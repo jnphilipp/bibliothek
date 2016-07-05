@@ -90,6 +90,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'languages',
     'links',
     'persons',
     'django.contrib.admin',
