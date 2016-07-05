@@ -93,6 +93,7 @@ INSTALLED_APPS = [
     'files',
     'languages',
     'links',
+    'papers',
     'persons',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -145,3 +146,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+# Media files
+
+MEDIA_ROOT = app_data_dir
