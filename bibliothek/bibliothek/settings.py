@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for bibliothek project.
 
@@ -10,10 +11,68 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
+import math
 import os
+
+from gi.repository import GLib
+
+
+__author__ = 'jnphilipp'
+__email__ = 'me@jnphilipp.org'
+__license__ = 'GPLv3'
+__version__ = '0.0.1'
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+# general app info
+app_identifier = 'bibliothek'
+app_name = 'bibliothek'
+app_comments = ''
+app_copyright = 'Copyright (C) 2016 jnphilipp'
+app_website = ''
+app_version = (('#####################################################\n' +
+                '#                    bibliothek                     #\n' +
+                '#                                                   #\n' +
+                '#%sv%s%s#\n' % (' ' * math.floor((50 - len(__version__)) / 2), __version__, ' ' * math.ceil((50 - len(__version__)) / 2)) +
+                '#%s%s%s#\n' % (' ' * math.floor((51 - len(__license__)) / 2), __license__, ' ' * math.ceil((51 - len(__license__)) / 2)) +
+                '#                                                   #\n'
+                '#%s%s%s#\n' % (' ' * math.floor((51 - len(__author__)) / 2), __author__, ' ' * math.ceil((51 - len(__author__)) / 2)) +
+                '#%s%s%s#\n' % (' ' * math.floor((51 - len(__email__)) / 2), __email__, ' ' * math.ceil((51 - len(__email__)) / 2)) +
+                '#                                                   #\n' +
+                '#%s%s%s#\n' % (' ' * math.floor((51 - len(app_website)) / 2), app_website, ' ' * math.ceil((51 - len(app_website)) / 2)) +
+                '#####################################################'))
+app_license = (('This program is free software: you can redistribute it and/or modify\n'+
+'it under the terms of the GNU General Public License as published by\n'+
+'the Free Software Foundation, either version 3 of the License, or\n'+
+'(at your option) any later version.\n'+
+'\n'+
+'This program is distributed in the hope that it will be useful,\n'+
+'but WITHOUT ANY WARRANTY; without even the implied warranty of\n'+
+'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n'+
+'GNU General Public License for more details.\n'+
+'\n'+
+'You should have received a copy of the GNU General Public License\n'+
+'along with this program.  If not, see <http://www.gnu.org/licenses/>.'))
+app_authors = ['jnphilipp <me@jnphilipp.org>']
+app_documenters = ['jnphilipp <me@jnphilipp.org>']
+
+
+# XDG config
+xdg_config_dir = GLib.get_user_config_dir()
+app_config_dir = os.path.join(xdg_config_dir, app_identifier)
+
+
+# XDG cache
+xdg_cache_dir = GLib.get_user_cache_dir()
+app_cache_dir = os.path.join(xdg_cache_dir, app_identifier)
+
+
+# XDG data
+xdg_data_dir = GLib.get_user_data_dir()
+app_data_dir = os.path.join(xdg_data_dir, app_identifier)
 
 
 # Quick-start development settings - unsuitable for production
@@ -39,37 +98,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-MIDDLEWARE_CLASSES = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
-
-ROOT_URLCONF = 'bibliothek.urls'
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
-
-WSGI_APPLICATION = 'bibliothek.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
@@ -77,7 +105,7 @@ WSGI_APPLICATION = 'bibliothek.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(app_data_dir, 'db.sqlite3'),
     }
 }
 
@@ -113,9 +141,3 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
-
-STATIC_URL = '/static/'
