@@ -15,6 +15,7 @@ import math
 import os
 
 from gi.repository import GLib
+from . import GConfig
 
 
 __author__ = 'jnphilipp'
@@ -28,12 +29,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # general app info
-app_identifier = 'bibliothek'
-app_name = 'bibliothek'
-app_comments = ''
-app_copyright = 'Copyright (C) 2016 jnphilipp'
-app_website = ''
-app_version = (('#####################################################\n' +
+APP_IDENTIFIER = 'bibliothek'
+APP_NAME = 'bibliothek'
+APP_COMMENTS = ''
+APP_COPYRIGHT = 'Copyright (C) 2016 jnphilipp'
+APP_WEBSITE = ''
+APP_VERSION = (('#####################################################\n' +
                 '#                    bibliothek                     #\n' +
                 '#                                                   #\n' +
                 '#%sv%s%s#\n' % (' ' * math.floor((50 - len(__version__)) / 2), __version__, ' ' * math.ceil((50 - len(__version__)) / 2)) +
@@ -42,9 +43,9 @@ app_version = (('#####################################################\n' +
                 '#%s%s%s#\n' % (' ' * math.floor((51 - len(__author__)) / 2), __author__, ' ' * math.ceil((51 - len(__author__)) / 2)) +
                 '#%s%s%s#\n' % (' ' * math.floor((51 - len(__email__)) / 2), __email__, ' ' * math.ceil((51 - len(__email__)) / 2)) +
                 '#                                                   #\n' +
-                '#%s%s%s#\n' % (' ' * math.floor((51 - len(app_website)) / 2), app_website, ' ' * math.ceil((51 - len(app_website)) / 2)) +
+                '#%s%s%s#\n' % (' ' * math.floor((51 - len(APP_WEBSITE)) / 2), APP_WEBSITE, ' ' * math.ceil((51 - len(APP_WEBSITE)) / 2)) +
                 '#####################################################'))
-app_license = (('This program is free software: you can redistribute it and/or modify\n'+
+APP_LICENSE = (('This program is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
 'the Free Software Foundation, either version 3 of the License, or\n'+
 '(at your option) any later version.\n'+
@@ -56,30 +57,34 @@ app_license = (('This program is free software: you can redistribute it and/or m
 '\n'+
 'You should have received a copy of the GNU General Public License\n'+
 'along with this program.  If not, see <http://www.gnu.org/licenses/>.'))
-app_authors = ['jnphilipp <me@jnphilipp.org>']
-app_documenters = ['jnphilipp <me@jnphilipp.org>']
+APP_AUTHORS = ['jnphilipp <me@jnphilipp.org>']
+APP_DOCUMENTERS = ['jnphilipp <me@jnphilipp.org>']
 
 
 # XDG config
-xdg_config_dir = GLib.get_user_config_dir()
-app_config_dir = os.path.join(xdg_config_dir, app_identifier)
+XDG_CONFIG_DIR = GLib.get_user_config_dir()
+APP_CONFIG_DIR = os.path.join(XDG_CONFIG_DIR, APP_IDENTIFIER)
 
 
 # XDG cache
-xdg_cache_dir = GLib.get_user_cache_dir()
-app_cache_dir = os.path.join(xdg_cache_dir, app_identifier)
+XDG_CACHE_DIR = GLib.get_user_cache_dir()
+APP_CACHE_DIR = os.path.join(XDG_CACHE_DIR, APP_IDENTIFIER)
 
 
 # XDG data
-xdg_data_dir = GLib.get_user_data_dir()
-app_data_dir = os.path.join(xdg_data_dir, app_identifier)
+XDG_DATA_DIR = GLib.get_user_data_dir()
+APP_DATA_DIR = os.path.join(XDG_DATA_DIR, APP_IDENTIFIER)
+
+
+gconf = GConfig(APP_IDENTIFIER)
+gconf.load()
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '^r$hgsy3b!fr*qt50lw$5z)ot^@o0t8pfso_j6kf=bupt2lm+4'
+SECRET_KEY = gconf['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -91,6 +96,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'files',
+    'journals',
     'languages',
     'links',
     'papers',
@@ -110,7 +116,7 @@ INSTALLED_APPS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(app_data_dir, 'db.sqlite3'),
+        'NAME': os.path.join(APP_DATA_DIR, 'db.sqlite3'),
     }
 }
 
@@ -150,4 +156,4 @@ USE_TZ = True
 
 # Media files
 
-MEDIA_ROOT = app_data_dir
+MEDIA_ROOT = APP_DATA_DIR
