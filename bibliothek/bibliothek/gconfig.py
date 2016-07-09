@@ -3,7 +3,9 @@
 import gi
 gi.require_version('GConf', '2.0')
 
+from base64 import b64encode
 from gi.repository import GConf
+from os import urandom
 
 
 class GConfig:
@@ -149,4 +151,5 @@ class GConfig:
 
 
     def load(self):
-        pass
+        if not self['SECRET_KEY']:
+            self['SECRET_KEY'] = b64encode(urandom(4096)).decode('utf-8')
