@@ -5,6 +5,27 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 
+class Acquisition(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    date = models.DateField(blank=True, null=True)
+    price = models.FloatField(default=0)
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+
+    def __str__(self):
+        return 'acquisition "%s"' % self.content_object
+
+
+    class Meta:
+        ordering = ('date',)
+        verbose_name = ' acquisition'
+
+
 class Read(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
