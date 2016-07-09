@@ -10,6 +10,10 @@ class Link(models.Model):
     link = models.URLField(max_length=4096, unique=True)
 
 
+    def to_json(self):
+        return {'link': self.link}
+
+
     def __str__(self):
         return self.link
 
