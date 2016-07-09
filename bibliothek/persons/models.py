@@ -30,7 +30,7 @@ class Person(models.Model):
 
 
     def to_json(self):
-        return {'first_name':self.first_name, 'last_name':self.last_name}
+        return {'first_name': self.first_name, 'last_name': self.last_name}
 
 
     def __str__(self):
