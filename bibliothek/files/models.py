@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import os
-import shutil
 
-
-from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.template.defaultfilters import slugify
 
 
 class File(models.Model):
@@ -17,13 +13,17 @@ class File(models.Model):
 
     file = models.FileField(upload_to='files', max_length=4096)
 
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True)
+    object_id = models.PositiveIntegerField(blank=True, null=True)
     content_object = GenericForeignKey('content_type', 'object_id')
 
 
+    def to_json(self):
+        return {'file_name': os.path.basename(self.file.name)}
+
+
     def __str__(self):
-        return os.path.basename(self.ebook.name)
+        return os.path.basename(self.file.name)
 
 
     class Meta:
