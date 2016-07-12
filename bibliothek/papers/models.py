@@ -35,10 +35,12 @@ class Paper(models.Model):
 
     links = models.ManyToManyField(Link, related_name='papers', blank=True)
 
+    acquisitions = GenericRelation('shelves.Acquisition')
+    reads = GenericRelation('shelves.Read')
+
 
     def move_file(self, file):
-        name = slugify('%s%s' % (self.title, '' if self.authors.count() == 0 else ' - %s' % ', '.join([str(a) for a in self.authors.all()])))
-        save_name = os.path.join('papers', str(self.id), name + os.path.splitext(os.path.basename(file.file.name))[1])
+        save_name = os.path.join('papers', str(self.id), os.path.basename(file.file.name))
 
         current_path = os.path.join(settings.MEDIA_ROOT, file.file.name)
         new_path = os.path.join(settings.MEDIA_ROOT, save_name)
@@ -80,6 +82,10 @@ class Paper(models.Model):
             data['links'] = [link.to_json() for link in self.links.all()]
         if self.files.all():
             data['files'] = [file.to_json() for file in self.files.all()]
+        if self.acquisitions.all():
+            data['acquisitions'] = [acquisition.to_json() for acquisition in self.acquisitions.all()]
+        if self.reads.all():
+            data['reads'] = [read.to_json() for read in self.reads.all()]
         return data
 
 
