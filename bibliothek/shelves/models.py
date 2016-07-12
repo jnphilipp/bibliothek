@@ -17,6 +17,10 @@ class Acquisition(models.Model):
     content_object = GenericForeignKey('content_type', 'object_id')
 
 
+    def to_json(self):
+        return {'date': str(self.date), 'price': str(self.price)}
+
+
     def __str__(self):
         return 'acquisition "%s"' % self.content_object
 
@@ -36,6 +40,10 @@ class Read(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
+
+
+    def to_json(self):
+        return {'started': str(self.started), 'finished': str(self.finished)}
 
 
     def __str__(self):
