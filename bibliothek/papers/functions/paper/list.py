@@ -14,7 +14,7 @@ def by_shelf(shelf):
     _list([[paper.title, paper.journal.name if paper.journal else None, paper.volume] for paper in papers], ['Title', 'Journal', 'Volume'], positions=[.55, .66, 1.])
 
 
-def by_search(term=None, stdout=True):
+def by_search(term=None):
     papers = Paper.objects.all()
     if term:
         papers = papers.filter(Q(title__icontains=term) | Q(journal__name__icontains=term) | Q(volume__icontains=term))

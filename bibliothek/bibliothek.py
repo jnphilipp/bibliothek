@@ -47,16 +47,28 @@ def valid_date(s):
 def _paper(args):
     import papers.functions
     if args.paper_subparsers == 'acquisition':
-        if args.action == 'add':
-            papers.functions.paper.acquisition.add(args.paper)
-        elif args.action == 'delete':
-            papers.functions.paper.acquisition.delete(args.paper)
+        if args.paper_read_subparsers == 'add':
+            paper = papers.functions.paper.get.by_term(args.paper)
+            if paper:
+                papers.functions.paper.read.add(paper, args.started, args.finished)
+        elif args.paper_read_subparsers == 'delete':
+            paper = papers.functions.paper.get.by_term(args.paper)
+            if paper:
+                papers.functions.paper.read.delete(paper, args.id)
+        elif args.paper_read_subparsers == 'edit':
+            paper = papers.functions.paper.get.by_term(args.paper)
+            if paper:
+                papers.functions.paper.read.edit(paper, args.id, args.field, args.value)
     elif args.paper_subparsers == 'edit':
-        papers.functions.paper.edit.cmd(args.paper)
+        paper = papers.functions.paper.get.by_term(args.paper)
+        if paper:
+            papers.functions.paper.edit.cmd(args.paper)
     elif args.paper_subparsers == 'list':
         papers.functions.paper.list.by_shelf(args.shelf)
     elif args.paper_subparsers == 'info':
-        papers.functions.paper.info.show(args.paper)
+        paper = papers.functions.paper.get.by_term(args.paper)
+        if paper:
+            papers.functions.paper.info.show(paper)
     elif args.paper_subparsers == 'parse':
         papers.functions.paper.create.from_bibtex(args.bibtex, args.file)
     elif args.paper_subparsers == 'read':
@@ -96,7 +108,7 @@ if __name__ == "__main__":
 
     paper_edit_parser = paper_subparsers.add_parser('edit', help='edit paper')
     paper_edit_parser.add_argument('paper', help='which paper to edit')
-    paper_edit_parser.add_argument('field', choices=['title', 'published_on'], help='which field to edit')
+    paper_edit_parser.add_argument('field', choices=['title', 'published_on', 'volume'], help='which field to edit')
     paper_edit_parser.add_argument('value', help='new value for the field')
 
     paper_list_parser = paper_subparsers.add_parser('list', help='list papers')

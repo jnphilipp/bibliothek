@@ -1,26 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from papers.models import Paper
 from utils import lookahead, stdout
 
-from . import list as paper_list
 
-def show(search=None):
-    papers = paper_list.by_search(search)
-    print('=' * 100)
-    print('\n\n')
-
-    if papers.count() == 0:
-        print('No paper found.')
-        print('=' * 100)
-        return
-    for paper, has_next in lookahead(papers):
-        _print_fields(paper)
-        if has_next:
-            print('\n\n')
-
-
-def _print_fields(paper):
+def show(paper):
     positions=[.33, 1.]
     stdout.p(['Field', 'Value'], positions=positions, after='=')
     stdout.p(['Title', paper.title], positions=positions)
