@@ -6,11 +6,14 @@ from utils import lookahead, stdout
 from . import list as paper_list
 
 def show(search=None):
-    papers = paper_list.by_search(search, stdout=False)
+    papers = paper_list.by_search(search)
+    print('=' * 100)
+    print('\n\n')
 
     if papers.count() == 0:
         print('No paper found.')
         print('=' * 100)
+        return
     for paper, has_next in lookahead(papers):
         _print_fields(paper)
         if has_next:
@@ -50,17 +53,17 @@ def _print_fields(paper):
     if paper.acquisitions.count() > 0:
         for (i, acquisition), has_next in lookahead(enumerate(paper.acquisitions.all())):
             if i == 0:
-                stdout.p(['Acquisitions', 'date: %s, price: %0.2f' % (str(acquisition.date), acquisition.price)], positions=positions, after='' if has_next else '_')
+                stdout.p(['Acquisitions', 'id: %s, date: %s, price: %0.2f' % (acquisition.id, acquisition.date, acquisition.price)], positions=positions, after='' if has_next else '_')
             else:
-                stdout.p(['', 'date: %s, price: %0.2f' % (str(acquisition.date), acquisition.price)], positions=positions, after='' if has_next else '_')
+                stdout.p(['', 'id: %s, date: %s, price: %0.2f' % (acquisition.id, acquisition.date, acquisition.price)], positions=positions, after='' if has_next else '_')
     else:
         stdout.p(['Acquisitions', ''], positions=positions)
 
     if paper.reads.count() > 0:
         for (i, read), has_next in lookahead(enumerate(paper.reads.all())):
             if i == 0:
-                stdout.p(['Read', read], positions=positions, after='' if has_next else '=')
+                stdout.p(['Read', 'id: %s, date started: %s, date finished: %s' % (read.id, read.started, read.finished)], positions=positions, after='' if has_next else '=')
             else:
-                stdout.p(['', read], positions=positions, after='' if has_next else '=')
+                stdout.p(['', 'id: %s, date started: %s, date finished: %s' % (read.id, read.started, read.finished)], positions=positions, after='' if has_next else '=')
     else:
         stdout.p(['Read', ''], positions=positions, after='=')
