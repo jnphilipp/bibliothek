@@ -47,6 +47,17 @@ def valid_date(s):
         raise ArgumentTypeError('Not a valid date: "{0}".'.format(s))
 
 
+def _journal(args):
+    import journals.functions
+    if args.journal_subparsers == 'list':
+        if args.shelf:
+            journals.functions.journal.list.by_shelf(args.shelf)
+        elif args.search:
+            journals.functions.journal.list.by_search(args.search)
+    else:
+        parser_paper.print_help()
+
+
 def _paper(args):
     import papers.functions
     if args.paper_subparsers == 'acquisition':
@@ -108,6 +119,17 @@ if __name__ == "__main__":
     parser = ArgumentParser(prog=settings.APP_NAME, formatter_class=RawTextHelpFormatter)
     parser.add_argument('-v', '--version', action='version', version=settings.APP_VERSION)
     subparsers = parser.add_subparsers(dest='subparser')
+
+
+    # create the parser for the "journal" subcommand
+    parser_journal = subparsers.add_parser('journal', help='subcommand for journals')
+    parser_journal.set_defaults(func=_journal)
+    journal_subparsers = parser_journal.add_subparsers(dest='journal_subparsers')
+
+    # journal list
+    journal_list_parser = journal_subparsers.add_parser('list', help='list journals')
+    journal_list_parser.add_argument('-shelf', choices=['read', 'unread'], help='filter on shelves')
+    journal_list_parser.add_argument('-s', '--search', help='filter on shelves')
 
 
     # create the parser for the "paper" subcommand
