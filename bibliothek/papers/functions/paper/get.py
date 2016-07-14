@@ -14,6 +14,5 @@ def by_term(term):
     elif papers.count() > 1:
         stdout.p(['More than one paper found.'], after='=', positions=[1.])
         return None
-    print('=' * 100)
-    print('\n\n')
+    print('\n')
     return papers[0]

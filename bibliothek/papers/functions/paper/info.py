@@ -30,7 +30,15 @@ def show(paper):
     else:
         stdout.p(['Languages', ''], positions=positions)
 
-    stdout.p(['Files', ', '.join([str(f) for f in paper.files.all()])], positions=positions)
+    if paper.files.count() > 0:
+        for (i, file), has_next in lookahead(enumerate(paper.files.all())):
+            if i == 0:
+                stdout.p(['Files', 'id: %s, file: %s' % (file.id, file)], positions=positions, after='' if has_next else '_')
+            else:
+                stdout.p(['', 'id: %s, file: %s' % (file.id, file)], positions=positions, after='' if has_next else '_')
+    else:
+        stdout.p(['Files', ''], positions=positions)
+
     stdout.p(['Links', ', '.join([str(l) for l in paper.links.all()])], positions=positions)
 
     if paper.acquisitions.count() > 0:
