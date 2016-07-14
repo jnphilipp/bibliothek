@@ -1,0 +1,56 @@
+_bibliothek() 
+{
+    local cur prev opts base subcommand
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    subcommand="${COMP_WORDS[1]}"
+
+    opts="paper -h --help -v --version"
+
+    case "${subcommand}" in
+        paper)
+            case "${prev}" in
+                acquisition)
+                    opts="add edit delete -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                parse)
+                    opts="-f --file -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                read)
+                    case "${prev}" in
+                        add)
+                            opts="-started -finished -h --help"
+                            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                            return 0
+                            ;;
+                        read)
+                            opts="add edit delete -h --help"
+                            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                            return 0
+                            ;;
+                        *)
+                            ;;
+                    esac
+                    ;;
+                paper)
+                    local opts="acquisition edit list info parse read"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                *)
+                    ;;
+            esac
+            ;;
+        *)
+            ;;
+    esac
+
+   COMPREPLY=($(compgen -W "${opts}" -- ${cur}))  
+   return 0
+}
+complete -F _bibliothek bibliothek
