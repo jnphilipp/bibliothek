@@ -26,4 +26,4 @@ def by_search(term=None):
 def _list(papers, fields, positions):
     stdout.p(fields, positions=positions, after='=')
     for paper, has_next in lookahead(papers):
-        stdout.p(paper, positions=positions, after='_' if has_next else None)
+        stdout.p(paper, positions=positions, after='_' if has_next else '=')

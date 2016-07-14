@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from utils import stdout
+
 from . import list as paper_list
 
 
