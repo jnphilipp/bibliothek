@@ -23,7 +23,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bibliothek.settings')
 import django
 django.setup()
 
-from argparse import ArgumentParser, RawTextHelpFormatter
+from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from bibliothek import settings
 from datetime import datetime
 from django.db.models import Q
@@ -39,26 +39,29 @@ def init():
 
 def valid_date(s):
     try:
+        if s.lower() in ['', 'n', 'none', 'null']:
+            return None
         return datetime.strptime(s, "%Y-%m-%d").date()
     except ValueError:
-        raise argparse.ArgumentTypeError('Not a valid date: "{0}".'.format(s))
+        raise ArgumentTypeError('Not a valid date: "{0}".'.format(s))
 
 
 def _paper(args):
     import papers.functions
     if args.paper_subparsers == 'acquisition':
-        if args.paper_read_subparsers == 'add':
+        if args.paper_acquisition_subparsers == 'add':
             paper = papers.functions.paper.get.by_term(args.paper)
             if paper:
-                papers.functions.paper.read.add(paper, args.started, args.finished)
-        elif args.paper_read_subparsers == 'delete':
+                papers.functions.paper.acquisition.add(paper, args.started, args.finished)
+        elif args.paper_acquisition_subparsers == 'delete':
             paper = papers.functions.paper.get.by_term(args.paper)
             if paper:
-                papers.functions.paper.read.delete(paper, args.id)
-        elif args.paper_read_subparsers == 'edit':
+                papers.functions.paper.acquisition.delete(paper, args.id)
+        elif args.paper_acquisition_subparsers == 'edit':
+            print(args)
             paper = papers.functions.paper.get.by_term(args.paper)
             if paper:
-                papers.functions.paper.read.edit(paper, args.id, args.field, args.value)
+                papers.functions.paper.acquisition.edit(paper, args.id, args.paper_acquisition_edit_subparsers, args.value)
     elif args.paper_subparsers == 'edit':
         paper = papers.functions.paper.get.by_term(args.paper)
         if paper:
@@ -102,21 +105,45 @@ if __name__ == "__main__":
     parser_paper.set_defaults(func=_paper)
     paper_subparsers = parser_paper.add_subparsers(dest='paper_subparsers')
 
+    # paper acquisitions
     paper_acquisition_parser = paper_subparsers.add_parser('acquisition', help='manage acquisition of papers')
-    paper_acquisition_parser.add_argument('action', choices=['add', 'delete'], help='action to perform')
-    paper_acquisition_parser.add_argument('paper', nargs='?', help='which paper')
+    paper_acquisition_subparser = paper_acquisition_parser.add_subparsers(dest='paper_acquisition_subparsers')
 
+    paper_acquisition_add_parser = paper_acquisition_subparser.add_parser('add', help='manage addition of acquisitions')
+    paper_acquisition_add_parser.add_argument('paper', help='which paper to edit')
+    paper_acquisition_add_parser.add_argument('-date', default=None, type=valid_date, help='date')
+    paper_acquisition_add_parser.add_argument('-price', default=None, type=float, help='price')
+
+    paper_acquisition_edit_parser = paper_acquisition_subparser.add_parser('edit', help='manage edition of acquisitions')
+    paper_acquisition_edit_parser.add_argument('paper', help='which paper to edit')
+    paper_acquisition_edit_parser.add_argument('id', type=int, help='which acquisition to edit')
+
+    paper_acquisition_edit_subparser = paper_acquisition_edit_parser.add_subparsers(dest='paper_acquisition_edit_subparsers', help='which field to edit')
+    paper_acquisition_edit_date_parser = paper_acquisition_edit_subparser.add_parser('date')
+    paper_acquisition_edit_date_parser.add_argument('value', type=valid_date, help='new value for field')
+
+    paper_acquisition_edit_date_parser = paper_acquisition_edit_subparser.add_parser('price')
+    paper_acquisition_edit_date_parser.add_argument('value', type=float, help='new value for field')
+
+    paper_acquisition_delete_parser = paper_acquisition_subparser.add_parser('delete', help='manage deletion of acquisitions')
+    paper_acquisition_delete_parser.add_argument('paper', help='which paper to edit')
+    paper_acquisition_delete_parser.add_argument('id', type=int, help='which acquisition to delete')
+
+    # paper edit
     paper_edit_parser = paper_subparsers.add_parser('edit', help='edit paper')
     paper_edit_parser.add_argument('paper', help='which paper to edit')
     paper_edit_parser.add_argument('field', choices=['title', 'published_on', 'volume'], help='which field to edit')
     paper_edit_parser.add_argument('value', help='new value for the field')
 
+    # paper list
     paper_list_parser = paper_subparsers.add_parser('list', help='list papers')
     paper_list_parser.add_argument('shelf', choices=['read', 'unread'], nargs='?', help='filter on shelves')
 
+    # paper info
     paper_info_parser = paper_subparsers.add_parser('info', help='show information of a paper')
     paper_info_parser.add_argument('paper', nargs='?', help='which paper to show')
 
+    # paper parse
     paper_parse_parser = paper_subparsers.add_parser('parse', help='parse bibtex and add papers')
     paper_parse_parser.add_argument('bibtex', help='bibtex file')
     paper_parse_parser.add_argument('-f', '--file', nargs='*', default=[], help='files to add')
