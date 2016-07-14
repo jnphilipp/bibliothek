@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import os
+import sys
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bibliothek.settings')
 
 import django
@@ -72,6 +73,15 @@ def _paper(args):
         paper = papers.functions.paper.get.by_term(args.paper)
         if paper:
             papers.functions.paper.info.show(paper)
+    elif args.paper_subparsers == 'open':
+        paper = papers.functions.paper.get.by_term(args.paper)
+        if paper:
+            file = paper.files.get(pk=args.id)
+            path = os.path.join(settings.MEDIA_ROOT, file.file.path)
+            if sys.platform == 'linux':
+                os.system('xdg-open "%s"' % path)
+            else:
+                os.system('open "%s"' % path)
     elif args.paper_subparsers == 'parse':
         papers.functions.paper.create.from_bibtex(args.bibtex, args.file)
     elif args.paper_subparsers == 'read':
@@ -142,6 +152,11 @@ if __name__ == "__main__":
     # paper info
     paper_info_parser = paper_subparsers.add_parser('info', help='show information of a paper')
     paper_info_parser.add_argument('paper', nargs='?', help='which paper to show')
+
+    # paper open
+    paper_open_parser = paper_subparsers.add_parser('open', help='open a file of a paper')
+    paper_open_parser.add_argument('paper', nargs='?', help='which paper to show')
+    paper_open_parser.add_argument('id', type=int, help='which file to open')
 
     # paper parse
     paper_parse_parser = paper_subparsers.add_parser('parse', help='parse bibtex and add papers')
