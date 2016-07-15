@@ -1,0 +1,15 @@
+body {font-family: monospace;
+    font-size: 10pt;
+    padding-top: 70px;}
+
+a:active {position: relative;
+    top: 1px;
+    right: -1px;}
+
+
+
+/* Navbar brand */
+
+.navbar-brand img {margin-top: -5px;
+    height: 30px;
+    display: inline-block;}
