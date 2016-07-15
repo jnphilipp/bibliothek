@@ -1,4 +1,4 @@
-{% load bootstrap i18n static %}
+{% load bibliothek bootstrap i18n static %}
 
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE|default:'en' }}">
@@ -28,14 +28,19 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="">
+                    <a class="navbar-brand" href="{% url 'dashboard' %}">
                         <img alt="Brand" src="{% static 'images/icon.png' %}"/> bibliothek
                     </a>
                 </div>
 
                 <div class="collapse navbar-collapse" id="bibliothek-navbar-collapse">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="">{% trans 'Papers' %} <span class="sr-only">(current)</span></a></li>
+                        {% url 'journals' as journals_url %}
+                        <li{% if request.path|startswith:journals_url %} class="active"{% endif %}><a href="{{ journals_url }}">{% trans 'Journals' %}{% if request.path|startswith:journals_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav">
+                        {% url 'papers' as papers_url %}
+                        <li{% if request.path|startswith:papers_url %} class="active"{% endif %}><a href="{{ papers_url }}">{% trans 'Papers' %}{% if request.path|startswith:papers_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
                 </div>
             </div>
