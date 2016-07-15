@@ -1,0 +1,57 @@
+{% load bootstrap i18n static %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <link rel="shortcut icon" href="{% static 'images/icon.png' %}"/>
+        <link rel="stylesheet" media="all" href="{% static 'css/bootstrap.min.css' %}"/>
+        <link rel="stylesheet" media="all" href="{% static 'css/bootstrap-theme.min.css' %}"/>
+        <link rel="stylesheet" media="all" href="{% static 'css/jquery-ui.min.css' %}"/>
+        <link rel="stylesheet" media="all" href="{% static 'css/jquery-ui.structure.min.css' %}"/>
+        <link rel="stylesheet" media="all" href="{% static 'css/jquery-ui.theme.min.css' %}"/>
+        <link rel="stylesheet" href="{% static 'css/bibliothek.css' %}"/>
+        <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+        <title>{% block title %}bibliothek{% endblock %}</title>
+        {% block extrahead %}{% endblock %}
+    </head>
+    <body>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bibliothek-navbar-collapse" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="">
+                        <img alt="Brand" src="{% static 'images/icon.png' %}"/> bibliothek
+                    </a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bibliothek-navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="">{% trans 'Papers' %} <span class="sr-only">(current)</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    {% messages %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
