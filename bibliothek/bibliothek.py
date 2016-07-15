@@ -27,7 +27,6 @@ django.setup()
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from bibliothek import settings
 from datetime import datetime
-from django.core.management import execute_from_command_line
 from utils import lookahead, stdout
 
 
@@ -110,6 +109,11 @@ def _paper(args):
                 papers.functions.paper.read.edit(paper, args.id, args.field, args.value)
     else:
         paper_parser.print_help()
+
+
+def _runserver(args):
+    from django.core.management import execute_from_command_line
+    execute_from_command_line(sys.argv)
 
 
 if __name__ == "__main__":
@@ -207,8 +211,7 @@ if __name__ == "__main__":
 
     # create the parser for the "runserver" subcommand
     runserver_parser = subparsers.add_parser('runserver', help='subcommand for local http server')
-    runserver_parser.set_defaults(func=execute_from_command_line(sys.argv))
-
+    runserver_parser.set_defaults(func=_runserver)
 
     args = parser.parse_args()
     if args.subparser:
