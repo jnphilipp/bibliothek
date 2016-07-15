@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+
+{% block content %}
+<h1 class="page-header">{{ paper.title }}</h1>
+<dl class="dl-horizontal">
+    <dt>{% trans 'Authors' %}</dt>
+    <dd>{% for author in paper.authors.all %}{{ author }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+    <dt>{% trans 'Journal' %}</dt>
+    <dd>{{ paper.journal.name }}</dd>
+    <dt>{% trans 'Volume' %}</dt>
+    <dd>{{ paper.volume }}</dd>
+    <dt>{% trans 'Published on' %}</dt>
+    <dd>{{ paper.published_on }}</dd>
+    <dt>{% trans 'Languages' %}</dt>
+    <dd>{% for language in paper.languages.all %}{{ language }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+    <dt>{% trans 'Bibtex' %}</dt>
+    <dd><pre>{{ paper.bibtex }}</pre></dd>
+    <dt>{% trans 'Files' %}</dt>
+    <dd>
+        <ul class="list-unstyled">
+            {% for file in paper.files.all %}
+                <li>{{ file }}</li>
+            {% endfor %}
+        </ul>
+    </dd>
+    <dt>{% trans 'Links' %}</dt>
+    <dd>
+        <ul class="list-unstyled">
+            {% for link in paper.links.all %}
+                <li><a href="{{ link }}">{{ link }}</a></li>
+            {% endfor %}
+        </ul>
+    </dd>
+</dl>
+
+{% endblock %}
+
+
+bibtex
+acquisitions
+reads

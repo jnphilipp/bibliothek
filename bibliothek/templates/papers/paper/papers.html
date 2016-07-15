@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+
+{% block content %}
+<h1 class="page-header">{% trans 'Papers' %}</h1>
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <th>{% trans 'Title' %}</th>
+            <th>{% trans 'Authors' %}</th>
+            <th>{% trans 'Journal' %}</th>
+            <th>{% trans 'Volume' %}</th>
+        </thead>
+        <tbody>
+            {% for paper in papers %}
+                <tr>
+                    <th><a href="{% url 'paper' paper.slug %}">{{ paper.title }}</a></th>
+                    <th>{% for author in paper.authors.all %}{{ author }}{% if not forloop.last %}, {% endif %}{% endfor %}</th>
+                    <th>{{ paper.journal.name }}</th>
+                    <th>{{ paper.volume }}</th>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
