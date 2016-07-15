@@ -27,7 +27,6 @@ django.setup()
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from bibliothek import settings
 from datetime import datetime
-from django.db.models import Q
 from utils import lookahead, stdout
 
 
@@ -55,7 +54,7 @@ def _journal(args):
         elif args.search:
             journals.functions.journal.list.by_search(args.search)
     else:
-        parser_paper.print_help()
+        journal_parser.print_help()
 
 
 def _paper(args):
@@ -109,7 +108,7 @@ def _paper(args):
             if paper:
                 papers.functions.paper.read.edit(paper, args.id, args.field, args.value)
     else:
-        parser_paper.print_help()
+        paper_parser.print_help()
 
 
 if __name__ == "__main__":
@@ -122,9 +121,9 @@ if __name__ == "__main__":
 
 
     # create the parser for the "journal" subcommand
-    parser_journal = subparsers.add_parser('journal', help='subcommand for journals')
-    parser_journal.set_defaults(func=_journal)
-    journal_subparsers = parser_journal.add_subparsers(dest='journal_subparsers')
+    journal_parser = subparsers.add_parser('journal', help='subcommand for journals')
+    journal_parser.set_defaults(func=_journal)
+    journal_subparsers = journal_parser.add_subparsers(dest='journal_subparsers')
 
     # journal list
     journal_list_parser = journal_subparsers.add_parser('list', help='list journals')
@@ -133,9 +132,9 @@ if __name__ == "__main__":
 
 
     # create the parser for the "paper" subcommand
-    parser_paper = subparsers.add_parser('paper', help='subcommand for papers')
-    parser_paper.set_defaults(func=_paper)
-    paper_subparsers = parser_paper.add_subparsers(dest='paper_subparsers')
+    paper_parser = subparsers.add_parser('paper', help='subcommand for papers')
+    paper_parser.set_defaults(func=_paper)
+    paper_subparsers = paper_parser.add_subparsers(dest='paper_subparsers')
 
     # paper acquisitions
     paper_acquisition_parser = paper_subparsers.add_parser('acquisition', help='manage acquisition of papers')
