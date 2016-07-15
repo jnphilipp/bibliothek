@@ -25,6 +25,8 @@ admin.site.site_header = 'Bibliothek administration'
 
 urlpatterns = [
     url(r'^$', views.papers, name='dashboard'),
+
+    url(r'^journals/', include('journals.urls')),
     url(r'^papers/', include('papers.urls')),
 
     url(r'^admin/', admin.site.urls),
