@@ -27,6 +27,7 @@ django.setup()
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from bibliothek import settings
 from datetime import datetime
+from django.core.management import execute_from_command_line
 from utils import lookahead, stdout
 
 
@@ -202,6 +203,12 @@ if __name__ == "__main__":
     paper_read_delete_parser = paper_read_subparser.add_parser('delete', help='manage deletion of reads')
     paper_read_delete_parser.add_argument('paper', help='which paper to edit')
     paper_read_delete_parser.add_argument('id', type=int, help='which read to delete')
+
+
+    # create the parser for the "runserver" subcommand
+    runserver_parser = subparsers.add_parser('runserver', help='subcommand for local http server')
+    runserver_parser.set_defaults(func=execute_from_command_line(sys.argv))
+
 
     args = parser.parse_args()
     if args.subparser:
