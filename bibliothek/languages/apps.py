@@ -5,5 +5,5 @@ from django.apps import AppConfig
 
 class LanguagesConfig(AppConfig):
     name = 'languages'
-    verbose_name = 'language'
-    verbose_name_plural = 'languages'
+    verbose_name = 'Language'
+    verbose_name_plural = 'Languages'

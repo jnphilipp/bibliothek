@@ -5,5 +5,5 @@ from django.apps import AppConfig
 
 class FilesConfig(AppConfig):
     name = 'files'
-    verbose_name = 'file'
-    verbose_name_plural = 'files'
+    verbose_name = 'File'
+    verbose_name_plural = 'Files'

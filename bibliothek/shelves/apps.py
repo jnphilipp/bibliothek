@@ -5,5 +5,5 @@ from django.apps import AppConfig
 
 class ShelvesConfig(AppConfig):
     name = 'shelves'
-    verbose_name = 'shelf'
-    verbose_name_plural = 'shelves'
+    verbose_name = 'Shelf'
+    verbose_name_plural = 'Shelves'
