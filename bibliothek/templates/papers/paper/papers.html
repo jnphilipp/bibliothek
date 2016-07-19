@@ -11,14 +11,18 @@
             <th>{% trans 'Authors' %}</th>
             <th>{% trans 'Journal' %}</th>
             <th>{% trans 'Volume' %}</th>
+            <th>{% trans 'Acquired' %}</th>
+            <th>{% trans 'Read' %}</th>
         </thead>
         <tbody>
             {% for paper in papers %}
                 <tr>
                     <th><a href="{% url 'paper' paper.slug %}">{{ paper.title }}</a></th>
-                    <th>{% for author in paper.authors.all %}{{ author }}{% if not forloop.last %}, {% endif %}{% endfor %}</th>
-                    <th>{{ paper.journal.name }}</th>
-                    <th>{{ paper.volume }}</th>
+                    <td>{% for author in paper.authors.all %}{{ author }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                    <td>{{ paper.journal.name }}</td>
+                    <td>{{ paper.volume }}</td>
+                    <td><span class="glyphicon glyphicon-{% if paper.acquisitions.exists %}ok{% else %}remove{% endif %}"></span></td>
+                    <td><span class="glyphicon glyphicon-{% if paper.reads.exists %}ok{% else %}remove{% endif %}"></span></td>
                 </tr>
             {% endfor %}
         </tbody>

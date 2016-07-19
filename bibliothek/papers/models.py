@@ -96,4 +96,3 @@ class Paper(models.Model):
     class Meta:
         ordering = ('journal__name', 'volume', 'title')
         unique_together = ('journal', 'volume')
-        verbose_name = ' paper'

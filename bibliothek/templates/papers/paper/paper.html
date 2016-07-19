@@ -33,11 +33,27 @@
             {% endfor %}
         </ul>
     </dd>
+    <dt>{% trans 'Acquisitions' %}</dt>
+    <dd>
+        {% for acquisition in paper.acquisitions.all %}
+            <ul>
+                <li>
+                    {% if acquisition.date %}<b>{% trans 'Date' %}</b>: {{ acquisition.date|date:'d.m.Y' }}{% endif%}
+                    <b>{% trans 'Price' %}</b>: {{ acquisition.price }}
+                </li>
+            </ul>
+        {% endfor %}
+    </dd>
+    <dt>{% trans 'Reads' %}</dt>
+    <dd>
+        {% for read in paper.reads.all %}
+            <ul>
+                <li>
+                    {% if read.started %}<b>{% trans 'Date started' %}</b>: {{ read.started|date:'d.m.Y' }}{% endif %}
+                    {% if read.finished %}<b>{% trans 'Date finished' %}</b>: {{ read.finished }}{% endif %}
+                </li>
+            </ul>
+        {% endfor %}
+    </dd>
 </dl>
-
 {% endblock %}
-
-
-bibtex
-acquisitions
-reads
