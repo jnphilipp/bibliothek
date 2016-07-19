@@ -5,7 +5,8 @@ from papers.models import Paper
 
 
 def papers(request):
-    papers = Paper.objects.all()
+    o = request.GET.get('o') if request.GET.get('o') else 'title'
+    papers = Paper.objects.all().order_by(o)
     return render(request, 'papers/paper/papers.html', locals())
 
 
