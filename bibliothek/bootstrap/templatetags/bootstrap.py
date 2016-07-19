@@ -16,3 +16,15 @@ def pagination(context, paginator, page, title=None, *args, **kwargs):
     context['title'] = title
     context['kwargs'] = kwargs
     return context
+
+
+@register.inclusion_tag('bootstrap/sortable_th.html', takes_context=True)
+def sortable_th(context, column_name, o, get_name, get_value, colspan=1, rowspan=1, *args, **kwargs):
+    context['column_name'] = column_name
+    context['o'] = o
+    context['get_name'] = get_name
+    context['get_value'] = get_value
+    context['colspan'] = colspan
+    context['rowspan'] = rowspan
+    context['kwargs'] = kwargs
+    return context
