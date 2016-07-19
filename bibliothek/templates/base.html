@@ -42,6 +42,10 @@
                         {% url 'papers' as papers_url %}
                         <li{% if request.path|startswith:papers_url %} class="active"{% endif %}><a href="{{ papers_url }}">{% trans 'Papers' %}{% if request.path|startswith:papers_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
+                    <ul class="nav navbar-nav">
+                        {% url 'persons' as persons_url %}
+                        <li{% if request.path|startswith:persons_url %} class="active"{% endif %}><a href="{{ persons_url }}">{% trans 'Persons' %}{% if request.path|startswith:persons_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                    </ul>
                 </div>
             </div>
         </nav>

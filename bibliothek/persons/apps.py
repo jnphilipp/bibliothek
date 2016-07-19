@@ -5,5 +5,5 @@ from django.apps import AppConfig
 
 class PersonsConfig(AppConfig):
     name = 'persons'
-    verbose_name = 'person'
-    verbose_name_plural = 'persons'
+    verbose_name = 'Person'
+    verbose_name_plural = 'Persons'

@@ -28,6 +28,7 @@ urlpatterns = [
 
     url(r'^journals/', include('journals.urls')),
     url(r'^papers/', include('papers.urls')),
+    url(r'^persons/', include('persons.urls')),
 
     url(r'^admin/', admin.site.urls),
 ]

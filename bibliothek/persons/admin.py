@@ -3,21 +3,21 @@
 from django.contrib import admin
 from django.db.models import Count
 from django.forms import TextInput
-from journals.models import Journal, TextFieldSingleLine
+from persons.models import Person, TextFieldSingleLine
 
 
-class JournalAdmin(admin.ModelAdmin):
+class PersonAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
-        return Journal.objects.annotate(paper_count=Count('papers'))
+        return Person.objects.annotate(paper_count=Count('papers'))
 
 
     def show_paper_count(self, inst):
         return inst.paper_count
 
 
-    list_display = ('name', 'show_paper_count', 'updated_at')
+    list_display = ('last_name', 'first_name', 'show_paper_count', 'updated_at')
     readonly_fields = ('slug',)
-    search_fields = ('name',)
+    search_fields = ('last_name', 'first_name')
     show_paper_count.admin_order_field = 'paper_count'
     show_paper_count.short_description = 'Number of Papers'
 
@@ -27,11 +27,11 @@ class JournalAdmin(admin.ModelAdmin):
     }
 
     fieldsets = [
-        (None, {'fields': ['slug', 'name']}),
+        (None, {'fields': ['slug', 'first_name', 'last_name']}),
         ('Links', {'fields': ['links']}),
     ]
 
     filter_horizontal = ('links',)
 
 
-admin.site.register(Journal, JournalAdmin)
+admin.site.register(Person, PersonAdmin)
