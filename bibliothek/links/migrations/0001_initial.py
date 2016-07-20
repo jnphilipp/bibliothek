@@ -22,7 +22,6 @@ class Migration(migrations.Migration):
                 ('link', models.URLField(max_length=4096, unique=True)),
             ],
             options={
-                'verbose_name': ' link',
                 'ordering': ('link',),
             },
         ),
