@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-default_app_config = 'magazines.apps.LinksConfig'
+default_app_config = 'magazines.apps.MagazinesConfig'
