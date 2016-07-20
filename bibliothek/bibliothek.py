@@ -31,10 +31,13 @@ from utils import lookahead, stdout
 
 
 def init():
-    if not os.path.exists(settings.APP_DATA_DIR):
-        os.makedirs(settings.APP_DATA_DIR)
-        from django.core.management import execute_from_command_line
+    from django.core.management import execute_from_command_line
+    if settings.DEBUG:
         execute_from_command_line(['', 'migrate'])
+    else:
+        if not os.path.exists(settings.APP_DATA_DIR):
+            os.makedirs(settings.APP_DATA_DIR)
+            execute_from_command_line(['', 'migrate'])
 
 
 def valid_date(s):
