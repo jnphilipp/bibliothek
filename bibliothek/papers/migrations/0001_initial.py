@@ -37,7 +37,6 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ('journal__name', 'volume', 'title'),
-                'verbose_name': ' paper',
             },
         ),
         migrations.AlterUniqueTogether(

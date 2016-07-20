@@ -27,7 +27,6 @@ class Migration(migrations.Migration):
                 ('links', models.ManyToManyField(blank=True, related_name='persons', to='links.Link')),
             ],
             options={
-                'verbose_name': ' person',
                 'ordering': ('last_name', 'first_name'),
             },
         ),

@@ -26,7 +26,6 @@ class Migration(migrations.Migration):
                 ('links', models.ManyToManyField(blank=True, related_name='journals', to='links.Link')),
             ],
             options={
-                'verbose_name': ' journal',
                 'ordering': ('name',),
             },
         ),
