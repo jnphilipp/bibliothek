@@ -87,7 +87,7 @@ class Issue(models.Model):
 
 
     def save(self, *args, **kwargs):
-        if not 'magazines' in self.cover_image.name:
+        if self.cover_image and not 'magazines' in self.cover_image.name:
             self.move_cover_image()
         if not self.slug:
             self.slug = slugify('%s %s' % (self.magazine.name, self.issue))
