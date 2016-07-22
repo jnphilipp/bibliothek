@@ -87,7 +87,8 @@ gconf.load()
 SECRET_KEY = gconf['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = gconf['DEBUG']
+DEBUG = True
+DEVELOPMENT = False
 
 ALLOWED_HOSTS = []
 
@@ -150,7 +151,7 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR if DEBUG else APP_DATA_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR if DEVELOPMENT else APP_DATA_DIR, 'db.sqlite3'),
     }
 }
 
@@ -192,7 +193,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR if DEBUG else APP_DATA_DIR, 'static')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'assets'),
 )
@@ -204,4 +204,5 @@ STATICFILES_FINDERS = (
 
 # Media files
 
-MEDIA_ROOT = BASE_DIR if DEBUG else APP_DATA_DIR
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR if DEVELOPMENT else APP_DATA_DIR

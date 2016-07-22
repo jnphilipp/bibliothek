@@ -32,7 +32,7 @@ from utils import lookahead, stdout
 
 def init():
     from django.core.management import execute_from_command_line
-    if settings.DEBUG:
+    if settings.DEVELOPMENT:
         execute_from_command_line(['', 'migrate'])
     else:
         if not os.path.exists(settings.APP_DATA_DIR):

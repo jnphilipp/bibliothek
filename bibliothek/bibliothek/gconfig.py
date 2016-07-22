@@ -153,5 +153,3 @@ class GConfig:
     def load(self):
         if not self['SECRET_KEY']:
             self['SECRET_KEY'] = b64encode(urandom(4096)).decode('utf-8')
-        if not self['DEBUG']:
-            self['DEBUG'] = False
