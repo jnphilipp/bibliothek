@@ -17,7 +17,7 @@ class IssueAdmin(admin.ModelAdmin):
     }
 
     fieldsets = [
-        (None, {'fields': ['slug', 'magazine', 'issue', 'published_on', 'languages']}),
+        (None, {'fields': ['slug', 'magazine', 'issue', 'published_on', 'languages', 'cover_image']}),
         ('Links', {'fields': ['links']}),
     ]
 
