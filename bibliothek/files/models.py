@@ -24,7 +24,3 @@ class File(models.Model):
 
     def __str__(self):
         return os.path.basename(self.file.name)
-
-
-    class Meta:
-        verbose_name = ' file'
