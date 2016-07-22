@@ -18,8 +18,8 @@
             {% for paper in papers %}
                 <tr>
                     <th><a href="{% url 'paper' paper.slug %}">{{ paper.title }}</a></th>
-                    <td>{% for author in paper.authors.all %}{{ author }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                    <td>{{ paper.journal.name }}</td>
+                    <td>{% for author in paper.authors.all %}<a href="{% url 'person' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                    <td><a href="{% url 'journal' paper.journal.slug %}">{{ paper.journal.name }}</a></td>
                     <td>{{ paper.volume }}</td>
                     <td><span class="glyphicon glyphicon-{% if paper.acquisitions.exists %}ok{% else %}remove{% endif %}"></span></td>
                     <td><span class="glyphicon glyphicon-{% if paper.reads.exists %}ok{% else %}remove{% endif %}"></span></td>
