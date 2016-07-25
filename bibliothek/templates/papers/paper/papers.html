@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load bootstrap i18n %}
+{% load bootstrap i18n shelves %}
 
 
 {% block content %}
@@ -22,7 +22,7 @@
                     <td><a href="{% url 'journal' paper.journal.slug %}">{{ paper.journal.name }}</a></td>
                     <td>{{ paper.volume }}</td>
                     <td><span class="glyphicon glyphicon-{% if paper.acquisitions.exists %}ok{% else %}remove{% endif %}"></span></td>
-                    <td><span class="glyphicon glyphicon-{% if paper.reads.exists %}ok{% else %}remove{% endif %}"></span></td>
+                    <td>{% read_status paper.reads %}</td>
                 </tr>
             {% endfor %}
         </tbody>

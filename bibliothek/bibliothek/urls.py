@@ -19,15 +19,16 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.views import static
-from papers import views
+from . import views
 
 admin.site.site_header = 'Bibliothek administration'
 
 
 urlpatterns = [
-    url(r'^$', views.papers, name='dashboard'),
+    url(r'^$', views.dashboard, name='dashboard'),
 
     url(r'^journals/', include('journals.urls')),
+    url(r'^magazines/', include('magazines.urls')),
     url(r'^papers/', include('papers.urls')),
     url(r'^persons/', include('persons.urls')),
 
