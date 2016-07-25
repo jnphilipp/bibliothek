@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import os
+import shutil
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
@@ -45,8 +48,8 @@ class Issue(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    slug = models.SlugField(max_length=2048, unique=True)
-    issue = TextFieldSingleLine(unique=True)
+    slug = models.SlugField(max_length=2048)
+    issue = TextFieldSingleLine()
     magazine = models.ForeignKey(Magazine, on_delete=models.CASCADE, related_name='issues')
     published_on = models.DateField(blank=True, null=True)
     languages = models.ManyToManyField(Language, related_name='issues', blank=True)
@@ -90,11 +93,11 @@ class Issue(models.Model):
         if self.cover_image and not 'magazines' in self.cover_image.name:
             self.move_cover_image()
         if not self.slug:
-            self.slug = slugify('%s %s' % (self.magazine.name, self.issue))
+            self.slug = slugify(self.issue)
         else:
             orig = Issue.objects.get(pk=self.id)
-            if orig.issue != self.issue or orig.magazine.name != self.magazine.name:
-                self.slug = slugify('%s %s' % (self.magazine.name, self.issue))
+            if orig.issue != self.issue:
+                self.slug = slugify(self.issue)
         super(Issue, self).save(*args, **kwargs)
         for file in self.files.all():
             if not 'magazines' in file.file:
@@ -107,3 +110,4 @@ class Issue(models.Model):
 
     class Meta:
         ordering = ('magazine', 'issue')
+        unique_together = ('magazine', 'issue')
