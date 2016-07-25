@@ -39,6 +39,10 @@
                         <li{% if request.path|startswith:journals_url %} class="active"{% endif %}><a href="{{ journals_url }}">{% trans 'Journals' %}{% if request.path|startswith:journals_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
                     <ul class="nav navbar-nav">
+                        {% url 'magazines' as magazines_url %}
+                        <li{% if request.path|startswith:magazines_url %} class="active"{% endif %}><a href="{{ magazines_url }}">{% trans 'Magazines' %}{% if request.path|startswith:magazines_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav">
                         {% url 'papers' as papers_url %}
                         <li{% if request.path|startswith:papers_url %} class="active"{% endif %}><a href="{{ papers_url }}">{% trans 'Papers' %}{% if request.path|startswith:papers_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
