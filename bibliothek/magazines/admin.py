@@ -1,9 +1,27 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericStackedInline
 from django.db.models import Count
 from django.forms import TextInput
+from files.models import File
 from magazines.models import Issue, Magazine, TextFieldSingleLine
+from shelves.models import Acquisition, Read
+
+
+class AcquisitionInline(GenericStackedInline):
+    extra = 1
+    model = Acquisition
+
+
+class FileInline(GenericStackedInline):
+    extra = 1
+    model = File
+
+
+class ReadInline(GenericStackedInline):
+    extra = 1
+    model = Read
 
 
 class IssueAdmin(admin.ModelAdmin):
@@ -19,6 +37,12 @@ class IssueAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['slug', 'magazine', 'issue', 'published_on', 'languages', 'cover_image']}),
         ('Links', {'fields': ['links']}),
+    ]
+
+    inlines = [
+        FileInline,
+        AcquisitionInline,
+        ReadInline,
     ]
 
     filter_horizontal = ('languages', 'links')
