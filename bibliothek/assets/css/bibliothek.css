@@ -8,6 +8,17 @@ a:active {position: relative;
 
 
 
+/* Collapse link */
+
+.collapse-link:after {font-family:'Glyphicons Halflings';
+    content:"\e114";
+    color: grey;}
+
+.collapse-link:hover {text-decoration: none;}
+.collapse-link.collapsed:after {content:"\e080";}
+
+
+
 /* Navbar brand */
 
 .navbar-brand img {margin-top: -5px;

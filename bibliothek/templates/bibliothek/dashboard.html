@@ -4,8 +4,11 @@
 
 {% block content %}
 <h1 class="page-header">{% trans 'Dashboard' %}</h1>
-<h2 class="page-header">{% trans 'Papers' %}</h2>
-<div class="table-responsive">
+<h2 class="page-header">
+    <a class="collapse-link" data-toggle="collapse" data-target="#collapse-paper" href="#collapse-paper"></a>
+    {% trans 'Papers' %}
+</h2>
+<div id="collapse-paper" class="table-responsive table-collapse collapse in">
     <table class="table table-striped table-hover">
         <thead>
             {% sortable_th 'Title' po 'po' 'title' %}
@@ -29,8 +32,11 @@
         </tbody>
     </table>
 </div>
-<h2 class="page-header">{% trans 'Magazines' %}</h2>
-<div class="table-responsive">
+<h2 class="page-header">
+    <a class="collapse-link" data-toggle="collapse" data-target="#collapse-magazine" href="#collapse-magazine"></a>
+    {% trans 'Magazines' %}
+</h2>
+<div id="collapse-magazine" class="table-responsive table-collapse collapse in">
     <table class="table table-striped table-hover">
         <thead>
             {% sortable_th 'Magazine' mo 'mo' 'magazine' %}
