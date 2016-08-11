@@ -55,33 +55,95 @@ def _journal(args):
         if args.shelf:
             journals.functions.journal.list.by_shelf(args.shelf)
         elif args.search:
-            journals.functions.journal.list.by_search(args.search)
+            journals.functions.journal.list.by_term(args.search)
+        else:
+            journals.functions.journal.list.all()
     else:
         journal_parser.print_help()
+
+def _magazine(args):
+    import magazines.functions
+    # elif args.paper_subparsers == 'edit':
+    #     paper = papers.functions.paper.get.by_term(args.paper)
+    #     if paper:
+    #         papers.functions.paper.edit.cmd(args.paper)
+    if args.magazine_subparsers == 'add':
+        magazines.functions.magazine.add.create(args.name, args.feed, args.link)
+    elif args.magazine_subparsers == 'list':
+        if args.shelf:
+            magazines.functions.magazine.list.by_shelf(args.shelf)
+        elif args.search:
+            magazines.functions.magazine.list.by_search(args.search)
+        else:
+            magazines.functions.magazine.list.all()
+    elif args.magazine_subparsers == 'issue':
+        magazine = magazines.functions.magazine.get.by_term(args.magazine)
+        if args.magazine_issue_subparsers == 'acquisition':
+            issue = magazines.functions.issue.get.by_term(magazine, args.issue)
+            if args.magazine_issue_acquisition_subparsers == 'add' and issue:
+                magazines.functions.issue.acquisition.add(issue, args.date, args.price)
+            elif args.magazine_issue_acquisition_subparsers == 'delete' and issue:
+                magazines.functions.issue.acquisition.delete(issue, args.id)
+            elif args.magazine_issue_acquisition_subparsers == 'edit' and issue:
+                magazines.functions.issue.acquisition.edit(issue, args.id, args.magazine_issue_acquisition_edit_subparsers, args.value)
+        elif args.magazine_issue_subparsers == 'add':
+            magazines.functions.issue.add.create(magazine, args.issue, args.published_on, args.link, args.file)
+        elif args.magazine_issue_subparsers == 'info':
+            issue = magazines.functions.issue.get.by_term(magazine, args.issue)
+            if issue:
+                magazines.functions.issue.info.show(issue)
+        elif args.magazine_issue_subparsers == 'list':
+            magazines.functions.issue.list.all(magazine)
+        elif args.magazine_issue_subparsers == 'read':
+            issue = magazines.functions.issue.get.by_term(magazine, args.issue)
+            if args.magazine_issue_acquisition_subparsers == 'add' and issue:
+                magazines.functions.issue.read.add(issue, args.started, args.finished)
+            elif args.magazine_issue_acquisition_subparsers == 'delete' and issue:
+                magazines.functions.issue.read.delete(issue, args.id)
+            elif args.magazine_issue_acquisition_subparsers == 'edit' and issue:
+                magazines.functions.issue.read.edit(issue, args.id, args.field, args.value)
+        else:
+            magazine_issue_parser.print_help()
+    elif args.magazine_subparsers == 'info':
+        magazine = magazines.functions.magazine.get.by_term(args.magazine)
+        if magazine:
+            magazines.functions.magazine.info.show(magazine)
+    # elif args.paper_subparsers == 'open':
+    #     paper = papers.functions.paper.get.by_term(args.paper)
+    #     if paper:
+    #         file = paper.files.get(pk=args.id)
+    #         path = os.path.join(settings.MEDIA_ROOT, file.file.path)
+    #         if sys.platform == 'linux':
+    #             os.system('xdg-open "%s"' % path)
+    #         else:
+    #             os.system('open "%s"' % path)
+    # elif args.paper_subparsers == 'parse':
+    #     papers.functions.paper.create.from_bibtex(args.bibtex, args.file)
+    else:
+        magazine_parser.print_help()
 
 
 def _paper(args):
     import papers.functions
     if args.paper_subparsers == 'acquisition':
-        if args.paper_acquisition_subparsers == 'add':
-            paper = papers.functions.paper.get.by_term(args.paper)
-            if paper:
-                papers.functions.paper.acquisition.add(paper, args.started, args.finished)
-        elif args.paper_acquisition_subparsers == 'delete':
-            paper = papers.functions.paper.get.by_term(args.paper)
-            if paper:
-                papers.functions.paper.acquisition.delete(paper, args.id)
-        elif args.paper_acquisition_subparsers == 'edit':
-            print(args)
-            paper = papers.functions.paper.get.by_term(args.paper)
-            if paper:
-                papers.functions.paper.acquisition.edit(paper, args.id, args.paper_acquisition_edit_subparsers, args.value)
+        paper = papers.functions.paper.get.by_term(args.paper)
+        if args.paper_acquisition_subparsers == 'add' and paper:
+            papers.functions.paper.acquisition.add(paper, args.date, args.price)
+        elif args.paper_acquisition_subparsers == 'delete' and paper:
+            papers.functions.paper.acquisition.delete(paper, args.id)
+        elif args.paper_acquisition_subparsers == 'edit' and paper:
+            papers.functions.paper.acquisition.edit(paper, args.id, args.paper_acquisition_edit_subparsers, args.value)
     elif args.paper_subparsers == 'edit':
         paper = papers.functions.paper.get.by_term(args.paper)
         if paper:
             papers.functions.paper.edit.cmd(args.paper)
     elif args.paper_subparsers == 'list':
-        papers.functions.paper.list.by_shelf(args.shelf)
+        if args.shelf:
+            papers.functions.paper.list.by_shelf(args.shelf)
+        elif args.search:
+            papers.functions.paper.list.by_term(args.search)
+        else:
+            papers.functions.paper.list.all()
     elif args.paper_subparsers == 'info':
         paper = papers.functions.paper.get.by_term(args.paper)
         if paper:
@@ -98,18 +160,13 @@ def _paper(args):
     elif args.paper_subparsers == 'parse':
         papers.functions.paper.create.from_bibtex(args.bibtex, args.file)
     elif args.paper_subparsers == 'read':
-        if args.paper_read_subparsers == 'add':
-            paper = papers.functions.paper.get.by_term(args.paper)
-            if paper:
-                papers.functions.paper.read.add(paper, args.started, args.finished)
-        elif args.paper_read_subparsers == 'delete':
-            paper = papers.functions.paper.get.by_term(args.paper)
-            if paper:
-                papers.functions.paper.read.delete(paper, args.id)
-        elif args.paper_read_subparsers == 'edit':
-            paper = papers.functions.paper.get.by_term(args.paper)
-            if paper:
-                papers.functions.paper.read.edit(paper, args.id, args.field, args.value)
+        paper = papers.functions.paper.get.by_term(args.paper)
+        if args.paper_read_subparsers == 'add' and paper:
+            papers.functions.paper.read.add(paper, args.started, args.finished)
+        elif args.paper_read_subparsers == 'delete' and paper:
+            papers.functions.paper.read.delete(paper, args.id)
+        elif args.paper_read_subparsers == 'edit' and paper:
+            papers.functions.paper.read.edit(paper, args.id, args.field, args.value)
     else:
         paper_parser.print_help()
 
@@ -139,6 +196,90 @@ if __name__ == "__main__":
     journal_list_parser.add_argument('-s', '--search', help='filter on shelves')
 
 
+    # create the parser for the "magazine" subcommand
+    magazine_parser = subparsers.add_parser('magazine', help='subcommand for local http server')
+    magazine_parser.set_defaults(func=_magazine)
+    magazine_subparsers = magazine_parser.add_subparsers(dest='magazine_subparsers')
+
+    # magazine add
+    magazine_list_parser = magazine_subparsers.add_parser('add', help='add a magazine')
+    magazine_list_parser.add_argument('name', help='magazine name')
+    magazine_list_parser.add_argument('-f', '--feed', help='magazine feed url')
+    magazine_list_parser.add_argument('-l', '--link', nargs='*', default=[], help='magazine link')
+
+    # magazine info
+    magazine_info_parser = magazine_subparsers.add_parser('info', help='show information of a magazine')
+    magazine_info_parser.add_argument('magazine', nargs='?', help='which magazine to show')
+
+    # magazine issue
+    magazine_issue_parser = magazine_subparsers.add_parser('issue', help='issues of a magazine')
+    magazine_issue_parser.add_argument('magazine', help='issues of which magazine')
+    magazine_issue_subparsers = magazine_issue_parser.add_subparsers(dest='magazine_issue_subparsers')
+
+    # magazine issue acquisitions
+    magazine_issue_acquisition_parser = magazine_issue_subparsers.add_parser('acquisition', help='manage acquisition of magazine issues')
+    magazine_issue_acquisition_subparsers = magazine_issue_acquisition_parser.add_subparsers(dest='magazine_issue_acquisition_subparsers')
+
+    magazine_issue_acquisition_add_parser = magazine_issue_acquisition_subparsers.add_parser('add', help='manage additions of acquisitions')
+    magazine_issue_acquisition_add_parser.add_argument('issue', help='to which issue to add the acquisition')
+    magazine_issue_acquisition_add_parser.add_argument('-date', default=None, type=valid_date, help='date')
+    magazine_issue_acquisition_add_parser.add_argument('-price', default=0, type=float, help='price')
+
+    magazine_issue_acquisition_edit_parser = magazine_issue_acquisition_subparsers.add_parser('edit', help='manage edition of acquisitions')
+    magazine_issue_acquisition_edit_parser.add_argument('issue', help='of which issue edit the acquisition')
+    magazine_issue_acquisition_edit_parser.add_argument('id', type=int, help='which acquisition to edit')
+
+    magazine_issue_acquisition_edit_subparser = magazine_issue_acquisition_edit_parser.add_subparsers(dest='magazine_issue_acquisition_edit_subparsers', help='which field to edit')
+    magazine_issue_acquisition_edit_date_parser = magazine_issue_acquisition_edit_subparser.add_parser('issue')
+    magazine_issue_acquisition_edit_date_parser.add_argument('value', type=str, help='new value for field')
+
+    magazine_issue_acquisition_edit_date_parser = magazine_issue_acquisition_edit_subparser.add_parser('published_on')
+    magazine_issue_acquisition_edit_date_parser.add_argument('value', type=valid_date, help='new value for field')
+
+    magazine_issue_acquisition_delete_parser = magazine_issue_acquisition_subparsers.add_parser('delete', help='manage deletion of acquisitions')
+    magazine_issue_acquisition_delete_parser.add_argument('issue', help='from which issue to delete the acquisition')
+    magazine_issue_acquisition_delete_parser.add_argument('id', type=int, help='which acquisition to delete')
+
+    # magazine issue add
+    magazine_issue_add_parser = magazine_issue_subparsers.add_parser('add', help='add an issue to a magazine')
+    magazine_issue_add_parser.add_argument('issue', help='issue')
+    magazine_issue_add_parser.add_argument('-p', '--published_on', type=valid_date, help='issue published on')
+    magazine_issue_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links to add to issue')
+    magazine_issue_add_parser.add_argument('-f', '--file', nargs='*', default=[], help='files to add to issue')
+
+    # magazine issue info
+    magazine_issue_info_parser = magazine_issue_subparsers.add_parser('info', help='show information of a magazine issue')
+    magazine_issue_info_parser.add_argument('issue', help='issue')
+
+    # magazine issue list
+    magazine_issue_list_parser = magazine_issue_subparsers.add_parser('list', help='list issues of a magazine')
+    magazine_issue_list_parser.add_argument('-shelf', choices=['read', 'unread'], help='filter on shelves')
+    magazine_issue_list_parser.add_argument('-s', '--search', help='filter on shelves')
+
+    # magazine issue reads
+    magazine_issue_parser = magazine_issue_subparsers.add_parser('read', help='manage read of papers')
+    magazine_issue_subparser = magazine_issue_parser.add_subparsers(dest='paper_read_subparsers')
+
+    magazine_issue_read_add_parser = magazine_issue_subparser.add_parser('add', help='manage addition of reads')
+    magazine_issue_read_add_parser.add_argument('issue', help='to which issue to add the read')
+    magazine_issue_read_add_parser.add_argument('-started', default=None, type=valid_date, help='date started')
+    magazine_issue_read_add_parser.add_argument('-finished', default=None, type=valid_date, help='date finished')
+
+    magazine_issue_read_edit_parser = magazine_issue_subparser.add_parser('edit', help='manage edition of reads')
+    magazine_issue_read_edit_parser.add_argument('issue', help='of which issue edit the acquisition')
+    magazine_issue_read_edit_parser.add_argument('id', type=int, help='which read to edit')
+    magazine_issue_read_edit_parser.add_argument('field', choices=['started', 'finished'], help='which field to edit')
+    magazine_issue_read_edit_parser.add_argument('value', type=valid_date, help='new value for field')
+
+    magazine_issue_read_delete_parser = magazine_issue_subparser.add_parser('delete', help='manage deletion of reads')
+    magazine_issue_read_delete_parser.add_argument('îssue', help='from which issue to delete the acquisition')
+    magazine_issue_read_delete_parser.add_argument('id', type=int, help='which read to delete')
+
+    # magazine list
+    magazine_list_parser = magazine_subparsers.add_parser('list', help='list magazines')
+    magazine_list_parser.add_argument('-s', '--search', help='filter on shelves')
+
+
     # create the parser for the "paper" subcommand
     paper_parser = subparsers.add_parser('paper', help='subcommand for papers')
     paper_parser.set_defaults(func=_paper)
@@ -151,7 +292,7 @@ if __name__ == "__main__":
     paper_acquisition_add_parser = paper_acquisition_subparser.add_parser('add', help='manage addition of acquisitions')
     paper_acquisition_add_parser.add_argument('paper', help='which paper to edit')
     paper_acquisition_add_parser.add_argument('-date', default=None, type=valid_date, help='date')
-    paper_acquisition_add_parser.add_argument('-price', default=None, type=float, help='price')
+    paper_acquisition_add_parser.add_argument('-price', default=0, type=float, help='price')
 
     paper_acquisition_edit_parser = paper_acquisition_subparser.add_parser('edit', help='manage edition of acquisitions')
     paper_acquisition_edit_parser.add_argument('paper', help='which paper to edit')
@@ -177,6 +318,7 @@ if __name__ == "__main__":
     # paper list
     paper_list_parser = paper_subparsers.add_parser('list', help='list papers')
     paper_list_parser.add_argument('shelf', choices=['read', 'unread'], nargs='?', help='filter on shelves')
+    paper_list_parser.add_argument('-s', '--search', nargs='?', help='search for papers')
 
     # paper info
     paper_info_parser = paper_subparsers.add_parser('info', help='show information of a paper')
@@ -216,8 +358,13 @@ if __name__ == "__main__":
     runserver_parser = subparsers.add_parser('runserver', help='subcommand for local http server')
     runserver_parser.set_defaults(func=_runserver)
 
+
     args = parser.parse_args()
     if args.subparser:
         args.func(args)
     else:
         parser.print_usage()
+
+    # from bibliothek.functions.parsers.freies_magazin import FreiesMagazinRSSParser
+    # parser = FreiesMagazinRSSParser()
+    # parser.archive()
