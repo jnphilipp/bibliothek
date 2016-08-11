@@ -6,7 +6,7 @@ from . import list as paper_list
 
 
 def by_term(term):
-    papers = paper_list.by_search(term)
+    papers = paper_list.by_term(term)
 
     if papers.count() == 0:
         stdout.p(['No paper found.'], after='=', positions=[1.])

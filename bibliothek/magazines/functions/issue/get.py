@@ -6,7 +6,7 @@ from . import list as issue_list
 
 
 def by_term(magazine, term):
-    issues = issue_list.by_search(magazine, term)
+    issues = issue_list.by_term(magazine, term)
 
     if issues.count() == 0:
         stdout.p(['No issue found.'], after='=', positions=[1.])

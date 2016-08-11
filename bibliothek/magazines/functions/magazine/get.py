@@ -6,7 +6,7 @@ from . import list as magazine_list
 
 
 def by_term(term):
-    magazines = magazine_list.by_search(term)
+    magazines = magazine_list.by_term(term)
 
     if magazines.count() == 0:
         stdout.p(['No magazine found.'], after='=', positions=[1.])

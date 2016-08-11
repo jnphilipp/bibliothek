@@ -6,7 +6,7 @@ from utils import lookahead, stdout
 
 def all(magazine):
     issues = Issue.objects.filter(magazine=magazine).order_by('published_on')
-    _list([[issue.id, issue.issue, issue.published_on] for issue in issues], ['Id', 'Issue', 'Published on'], positions=[.05, .55, 1.])
+    _list([[issue.issue, issue.published_on, issue.files.count()] for issue in issues], ['Issue', 'Published on', '#Files'], positions=[.45, .60, 1.])
 
 
 def by_shelf(magazine, shelf):
@@ -15,15 +15,13 @@ def by_shelf(magazine, shelf):
         issues = issues.filter(issues__reads__isnull=False)
     elif shelf == 'unread':
         issues = issues.filter(issues__reads__isnull=True)
-    _list([[issue.issue, issue.files.count()] for issue in issues], ['Name', '#Files'], positions=[.55, 1.])
+    magazines = magazines.distinct()
+    _list([[issue.issue, issue.published_on, issue.files.count()] for issue in issues], ['Name', 'Published on', '#Files'], positions=[.45, .60, 1.])
 
 
-def by_search(magazine, term=None):
-    issues = Issue.objects.filter(magazine=magazine)
-    if term:
-        issues = issues.filter(issue__icontains=term)
-    if stdout:
-        _list([[issue.id, issue.issue, issue.files.count()] for issue in issues], ['Id', 'Name', '#Files'], positions=[.05, .55, 1.])
+def by_term(magazine, term):
+    issues = Issue.objects.filter(magazine=magazine).filter(issue__icontains=term)
+    _list([[issue.issue, issue.published_on, issue.files.count()] for issue in issues], ['Name', 'Published on', '#Files'], positions=[.45, .60, 1.])
     return issues
 
 

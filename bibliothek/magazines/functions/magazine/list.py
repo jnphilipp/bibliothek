@@ -18,12 +18,9 @@ def by_shelf(shelf):
     _list([[magazine.name, magazine.issues.count()] for magazine in magazines], ['Name', '#Issues'], positions=[.55, 1.])
 
 
-def by_search(term=None):
-    magazines = Magazine.objects.all()
-    if term:
-        magazines = magazines.filter(name__icontains=term)
-    if stdout:
-        _list([[magazine.id, magazine.name, magazine.issues.count()] for magazine in magazines], ['Id', 'Name', '#Issues'], positions=[.05, .55, 1.])
+def by_term(term):
+    magazines = Magazine.objects.filter(name__icontains=term)
+    _list([[magazine.name, magazine.issues.count()] for magazine in magazines], ['Name', '#Issues'], positions=[.55, 1.])
     return magazines
 
 
