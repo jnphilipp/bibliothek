@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField(max_length=2048)),
                 ('issue', magazines.models.TextFieldSingleLine()),
                 ('published_on', models.DateField(blank=True, null=True)),
-                ('cover_image', models.ImageField(blank=True, null=True, upload_to='issues')),
+                ('cover_image', models.ImageField(blank=True, null=True, upload_to='files')),
                 ('languages', models.ManyToManyField(blank=True, related_name='issues', to='languages.Language')),
                 ('links', models.ManyToManyField(blank=True, related_name='issues', to='links.Link')),
                 ('magazine', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issues', to='magazines.Magazine')),

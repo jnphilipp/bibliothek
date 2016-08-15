@@ -55,7 +55,7 @@ class Issue(models.Model):
     languages = models.ManyToManyField(Language, related_name='issues', blank=True)
 
     files = GenericRelation('files.File')
-    cover_image = models.ImageField(upload_to='issues', blank=True, null=True)
+    cover_image = models.ImageField(upload_to='files', blank=True, null=True)
     links = models.ManyToManyField(Link, related_name='issues', blank=True)
 
     acquisitions = GenericRelation('shelves.Acquisition')
