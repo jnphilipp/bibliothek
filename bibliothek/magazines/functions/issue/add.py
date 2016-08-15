@@ -9,7 +9,7 @@ from magazines.models import Issue
 from utils import lookahead, stdout
 
 
-def create(magazine, issue_name, published_on=None, links=[], files=[]):
+def create(magazine, issue_name, published_on=None, cover_image=None, links=[], files=[]):
     positions = [.33, 1.]
 
     issue, created = Issue.objects.get_or_create(magazine=magazine, issue=issue_name.strip())
@@ -21,6 +21,12 @@ def create(magazine, issue_name, published_on=None, links=[], files=[]):
             stdout.p(['Published on', published_on], positions=positions)
         else:
             stdout.p(['Published on', ''], positions=positions)
+
+        if cover_image:
+            issue.cover_image = cover_image
+            stdout.p(['Cover image', cover_image], positions=positions)
+        else:
+            stdout.p(['Cover image', ''], positions=positions)
 
         for (i, url), has_next in lookahead(enumerate(links)):
             link, created = Link.objects.get_or_create(link=url.strip())
