@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from . import add
+from .base import *
+
 from . import get
 from . import info
 from . import list

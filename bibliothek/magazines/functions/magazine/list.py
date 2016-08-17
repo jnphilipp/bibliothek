@@ -7,6 +7,7 @@ from utils import lookahead, stdout
 def all():
     magazines = Magazine.objects.all()
     _list([[magazine.name, magazine.issues.count()] for magazine in magazines], ['Name', '#Issues'], positions=[.55, 1.])
+    return magazines
 
 
 def by_shelf(shelf):
@@ -16,6 +17,7 @@ def by_shelf(shelf):
     elif shelf == 'unread':
         magazines = magazines.filter(issues__reads__isnull=True)
     _list([[magazine.name, magazine.issues.count()] for magazine in magazines], ['Name', '#Issues'], positions=[.55, 1.])
+    return magazines
 
 
 def by_term(term):
