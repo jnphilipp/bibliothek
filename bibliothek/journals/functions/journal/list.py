@@ -8,6 +8,7 @@ from utils import lookahead, stdout
 def all():
     journals = Journal.objects.all()
     _list([[journal.name, journal.papers.count()] for journal in journals], ['Name', '#Papers'], positions=[.55, 1.])
+    return journals
 
 
 def by_shelf(shelf):
@@ -18,6 +19,7 @@ def by_shelf(shelf):
         journals = journals.filter(papers__reads__isnull=True)
     journals = journals.distinct()
     _list([[journal.name, journal.papers.count()] for journal in journals], ['Name', '#Papers'], positions=[.55, 1.])
+    return journals
 
 
 def by_term(term):

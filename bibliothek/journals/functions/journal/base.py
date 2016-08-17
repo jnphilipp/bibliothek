@@ -42,9 +42,9 @@ def info(journal):
     if journal.links.count() > 0:
         for (i, link), has_next in lookahead(enumerate(journal.links.all())):
             if i == 0:
-                stdout.p(['Links', '%s: %s' % (link.id link.link)], positions=positions, after='' if has_next else '_')
+                stdout.p(['Links', '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
             else:
-                stdout.p(['', '%s: %s' % (link.id link.link)], positions=positions, after='' if has_next else '_')
+                stdout.p(['', '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
     else:
         stdout.p(['Links', ''], positions=positions)
 
