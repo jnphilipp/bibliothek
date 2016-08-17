@@ -12,6 +12,7 @@ def add(paper, date=None, price=0.0):
     acquisition = Acquisition.objects.create(date=date, price=price, content_object=paper)
     stdout.p(['Successfully added acquisition "%s" to paper "%s".' % (acquisition.id, paper.title)], positions=[1.])
     _print(acquisition)
+    return acquisition
 
 
 def delete(paper, id):
@@ -20,12 +21,13 @@ def delete(paper, id):
         _print(acquisition)
         acquisition.delete()
         stdout.p(['Successfully deleted acquisition.'], positions=[1.])
-        
     except Acquisition.DoesNotExist:
         stdout.p(['A acquisition with id "%s" for this paper does not exist.' % id], after='=', positions=[1.])
 
 
 def edit(paper, id, field, value):
+    assert field in ['date', 'price']
+
     try:
         acquisition = paper.acquisitions.get(pk=id)
         if field == 'date':
@@ -35,8 +37,10 @@ def edit(paper, id, field, value):
         acquisition.save()
         stdout.p(['Successfully edited acquisition "%s".' % acquisition.id], positions=[1.])
         _print(acquisition)
+        return acquisition
     except Acquisition.DoesNotExist:
         stdout.p(['A acquisition with id "%s" for this paper does not exist.' % id], after='=', positions=[1.])
+        return None
 
 
 def _print(acquisition):

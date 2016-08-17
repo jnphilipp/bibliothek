@@ -34,12 +34,12 @@ def from_dict(paper_dict, files=[]):
         paper, created = Paper.objects.get_or_create(title=paper_dict['title'])
         if not created:
             stdout.p(['The paper already exists, aborting...'], after='=')
-            return
+            return None
         else:
             paper.bibtex = paper_dict['bibtex']
     else:
         stdout.p(['No title, aborting...'], after='=')
-        return
+        return None
 
     for (i, author), has_next in lookahead(enumerate(paper_dict['authors'])):
         if i == 0:
@@ -68,14 +68,15 @@ def from_dict(paper_dict, files=[]):
         paper.links.add(link)
 
     for (i, file), has_next in lookahead(enumerate(files)):
-        stdout.p(['Files' if i == 0 else '', file], after=None if has_next else '_', positions=positions)
         file_name = os.path.basename(file)
         file_obj = File()
         file_obj.file.save(file_name, DJFile(open(file, 'rb')))
         file_obj.content_object = paper
         file_obj.save()
+        stdout.p(['Files' if i == 0 else '', '%s: %s' % (file_obj.id, file_obj)], after=None if has_next else '_', positions=positions)
     paper.save()
     stdout.p(['Successfully added paper "%s" with id "%s".' % (paper.title, paper.id)], positions=[1.])
-    
+
     acquisition = Acquisition.objects.create(date=date.today(), content_object=paper)
     stdout.p(['Successfully added acquisition on "%s".' % acquisition.date], after='=', positions=[1.])
+    return paper, acquisition

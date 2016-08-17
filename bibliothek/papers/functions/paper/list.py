@@ -4,9 +4,11 @@ from django.db.models import Q
 from papers.models import Paper
 from utils import lookahead, stdout
 
+
 def all():
     papers = Paper.objects.all()
     _list([[paper.title, paper.journal.name if paper.journal else None, paper.volume] for paper in papers], ['Title', 'Journal', 'Volume'], positions=[.55, .66, 1.])
+    return papers
 
 
 def by_shelf(shelf):
@@ -16,6 +18,7 @@ def by_shelf(shelf):
     elif shelf == 'unread':
         papers = papers.filter(reads__isnull=True)
     _list([[paper.title, paper.journal.name if paper.journal else None, paper.volume] for paper in papers], ['Title', 'Journal', 'Volume'], positions=[.55, .66, 1.])
+    return papers
 
 
 def by_term(term):
