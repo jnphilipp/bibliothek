@@ -12,6 +12,7 @@ def add(issue, started=None, finished=None):
     read = Read.objects.create(started=started, finished=finished, content_object=issue)
     stdout.p(['Successfully added read "%s" to issue "%s %s".' % (read.id, issue.magazine.name, issue.issue)], positions=[1.])
     _print(read)
+    return read
 
 
 def delete(issue, id):
@@ -20,7 +21,6 @@ def delete(issue, id):
         _print(read)
         read.delete()
         stdout.p(['Successfully deleted read.'], positions=[1.])
-
     except Read.DoesNotExist:
         stdout.p(['A read with id "%s" for this issue does not exist.' % id], after='=', positions=[1.])
 

@@ -11,6 +11,7 @@ def add(issue, date=None, price=0.0):
     acquisition = Acquisition.objects.create(date=date, price=price, content_object=issue)
     stdout.p(['Successfully added acquisition "%s" to issue "%s" "%s".' % (acquisition.id, issue.magazine.name, issue.issue)], positions=[1.])
     _print(acquisition)
+    return acquisition
 
 
 def delete(issue, id):
@@ -19,12 +20,13 @@ def delete(issue, id):
         _print(acquisition)
         acquisition.delete()
         stdout.p(['Successfully deleted acquisition.'], positions=[1.])
-
     except Acquisition.DoesNotExist:
         stdout.p(['A acquisition with id "%s" for this issue does not exist.' % id], after='=', positions=[1.])
 
 
 def edit(issue, id, field, value):
+    assert field in ['date', 'price']
+
     try:
         acquisition = issue.acquisitions.get(pk=id)
         if field == 'date':

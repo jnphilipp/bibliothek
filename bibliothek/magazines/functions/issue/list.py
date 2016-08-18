@@ -7,6 +7,7 @@ from utils import lookahead, stdout
 def all(magazine):
     issues = Issue.objects.filter(magazine=magazine).order_by('published_on')
     _list([[issue.issue, issue.published_on, issue.files.count()] for issue in issues], ['Issue', 'Published on', '#Files'], positions=[.45, .60, 1.])
+    return issues
 
 
 def by_shelf(magazine, shelf):
@@ -17,6 +18,7 @@ def by_shelf(magazine, shelf):
         issues = issues.filter(issues__reads__isnull=True)
     magazines = magazines.distinct()
     _list([[issue.issue, issue.published_on, issue.files.count()] for issue in issues], ['Name', 'Published on', '#Files'], positions=[.45, .60, 1.])
+    return issues
 
 
 def by_term(magazine, term):
