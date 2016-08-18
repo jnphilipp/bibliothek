@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.utils.translation import ugettext as _
 from links.models import Link
 
 
@@ -34,3 +35,5 @@ class Publisher(models.Model):
 
     class Meta:
         ordering = ('name',)
+        verbose_name = _('Publisher')
+        verbose_name_plural = _('Publishers')

@@ -26,6 +26,8 @@ class Migration(migrations.Migration):
                 ('links', models.ManyToManyField(blank=True, related_name='publishers', to='links.Link')),
             ],
             options={
+                'verbose_name_plural': 'Publishers',
+                'verbose_name': 'Publisher',
                 'ordering': ('name',),
             },
         ),
