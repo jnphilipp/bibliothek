@@ -107,6 +107,7 @@ INSTALLED_APPS = [
     'magazines',
     'papers',
     'persons',
+    'publishers',
     'series',
     'shelves',
     'django.contrib.admin',
