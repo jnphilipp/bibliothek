@@ -8,13 +8,13 @@ from utils import lookahead, stdout
 def create(name, feed=None, links=[]):
     positions = [.33, 1.]
 
-    magazine, created = Magazine.objects.get_or_create(name=name.strip())
+    magazine, created = Magazine.objects.get_or_create(name=name)
     if created:
         stdout.p(['Id', magazine.id], positions=positions)
         stdout.p(['Name', magazine.name], positions=positions)
 
         if feed:
-            feed = feed.strip()
+            feed = feed
             link, c = Link.objects.get_or_create(link=feed)
             magazine.feed = feed
             stdout.p(['Feed', '%s: %s' % (link.id, link.link)], positions=positions)
@@ -22,7 +22,7 @@ def create(name, feed=None, links=[]):
             stdout.p(['Feed', ''], positions=positions)
 
         for (i, url), has_next in lookahead(enumerate(links)):
-            link, c = Link.objects.get_or_create(link=url.strip())
+            link, c = Link.objects.get_or_create(link=url)
             magazine.links.add(link)
             stdout.p(['Links' if i == 0 else '', '%s: %s' % (link.id, link.link)], after=None if has_next else '_', positions=positions)
         magazine.save()
