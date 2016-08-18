@@ -10,6 +10,7 @@ def create(name, links=[]):
 
     journal, created = Journal.objects.get_or_create(name=name)
     if created:
+        stdout.p(['Id', journal.id], positions=positions)
         stdout.p(['Name', journal.name], positions=positions)
 
         for (i, url), has_next in lookahead(enumerate(links)):
