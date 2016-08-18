@@ -44,3 +44,37 @@ class PaperFunctionsTestCase(TestCase):
 
         papers = functions.paper.list.by_term('Two')
         self.assertEquals(len(papers), 1)
+
+
+    def test_paper_acquisition(self):
+        paper, created = functions.paper.create('Super Important Stuff', published_on='2016-06-01')
+        self.assertTrue(created)
+        self.assertIsNotNone(paper.id)
+
+        acquisition = functions.paper.acquisition.add(paper, date='2016-06-02', price=2.5)
+        self.assertIsNotNone(acquisition)
+        self.assertEquals(paper.acquisitions.count(), 1)
+
+        functions.paper.acquisition.edit(paper, acquisition.id, 'price', 5.75)
+        self.assertIsNotNone(acquisition.price, 5.75)
+
+
+        functions.paper.acquisition.delete(paper, acquisition.id)
+        self.assertEquals(paper.acquisitions.count(), 0)
+
+
+    def test_paper_read(self):
+        paper, created = functions.paper.create('Super Important Stuff (Second Edition)', published_on='2016-07-01')
+        self.assertTrue(created)
+        self.assertIsNotNone(paper.id)
+
+        read = functions.paper.read.add(paper, started='2016-07-03')
+        self.assertIsNotNone(read)
+        self.assertEquals(paper.reads.count(), 1)
+
+        functions.paper.read.edit(paper, read.id, 'finished', '2016-07-15')
+        self.assertIsNotNone(str(read.finished), '2016-07-15')
+
+
+        functions.paper.read.delete(paper, read.id)
+        self.assertEquals(paper.reads.count(), 0)

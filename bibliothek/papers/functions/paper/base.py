@@ -10,6 +10,7 @@ def create(title, published_on=None, journal_id=None, volume=None):
 
     paper, created = Paper.objects.get_or_create(title=title)
     if created:
+        stdout.p(['Id', paper.id], positions=positions)
         stdout.p(['Title', paper.title], positions=positions)
 
         if published_on:
