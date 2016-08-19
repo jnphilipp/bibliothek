@@ -49,6 +49,29 @@ def valid_date(s):
         raise ArgumentTypeError('Not a valid date: "{0}".'.format(s))
 
 
+def _book(args):
+    import books.functions
+    if args.book_subparsers == 'add':
+        books.functions.book.create(args.title, args.author, args.series, args.volume, args.link)
+    elif args.book_subparsers == 'edit':
+        book = books.functions.book.get.by_term(args.title)
+        if book:
+            books.functions.book.edit(book, args.field, args.value)
+    elif args.book_subparsers == 'info':
+        book = books.functions.book.get.by_term(args.title)
+        if book:
+            books.functions.book.info(book)
+    elif args.book_subparsers == 'list':
+        if args.shelf:
+            books.functions.book.list.by_shelf(args.shelf)
+        elif args.search:
+            books.functions.book.list.by_term(args.search)
+        else:
+            books.functions.book.list.all()
+    else:
+        book_parser.print_help()
+
+
 def _journal(args):
     import journals.functions
     if args.journal_subparsers == 'add':
@@ -228,6 +251,35 @@ if __name__ == "__main__":
     parser = ArgumentParser(prog=settings.APP_NAME, formatter_class=RawTextHelpFormatter)
     parser.add_argument('-v', '--version', action='version', version=settings.APP_VERSION)
     subparsers = parser.add_subparsers(dest='subparser')
+
+
+    # create the parser for the "book" subcommand
+    book_parser = subparsers.add_parser('book', help='subcommand for books')
+    book_parser.set_defaults(func=_book)
+    book_subparsers = book_parser.add_subparsers(dest='book_subparsers')
+
+    # book add
+    book_add_parser = book_subparsers.add_parser('add', help='add a book')
+    book_add_parser.add_argument('name', help='book name')
+    book_add_parser.add_argument('-a', '--auhtor', nargs='*', default=[], type=int, help='authors')
+    book_add_parser.add_argument('-s', '--series', default=None, type=int, help='series')
+    book_add_parser.add_argument('-v', '--volume', default=None, type=float, help='series volume')
+    book_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
+
+    # book edit
+    book_edit_parser = book_subparsers.add_parser('edit', help='edit a book')
+    book_edit_parser.add_argument('book', help='which book to edit')
+    book_edit_parser.add_argument('field', choices=['name'], help='field to edit')
+    book_edit_parser.add_argument('value', help='new value for field')
+
+    # book info
+    book_info_parser = book_subparsers.add_parser('info', help='show information of book')
+    book_info_parser.add_argument('name', help='book name')
+
+    # book list
+    book_list_parser = book_subparsers.add_parser('list', help='list books')
+    book_list_parser.add_argument('-shelf', choices=['read', 'unread'], help='filter on shelves')
+    book_list_parser.add_argument('-s', '--search', help='filter on shelves')
 
 
     # create the parser for the "journal" subcommand
