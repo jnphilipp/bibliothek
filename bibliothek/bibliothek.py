@@ -174,6 +174,27 @@ def _paper(args):
         paper_parser.print_help()
 
 
+def _publisher(args):
+    import publishers.functions
+    if args.publisher_subparsers == 'add':
+        publishers.functions.publisher.create(args.name, args.link)
+    elif args.publisher_subparsers == 'edit':
+        publisher = publishers.functions.publisher.get.by_term(args.publisher)
+        if publisher:
+            publishers.functions.publisher.edit(publisher, args.field, args.value)
+    elif args.publisher_subparsers == 'info':
+        publisher = publishers.functions.publisher.get.by_term(args.name)
+        if publisher:
+            publishers.functions.publisher.info(publisher)
+    elif args.publisher_subparsers == 'list':
+        if args.search:
+            publishers.functions.publisher.list.by_term(args.search)
+        else:
+            publishers.functions.publisher.list.all()
+    else:
+        publisher_parser.print_help()
+
+
 def _runserver(args):
     from django.core.management import execute_from_command_line
     execute_from_command_line(sys.argv)
@@ -403,6 +424,31 @@ if __name__ == "__main__":
     paper_read_edit_parser.add_argument('id', type=int, help='which read to edit')
     paper_read_edit_parser.add_argument('field', choices=['started', 'finished'], help='which field to edit')
     paper_read_edit_parser.add_argument('value', type=valid_date, help='new value for field')
+
+
+    # create the parser for the "publisher" subcommand
+    publisher_parser = subparsers.add_parser('publisher', help='subcommand for publishers')
+    publisher_parser.set_defaults(func=_publisher)
+    publisher_subparsers = publisher_parser.add_subparsers(dest='publisher_subparsers')
+
+    # publisher add
+    publisher_add_parser = publisher_subparsers.add_parser('add', help='add a publisher')
+    publisher_add_parser.add_argument('name', help='publisher name')
+    publisher_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='publisher links')
+
+    # magazine edit
+    publisher_edit_parser = publisher_subparsers.add_parser('edit', help='edit a publisher')
+    publisher_edit_parser.add_argument('publisher', help='which publisher to edit')
+    publisher_edit_parser.add_argument('field', choices=['name'], help='field to edit')
+    publisher_edit_parser.add_argument('value', help='new value for field')
+
+    # publisher info
+    publisher_info_parser = publisher_subparsers.add_parser('info', help='show information of publisher')
+    publisher_info_parser.add_argument('name', help='publisher name')
+
+    # publisher list
+    publisher_list_parser = publisher_subparsers.add_parser('list', help='list publishers')
+    publisher_list_parser.add_argument('-s', '--search', help='search by')
 
 
     # create the parser for the "runserver" subcommand
