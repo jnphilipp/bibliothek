@@ -195,6 +195,27 @@ def _publisher(args):
         publisher_parser.print_help()
 
 
+def _series(args):
+    import series.functions
+    if args.series_subparsers == 'add':
+        series.functions.series.create(args.name)
+    elif args.series_subparsers == 'edit':
+        series_obj = series.functions.series.get.by_term(args.series)
+        if series_obj:
+            series.functions.series.edit(series_obj, args.field, args.value)
+    elif args.series_subparsers == 'info':
+        series_obj = series.functions.series.get.by_term(args.name)
+        if series_obj:
+            series.functions.series.info(series_obj)
+    elif args.series_subparsers == 'list':
+        if args.search:
+            series.functions.series.list.by_term(args.search)
+        else:
+            series.functions.series.list.all()
+    else:
+        series_parser.print_help()
+
+
 def _runserver(args):
     from django.core.management import execute_from_command_line
     execute_from_command_line(sys.argv)
@@ -449,6 +470,31 @@ if __name__ == "__main__":
     # publisher list
     publisher_list_parser = publisher_subparsers.add_parser('list', help='list publishers')
     publisher_list_parser.add_argument('-s', '--search', help='search by')
+
+
+    # create the parser for the "series" subcommand
+    series_parser = subparsers.add_parser('series', help='subcommand for series')
+    series_parser.set_defaults(func=_series)
+    series_subparsers = series_parser.add_subparsers(dest='series_subparsers')
+
+    # series add
+    series_add_parser = series_subparsers.add_parser('add', help='add a series')
+    series_add_parser.add_argument('name', help='series name')
+    series_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='series links')
+
+    # magazine edit
+    series_edit_parser = series_subparsers.add_parser('edit', help='edit a series')
+    series_edit_parser.add_argument('series', help='which series to edit')
+    series_edit_parser.add_argument('field', choices=['name'], help='field to edit')
+    series_edit_parser.add_argument('value', help='new value for field')
+
+    # series info
+    series_info_parser = series_subparsers.add_parser('info', help='show information of series')
+    series_info_parser.add_argument('name', help='series name')
+
+    # series list
+    series_list_parser = series_subparsers.add_parser('list', help='list series')
+    series_list_parser.add_argument('-s', '--search', help='search by')
 
 
     # create the parser for the "runserver" subcommand
