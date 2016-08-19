@@ -76,7 +76,7 @@ def _journal(args):
     import journals.functions
     if args.journal_subparsers == 'add':
         journals.functions.journal.create(args.name, args.link)
-    if args.journal_subparsers == 'edit':
+    elif args.journal_subparsers == 'edit':
         journal = journals.functions.journal.get.by_term(args.name)
         if journal:
             journals.functions.journal.edit(journal, args.field, args.value)
@@ -93,6 +93,7 @@ def _journal(args):
             journals.functions.journal.list.all()
     else:
         journal_parser.print_help()
+
 
 def _magazine(args):
     import magazines.functions
@@ -292,9 +293,11 @@ if __name__ == "__main__":
     journal_add_parser.add_argument('name', help='journal name')
     journal_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='journal links')
 
-    # magazine edit
+    # journal edit
     journal_edit_parser = journal_subparsers.add_parser('edit', help='edit a journal')
-    journal_edit_parser.add_argument('journal', type=int, help='which journal to edit')
+    journal_edit_parser.add_argument('journal', help='which journal to edit')
+    journal_edit_parser.add_argument('field', choices=['name'], help='field to edit')
+    journal_edit_parser.add_argument('value', help='new value for field')
 
     # journal info
     journal_info_parser = journal_subparsers.add_parser('info', help='show information of journal')
