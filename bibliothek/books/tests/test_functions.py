@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from django.test import TestCase
 from books import functions
+from django.test import TestCase
+from persons import functions as pfunctions
+from series import functions as sfunctions
 
 
 class BookFunctionsTestCase(TestCase):
@@ -9,6 +11,21 @@ class BookFunctionsTestCase(TestCase):
         book, created = functions.book.create('Test Book')
         self.assertTrue(created)
         self.assertIsNotNone(book.id)
+
+        person, created = pfunctions.person.create('Firstname', 'Lastname')
+        self.assertTrue(created)
+        self.assertIsNotNone(person.id)
+
+        series, created = sfunctions.series.create('Test Series')
+        self.assertTrue(created)
+        self.assertIsNotNone(person.id)
+
+        book, created = functions.book.create('Some Test Book', [person.id], series.id, 1.0)
+        self.assertTrue(created)
+        self.assertIsNotNone(book.id)
+        self.assertEquals(1, book.authors.count())
+        self.assertEquals(person, book.authors.first())
+        self.assertEquals(series, book.series)
 
 
     def test_book_edit(self):

@@ -19,13 +19,30 @@ def create(title, authors=[], series_id=None, volume=0, links=[]):
         if len(authors) > 0:
             for (i, author_id), has_next in lookahead(enumerate(authors)):
                 try:
-                    author = Journal.objects.get(pk=author_id)
-                    book.author.add(author)
+                    author = Person.objects.get(pk=author_id)
+                    book.authors.add(author)
                     stdout.p([_('Authors') if i == 0 else '', '%s: %s' % (author.id, str(author))], after=None if has_next else '_', positions=positions)
-                except Journal.DoesNotExist:
+                except Person.DoesNotExist:
                     stdout.p([_('Authors') if i == 0 else '', 'Person with id "%s" does not exist.' % author_id], positions=positions)
         else:
             stdout.p(['Authors', ''], positions=positions)
+
+        if series_id:
+            try:
+                series = Series.objects.get(pk=series_id)
+                book.series = series
+                stdout.p([_('Series'), '%s: %s' % (series.id, series.name)], positions=positions)
+            except Series.DoesNotExist:
+                stdout.p([_('Series with id "%(id)s" does not exist.') % {'id':value}], positions=[1.])
+        else:
+            stdout.p([_('Series'), ''], positions=positions)
+
+        if volume:
+            book.volume = volume
+            stdout.p([_('Volume'), book.volume], positions=positions)
+        else:
+            stdout.p([_('Volume'), ''], positions=positions)
+
 
         for (i, url), has_next in lookahead(enumerate(links)):
             link, c = Link.objects.get_or_create(link=url)
@@ -40,10 +57,16 @@ def create(title, authors=[], series_id=None, volume=0, links=[]):
 
 
 def edit(book, field, value):
-    assert field in ['title']
+    assert field in ['title', 'series', 'volume']
 
     if field == 'title':
         book.title = value
+    elif field == 'series':
+        try:
+            series = Series.objects.get(pk=value)
+            book.series = series
+        except Series.DoesNotExist:
+            stdout.p([_('Series with id "%(id)s" does not exist.') % {'id':value}], positions=[1.])
     book.save()
     stdout.p([_('Successfully edited book "%(title)s" with id "%(id)s".') % {'title':book.title, 'id':book.id}], positions=[1.])
 
