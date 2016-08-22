@@ -46,10 +46,28 @@ def info(person):
     stdout.p([_('Last name'), person.last_name], positions=positions)
 
     if person.links.count() > 0:
-        for (i, link), has_next in lookahead(enumerate(publisher.links.all())):
+        for (i, link), has_next in lookahead(enumerate(person.links.all())):
             if i == 0:
                 stdout.p([_('Links'), '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
             else:
                 stdout.p(['', '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
     else:
         stdout.p([_('Links'), ''], positions=positions)
+
+    if person.books.count() > 0:
+        for (i, book), has_next in lookahead(enumerate(person.books.all())):
+            if i == 0:
+                stdout.p([_('Books'), '%s: %s' % (book.id, book.title)], positions=positions, after='' if has_next else '_')
+            else:
+                stdout.p(['', '%s: %s' % (book.id, book.title)], positions=positions, after='' if has_next else '_')
+    else:
+        stdout.p([_('Books'), ''], positions=positions)
+
+    if person.papers.count() > 0:
+        for (i, paper), has_next in lookahead(enumerate(person.papers.all())):
+            if i == 0:
+                stdout.p([_('Papers'), '%s: %s' % (paper.id, paper.title)], positions=positions, after='' if has_next else '_')
+            else:
+                stdout.p(['', '%s: %s' % (paper.id, paper.title)], positions=positions, after='' if has_next else '_')
+    else:
+        stdout.p([_('Papers'), ''], positions=positions)

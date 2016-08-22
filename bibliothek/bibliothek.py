@@ -148,6 +148,27 @@ def _magazine(args):
         magazine_parser.print_help()
 
 
+def _person(args):
+    import persons.functions
+    if args.person_subparsers == 'add':
+        persons.functions.person.create(args.first_name, args.last_name)
+    elif args.person_subparsers == 'edit':
+        person = persons.functions.person.get.by_term(args.person)
+        if person:
+            persons.functions.person.edit(person, args.field, args.value)
+    elif args.person_subparsers == 'info':
+        person = persons.functions.person.get.by_term(args.person)
+        if person:
+            persons.functions.person.info(person)
+    elif args.person_subparsers == 'list':
+        if args.search:
+            persons.functions.person.list.by_term(args.search)
+        else:
+            persons.functions.person.list.all()
+    else:
+        person_parser.print_help()
+
+
 def _paper(args):
     import papers.functions
     if args.paper_subparsers == 'acquisition':
@@ -500,6 +521,31 @@ if __name__ == "__main__":
     paper_read_edit_parser.add_argument('id', type=int, help='which read to edit')
     paper_read_edit_parser.add_argument('field', choices=['started', 'finished'], help='which field to edit')
     paper_read_edit_parser.add_argument('value', type=valid_date, help='new value for field')
+
+
+    # create the parser for the "person" subcommand
+    person_parser = subparsers.add_parser('person', help='manage persons')
+    person_parser.set_defaults(func=_person)
+    person_subparsers = person_parser.add_subparsers(dest='person_subparsers')
+
+    # person add
+    person_add_parser = person_subparsers.add_parser('add', help='add a person')
+    person_add_parser.add_argument('first_name', help='first name')
+    person_add_parser.add_argument('last_name', help='last name')
+
+    # person edit
+    person_edit_parser = person_subparsers.add_parser('edit', help='edit a person')
+    person_edit_parser.add_argument('person', help='which person to edit')
+    person_edit_parser.add_argument('field', choices=['first_name', 'last_name'], help='field to edit')
+    person_edit_parser.add_argument('value', help='new value for field')
+
+    # person info
+    person_info_parser = person_subparsers.add_parser('info', help='show information of a person')
+    person_info_parser.add_argument('person', help='which person to show information of')
+
+    # person list
+    person_list_parser = person_subparsers.add_parser('list', help='list persons')
+    person_list_parser.add_argument('-s', '--search', help='search by term')
 
 
     # create the parser for the "publisher" subcommand

@@ -22,10 +22,10 @@ class PersonFunctionsTestCase(TestCase):
         self.assertIsNotNone(person.id)
 
         functions.person.edit(person, 'last_name', 'Schmidts')
-        self.assertEquals(person.last_name, 'Schmidts')
+        self.assertEquals('Schmidts', person.last_name)
 
         functions.person.edit(person, 'first_name', 'Franky')
-        self.assertEquals(person.first_name, 'Franky')
+        self.assertEquals('Franky', person.first_name)
 
 
     def test_person_get(self):
@@ -34,7 +34,11 @@ class PersonFunctionsTestCase(TestCase):
         self.assertIsNotNone(person.id)
 
         person2 = functions.person.get.by_term('rl Hei')
-        self.assertIsNotNone(person)
+        self.assertIsNotNone(person2)
+        self.assertEquals(person, person2)
+
+        person2 = functions.person.get.by_term(str(person.id))
+        self.assertIsNotNone(person2)
         self.assertEquals(person, person2)
 
 

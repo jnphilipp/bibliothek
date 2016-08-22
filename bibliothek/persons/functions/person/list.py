@@ -9,13 +9,13 @@ from utils import lookahead, stdout
 
 def all():
     persons = Person.objects.all()
-    _list([[person.first_name, person.last_name] for person in persons], [_('First name'), _('Last name')], positions=[.55, 1.])
+    _list([[person.id, person.first_name, person.last_name, person.books.count(), person.papers.count()] for person in persons], [_('Id'), _('First name'), _('Last name'), _('#Books'), _('#Papers')], positions=[.05, .425, .8, .9, 1.])
     return persons
 
 
 def by_term(term):
-    persons = Person.objects.annotate(name=Concat('first_name', Value(' '), 'last_name')).filter(name__icontains=term)
-    _list([[person.first_name, person.last_name] for person in persons], [_('First name'), _('Last name')], positions=[.55, 1.])
+    persons = Person.objects.annotate(name=Concat('first_name', Value(' '), 'last_name')).filter(Q(pk=term if term.isdigit() else None) | Q(name__icontains=term))
+    _list([[person.id, person.first_name, person.last_name, person.books.count(), person.papers.count()] for person in persons], [_('Id'), _('First name'), _('Last name'), _('#Books'), _('#Papers')], positions=[.05, .425, .8, .9, 1.])
     return persons
 
 
