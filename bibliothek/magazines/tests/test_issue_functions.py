@@ -23,7 +23,10 @@ class IssueFunctionsTestCase(TestCase):
         self.assertIsNotNone(issue.id)
 
         functions.issue.edit(issue, 'issue', '2/2016')
-        self.assertEquals(issue.issue, '2/2016')
+        self.assertEquals('2/2016', issue.issue)
+
+        functions.issue.edit(issue, 'published_on', '2016-02-03')
+        self.assertEquals('2016-02-03', issue.published_on)
 
 
     def test_issue_get(self):
@@ -32,6 +35,10 @@ class IssueFunctionsTestCase(TestCase):
         self.assertIsNotNone(issue.id)
 
         issue2 = functions.issue.get.by_term(self.magazine, '3/2016')
+        self.assertIsNotNone(issue)
+        self.assertEquals(issue, issue2)
+
+        issue2 = functions.issue.get.by_term(self.magazine, str(issue.id))
         self.assertIsNotNone(issue)
         self.assertEquals(issue, issue2)
 
@@ -63,7 +70,6 @@ class IssueFunctionsTestCase(TestCase):
 
         functions.issue.acquisition.edit(issue, acquisition.id, 'price', 5.75)
         self.assertIsNotNone(acquisition.price, 5.75)
-
 
         functions.issue.acquisition.delete(issue, acquisition.id)
         self.assertEquals(issue.acquisitions.count(), 0)
