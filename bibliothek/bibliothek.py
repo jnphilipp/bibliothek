@@ -77,17 +77,15 @@ def _journal(args):
     if args.journal_subparsers == 'add':
         journals.functions.journal.create(args.name, args.link)
     elif args.journal_subparsers == 'edit':
-        journal = journals.functions.journal.get.by_term(args.name)
+        journal = journals.functions.journal.get.by_term(args.journal)
         if journal:
             journals.functions.journal.edit(journal, args.field, args.value)
     elif args.journal_subparsers == 'info':
-        journal = journals.functions.journal.get.by_term(args.name)
+        journal = journals.functions.journal.get.by_term(args.journal)
         if journal:
             journals.functions.journal.info(journal)
     elif args.journal_subparsers == 'list':
-        if args.shelf:
-            journals.functions.journal.list.by_shelf(args.shelf)
-        elif args.search:
+        if args.search:
             journals.functions.journal.list.by_term(args.search)
         else:
             journals.functions.journal.list.all()
@@ -313,14 +311,14 @@ if __name__ == "__main__":
 
 
     # create the parser for the "journal" subcommand
-    journal_parser = subparsers.add_parser('journal', help='subcommand for journals')
+    journal_parser = subparsers.add_parser('journal', help='manage journals')
     journal_parser.set_defaults(func=_journal)
     journal_subparsers = journal_parser.add_subparsers(dest='journal_subparsers')
 
     # journal add
     journal_add_parser = journal_subparsers.add_parser('add', help='add a journal')
-    journal_add_parser.add_argument('name', help='journal name')
-    journal_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='journal links')
+    journal_add_parser.add_argument('name', help='name')
+    journal_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
 
     # journal edit
     journal_edit_parser = journal_subparsers.add_parser('edit', help='edit a journal')
@@ -329,13 +327,12 @@ if __name__ == "__main__":
     journal_edit_parser.add_argument('value', help='new value for field')
 
     # journal info
-    journal_info_parser = journal_subparsers.add_parser('info', help='show information of journal')
-    journal_info_parser.add_argument('name', help='journal name')
+    journal_info_parser = journal_subparsers.add_parser('info', help='show information of a journal')
+    journal_info_parser.add_argument('journal', help='which journal to show information of')
 
     # journal list
     journal_list_parser = journal_subparsers.add_parser('list', help='list journals')
-    journal_list_parser.add_argument('-shelf', choices=['read', 'unread'], help='filter on shelves')
-    journal_list_parser.add_argument('-s', '--search', help='filter on shelves')
+    journal_list_parser.add_argument('-s', '--search', help='filter by term')
 
 
     # create the parser for the "magazine" subcommand
