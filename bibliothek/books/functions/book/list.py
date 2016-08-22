@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from books.models import Book
-from django.db.models import Q, Value
-from django.db.models.functions import Concat
+from django.db.models import Q
 from django.utils.translation import ugettext as _
 from utils import lookahead, stdout
 
 
 def all():
     books = Book.objects.all()
-    _list([[book.title, ','.join(str(author) for author in book.authors.all()), book.series.name if book.series else '', book.volume] for book in books], [_('Title'), _('Authors'), _('Series'), _('Volume')], positions=[.45, .75, .9, 1.])
+    _list([[book.id, book.title, ','.join(str(author) for author in book.authors.all()), book.series.name if book.series else '', book.volume] for book in books], [_('Id'), _('Title'), _('Authors'), _('Series'), _('Volume')], positions=[.05, .5, .75, .9, 1.])
     return books
 
 
@@ -20,13 +19,13 @@ def by_shelf(shelf):
     elif shelf == 'unread':
         books = books.filter(editions__reads__isnull=True)
     books = books.distinct()
-    _list([[book.title, ','.join(str(author) for author in book.authors.all()), book.series.name if book.series else '', book.volume] for book in books], [_('Title'), _('Authors'), _('Series'), _('Volume')], positions=[.45, .75, .9, 1.])
+    _list([[book.id, book.title, ','.join(str(author) for author in book.authors.all()), book.series.name if book.series else '', book.volume] for book in books], [_('Id'), _('Title'), _('Authors'), _('Series'), _('Volume')], positions=[.05, .5, .75, .9, 1.])
     return books
 
 
 def by_term(term):
-    books = Book.objects.annotate(authors__name=Concat('authors__first_name', Value(' '), 'authors__last_name')).filter(Q(title__icontains=term) | Q(authors__name__icontains=term) | Q(series__name__icontains=term) | Q(volume__icontains=term)).distinct()
-    _list([[book.title, ','.join(str(author) for author in book.authors.all()), book.series.name if book.series else '', book.volume] for book in books], [_('Title'), _('Authors'), _('Series'), _('Volume')], positions=[.45, .75, .9, 1.])
+    books = Book.objects.filter(Q(pk=term if term.isdigit() else None) | Q(title__icontains=term))
+    _list([[book.id, book.title, ','.join(str(author) for author in book.authors.all()), book.series.name if book.series else '', book.volume] for book in books], [_('Id'), _('Title'), _('Authors'), _('Series'), _('Volume')], positions=[.05, .5, .75, .9, 1.])
     return books
 
 

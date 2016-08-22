@@ -18,7 +18,7 @@ class BookFunctionsTestCase(TestCase):
 
         series, created = sfunctions.series.create('Test Series')
         self.assertTrue(created)
-        self.assertIsNotNone(person.id)
+        self.assertIsNotNone(series.id)
 
         book, created = functions.book.create('Some Test Book', [person.id], series.id, 1.0)
         self.assertTrue(created)
@@ -29,12 +29,27 @@ class BookFunctionsTestCase(TestCase):
 
 
     def test_book_edit(self):
-        book, created = functions.book.create('Test2 Book')
+        series, created = sfunctions.series.create('Test Series')
+        self.assertTrue(created)
+        self.assertIsNotNone(series.id)
+
+        book, created = functions.book.create('Test2 Book', series_id=series.id, volume=1.0)
         self.assertTrue(created)
         self.assertIsNotNone(book.id)
+        self.assertEquals(series, book.series)
 
         functions.book.edit(book, 'title', 'IEEE Test Book')
-        self.assertEquals(book.title, 'IEEE Test Book')
+        self.assertEquals('IEEE Test Book', book.title)
+
+        series, created = sfunctions.series.create('Space Series')
+        self.assertTrue(created)
+        self.assertIsNotNone(series.id)
+
+        functions.book.edit(book, 'series', series.id)
+        self.assertEquals(series, book.series)
+
+        functions.book.edit(book, 'volume', 0.75)
+        self.assertEquals(0.75, book.volume)
 
 
     def test_book_get(self):
@@ -43,18 +58,29 @@ class BookFunctionsTestCase(TestCase):
         self.assertIsNotNone(book.id)
 
         book2 = functions.book.get.by_term('Test Book')
-        self.assertIsNotNone(book)
+        self.assertIsNotNone(book2)
+        self.assertEquals(book, book2)
+
+        book2 = functions.book.get.by_term(str(book.id))
+        self.assertIsNotNone(book2)
         self.assertEquals(book, book2)
 
 
     def test_book_list(self):
-        book, created = functions.book.create('Test Book')
+        book, created = functions.book.create('About Stuff')
         self.assertTrue(created)
         self.assertIsNotNone(book.id)
 
-        book, created = functions.book.create('Test2 Book')
+        book, created = functions.book.create('Not so cool Stuff')
+        self.assertTrue(created)
+        self.assertIsNotNone(book.id)
+
+        book, created = functions.book.create('About cool Stuff')
         self.assertTrue(created)
         self.assertIsNotNone(book.id)
 
         books = functions.book.list.all()
-        self.assertEquals(len(books), 2)
+        self.assertEquals(3, len(books))
+
+        books = functions.book.list.by_term('cool Stuff')
+        self.assertEquals(2, len(books))

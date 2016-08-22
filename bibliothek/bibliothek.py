@@ -54,11 +54,11 @@ def _book(args):
     if args.book_subparsers == 'add':
         books.functions.book.create(args.title, args.author, args.series, args.volume, args.link)
     elif args.book_subparsers == 'edit':
-        book = books.functions.book.get.by_term(args.title)
+        book = books.functions.book.get.by_term(args.book)
         if book:
             books.functions.book.edit(book, args.field, args.value)
     elif args.book_subparsers == 'info':
-        book = books.functions.book.get.by_term(args.title)
+        book = books.functions.book.get.by_term(args.book)
         if book:
             books.functions.book.info(book)
     elif args.book_subparsers == 'list':
@@ -276,14 +276,14 @@ if __name__ == "__main__":
 
 
     # create the parser for the "book" subcommand
-    book_parser = subparsers.add_parser('book', help='subcommand for books')
+    book_parser = subparsers.add_parser('book', help='manage books')
     book_parser.set_defaults(func=_book)
     book_subparsers = book_parser.add_subparsers(dest='book_subparsers')
 
     # book add
     book_add_parser = book_subparsers.add_parser('add', help='add a book')
-    book_add_parser.add_argument('name', help='book name')
-    book_add_parser.add_argument('-a', '--auhtor', nargs='*', default=[], type=int, help='authors')
+    book_add_parser.add_argument('title', help='title')
+    book_add_parser.add_argument('-a', '--author', nargs='*', default=[], type=int, help='authors')
     book_add_parser.add_argument('-s', '--series', default=None, type=int, help='series')
     book_add_parser.add_argument('-v', '--volume', default=None, type=float, help='series volume')
     book_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
@@ -291,17 +291,25 @@ if __name__ == "__main__":
     # book edit
     book_edit_parser = book_subparsers.add_parser('edit', help='edit a book')
     book_edit_parser.add_argument('book', help='which book to edit')
-    book_edit_parser.add_argument('field', choices=['name'], help='field to edit')
-    book_edit_parser.add_argument('value', help='new value for field')
+    book_edit_subparser = book_edit_parser.add_subparsers(dest='book_edit_subparsers', help='which field to edit')
+
+    book_edit_title_parser = book_edit_subparser.add_parser('title')
+    book_edit_title_parser.add_argument('value', help='new value for field')
+
+    book_edit_series_parser = book_edit_subparser.add_parser('series')
+    book_edit_series_parser.add_argument('value', type=int, help='new value for field')
+
+    book_edit_volume_parser = book_edit_subparser.add_parser('volume')
+    book_edit_volume_parser.add_argument('value', type=float, help='new value for field')
 
     # book info
-    book_info_parser = book_subparsers.add_parser('info', help='show information of book')
-    book_info_parser.add_argument('name', help='book name')
+    book_info_parser = book_subparsers.add_parser('info', help='show information of a book')
+    book_info_parser.add_argument('book', help='which book to show information of')
 
     # book list
     book_list_parser = book_subparsers.add_parser('list', help='list books')
     book_list_parser.add_argument('-shelf', choices=['read', 'unread'], help='filter on shelves')
-    book_list_parser.add_argument('-s', '--search', help='filter on shelves')
+    book_list_parser.add_argument('-s', '--search', help='search by term')
 
 
     # create the parser for the "journal" subcommand

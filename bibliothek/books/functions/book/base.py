@@ -23,9 +23,9 @@ def create(title, authors=[], series_id=None, volume=0, links=[]):
                     book.authors.add(author)
                     stdout.p([_('Authors') if i == 0 else '', '%s: %s' % (author.id, str(author))], after=None if has_next else '_', positions=positions)
                 except Person.DoesNotExist:
-                    stdout.p([_('Authors') if i == 0 else '', 'Person with id "%s" does not exist.' % author_id], positions=positions)
+                    stdout.p([_('Authors') if i == 0 else '', _('Person with id "%s" does not exist.') % {'id':author_id}], positions=positions)
         else:
-            stdout.p(['Authors', ''], positions=positions)
+            stdout.p([_('Authors'), ''], positions=positions)
 
         if series_id:
             try:
@@ -33,7 +33,7 @@ def create(title, authors=[], series_id=None, volume=0, links=[]):
                 book.series = series
                 stdout.p([_('Series'), '%s: %s' % (series.id, series.name)], positions=positions)
             except Series.DoesNotExist:
-                stdout.p([_('Series with id "%(id)s" does not exist.') % {'id':value}], positions=[1.])
+                stdout.p([_('Series'), _('Series with id "%(id)s" does not exist.') % {'id':series_id}], positions=positions)
         else:
             stdout.p([_('Series'), ''], positions=positions)
 
@@ -47,7 +47,7 @@ def create(title, authors=[], series_id=None, volume=0, links=[]):
         for (i, url), has_next in lookahead(enumerate(links)):
             link, c = Link.objects.get_or_create(link=url)
             book.links.add(link)
-            stdout.p([_('Links') if i == 0 else '', link.link], after=None if has_next else '_', positions=positions)
+            stdout.p([_('Links') if i == 0 else '', '%s: %s' % (link.id, link.link)], after=None if has_next else '_', positions=positions)
 
         book.save()
         stdout.p([_('Successfully added book "%(title)s" with id "%(id)s".') % {'title':book.title, 'id':book.id}], after='=', positions=[1.])
@@ -67,6 +67,8 @@ def edit(book, field, value):
             book.series = series
         except Series.DoesNotExist:
             stdout.p([_('Series with id "%(id)s" does not exist.') % {'id':value}], positions=[1.])
+    elif field == 'volume':
+        book.volume = value
     book.save()
     stdout.p([_('Successfully edited book "%(title)s" with id "%(id)s".') % {'title':book.title, 'id':book.id}], positions=[1.])
 
@@ -86,8 +88,8 @@ def info(book):
     else:
         stdout.p([_('Authors'), ''], positions=positions)
 
-    stdout.p([_('Series'), '%s: %s' % (book.series.id, book.series.name)], positions=positions)
-    stdout.p([_('Volume'), book.volume], positions=positions)
+    stdout.p([_('Series'), '%s: %s' % (book.series.id, book.series.name) if book.series else ''], positions=positions)
+    stdout.p([_('Volume'), book.volume if book.volume else ''], positions=positions)
 
     if book.links.count() > 0:
         for (i, link), has_next in lookahead(enumerate(book.links.all())):
