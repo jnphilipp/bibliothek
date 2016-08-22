@@ -8,13 +8,13 @@ from utils import lookahead, stdout
 
 def all():
     series = Series.objects.all()
-    _list([[series.name] for series in series], [_('Name')], positions=[.55, 1.])
+    _list([[series.id, series.name] for series in series], [_('Id'), _('Name')], positions=[.05, 1.])
     return series
 
 
 def by_term(term):
-    series = Series.objects.filter(name__icontains=term)
-    _list([[series.name] for series in series], [_('Name')], positions=[.55, 1.])
+    series = Series.objects.filter(Q(pk=term if term.isdigit() else None) | Q(name__icontains=term))
+    _list([[series.id, series.name] for series in series], [_('Id'), _('Name')], positions=[.05, 1.])
     return series
 
 

@@ -249,7 +249,7 @@ def _series(args):
         if series_obj:
             series.functions.series.edit(series_obj, args.field, args.value)
     elif args.series_subparsers == 'info':
-        series_obj = series.functions.series.get.by_term(args.name)
+        series_obj = series.functions.series.get.by_term(args.series)
         if series_obj:
             series.functions.series.info(series_obj)
     elif args.series_subparsers == 'list':
@@ -574,16 +574,15 @@ if __name__ == "__main__":
 
 
     # create the parser for the "series" subcommand
-    series_parser = subparsers.add_parser('series', help='subcommand for series')
+    series_parser = subparsers.add_parser('series', help='manage series')
     series_parser.set_defaults(func=_series)
     series_subparsers = series_parser.add_subparsers(dest='series_subparsers')
 
     # series add
     series_add_parser = series_subparsers.add_parser('add', help='add a series')
-    series_add_parser.add_argument('name', help='series name')
-    series_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='series links')
+    series_add_parser.add_argument('name', help='name')
 
-    # magazine edit
+    # series edit
     series_edit_parser = series_subparsers.add_parser('edit', help='edit a series')
     series_edit_parser.add_argument('series', help='which series to edit')
     series_edit_parser.add_argument('field', choices=['name'], help='field to edit')
@@ -594,8 +593,8 @@ if __name__ == "__main__":
     series_info_parser.add_argument('name', help='series name')
 
     # series list
-    series_list_parser = series_subparsers.add_parser('list', help='list series')
-    series_list_parser.add_argument('-s', '--search', help='search by')
+    series_info_parser = series_subparsers.add_parser('info', help='show information of a series')
+    series_info_parser.add_argument('series', help='which series to show information of')
 
 
     # create the parser for the "runserver" subcommand
