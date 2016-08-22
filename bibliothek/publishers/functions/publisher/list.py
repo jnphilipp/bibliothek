@@ -8,13 +8,13 @@ from utils import lookahead, stdout
 
 def all():
     publishers = Publisher.objects.all()
-    _list([[publisher.name] for publisher in publishers], [_('Name')], positions=[.55, 1.])
+    _list([[publisher.id, publisher.name] for publisher in publishers], [_('Id'), _('Name')], positions=[.05, 1.])
     return publishers
 
 
 def by_term(term):
-    publishers = Publisher.objects.filter(name__icontains=term)
-    _list([[publisher.name] for publisher in publishers], [_('Name')], positions=[.55, 1.])
+    publishers = Publisher.objects.filter(Q(pk=term if term.isdigit() else None) | Q(name__icontains=term))
+    _list([[publisher.id, publisher.name] for publisher in publishers], [_('Id'), _('Name')], positions=[.05, 1.])
     return publishers
 
 
