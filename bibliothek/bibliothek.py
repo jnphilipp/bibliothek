@@ -149,27 +149,6 @@ def _magazine(args):
         magazine_parser.print_help()
 
 
-def _person(args):
-    import persons.functions
-    if args.person_subparsers == 'add':
-        persons.functions.person.create(args.first_name, args.last_name)
-    elif args.person_subparsers == 'edit':
-        person = persons.functions.person.get.by_term(args.person)
-        if person:
-            persons.functions.person.edit(person, args.field, args.value)
-    elif args.person_subparsers == 'info':
-        person = persons.functions.person.get.by_term(args.person)
-        if person:
-            persons.functions.person.info(person)
-    elif args.person_subparsers == 'list':
-        if args.search:
-            persons.functions.person.list.by_term(args.search)
-        else:
-            persons.functions.person.list.all()
-    else:
-        person_parser.print_help()
-
-
 def _paper(args):
     import papers.functions
     if args.paper_subparsers == 'acquisition':
@@ -218,6 +197,27 @@ def _paper(args):
             papers.functions.paper.read.edit(paper, args.read, args.field, args.value)
     else:
         paper_parser.print_help()
+
+
+def _person(args):
+    import persons.functions
+    if args.person_subparsers == 'add':
+        persons.functions.person.create(args.first_name, args.last_name, args.link)
+    elif args.person_subparsers == 'edit':
+        person = persons.functions.person.get.by_term(args.person)
+        if person:
+            persons.functions.person.edit(person, args.field, args.value)
+    elif args.person_subparsers == 'info':
+        person = persons.functions.person.get.by_term(args.person)
+        if person:
+            persons.functions.person.info(person)
+    elif args.person_subparsers == 'list':
+        if args.search:
+            persons.functions.person.list.by_term(args.search)
+        else:
+            persons.functions.person.list.all()
+    else:
+        person_parser.print_help()
 
 
 def _publisher(args):
@@ -284,8 +284,8 @@ if __name__ == "__main__":
     # book add
     book_add_parser = book_subparsers.add_parser('add', help='add a book')
     book_add_parser.add_argument('title', help='title')
-    book_add_parser.add_argument('-a', '--author', nargs='*', default=[], type=int, help='authors')
-    book_add_parser.add_argument('-s', '--series', default=None, type=int, help='series')
+    book_add_parser.add_argument('-a', '--author', nargs='*', default=[], help='authors')
+    book_add_parser.add_argument('-s', '--series', default=None, help='series')
     book_add_parser.add_argument('-v', '--volume', default=None, type=float, help='series volume')
     book_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
 
@@ -298,14 +298,14 @@ if __name__ == "__main__":
     book_edit_title_parser.add_argument('value', help='new value for field')
 
     book_edit_series_parser = book_edit_subparser.add_parser('series')
-    book_edit_series_parser.add_argument('value', type=int, help='new value for field')
+    book_edit_series_parser.add_argument('value', help='new value for field')
 
     book_edit_volume_parser = book_edit_subparser.add_parser('volume')
     book_edit_volume_parser.add_argument('value', type=float, help='new value for field')
 
     # book info
     book_info_parser = book_subparsers.add_parser('info', help='show information of a book')
-    book_info_parser.add_argument('book', help='which book to show information of')
+    book_info_parser.add_argument('book', help='of which book to show information')
 
     # book list
     book_list_parser = book_subparsers.add_parser('list', help='list books')
@@ -326,12 +326,12 @@ if __name__ == "__main__":
     # journal edit
     journal_edit_parser = journal_subparsers.add_parser('edit', help='edit a journal')
     journal_edit_parser.add_argument('journal', help='which journal to edit')
-    journal_edit_parser.add_argument('field', choices=['name'], help='field to edit')
+    journal_edit_parser.add_argument('field', choices=['name'], help='which field to edit')
     journal_edit_parser.add_argument('value', help='new value for field')
 
     # journal info
     journal_info_parser = journal_subparsers.add_parser('info', help='show information of a journal')
-    journal_info_parser.add_argument('journal', help='which journal to show information of')
+    journal_info_parser.add_argument('journal', help='of which journal to show information')
 
     # journal list
     journal_list_parser = journal_subparsers.add_parser('list', help='list journals')
@@ -352,7 +352,7 @@ if __name__ == "__main__":
     # magazine edit
     magazine_edit_parser = magazine_subparsers.add_parser('edit', help='edit a magazine')
     magazine_edit_parser.add_argument('magazine', help='which magazine to edit')
-    magazine_edit_parser.add_argument('field', help='which field to edit')
+    magazine_edit_parser.add_argument('field', choices=['name', 'feed'], help='which field to edit')
     magazine_edit_parser.add_argument('value', help='new value for field')
 
     # magazine info
@@ -373,6 +373,9 @@ if __name__ == "__main__":
     magazine_issue_acquisition_add_parser.add_argument('-date', default=None, type=valid_date, help='date')
     magazine_issue_acquisition_add_parser.add_argument('-price', default=0, type=float, help='price')
 
+    magazine_issue_acquisition_delete_parser = magazine_issue_acquisition_subparsers.add_parser('delete', help='delete an acquisition')
+    magazine_issue_acquisition_delete_parser.add_argument('acquisition', type=int, help='which acquisition to delete')
+
     magazine_issue_acquisition_edit_parser = magazine_issue_acquisition_subparsers.add_parser('edit', help='edit an acquisition')
     magazine_issue_acquisition_edit_parser.add_argument('acquisition', type=int, help='which acquisition to edit')
 
@@ -382,9 +385,6 @@ if __name__ == "__main__":
 
     magazine_issue_acquisition_edit_price_parser = magazine_issue_acquisition_edit_subparser.add_parser('price')
     magazine_issue_acquisition_edit_price_parser.add_argument('value', type=float, help='new value for field')
-
-    magazine_issue_acquisition_delete_parser = magazine_issue_acquisition_subparsers.add_parser('delete', help='delete an acquisition')
-    magazine_issue_acquisition_delete_parser.add_argument('acquisition', type=int, help='which acquisition to delete')
 
     # magazine issue add
     magazine_issue_add_parser = magazine_issue_subparsers.add_parser('add', help='add an issue to a magazine')
@@ -426,13 +426,13 @@ if __name__ == "__main__":
     magazine_issue_read_add_parser.add_argument('-started', default=None, type=valid_date, help='date started')
     magazine_issue_read_add_parser.add_argument('-finished', default=None, type=valid_date, help='date finished')
 
+    magazine_issue_read_delete_parser = magazine_issue_read_subparser.add_parser('delete', help='delete a read')
+    magazine_issue_read_delete_parser.add_argument('read', type=int, help='which read to delete')
+
     magazine_issue_read_edit_parser = magazine_issue_read_subparser.add_parser('edit', help='edit a read')
     magazine_issue_read_edit_parser.add_argument('read', type=int, help='which read to edit')
     magazine_issue_read_edit_parser.add_argument('field', choices=['started', 'finished'], help='which field to edit')
     magazine_issue_read_edit_parser.add_argument('value', type=valid_date, help='new value for field')
-
-    magazine_issue_read_delete_parser = magazine_issue_read_subparser.add_parser('delete', help='delete a read')
-    magazine_issue_read_delete_parser.add_argument('read', type=int, help='which read to delete')
 
     # magazine list
     magazine_list_parser = magazine_subparsers.add_parser('list', help='list magazines')
@@ -538,6 +538,7 @@ if __name__ == "__main__":
     person_add_parser = person_subparsers.add_parser('add', help='add a person')
     person_add_parser.add_argument('first_name', help='first name')
     person_add_parser.add_argument('last_name', help='last name')
+    person_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
 
     # person edit
     person_edit_parser = person_subparsers.add_parser('edit', help='edit a person')
@@ -547,7 +548,7 @@ if __name__ == "__main__":
 
     # person info
     person_info_parser = person_subparsers.add_parser('info', help='show information of a person')
-    person_info_parser.add_argument('person', help='which person to show information of')
+    person_info_parser.add_argument('person', help='of which person to show information')
 
     # person list
     person_list_parser = person_subparsers.add_parser('list', help='list persons')
@@ -572,7 +573,7 @@ if __name__ == "__main__":
 
     # publisher info
     publisher_info_parser = publisher_subparsers.add_parser('info', help='show information of a publisher')
-    publisher_info_parser.add_argument('publisher', help='which publisher to show information of')
+    publisher_info_parser.add_argument('publisher', help='of which publisher to show information')
 
     # publisher list
     publisher_list_parser = publisher_subparsers.add_parser('list', help='list publishers')
@@ -600,11 +601,11 @@ if __name__ == "__main__":
 
     # series list
     series_info_parser = series_subparsers.add_parser('info', help='show information of a series')
-    series_info_parser.add_argument('series', help='which series to show information of')
+    series_info_parser.add_argument('series', help='of which series to show information')
 
 
     # create the parser for the "runserver" subcommand
-    runserver_parser = subparsers.add_parser('runserver', help='subcommand for local http server')
+    runserver_parser = subparsers.add_parser('runserver', help='start local http server')
     runserver_parser.set_defaults(func=_runserver)
 
 
