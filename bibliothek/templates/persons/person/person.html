@@ -14,16 +14,41 @@
         </ul>
     </dd>
 </dl>
+<h2 class="page-header">{% trans 'Books' %}</h2>
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            {% sortable_th 'Title' bo 'bo' 'title' %}
+            <th>{% trans 'Authors' %}</th>
+            {% sortable_th 'Series' bo 'bo' 'series' %}
+            {% sortable_th 'Volume' bo 'bo' 'volume' %}
+            {% sortable_th 'Acquired' bo 'bo' 'acquisitions' %}
+            {% sortable_th 'Read' bo 'bo' 'reads' %}
+        </thead>
+        <tbody>
+            {% for book in books %}
+                <tr>
+                    <th><a href="{% url 'book' book.slug %}">{{ book.title }}</a></th>
+                    <td>{% for author in book.authors.all %}<a href="{% url 'person' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                    <td><a href="{% url 'series' book.series.slug %}">{{ book.series.name }}</a></td>
+                    <td>{{ book.volume }}</td>
+                    <td><span class="glyphicon glyphicon-{% if book.acquisitions.exists %}ok{% else %}remove{% endif %}"></span></td>
+                    <td><span class="glyphicon glyphicon-{% if book.reads.exists %}ok{% else %}remove{% endif %}"></span></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 <h2 class="page-header">{% trans 'Papers' %}</h2>
 <div class="table-responsive">
     <table class="table table-striped table-hover">
         <thead>
-            {% sortable_th 'Title' o 'o' 'title' %}
+            {% sortable_th 'Title' po 'po' 'title' %}
             <th>{% trans 'Authors' %}</th>
-            {% sortable_th 'Journal' o 'o' 'journal' %}
-            {% sortable_th 'Volume' o 'o' 'volume' %}
-            {% sortable_th 'Acquired' o 'o' 'acquisitions' %}
-            {% sortable_th 'Read' o 'o' 'reads' %}
+            {% sortable_th 'Journal' po 'po' 'journal' %}
+            {% sortable_th 'Volume' po 'po' 'volume' %}
+            {% sortable_th 'Acquired' po 'po' 'acquisitions' %}
+            {% sortable_th 'Read' po 'po' 'reads' %}
         </thead>
         <tbody>
             {% for paper in papers %}
