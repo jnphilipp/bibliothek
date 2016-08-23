@@ -177,11 +177,11 @@ def _paper(args):
         if args.paper_acquisition_subparsers == 'add' and paper:
             papers.functions.paper.acquisition.add(paper, args.date, args.price)
         elif args.paper_acquisition_subparsers == 'delete' and paper:
-            papers.functions.paper.acquisition.delete(paper, args.id)
+            papers.functions.paper.acquisition.delete(paper, args.acquisition)
         elif args.paper_acquisition_subparsers == 'edit' and paper:
-            papers.functions.paper.acquisition.edit(paper, args.id, args.paper_acquisition_edit_subparsers, args.value)
-    elif args.paper_subparsers == 'create':
-        papers.functions.paper.create(args.title, args.published_on, args.journal, args.volume)
+            papers.functions.paper.acquisition.edit(paper, args.acquisition, args.paper_acquisition_edit_subparsers, args.value)
+    elif args.paper_subparsers == 'add':
+        papers.functions.paper.create(args.title, args.author, args.published_on, args.journal, args.volume, args.link)
     elif args.paper_subparsers == 'edit':
         paper = papers.functions.paper.get.by_term(args.paper)
         if paper:
@@ -200,7 +200,7 @@ def _paper(args):
     elif args.paper_subparsers == 'open':
         paper = papers.functions.paper.get.by_term(args.paper)
         if paper:
-            file = paper.files.get(pk=args.id)
+            file = paper.files.get(pk=args.file)
             path = os.path.join(settings.MEDIA_ROOT, file.file.path)
             if sys.platform == 'linux':
                 os.system('xdg-open "%s"' % path)
@@ -213,9 +213,9 @@ def _paper(args):
         if args.paper_read_subparsers == 'add' and paper:
             papers.functions.paper.read.add(paper, args.started, args.finished)
         elif args.paper_read_subparsers == 'delete' and paper:
-            papers.functions.paper.read.delete(paper, args.id)
+            papers.functions.paper.read.delete(paper, args.read)
         elif args.paper_read_subparsers == 'edit' and paper:
-            papers.functions.paper.read.edit(paper, args.id, args.field, args.value)
+            papers.functions.paper.read.edit(paper, args.read, args.field, args.value)
     else:
         paper_parser.print_help()
 
@@ -440,21 +440,24 @@ if __name__ == "__main__":
 
 
     # create the parser for the "paper" subcommand
-    paper_parser = subparsers.add_parser('paper', help='subcommand for papers')
+    paper_parser = subparsers.add_parser('paper', help='manage papers')
     paper_parser.set_defaults(func=_paper)
     paper_subparsers = paper_parser.add_subparsers(dest='paper_subparsers')
 
     # paper acquisitions
-    paper_acquisition_parser = paper_subparsers.add_parser('acquisition', help='manage acquisition of papers')
+    paper_acquisition_parser = paper_subparsers.add_parser('acquisition', help='manage acquisition of a paper')
     paper_acquisition_parser.add_argument('paper', help='of which paper to manage an acquisition')
     paper_acquisition_subparser = paper_acquisition_parser.add_subparsers(dest='paper_acquisition_subparsers')
 
-    paper_acquisition_add_parser = paper_acquisition_subparser.add_parser('add', help='manage addition of acquisitions')
+    paper_acquisition_add_parser = paper_acquisition_subparser.add_parser('add', help='add an acquisitions')
     paper_acquisition_add_parser.add_argument('-date', default=None, type=valid_date, help='date')
     paper_acquisition_add_parser.add_argument('-price', default=0, type=float, help='price')
 
-    paper_acquisition_edit_parser = paper_acquisition_subparser.add_parser('edit', help='manage edition of acquisitions')
-    paper_acquisition_edit_parser.add_argument('id', type=int, help='which acquisition to edit')
+    paper_acquisition_delete_parser = paper_acquisition_subparser.add_parser('delete', help='delete an acquisitions')
+    paper_acquisition_delete_parser.add_argument('acquisition', type=int, help='which acquisition to delete')
+
+    paper_acquisition_edit_parser = paper_acquisition_subparser.add_parser('edit', help='edit an acquisitions')
+    paper_acquisition_edit_parser.add_argument('acquisition', type=int, help='which acquisition to edit')
 
     paper_acquisition_edit_subparser = paper_acquisition_edit_parser.add_subparsers(dest='paper_acquisition_edit_subparsers', help='which field to edit')
     paper_acquisition_edit_date_parser = paper_acquisition_edit_subparser.add_parser('date')
@@ -463,66 +466,65 @@ if __name__ == "__main__":
     paper_acquisition_edit_price_parser = paper_acquisition_edit_subparser.add_parser('price')
     paper_acquisition_edit_price_parser.add_argument('value', type=float, help='new value for field')
 
-    paper_acquisition_delete_parser = paper_acquisition_subparser.add_parser('delete', help='manage deletion of acquisitions')
-    paper_acquisition_delete_parser.add_argument('id', type=int, help='which acquisition to delete')
-
     # paper add
     paper_add_parser = paper_subparsers.add_parser('add', help='add a paper')
-    paper_add_parser.add_argument('title', help='title of the paper')
-    paper_add_parser.add_argument('--published_on', type=valid_date, help='published on date of the paper')
-    paper_add_parser.add_argument('--journal', type=int, help='journal of the paper')
-    paper_add_parser.add_argument('--volume', help='volume of the paper')
+    paper_add_parser.add_argument('title', help='title')
+    paper_add_parser.add_argument('-a', '--author', nargs='*', default=[], help='authors')
+    paper_add_parser.add_argument('--published_on', type=valid_date, help='published on')
+    paper_add_parser.add_argument('--journal', help='journal')
+    paper_add_parser.add_argument('--volume', help='journal volume')
+    paper_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
 
     # paper edit
-    paper_edit_parser = paper_subparsers.add_parser('edit', help='edit paper')
+    paper_edit_parser = paper_subparsers.add_parser('edit', help='edit a paper')
     paper_edit_parser.add_argument('paper', help='which paper to edit')
-    paper_edit_subparser = paper_edit_parser.add_subparsers(dest='paper_edit_subparsers')
+    paper_edit_subparser = paper_edit_parser.add_subparsers(dest='paper_edit_subparsers', help='which field to edit')
 
-    paper_edit_title_parser = paper_edit_subparser.add_parser('title', help='edit title field')
-    paper_edit_title_parser.add_argument('value', help='new value for title field')
+    paper_edit_title_parser = paper_edit_subparser.add_parser('title')
+    paper_edit_title_parser.add_argument('value', help='new value for field')
 
-    paper_edit_published_on_parser = paper_edit_subparser.add_parser('published_on', help='edit published_on field')
-    paper_edit_published_on_parser.add_argument('value', type=valid_date, help='new value for published_on field')
+    paper_edit_published_on_parser = paper_edit_subparser.add_parser('published_on')
+    paper_edit_published_on_parser.add_argument('value', type=valid_date, help='new value for field')
 
-    paper_edit_journal_parser = paper_edit_subparser.add_parser('journal', help='edit journal field')
-    paper_edit_journal_parser.add_argument('value', type=int, help='new value for journal field')
+    paper_edit_journal_parser = paper_edit_subparser.add_parser('journal')
+    paper_edit_journal_parser.add_argument('value', help='new value for field')
 
-    paper_edit_volume_parser = paper_edit_subparser.add_parser('volume', help='edit volume field')
-    paper_edit_volume_parser.add_argument('value', help='new value for volume field')
+    paper_edit_volume_parser = paper_edit_subparser.add_parser('volume')
+    paper_edit_volume_parser.add_argument('value', help='new value for field')
 
     # paper list
     paper_list_parser = paper_subparsers.add_parser('list', help='list papers')
     paper_list_parser.add_argument('shelf', choices=['read', 'unread'], nargs='?', help='filter on shelves')
-    paper_list_parser.add_argument('-s', '--search', nargs='?', help='search for papers')
+    paper_list_parser.add_argument('-s', '--search', help='search by term')
 
     # paper info
     paper_info_parser = paper_subparsers.add_parser('info', help='show information of a paper')
-    paper_info_parser.add_argument('paper', nargs='?', help='which paper to show')
+    paper_info_parser.add_argument('paper', help='of which paper to show information')
 
     # paper open
     paper_open_parser = paper_subparsers.add_parser('open', help='open a file of a paper')
-    paper_open_parser.add_argument('paper', nargs='?', help='which paper to show')
-    paper_open_parser.add_argument('id', type=int, help='which file to open')
+    paper_open_parser.add_argument('paper', nargs='?', help='which paper')
+    paper_open_parser.add_argument('file', type=int, help='which file to open')
 
     # paper parse
     paper_parse_parser = paper_subparsers.add_parser('parse', help='parse bibtex and add papers')
     paper_parse_parser.add_argument('bibtex', help='bibtex file')
-    paper_parse_parser.add_argument('-f', '--file', nargs='*', default=[], help='files to add')
+    paper_parse_parser.add_argument('-f', '--file', nargs='*', default=[], help='files')
 
     # paper reads
     paper_read_parser = paper_subparsers.add_parser('read', help='manage read of papers')
-    paper_read_parser.add_argument('paper', help='which paper to edit')
+    paper_read_parser.add_argument('paper', help='of which paper to manage a read')
     paper_read_subparser = paper_read_parser.add_subparsers(dest='paper_read_subparsers')
 
-    paper_read_add_parser = paper_read_subparser.add_parser('add', help='manage addition of reads')
+    paper_read_add_parser = paper_read_subparser.add_parser('add', help='add a read')
     paper_read_add_parser.add_argument('-started', default=None, type=valid_date, help='date started')
     paper_read_add_parser.add_argument('-finished', default=None, type=valid_date, help='date finished')
 
-    paper_read_delete_parser = paper_read_subparser.add_parser('delete', help='manage deletion of reads')
-    paper_read_delete_parser.add_argument('id', type=int, help='which read to delete')
+    paper_read_delete_parser = paper_read_subparser.add_parser('delete', help='delete a read')
+    paper_read_delete_parser.add_argument('read', type=int, help='which read to delete')
 
-    paper_read_edit_parser = paper_read_subparser.add_parser('edit', help='manage edition of reads')
-    paper_read_edit_parser.add_argument('id', type=int, help='which read to edit')
+    paper_read_edit_parser = paper_read_subparser.add_parser('edit', help='edit a read')
+    paper_read_edit_parser.add_argument('read', type=int, help='which read to edit')
     paper_read_edit_parser.add_argument('field', choices=['started', 'finished'], help='which field to edit')
     paper_read_edit_parser.add_argument('value', type=valid_date, help='new value for field')
 

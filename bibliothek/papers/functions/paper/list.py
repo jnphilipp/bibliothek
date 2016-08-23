@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from django.db.models import Q
+from django.utils.translation import ugettext as _
 from papers.models import Paper
 from utils import lookahead, stdout
 
 
 def all():
     papers = Paper.objects.all()
-    _list([[paper.title, paper.journal.name if paper.journal else None, paper.volume] for paper in papers], ['Title', 'Journal', 'Volume'], positions=[.55, .66, 1.])
+    _list([[paper.id, paper.title, paper.journal.name if paper.journal else None, paper.volume] for paper in papers], [_('Id'), _('Title'), _('Journal'), _('Volume')], positions=[.05, .55, .66, 1.])
     return papers
 
 
@@ -17,13 +18,13 @@ def by_shelf(shelf):
         papers = papers.filter(reads__isnull=False)
     elif shelf == 'unread':
         papers = papers.filter(reads__isnull=True)
-    _list([[paper.title, paper.journal.name if paper.journal else None, paper.volume] for paper in papers], ['Title', 'Journal', 'Volume'], positions=[.55, .66, 1.])
+    _list([[paper.id, paper.title, paper.journal.name if paper.journal else None, paper.volume] for paper in papers], [_('Id'), _('Title'), _('Journal'), _('Volume')], positions=[.05, .55, .66, 1.])
     return papers
 
 
 def by_term(term):
-    papers = Paper.objects.filter(Q(title__icontains=term) | Q(journal__name__icontains=term) | Q(volume__icontains=term))
-    _list([[paper.title, paper.journal.name if paper.journal else None, paper.volume] for paper in papers], ['Title', 'Journal', 'Volume'], positions=[.55, .66, 1.])
+    papers = Paper.objects.filter(Q(pk=term if term.isdigit() else None) | Q(title__icontains=term))
+    _list([[paper.id, paper.title, paper.journal.name if paper.journal else None, paper.volume] for paper in papers], [_('Id'), _('Title'), _('Journal'), _('Volume')], positions=[.05, .55, .66, 1.])
     return papers
 
 
