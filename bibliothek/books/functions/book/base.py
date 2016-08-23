@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from books.models import Book
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
 from django.utils.translation import ugettext as _
 from links.models import Link
 from persons.models import Person
@@ -8,7 +10,7 @@ from series.models import Series
 from utils import lookahead, stdout
 
 
-def create(title, authors=[], series_id=None, volume=0, links=[]):
+def create(title, authors=[], series=None, volume=0, links=[]):
     positions = [.33, 1.]
 
     book, created = Book.objects.get_or_create(title=title)
@@ -17,23 +19,16 @@ def create(title, authors=[], series_id=None, volume=0, links=[]):
         stdout.p([_('Title'), book.title], positions=positions)
 
         if len(authors) > 0:
-            for (i, author_id), has_next in lookahead(enumerate(authors)):
-                try:
-                    author = Person.objects.get(pk=author_id)
-                    book.authors.add(author)
-                    stdout.p([_('Authors') if i == 0 else '', '%s: %s' % (author.id, str(author))], after=None if has_next else '_', positions=positions)
-                except Person.DoesNotExist:
-                    stdout.p([_('Authors') if i == 0 else '', _('Person with id "%s" does not exist.') % {'id':author_id}], positions=positions)
+            for (i, a), has_next in lookahead(enumerate(authors)):
+                author, c = Person.objects.annotate(name=Concat('first_name', Value(' '), 'last_name')).filter(Q(pk=a if a.isdigit() else None) | Q(name__icontains=a)).get_or_create(defaults={'first_name':a[:a.rfind(' ')], 'last_name':a[a.rfind(' ') + 1 :]})
+                book.authors.add(author)
+                stdout.p([_('Authors') if i == 0 else '', '%s: %s' % (author.id, str(author))], after=None if has_next else '_', positions=positions)
         else:
             stdout.p([_('Authors'), ''], positions=positions)
 
-        if series_id:
-            try:
-                series = Series.objects.get(pk=series_id)
-                book.series = series
-                stdout.p([_('Series'), '%s: %s' % (series.id, series.name)], positions=positions)
-            except Series.DoesNotExist:
-                stdout.p([_('Series'), _('Series with id "%(id)s" does not exist.') % {'id':series_id}], positions=positions)
+        if series:
+            book.series, c = Series.objects.filter(Q(pk=series if series.isdigit() else None) | Q(name__icontains=series)).get_or_create(defaults={'name':series})
+            stdout.p([_('Series'), '%s: %s' % (book.series.id, book.series.name)], positions=positions)
         else:
             stdout.p([_('Series'), ''], positions=positions)
 
@@ -45,7 +40,7 @@ def create(title, authors=[], series_id=None, volume=0, links=[]):
 
 
         for (i, url), has_next in lookahead(enumerate(links)):
-            link, c = Link.objects.get_or_create(link=url)
+            link, c = Link.objects.filter(Q(pk=url if url.isdigit() else None) | Q(link=url)).get_or_create(defaults={'link':url})
             book.links.add(link)
             stdout.p([_('Links') if i == 0 else '', '%s: %s' % (link.id, link.link)], after=None if has_next else '_', positions=positions)
 
@@ -62,11 +57,7 @@ def edit(book, field, value):
     if field == 'title':
         book.title = value
     elif field == 'series':
-        try:
-            series = Series.objects.get(pk=value)
-            book.series = series
-        except Series.DoesNotExist:
-            stdout.p([_('Series with id "%(id)s" does not exist.') % {'id':value}], positions=[1.])
+        book.series, created = Series.objects.filter(Q(pk=value if value.isdigit() else None) | Q(name__icontains=value)).get_or_create(defaults={'name':value})
     elif field == 'volume':
         book.volume = value
     book.save()
@@ -81,10 +72,7 @@ def info(book):
 
     if book.authors.count() > 0:
         for (i, author), has_next in lookahead(enumerate(book.authors.all())):
-            if i == 0:
-                stdout.p([_('Authors'), '%s: %s' % (author.id, str(author))], positions=positions, after='' if has_next else '_')
-            else:
-                stdout.p(['', '%s: %s' % (author.id, str(author))], positions=positions, after='' if has_next else '_')
+            stdout.p([_('Authors') if i == 0 else '', '%s: %s' % (author.id, str(author))], positions=positions, after='' if has_next else '_')
     else:
         stdout.p([_('Authors'), ''], positions=positions)
 
@@ -93,9 +81,6 @@ def info(book):
 
     if book.links.count() > 0:
         for (i, link), has_next in lookahead(enumerate(book.links.all())):
-            if i == 0:
-                stdout.p([_('Links'), '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
-            else:
-                stdout.p(['', '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
+            stdout.p([_('Links') if i == 0 else '', '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
     else:
         stdout.p([_('Links'), ''], positions=positions)

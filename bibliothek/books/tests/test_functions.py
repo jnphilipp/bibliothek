@@ -20,7 +20,14 @@ class BookFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(series.id)
 
-        book, created = functions.book.create('Some Test Book', [person.id], series.id, 1.0)
+        book, created = functions.book.create('Some Test Book', [str(person.id)], str(series.id), 1.0)
+        self.assertTrue(created)
+        self.assertIsNotNone(book.id)
+        self.assertEquals(1, book.authors.count())
+        self.assertEquals(person, book.authors.first())
+        self.assertEquals(series, book.series)
+
+        book, created = functions.book.create('Some Test Book 2', ['%s %s' % (person.first_name, person.last_name)], series.name, 1.0)
         self.assertTrue(created)
         self.assertIsNotNone(book.id)
         self.assertEquals(1, book.authors.count())
@@ -33,7 +40,7 @@ class BookFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(series.id)
 
-        book, created = functions.book.create('Test2 Book', series_id=series.id, volume=1.0)
+        book, created = functions.book.create('Test2 Book', series=str(series.id), volume=1.0)
         self.assertTrue(created)
         self.assertIsNotNone(book.id)
         self.assertEquals(series, book.series)
@@ -45,11 +52,18 @@ class BookFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(series.id)
 
-        functions.book.edit(book, 'series', series.id)
+        functions.book.edit(book, 'series', str(series.id))
         self.assertEquals(series, book.series)
 
         functions.book.edit(book, 'volume', 0.75)
         self.assertEquals(0.75, book.volume)
+
+        series, created = sfunctions.series.create('Deep Space Series')
+        self.assertTrue(created)
+        self.assertIsNotNone(series.id)
+
+        functions.book.edit(book, 'series', 'Deep Space')
+        self.assertEquals(series, book.series)
 
 
     def test_book_get(self):

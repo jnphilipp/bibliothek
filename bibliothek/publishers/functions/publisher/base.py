@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from django.db.models import Q
 from django.utils.translation import ugettext as _
 from links.models import Link
 from publishers.models import Publisher
@@ -15,7 +16,7 @@ def create(name, links=[]):
         stdout.p([_('Name'), publisher.name], positions=positions)
 
         for (i, url), has_next in lookahead(enumerate(links)):
-            link, c = Link.objects.get_or_create(link=url)
+            link, c = Link.objects.filter(Q(pk=url if url.isdigit() else None) | Q(link=url)).get_or_create(defaults={'link':url})
             publisher.links.add(link)
             stdout.p([_('Links') if i == 0 else '', link.link], after=None if has_next else '_', positions=positions)
 
