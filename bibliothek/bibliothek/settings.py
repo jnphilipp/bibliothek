@@ -98,6 +98,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'bibliothek',
+    'bindings',
     'books',
     'bootstrap',
     'files',
