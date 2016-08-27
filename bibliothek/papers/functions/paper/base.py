@@ -85,7 +85,7 @@ def info(paper):
     else:
         stdout.p([_('Authors'), ''], positions=positions)
 
-    stdout.p([_('Journal'), '%s: %s' % (paper.journal.id, paper.journal.name)], positions=positions)
+    stdout.p([_('Journal'), '%s: %s' % (paper.journal.id, paper.journal.name) if paper.journal else ''], positions=positions)
     stdout.p([_('Volume'), paper.volume], positions=positions)
     stdout.p([_('Published on'), paper.published_on], positions=positions)
 

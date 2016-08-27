@@ -30,38 +30,39 @@ def from_dict(paper_dict, files=[]):
     positions=[.33, 1.]
     print('=' * 100)
 
-    if paper_dict['title']:
+    if paper_dict['title'] and paper_dict['title']:
         paper, created = Paper.objects.get_or_create(title=paper_dict['title'])
+        stdout.p([_('Id'), paper.id], positions=positions)
         stdout.p([_('Title'), paper.title], positions=positions)
         if not created:
             stdout.p([_('The paper "%(title)s" already exists with id "%(id)s", aborting...') % {'title':paper.title, 'id':paper.id}], after='=')
             return paper, created, None
-        if 'bibtex' in paper_dict:
+        if 'bibtex' in paper_dict and paper_dict['bibtex']:
             paper.bibtex = paper_dict['bibtex']
     else:
         stdout.p([_('No title given, aborting...')], after='=')
         return None, False, None
 
-    if 'authors' in paper_dict:
+    if 'authors' in paper_dict and paper_dict['authors']:
         for (i, author), has_next in lookahead(enumerate(paper_dict['authors'])):
             person, c = Person.objects.get_or_create(first_name=author['first_name'], last_name=author['last_name'])
             paper.authors.add(person)
             stdout.p([_('Authors') if i == 0 else '', '%s: %s' % (person.id, str(person))], after=None if has_next else '_', positions=positions)
 
-    if 'journal' in paper_dict:
+    if 'journal' in paper_dict and paper_dict['journal']:
         journal, c = Journal.objects.get_or_create(name=paper_dict['journal'])
         paper.journal = journal
         stdout.p([_('Journal'), '%s: %s' % (paper.journal.id, paper.journal.name)], positions=positions)
 
-    if 'volume' in paper_dict:
+    if 'volume' in paper_dict and paper_dict['volume']:
         paper.volume = paper_dict['volume']
         stdout.p([_('Volume'), paper.volume], positions=positions)
 
-    if 'published_on' in paper_dict:
+    if 'published_on' in paper_dict and paper_dict['published_on']:
         paper.published_on = paper_dict['published_on']
         stdout.p([_('Published on'), paper.published_on], positions=positions)
 
-    if 'url' in paper_dict:
+    if 'url' in paper_dict and paper_dict['url']:
         link, c = Link.objects.get_or_create(link=paper_dict['url'])
         paper.links.add(link)
         stdout.p([_('Links'), '%s: %s' % (link.id, link.link)], positions=positions)
