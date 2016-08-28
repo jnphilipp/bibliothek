@@ -49,6 +49,27 @@ def valid_date(s):
         raise ArgumentTypeError('Not a valid date: "{0}".'.format(s))
 
 
+def _binding(args):
+    import bindings.functions
+    if args.binding_subparsers == 'add':
+        bindings.functions.binding.create(args.name)
+    elif args.binding_subparsers == 'edit':
+        binding = bindings.functions.binding.get.by_term(args.binding)
+        if binding:
+            bindings.functions.binding.edit(binding, args.field, args.value)
+    elif args.binding_subparsers == 'info':
+        binding = bindings.functions.binding.get.by_term(args.binding)
+        if binding:
+            bindings.functions.binding.info(binding)
+    elif args.binding_subparsers == 'list':
+        if args.search:
+            bindings.functions.binding.list.by_term(args.search)
+        else:
+            bindings.functions.binding.list.all()
+    else:
+        binding_parser.print_help()
+
+
 def _book(args):
     import books.functions
     if args.book_subparsers == 'add':
@@ -274,6 +295,30 @@ if __name__ == "__main__":
     parser = ArgumentParser(prog=settings.APP_NAME, formatter_class=RawTextHelpFormatter)
     parser.add_argument('-v', '--version', action='version', version=settings.APP_VERSION)
     subparsers = parser.add_subparsers(dest='subparser')
+
+
+    # create the parser for the "binding" subcommand
+    binding_parser = subparsers.add_parser('binding', help='manage bindings')
+    binding_parser.set_defaults(func=_binding)
+    binding_subparsers = binding_parser.add_subparsers(dest='binding_subparsers')
+
+    # binding add
+    binding_add_parser = binding_subparsers.add_parser('add', help='add a binding')
+    binding_add_parser.add_argument('name', help='name')
+
+    # binding edit
+    binding_edit_parser = binding_subparsers.add_parser('edit', help='edit a binding')
+    binding_edit_parser.add_argument('binding', help='which binding to edit')
+    binding_edit_parser.add_argument('field', choices=['name'], help='which field to edit')
+    binding_edit_parser.add_argument('value', help='new value for field')
+
+    # binding info
+    binding_info_parser = binding_subparsers.add_parser('info', help='show information of a binding')
+    binding_info_parser.add_argument('binding', help='of which binding to show information')
+
+    # binding list
+    binding_list_parser = binding_subparsers.add_parser('list', help='list bindings')
+    binding_list_parser.add_argument('-s', '--search', help='filter by term')
 
 
     # create the parser for the "book" subcommand
