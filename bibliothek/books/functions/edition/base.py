@@ -72,11 +72,11 @@ def info(edition):
     stdout.p([_('Field'), _('Value')], positions=positions, after='=')
     stdout.p([_('Id'), edition.id], positions=positions)
     stdout.p([_('Book'), str(edition.book)], positions=positions)
-    stdout.p([_('ISBN'), book.isbn if book.isbn else ''], positions=positions)
-    stdout.p([_('Published on'), book.published_on if book.published_on else ''], positions=positions)
-    stdout.p([_('Cover'), book.cover_image if book.cover_image else ''], positions=positions)
-    stdout.p([_('Binding'), '%s: %s' % (book.binding.id, book.binding.name) if book.binding else ''], positions=positions)
-    stdout.p([_('Publisher'), '%s: %s' % (book.publisher.id, book.publisher.name) if book.publisher else ''], positions=positions)
+    stdout.p([_('ISBN'), edition.isbn if edition.isbn else ''], positions=positions)
+    stdout.p([_('Published on'), edition.published_on if edition.published_on else ''], positions=positions)
+    stdout.p([_('Cover'), edition.cover_image if edition.cover_image else ''], positions=positions)
+    stdout.p([_('Binding'), '%s: %s' % (edition.binding.id, edition.binding.name) if edition.binding else ''], positions=positions)
+    stdout.p([_('Publisher'), '%s: %s' % (edition.publisher.id, edition.publisher.name) if edition.publisher else ''], positions=positions)
 
     if edition.files.count() > 0:
         for (i, file), has_next in lookahead(enumerate(edition.files.all())):
