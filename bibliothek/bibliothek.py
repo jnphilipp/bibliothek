@@ -72,17 +72,53 @@ def _binding(args):
 
 def _book(args):
     import books.functions
-    if args.book_subparsers == 'add':
+    if args.book_subparser == 'add':
         books.functions.book.create(args.title, args.author, args.series, args.volume, args.link)
-    elif args.book_subparsers == 'edit':
+    elif args.book_subparser == 'edit':
         book = books.functions.book.get.by_term(args.book)
         if book:
-            books.functions.book.edit(book, args.field, args.value)
-    elif args.book_subparsers == 'info':
+            books.functions.book.edit(book, args.book_edit_subparser, args.value)
+    elif args.book_subparser == 'edition':
+        book = books.functions.book.get.by_term(args.book)
+        if args.book_edition_subparser == 'acquisition' and book:
+            edition = books.functions.edition.get.by_term(book, args.edition)
+            if args.book_edition_acquisition_subparser == 'add' and edition:
+                books.functions.edition.acquisition.add(edition, args.date, args.price)
+            elif args.book_edition_acquisition_subparser == 'delete' and edition:
+                books.functions.edition.acquisition.delete(edition, args.acquisition)
+            elif args.book_edition_acquisition_subparser == 'edit' and edition:
+                books.functions.edition.acquisition.edit(edition, args.acquisition, args.book_edition_acquisition_edit_subparser, args.value)
+        elif args.book_edition_subparser == 'add' and book:
+            books.functions.edition.create(book, args.isbn, args.published_on, args.cover, args.binding, args.publisher, args.file)
+        elif args.book_edition_subparser == 'edit' and book:
+            edition = books.functions.edition.get.by_term(book, args.edition)
+            if edition:
+                books.functions.edition.edit(edition, args.field, args.value)
+        elif args.book_edition_subparser == 'info' and book:
+            edition = books.functions.edition.get.by_term(book, args.edition)
+            if edition:
+                books.functions.edition.info(edition)
+        elif args.book_edition_subparser == 'list' and book:
+            if args.search:
+                books.functions.edition.list.by_term(book, args.search)
+            else:
+                books.functions.edition.list.all(book)
+        elif args.book_edition_subparser == 'read' and book:
+            edition = books.functions.edition.get.by_term(book, args.edition)
+            print(args)
+            if args.book_edition_read_subparsers == 'add' and edition:
+                books.functions.edition.read.add(edition, args.started, args.finished)
+            elif args.book_edition_read_subparsers == 'delete' and edition:
+                books.functions.edition.read.delete(edition, args.read)
+            elif args.book_edition_read_subparsers == 'edit' and edition:
+                books.functions.edition.read.edit(edition, args.read, args.field, args.value)
+        else:
+            book_edition_parser.print_help()
+    elif args.book_subparser == 'info':
         book = books.functions.book.get.by_term(args.book)
         if book:
             books.functions.book.info(book)
-    elif args.book_subparsers == 'list':
+    elif args.book_subparser == 'list':
         if args.shelf:
             books.functions.book.list.by_shelf(args.shelf)
         elif args.search:
@@ -324,10 +360,10 @@ if __name__ == "__main__":
     # create the parser for the "book" subcommand
     book_parser = subparsers.add_parser('book', help='manage books')
     book_parser.set_defaults(func=_book)
-    book_subparsers = book_parser.add_subparsers(dest='book_subparsers')
+    book_subparser = book_parser.add_subparsers(dest='book_subparser')
 
     # book add
-    book_add_parser = book_subparsers.add_parser('add', help='add a book')
+    book_add_parser = book_subparser.add_parser('add', help='add a book')
     book_add_parser.add_argument('title', help='title')
     book_add_parser.add_argument('-a', '--author', nargs='*', default=[], help='authors')
     book_add_parser.add_argument('-s', '--series', default=None, help='series')
@@ -335,9 +371,9 @@ if __name__ == "__main__":
     book_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
 
     # book edit
-    book_edit_parser = book_subparsers.add_parser('edit', help='edit a book')
+    book_edit_parser = book_subparser.add_parser('edit', help='edit a book')
     book_edit_parser.add_argument('book', help='which book to edit')
-    book_edit_subparser = book_edit_parser.add_subparsers(dest='book_edit_subparsers', help='which field to edit')
+    book_edit_subparser = book_edit_parser.add_subparsers(dest='book_edit_subparser', help='which field to edit')
 
     book_edit_title_parser = book_edit_subparser.add_parser('title')
     book_edit_title_parser.add_argument('value', help='new value for field')
@@ -348,12 +384,94 @@ if __name__ == "__main__":
     book_edit_volume_parser = book_edit_subparser.add_parser('volume')
     book_edit_volume_parser.add_argument('value', type=float, help='new value for field')
 
+    # book edition
+    book_edition_parser = book_subparser.add_parser('edition', help='manage editions of a book')
+    book_edition_parser.add_argument('book', help='editions of which book')
+    book_edition_subparser = book_edition_parser.add_subparsers(dest='book_edition_subparser')
+
+    # book edition acquisitions
+    book_edition_acquisition_parser = book_edition_subparser.add_parser('acquisition', help='manage acquisition of a book edition')
+    book_edition_acquisition_parser.add_argument('edition', help='of which edition to manage an acquisition')
+    book_edition_acquisition_subparser = book_edition_acquisition_parser.add_subparsers(dest='book_edition_acquisition_subparser')
+
+    book_edition_acquisition_add_parser = book_edition_acquisition_subparser.add_parser('add', help='add an acquisition')
+    book_edition_acquisition_add_parser.add_argument('--date', default=None, type=valid_date, help='date')
+    book_edition_acquisition_add_parser.add_argument('--price', default=0, type=float, help='price')
+
+    book_edition_acquisition_delete_parser = book_edition_acquisition_subparser.add_parser('delete', help='delete an acquisition')
+    book_edition_acquisition_delete_parser.add_argument('acquisition', type=int, help='which acquisition to delete')
+
+    book_edition_acquisition_edit_parser = book_edition_acquisition_subparser.add_parser('edit', help='edit an acquisition')
+    book_edition_acquisition_edit_parser.add_argument('acquisition', type=int, help='which acquisition to edit')
+
+    book_edition_acquisition_edit_subparser = book_edition_acquisition_edit_parser.add_subparsers(dest='book_edition_acquisition_edit_subparser', help='which field to edit')
+    book_edition_acquisition_edit_date_parser = book_edition_acquisition_edit_subparser.add_parser('date')
+    book_edition_acquisition_edit_date_parser.add_argument('value', type=valid_date, help='new value for field')
+
+    book_edition_acquisition_edit_price_parser = book_edition_acquisition_edit_subparser.add_parser('price')
+    book_edition_acquisition_edit_price_parser.add_argument('value', type=float, help='new value for field')
+
+    # book edition add
+    book_edition_add_parser = book_edition_subparser.add_parser('add', help='add an edition to a book')
+    book_edition_add_parser.add_argument('-i', '--isbn', help='ISBN')
+    book_edition_add_parser.add_argument('-p', '--published_on', type=valid_date, help='published on')
+    book_edition_add_parser.add_argument('-c', '--cover', help='path to a cover image')
+    book_edition_add_parser.add_argument('-b', '--binding', help='binding')
+    book_edition_add_parser.add_argument('-u', '--publisher', help='publisher')
+    book_edition_add_parser.add_argument('-f', '--file', nargs='*', default=[], help='files')
+
+    # book edition edit
+    book_edition_edit_parser = book_edition_subparser.add_parser('edit', help='edit a book edition')
+    book_edition_edit_parser.add_argument('edition', help='which edition to edit')
+    book_edition_edit_subparser = book_edition_edit_parser.add_subparsers(dest='book_edition_edit_subparser', help='which field to edit')
+
+    book_edition_edit_edition_parser = book_edition_edit_subparser.add_parser('isbn')
+    book_edition_edit_edition_parser.add_argument('value', help='new value for field')
+
+    book_edition_edit_published_on_parser = book_edition_edit_subparser.add_parser('published_on')
+    book_edition_edit_published_on_parser.add_argument('value', type=valid_date, help='new value for field')
+
+    book_edition_edit_cover_parser = book_edition_edit_subparser.add_parser('cover')
+    book_edition_edit_cover_parser.add_argument('value', help='new value for field')
+
+    book_edition_edit_binding_parser = book_edition_edit_subparser.add_parser('binding')
+    book_edition_edit_binding_parser.add_argument('value', help='new value for field')
+
+    book_edition_edit_publisher_parser = book_edition_edit_subparser.add_parser('publisher')
+    book_edition_edit_publisher_parser.add_argument('value', help='new value for field')
+
+    # book edition info
+    book_edition_info_parser = book_edition_subparser.add_parser('info', help='show information of a book edition')
+    book_edition_info_parser.add_argument('edition', help='of which edition to show information')
+
+    # book edition list
+    book_edition_list_parser = book_edition_subparser.add_parser('list', help='list editions of a book')
+    book_edition_list_parser.add_argument('-shelf', choices=['read', 'unread'], help='filter on shelves')
+    book_edition_list_parser.add_argument('-s', '--search', help='search by term')
+
+    # book edition reads
+    book_edition_read_parser = book_edition_subparser.add_parser('read', help='manage read of papers')
+    book_edition_read_parser.add_argument('edition', help='of which edition to manage a read')
+    book_edition_read_subparsers = book_edition_read_parser.add_subparsers(dest='book_edition_read_subparsers')
+
+    book_edition_read_add_parser = book_edition_read_subparsers.add_parser('add', help='add a read')
+    book_edition_read_add_parser.add_argument('--started', default=None, type=valid_date, help='date started')
+    book_edition_read_add_parser.add_argument('--finished', default=None, type=valid_date, help='date finished')
+
+    book_edition_read_delete_parser = book_edition_read_subparsers.add_parser('delete', help='delete a read')
+    book_edition_read_delete_parser.add_argument('read', type=int, help='which read to delete')
+
+    book_edition_read_edit_parser = book_edition_read_subparsers.add_parser('edit', help='edit a read')
+    book_edition_read_edit_parser.add_argument('read', type=int, help='which read to edit')
+    book_edition_read_edit_parser.add_argument('field', choices=['started', 'finished'], help='which field to edit')
+    book_edition_read_edit_parser.add_argument('value', type=valid_date, help='new value for field')
+
     # book info
-    book_info_parser = book_subparsers.add_parser('info', help='show information of a book')
+    book_info_parser = book_subparser.add_parser('info', help='show information of a book')
     book_info_parser.add_argument('book', help='of which book to show information')
 
     # book list
-    book_list_parser = book_subparsers.add_parser('list', help='list books')
+    book_list_parser = book_subparser.add_parser('list', help='list books')
     book_list_parser.add_argument('-shelf', choices=['read', 'unread'], help='filter on shelves')
     book_list_parser.add_argument('-s', '--search', help='search by term')
 
