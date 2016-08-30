@@ -73,36 +73,24 @@ def show(issue):
 
     if issue.links.count() > 0:
         for (i, link), has_next in lookahead(enumerate(issue.links.all())):
-            if i == 0:
-                stdout.p([_('Links'), '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
-            else:
-                stdout.p(['', '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
+            stdout.p([_('Links') if i == 0 else '', '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
     else:
         stdout.p([_('Links'), ''], positions=positions)
 
     if issue.files.count() > 0:
         for (i, file), has_next in lookahead(enumerate(issue.files.all())):
-            if i == 0:
-                stdout.p([_('Files'), '%s: %s' % (file.id, file)], positions=positions, after='' if has_next else '_')
-            else:
-                stdout.p(['', '%s: %s' % (file.id, file)], positions=positions, after='' if has_next else '_')
+            stdout.p([_('Files') if i == 0 else '', '%s: %s' % (file.id, file)], positions=positions, after='' if has_next else '_')
     else:
         stdout.p([_('Files'), ''], positions=positions)
 
     if issue.acquisitions.count() > 0:
         for (i, acquisition), has_next in lookahead(enumerate(issue.acquisitions.all())):
-            if i == 0:
-                stdout.p([_('Acquisitions'), '%s: date=%s, price=%0.2f' % (acquisition.id, acquisition.date, acquisition.price)], positions=positions, after='' if has_next else '_')
-            else:
-                stdout.p(['', '%s: date=%s, price=%0.2f' % (acquisition.id, acquisition.date, acquisition.price)], positions=positions, after='' if has_next else '_')
+            stdout.p([_('Acquisitions') if i == 0 else '', '%s: date=%s, price=%0.2f' % (acquisition.id, acquisition.date, acquisition.price)], positions=positions, after='' if has_next else '_')
     else:
         stdout.p([_('Acquisitions'), ''], positions=positions)
 
     if issue.reads.count() > 0:
         for (i, read), has_next in lookahead(enumerate(issue.reads.all())):
-            if i == 0:
-                stdout.p([_('Read'), '%s: date started=%s, date finished=%s' % (read.id, read.started, read.finished)], positions=positions, after='' if has_next else '=')
-            else:
-                stdout.p(['', '%s: date started=%s, date finished=%s' % (read.id, read.started, read.finished)], positions=positions, after='' if has_next else '=')
+            stdout.p([_('Read') if i == 0 else '', '%s: date started=%s, date finished=%s' % (read.id, read.started, read.finished)], positions=positions, after='' if has_next else '=')
     else:
         stdout.p([_('Read'), ''], positions=positions, after='=')

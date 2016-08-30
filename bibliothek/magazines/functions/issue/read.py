@@ -26,6 +26,8 @@ def delete(issue, read_id):
 
 
 def edit(issue, read_id, field, value):
+    assert field in ['started', 'finished']
+
     try:
         read = issue.reads.get(pk=read_id)
         if field == 'started':

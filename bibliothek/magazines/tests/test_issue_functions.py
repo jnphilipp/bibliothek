@@ -53,10 +53,10 @@ class IssueFunctionsTestCase(TestCase):
         self.assertIsNotNone(issue.id)
 
         issues = functions.issue.list.all(self.magazine)
-        self.assertEquals(len(issues), 2)
+        self.assertEquals(2, len(issues))
 
         issues = functions.issue.list.by_term(self.magazine, '5/2016')
-        self.assertEquals(len(issues), 1)
+        self.assertEquals(1, len(issues))
 
 
     def test_issue_acquisition(self):
@@ -66,13 +66,13 @@ class IssueFunctionsTestCase(TestCase):
 
         acquisition = functions.issue.acquisition.add(issue, date='2016-06-02', price=2.5)
         self.assertIsNotNone(acquisition)
-        self.assertEquals(issue.acquisitions.count(), 1)
+        self.assertEquals(1, issue.acquisitions.count())
 
         functions.issue.acquisition.edit(issue, acquisition.id, 'price', 5.75)
-        self.assertIsNotNone(acquisition.price, 5.75)
+        self.assertIsNotNone(5.75, acquisition.price)
 
         functions.issue.acquisition.delete(issue, acquisition.id)
-        self.assertEquals(issue.acquisitions.count(), 0)
+        self.assertEquals(0, issue.acquisitions.count())
 
 
     def test_issue_read(self):
@@ -82,11 +82,13 @@ class IssueFunctionsTestCase(TestCase):
 
         read = functions.issue.read.add(issue, started='2016-07-03')
         self.assertIsNotNone(read)
-        self.assertEquals(issue.reads.count(), 1)
+        self.assertEquals(1, issue.reads.count())
+
+        functions.issue.read.edit(issue, read.id, 'started', '2016-07-06')
+        self.assertIsNotNone('2016-07-06', str(read.started))
 
         functions.issue.read.edit(issue, read.id, 'finished', '2016-07-15')
-        self.assertIsNotNone(str(read.finished), '2016-07-15')
-
+        self.assertIsNotNone('2016-07-15', str(read.finished))
 
         functions.issue.read.delete(issue, read.id)
-        self.assertEquals(issue.reads.count(), 0)
+        self.assertEquals(0, issue.reads.count())
