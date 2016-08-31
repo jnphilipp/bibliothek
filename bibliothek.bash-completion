@@ -7,29 +7,19 @@ _bibliothek()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     subcommand="${COMP_WORDS[1]}"
 
-    opts="journal magazine paper runserver -h --help -v --version"
+    opts="binding book journal magazine paper person publisher series runserver -h --help -v --version"
 
     case "${subcommand}" in
-        journal)
-            subcommand="${COMP_WORDS[2]}"
-            case "${subcommand}" in
-                list)
-                    opts="-s --search -shelf -h --help"
-                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-                    return 0
-                    ;;
-                *)
-                    opts="list -h --help"
-                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-                    return 0
-                    ;;
-            esac
-            ;;
-        magazine)
+        binding)
             subcommand="${COMP_WORDS[2]}"
             case "${subcommand}" in
                 add)
-                    opts="-f --feed -l --link -h --help"
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                edit)
+                    opts="name -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -38,14 +28,39 @@ _bibliothek()
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
-                issue)
+                list)
+                    opts="-s --search -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                *)
+                    opts="add edit info list -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+            esac
+            ;;
+        book)
+            subcommand="${COMP_WORDS[2]}"
+            case "${subcommand}" in
+                add)
+                    opts="-a --author -s --series -v --volume -l --link -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                edit)
+                    opts="title series volume -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                edition)
                     subcommand="${COMP_WORDS[4]}"
                     case "${subcommand}" in
                         acquisition)
-                            subcommand="${COMP_WORDS[5]}"
+                            subcommand="${COMP_WORDS[6]}"
                             case "${subcommand}" in
                                 add)
-                                    opts="-date -price -h --help"
+                                    opts="--date --price -h --help"
                                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                                     return 0
                                     ;;
@@ -60,14 +75,24 @@ _bibliothek()
                                     return 0
                                     ;;
                                 *)
-                                    opts="add edit delete -h --help"
+                                    opts="add delete edit -h --help"
                                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                                     return 0
                                     ;;
                             esac
                             ;;
                         add)
-                            opts="-p --published_on -l --link -f --file -h --help"
+                            opts="-i --isbn -p --published_on -c --cover -b --binding -u --publisher -f --file -h --help"
+                            copts=$(compgen -W "${opts}" -- ${cur})
+                            OLDIFS=$IFS
+                            IFS=$'\n'
+                            COMPREPLY=( ${copts[@]} $(compgen -f -- ${cur}) )
+                            IFS=$OLDIFS
+                            _file="-o filenames"
+                            return 0
+                            ;;
+                        edit)
+                            opts="isbn published_on cover binding publisher -h --help"
                             copts=$(compgen -W "${opts}" -- ${cur})
                             OLDIFS=$IFS
                             IFS=$'\n'
@@ -82,15 +107,15 @@ _bibliothek()
                             return 0
                             ;;
                         list)
-                            opts="-shelf -s --search -h --help"
+                            opts="-s --search --shelf -h --help"
                             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                             return 0
                             ;;
                         read)
-                            subcommand="${COMP_WORDS[5]}"
+                            subcommand="${COMP_WORDS[6]}"
                             case "${subcommand}" in
                                 add)
-                                    opts="-started -finished -h --help"
+                                    opts="--started --finished -h --help"
                                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                                     return 0
                                     ;;
@@ -105,26 +130,176 @@ _bibliothek()
                                     return 0
                                     ;;
                                 *)
-                                    opts="add edit delete -h --help"
+                                    opts="add delete edit -h --help"
                                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                                     return 0
                                     ;;
                             esac
                             ;;
                         *)
-                            opts="acquisition add info list read -h --help"
+                            opts="acquisition add edit info list read -h --help"
+                            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                            return 0
+                            ;;
+                    esac
+                    ;;
+                info)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                list)
+                    opts="-s --search --shelf -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                *)
+                    opts="add edit edition info list -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+            esac
+            ;;
+        journal)
+            subcommand="${COMP_WORDS[2]}"
+            case "${subcommand}" in
+                add)
+                    opts="-l --link -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                edit)
+                    opts="name -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                info)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                list)
+                    opts="-s --search -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                *)
+                    opts="add edit info list -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+            esac
+            ;;
+        magazine)
+            subcommand="${COMP_WORDS[2]}"
+            case "${subcommand}" in
+                add)
+                    opts="-f --feed -l --link -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                edit)
+                    opts="name feed -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                info)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                issue)
+                    subcommand="${COMP_WORDS[4]}"
+                    case "${subcommand}" in
+                        acquisition)
+                            subcommand="${COMP_WORDS[6]}"
+                            case "${subcommand}" in
+                                add)
+                                    opts="--date --price -h --help"
+                                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                                    return 0
+                                    ;;
+                                edit)
+                                    opts="date price -h --help"
+                                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                                    return 0
+                                    ;;
+                                delete)
+                                    opts="-h --help"
+                                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                                    return 0
+                                    ;;
+                                *)
+                                    opts="add delete edit -h --help"
+                                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                                    return 0
+                                    ;;
+                            esac
+                            ;;
+                        add)
+                            opts="-p --published_on -c --cover -l --link -f --file -h --help"
+                            copts=$(compgen -W "${opts}" -- ${cur})
+                            OLDIFS=$IFS
+                            IFS=$'\n'
+                            COMPREPLY=( ${copts[@]} $(compgen -f -- ${cur}) )
+                            IFS=$OLDIFS
+                            _file="-o filenames"
+                            return 0
+                            ;;
+                        edit)
+                            opts="issue published_on cover -h --help"
+                            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                            return 0
+                            ;;
+                        info)
+                            opts="-h --help"
+                            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                            return 0
+                            ;;
+                        list)
+                            opts="--shelf -s --search -h --help"
+                            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                            return 0
+                            ;;
+                        read)
+                            subcommand="${COMP_WORDS[6]}"
+                            case "${subcommand}" in
+                                add)
+                                    opts="--started --finished -h --help"
+                                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                                    return 0
+                                    ;;
+                                edit)
+                                    opts="started finished -h --help"
+                                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                                    return 0
+                                    ;;
+                                delete)
+                                    opts="-h --help"
+                                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                                    return 0
+                                    ;;
+                                *)
+                                    opts="add delete edit -h --help"
+                                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                                    return 0
+                                    ;;
+                            esac
+                            ;;
+                        *)
+                            opts="acquisition add edit info list read -h --help"
                             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                             return 0
                         ;;
                     esac
                     ;;
                 list)
-                    opts="-s --search -shelf -h --help"
+                    opts="-s --search -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
                 *)
-                    opts="add info issue list -h --help"
+                    opts="add edit info issue list -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -137,7 +312,7 @@ _bibliothek()
                     subcommand="${COMP_WORDS[3]}"
                     case "${subcommand}" in
                         add)
-                            opts="-date -price -h --help"
+                            opts="--date --price -h --help"
                             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                             return 0
                             ;;
@@ -158,13 +333,18 @@ _bibliothek()
                             ;;
                     esac
                     ;;
+                add)
+                    opts="-a --author -p --published_on -j --journal -v --volume -l --link -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
                 edit)
-                    opts="-h --help"
+                    opts="title published_on journal volume -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
                 list)
-                    opts="read unread -h --help"
+                    opts="-s --search --shelf -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -192,7 +372,7 @@ _bibliothek()
                     subcommand="${COMP_WORDS[3]}"
                     case "${subcommand}" in
                         add)
-                            opts="-started -finished -h --help"
+                            opts="--started --finished -h --help"
                             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                             return 0
                             ;;
@@ -214,11 +394,101 @@ _bibliothek()
                     esac
                     ;;
                 *)
+                    local opts="acquisition add edit list info open parse read -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
                     ;;
             esac
-            local opts="acquisition edit list info open parse read -h --help"
-            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-            return 0
+            ;;
+        person)
+            subcommand="${COMP_WORDS[2]}"
+            case "${subcommand}" in
+                add)
+                    opts="-l --link -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                edit)
+                    opts="first_name last_name -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                info)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                list)
+                    opts="-s --search -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                *)
+                    opts="add edit info list -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+            esac
+            ;;
+        publisher)
+            subcommand="${COMP_WORDS[2]}"
+            case "${subcommand}" in
+                add)
+                    opts="-l --link -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                edit)
+                    opts="name -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                info)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                list)
+                    opts="-s --search -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                *)
+                    opts="add edit info list -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+            esac
+            ;;
+        series)
+            subcommand="${COMP_WORDS[2]}"
+            case "${subcommand}" in
+                add)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                edit)
+                    opts="name -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                info)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                list)
+                    opts="-s --search -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                *)
+                    opts="add edit info list -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+            esac
             ;;
         *)
             ;;
