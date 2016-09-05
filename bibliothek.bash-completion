@@ -7,7 +7,7 @@ _bibliothek()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     subcommand="${COMP_WORDS[1]}"
 
-    opts="binding book journal magazine paper person publisher series runserver -h --help -v --version"
+    opts="binding book genre journal magazine paper person publisher series runserver -h --help -v --version"
 
     case "${subcommand}" in
         binding)
@@ -44,7 +44,7 @@ _bibliothek()
             subcommand="${COMP_WORDS[2]}"
             case "${subcommand}" in
                 add)
-                    opts="-a --author -s --series -v --volume -l --link -h --help"
+                    opts="-a --author -s --series -v --volume -g --genre -l --link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -155,6 +155,36 @@ _bibliothek()
                     ;;
                 *)
                     opts="add edit edition info list -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+            esac
+            ;;
+        genre)
+            subcommand="${COMP_WORDS[2]}"
+            case "${subcommand}" in
+                add)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                edit)
+                    opts="name -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                info)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                list)
+                    opts="-s --search -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                *)
+                    opts="add edit info list -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
