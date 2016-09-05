@@ -102,6 +102,7 @@ INSTALLED_APPS = [
     'books',
     'bootstrap',
     'files',
+    'genres',
     'journals',
     'languages',
     'links',
