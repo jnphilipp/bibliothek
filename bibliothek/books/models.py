@@ -9,6 +9,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
+from genres.models import Genre
 from languages.models import Language
 from links.models import Link
 from persons.models import Person
@@ -31,6 +32,7 @@ class Book(models.Model):
     series = models.ForeignKey(Series, on_delete=models.SET_NULL, related_name='books', blank=True, null=True)
     volume = models.FloatField(default=0, blank=True)
 
+    genres = models.ManyToManyField(Genre, related_name='books', blank=True)
     links = models.ManyToManyField(Link, related_name='books', blank=True)
 
 

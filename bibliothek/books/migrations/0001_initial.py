@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
         ('persons', '0001_initial'),
         ('series', '0001_initial'),
         ('links', '0001_initial'),
+        ('genres', '0001_initial'),
     ]
 
     operations = [
@@ -29,6 +30,7 @@ class Migration(migrations.Migration):
                 ('volume', models.FloatField(blank=True, default=0)),
                 ('authors', models.ManyToManyField(blank=True, related_name='books', to='persons.Person')),
                 ('links', models.ManyToManyField(blank=True, related_name='books', to='links.Link')),
+                ('genres', models.ManyToManyField(blank=True, related_name='books', to='genres.Genre')),
                 ('series', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='books', to='series.Series')),
             ],
             options={
