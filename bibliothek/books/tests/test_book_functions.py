@@ -20,19 +20,24 @@ class BookFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(series.id)
 
-        book, created = functions.book.create('Some Test Book', [str(person.id)], str(series.id), 1.0)
+        book, created = functions.book.create('Some Test Book', [str(person.id)], str(series.id), 1.0, ['SciFi', 'Romance'])
         self.assertTrue(created)
         self.assertIsNotNone(book.id)
         self.assertEquals(1, book.authors.count())
         self.assertEquals(person, book.authors.first())
         self.assertEquals(series, book.series)
+        self.assertEquals(2, book.genres.count())
+        self.assertEquals('Romance', book.genres.first().name)
+        self.assertEquals('SciFi', book.genres.last().name)
 
-        book, created = functions.book.create('Some Test Book 2', ['%s %s' % (person.first_name, person.last_name)], series.name, 1.0)
+        book, created = functions.book.create('Some Test Book 2', ['%s %s' % (person.first_name, person.last_name)], series.name, 1.0, ['SciFi', 'Romance'])
         self.assertTrue(created)
         self.assertIsNotNone(book.id)
         self.assertEquals(1, book.authors.count())
         self.assertEquals(person, book.authors.first())
         self.assertEquals(series, book.series)
+        self.assertEquals('Romance', book.genres.first().name)
+        self.assertEquals('SciFi', book.genres.last().name)
 
 
     def test_book_edit(self):

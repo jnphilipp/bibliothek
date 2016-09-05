@@ -5,12 +5,13 @@ from django.db.models import Q, Value
 from django.db.models.functions import Concat
 from django.utils.translation import ugettext as _
 from links.models import Link
+from genres.models import Genre
 from persons.models import Person
 from series.models import Series
 from utils import lookahead, stdout
 
 
-def create(title, authors=[], series=None, volume=0, links=[]):
+def create(title, authors=[], series=None, volume=0, genres=[], links=[]):
     positions = [.33, 1.]
 
     book, created = Book.objects.get_or_create(title=title)
@@ -38,6 +39,10 @@ def create(title, authors=[], series=None, volume=0, links=[]):
         else:
             stdout.p([_('Volume'), ''], positions=positions)
 
+        for (i, g), has_next in lookahead(enumerate(genres)):
+            genre, c = Genre.objects.filter(Q(pk=g if g.isdigit() else None) | Q(name=g)).get_or_create(defaults={'name':g})
+            book.genres.add(genre)
+            stdout.p([_('Genres') if i == 0 else '', '%s: %s' % (genre.id, genre.name)], after=None if has_next else '_', positions=positions)
 
         for (i, url), has_next in lookahead(enumerate(links)):
             link, c = Link.objects.filter(Q(pk=url if url.isdigit() else None) | Q(link=url)).get_or_create(defaults={'link':url})
@@ -78,6 +83,12 @@ def info(book):
 
     stdout.p([_('Series'), '%s: %s' % (book.series.id, book.series.name) if book.series else ''], positions=positions)
     stdout.p([_('Volume'), book.volume if book.volume else ''], positions=positions)
+
+    if book.genres.count() > 0:
+        for (i, genre), has_next in lookahead(enumerate(book.genres.all())):
+            stdout.p([_('Genres') if i == 0 else '', '%s: %s' % (genre.id, genre.name)], positions=positions, after='' if has_next else '_')
+    else:
+        stdout.p([_('Genres'), ''], positions=positions)
 
     if book.links.count() > 0:
         for (i, link), has_next in lookahead(enumerate(book.links.all())):

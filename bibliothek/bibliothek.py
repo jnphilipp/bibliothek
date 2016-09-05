@@ -73,7 +73,7 @@ def _binding(args):
 def _book(args):
     import books.functions
     if args.book_subparser == 'add':
-        books.functions.book.create(args.title, args.author, args.series, args.volume, args.link)
+        books.functions.book.create(args.title, args.author, args.series, args.volume, args.genre, args.link)
     elif args.book_subparser == 'edit':
         book = books.functions.book.get.by_term(args.book)
         if book:
@@ -389,6 +389,7 @@ if __name__ == "__main__":
     book_add_parser.add_argument('-a', '--author', nargs='*', default=[], help='authors')
     book_add_parser.add_argument('-s', '--series', default=None, help='series')
     book_add_parser.add_argument('-v', '--volume', default=None, type=float, help='series volume')
+    book_add_parser.add_argument('-g', '--genre', nargs='*', default=[], help='genres')
     book_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
 
     # book edit

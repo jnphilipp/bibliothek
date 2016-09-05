@@ -26,10 +26,11 @@ class BookAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['slug', 'title', 'authors']}),
         ('Series', {'fields': ['series', 'volume']}),
+        ('Genres', {'fields': ['genres']}),
         ('Links', {'fields': ['links']}),
     ]
 
-    filter_horizontal = ('authors', 'links')
+    filter_horizontal = ('authors', 'genres', 'links')
 
 
 admin.site.register(Book, BookAdmin)
