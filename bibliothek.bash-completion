@@ -339,7 +339,7 @@ _bibliothek()
             subcommand="${COMP_WORDS[2]}"
             case "${subcommand}" in
                 acquisition)
-                    subcommand="${COMP_WORDS[3]}"
+                    subcommand="${COMP_WORDS[4]}"
                     case "${subcommand}" in
                         add)
                             opts="--date --price -h --help"
@@ -399,7 +399,7 @@ _bibliothek()
                     return 0
                     ;;
                 read)
-                    subcommand="${COMP_WORDS[3]}"
+                    subcommand="${COMP_WORDS[4]}"
                     case "${subcommand}" in
                         add)
                             opts="--started --finished -h --help"
