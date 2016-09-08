@@ -8,7 +8,7 @@ from utils import lookahead, stdout
 
 def all(book):
     editions = Edition.objects.filter(book=book)
-    _list([[edition.id, edition.isbn, edition.published_on] for edition in editions], [_('Id'), _('ISBN'), _('Published on')], positions=[.05, .55, 1.])
+    _list([[edition.id, edition.alternate_title, edition.isbn, edition.published_on] for edition in editions], [_('Id'), _('Alternate title'), _('ISBN'), _('Published on')], positions=[.05, .55, .75, 1.])
     return editions
 
 
@@ -19,13 +19,13 @@ def by_shelf(book, shelf):
     elif shelf == 'unread':
         editions = editions.filter(Q(reads__isnull=True) | Q(reads__finished__isnull=True))
     editions = editions.distinct()
-    _list([[edition.id, edition.isbn, edition.published_on] for edition in editions], [_('Id'), _('ISBN'), _('Published on')], positions=[.05, .55, 1.])
+    _list([[edition.id, edition.alternate_title, edition.isbn, edition.published_on] for edition in editions], [_('Id'), _('Alternate title'), _('ISBN'), _('Published on')], positions=[.05, .55, .75, 1.])
     return editions
 
 
 def by_term(book, term):
     editions = Edition.objects.filter(Q(book=book) & (Q(pk=term if term.isdigit() else None) | Q(isbn__icontains=term) | Q(published_on__icontains=term)))
-    _list([[edition.id, edition.isbn, edition.published_on] for edition in editions], [_('Id'), _('ISBN'), _('Published on')], positions=[.05, .55, 1.])
+    _list([[edition.id, edition.alternate_title, edition.isbn, edition.published_on] for edition in editions], [_('Id'), _('Alternate title'), _('ISBN'), _('Published on')], positions=[.05, .55, .75, 1.])
     return editions
 
 

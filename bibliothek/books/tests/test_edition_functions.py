@@ -45,15 +45,18 @@ class BookFunctionsTestCase(TestCase):
         self.assertEquals(binding, edition.binding)
         self.assertEquals(publisher, edition.publisher)
 
-        edition, created = functions.edition.create(self.book, '9783365469875', '2016-06-01', binding='Taschenbuch', publisher='Book Printer')
+        edition, created = functions.edition.create(self.book, '9783365469875', '2016-06-01', binding='Taschenbuch', publisher='Book Printer', languages=['Deutsch', 'Español'])
         self.assertTrue(created)
         self.assertIsNotNone(edition.id)
         self.assertEquals('9783365469875', edition.isbn)
         self.assertEquals('2016-06-01', edition.published_on)
         self.assertEquals(binding, edition.binding)
         self.assertEquals(publisher, edition.publisher)
+        self.assertEquals(2, edition.languages.count())
+        self.assertEquals('Deutsch', edition.languages.first().name)
+        self.assertEquals('Español', edition.languages.last().name)
 
-        edition, created = functions.edition.create(self.book, published_on='2016-06-01', binding='Paperpback', publisher='Printers')
+        edition, created = functions.edition.create(self.book, published_on='2016-06-01', binding='Paperpback', publisher='Printers', languages=['English'])
         self.assertTrue(created)
         self.assertIsNotNone(edition.id)
         self.assertIsNone(edition.isbn)
@@ -62,6 +65,8 @@ class BookFunctionsTestCase(TestCase):
         self.assertIsNotNone(edition.binding.id)
         self.assertIsNotNone(edition.publisher)
         self.assertIsNotNone(edition.publisher.id)
+        self.assertEquals(1, edition.languages.count())
+        self.assertEquals('English', edition.languages.first().name)
 
 
     def test_book_edit(self):
@@ -83,6 +88,18 @@ class BookFunctionsTestCase(TestCase):
         self.assertIsNotNone(edition.publisher)
         self.assertIsNotNone(edition.publisher.id)
         self.assertEquals('Printers', edition.publisher.name)
+
+        functions.edition.edit(edition, '+language', 'English')
+        self.assertEquals(1, edition.languages.count())
+        self.assertEquals('English', edition.languages.first().name)
+
+        functions.edition.edit(edition, '+language', 'Deutsch')
+        self.assertEquals(2, edition.languages.count())
+        self.assertEquals('Deutsch', edition.languages.first().name)
+
+        functions.edition.edit(edition, '-language', 'English')
+        self.assertEquals(1, edition.languages.count())
+        self.assertEquals('Deutsch', edition.languages.first().name)
 
 
     def test_book_get(self):

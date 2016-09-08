@@ -57,14 +57,32 @@ def create(title, authors=[], series=None, volume=0, genres=[], links=[]):
 
 
 def edit(book, field, value):
-    assert field in ['title', 'series', 'volume']
+    assert field in ['title', '+author', '-author', 'series', 'volume', '+genre', '-genre']
 
     if field == 'title':
         book.title = value
+    elif field == '+author':
+        author, created = Person.objects.annotate(name=Concat('first_name', Value(' '), 'last_name')).filter(Q(pk=value if value.isdigit() else None) | Q(name__icontains=value)).get_or_create(defaults={'first_name':value[:value.rfind(' ')], 'last_name':value[value.rfind(' ') + 1 :]})
+        book.authors.add(author)
+    elif field == '-author':
+        try:
+            author = Person.objects.annotate(name=Concat('first_name', Value(' '), 'last_name')).get(Q(pk=value if value.isdigit() else None) | Q(name__icontains=value))
+            book.authors.remove(author)
+        except Person.DoesNotExist:
+            stdout.p([_('Author "%(name)s" not found.') % {'name':value}], positions=[1.])
     elif field == 'series':
         book.series, created = Series.objects.filter(Q(pk=value if value.isdigit() else None) | Q(name__icontains=value)).get_or_create(defaults={'name':value})
     elif field == 'volume':
         book.volume = value
+    elif field == '+genre':
+        genre, created = Genre.objects.filter(Q(pk=value if value.isdigit() else None) | Q(name=value)).get_or_create(defaults={'name':value})
+        book.genres.add(genre)
+    elif field == '-genre':
+        try:
+            genre = Genre.objects.get(Q(pk=value if value.isdigit() else None) | Q(name=value))
+            book.genres.remove(genre)
+        except Genre.DoesNotExist:
+            stdout.p([_('Genre "%(name)s" not found.') % {'name':value}], positions=[1.])
     book.save()
     stdout.p([_('Successfully edited book "%(title)s" with id "%(id)s".') % {'title':book.title, 'id':book.id}], positions=[1.])
 

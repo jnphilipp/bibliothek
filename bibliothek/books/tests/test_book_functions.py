@@ -45,13 +45,26 @@ class BookFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(series.id)
 
-        book, created = functions.book.create('Test2 Book', series=str(series.id), volume=1.0)
+        person, created = pfunctions.person.create('John', 'Do')
+        self.assertTrue(created)
+        self.assertIsNotNone(person.id)
+
+        book, created = functions.book.create('Test2 Book', [str(person.id)], series=str(series.id), volume=1.0, genres=['Romance'])
         self.assertTrue(created)
         self.assertIsNotNone(book.id)
         self.assertEquals(series, book.series)
 
         functions.book.edit(book, 'title', 'IEEE Test Book')
         self.assertEquals('IEEE Test Book', book.title)
+
+        functions.book.edit(book, '+author', 'Jane Do')
+        self.assertEquals(2, book.authors.count())
+        self.assertEquals('Jane Do', str(book.authors.all()[0]))
+        self.assertEquals('John Do', str(book.authors.all()[1]))
+
+        functions.book.edit(book, '-author', str(person.id))
+        self.assertEquals(1, book.authors.count())
+        self.assertEquals('Jane Do', str(book.authors.all()[0]))
 
         series, created = sfunctions.series.create('Space Series')
         self.assertTrue(created)
@@ -69,6 +82,15 @@ class BookFunctionsTestCase(TestCase):
 
         functions.book.edit(book, 'series', 'Deep Space')
         self.assertEquals(series, book.series)
+
+        functions.book.edit(book, '+genre', 'SciFi')
+        self.assertEquals(2, book.genres.count())
+        self.assertEquals('Romance', str(book.genres.all()[0]))
+        self.assertEquals('SciFi', str(book.genres.all()[1]))
+
+        functions.book.edit(book, '-genre', '1')
+        self.assertEquals(1, book.genres.count())
+        self.assertEquals('SciFi', str(book.genres.all()[0]))
 
 
     def test_book_get(self):
