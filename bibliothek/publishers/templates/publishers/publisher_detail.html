@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load bootstrap i18n shelves %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-offset-1 col-md-10">
+        <h1 class="page-header">{{ publisher.name }}</h1>
+        <dl class="dl-horizontal">
+            <dt>{% trans 'Links' %}</dt>
+            <dd>
+                <ul class="list-unstyled">
+                    {% for link in publisher.links.all %}
+                        <li><a href="{{ link }}">{{ link }}</a></li>
+                    {% endfor %}
+                </ul>
+            </dd>
+        </dl>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-offset-1 col-md-10">
+        <h2 class="page-header">{% trans 'Editions' %}</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    {% sortable_th 'Id' o 'o' 'id' %}
+                    {% sortable_th 'Title' o 'o' 'book__title' %}
+                    <th>{% trans 'Authors' %}</th>
+                    {% sortable_th 'Series' o 'o' 'book__series' %}
+                    {% sortable_th 'Volume' o 'o' 'book__volume' %}
+                    {% sortable_th 'Alternate title' o 'o' 'alternate_title' %}
+                    {% sortable_th 'ISBN' o 'o' 'isbn' %}
+                    {% sortable_th 'Acquired' o 'o' 'acquisitions' %}
+                    {% sortable_th 'Read' o 'o' 'reads' %}
+                </thead>
+                <tbody>
+                    {% for edition in editions %}
+                        <tr>
+                            <th><a href="{% url 'edition_detail' edition.book.slug edition.id %}">#{{ edition.id }}</a></th>
+                            <td><a href="{% url 'book_detail' edition.book.slug %}">{{ edition.book.title }}</a></td>
+                            <td>{% for author in edition.book.authors.all %}{{ author }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{% if edition.book.series %}<a href="{% url 'series_detail' edition.book.series.slug %}">{{ edition.book.series.name }}</a>{% endif %}</td>
+                            <td>{{ edition.book.volume|default:'' }}</td>
+                            <td>{{ edition.alternate_title|default:'' }}</td>
+                            <td>{{ edition.isbn|default:'' }}</td>
+                            <td><span class="glyphicon glyphicon-{% if edition.acquisitions.exists %}ok{% else %}remove{% endif %}"></span></td>
+                            <td>{% read_status edition.reads %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
