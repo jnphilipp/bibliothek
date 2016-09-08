@@ -90,7 +90,7 @@ class Issue(models.Model):
 
 
     def save(self, *args, **kwargs):
-        if self.cover_image and not 'magazines' in self.cover_image.name:
+        if self.cover_image and not self.cover_image.name.startswith('magazines'):
             self.move_cover_image()
         if not self.slug:
             self.slug = slugify(self.issue)
@@ -100,7 +100,7 @@ class Issue(models.Model):
                 self.slug = slugify(self.issue)
         super(Issue, self).save(*args, **kwargs)
         for file in self.files.all():
-            if not 'magazines' in file.file:
+            if not file.file.name.startswith('magazines'):
                 self.move_file(file)
 
 
