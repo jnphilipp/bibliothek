@@ -1,10 +1,28 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericStackedInline
 from django.db import models
 from django.forms import Textarea, TextInput
 from django.utils.html import format_html_join
+from files.models import File
 from papers.models import Paper, TextFieldSingleLine
+from shelves.models import Acquisition, Read
+
+
+class AcquisitionInline(GenericStackedInline):
+    extra = 1
+    model = Acquisition
+
+
+class FileInline(GenericStackedInline):
+    extra = 1
+    model = File
+
+
+class ReadInline(GenericStackedInline):
+    extra = 1
+    model = Read
 
 
 class PaperAdmin(admin.ModelAdmin):
@@ -27,6 +45,12 @@ class PaperAdmin(admin.ModelAdmin):
         ('Journal', {'fields': ['journal', 'volume', 'published_on']}),
         ('Bibtex', {'fields': ['bibtex']}),
         ('Links', {'fields': ['links']}),
+    ]
+
+    inlines = [
+        FileInline,
+        AcquisitionInline,
+        ReadInline,
     ]
 
     filter_horizontal = ('authors', 'languages', 'links')

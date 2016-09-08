@@ -5,19 +5,36 @@ from django.contrib import admin
 from django.db import models
 from django.forms import Textarea, TextInput
 from django.utils.translation import ugettext as _
+from files.models import File
+from shelves.models import Acquisition, Read
+
+
+class AcquisitionInline(GenericStackedInline):
+    extra = 1
+    model = Acquisition
+
+
+class FileInline(GenericStackedInline):
+    extra = 1
+    model = File
+
+
+class ReadInline(GenericStackedInline):
+    extra = 1
+    model = Read
 
 
 class BookAdmin(admin.ModelAdmin):
-    def get_authors(self, inst):
-        return ', '.join([str(a) for a in inst.authors.all()])
+        def list_authors(self, obj):
+        return format_html_join(', ', '{} {}', ((p.first_name, p.last_name) for p in obj.authors.all()))
 
-    list_display = ('title', 'get_authors', 'series', 'volume')
+    list_display = ('title', 'list_authors', 'series', 'volume')
     list_filter = ('authors', 'series')
     readonly_fields = ('slug',)
     search_fields = ('title', 'authors__first_name', 'authors__last_name', 'series__name', 'volume')
 
-    get_authors.admin_order_field = 'authors'
-    get_authors.short_description = _('Authors')
+    list_authors.admin_order_field = 'authors'
+    list_authors.short_description = _('Authors')
 
     formfield_overrides = {
         TextFieldSingleLine: {'widget': TextInput(attrs={'autocomplete':'off', 'style':'min-width:50%;'})},
@@ -47,6 +64,12 @@ class EditionAdmin(admin.ModelAdmin):
         (None, {'fields': ['book', 'alternate_title', 'isbn', 'binding', 'published_on', 'publisher', 'cover_image']}),
         ('Languages', {'fields': ['languages']}),
         ('Bibtex', {'fields': ['bibtex']}),
+    ]
+
+    inlines = [
+        FileInline,
+        AcquisitionInline,
+        ReadInline,
     ]
 
     filter_horizontal = ('languages',)
