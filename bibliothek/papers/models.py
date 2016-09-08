@@ -62,7 +62,7 @@ class Paper(models.Model):
                 self.slug = slugify(self.title)
         super(Paper, self).save(*args, **kwargs)
         for file in self.files.all():
-            if not 'papers' in file.file:
+            if not file.file.name.startswith('papers'):
                 self.move_file(file)
 
 
