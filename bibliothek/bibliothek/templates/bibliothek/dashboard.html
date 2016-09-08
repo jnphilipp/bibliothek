@@ -19,10 +19,10 @@
         <tbody>
             {% for book in books %}
                 <tr>
-                    <th><a href="{% url 'book' book.slug %}">{{ book.title }}</a></th>
+                    <th><a href="{% url 'book_detail' book.slug %}">{{ book.title }}</a></th>
                     <td>{% for author in book.authors.all %}<a href="{% url 'person' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                    <th>{% if book.series %}<a href="{% url 'series' book.series.slug %}">{{ book.series.name }}</a>{% endif %}</th>
-                    <td>{{ book.volume }}</td>
+                    <th>{% if book.series %}<a href="{% url 'series_detail' book.series.slug %}">{{ book.series.name }}</a>{% endif %}</th>
+                    <td>{{ book.volume|default:'' }}</td>
                 </tr>
             {% endfor %}
         </tbody>

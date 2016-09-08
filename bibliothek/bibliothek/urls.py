@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^magazines/', include('magazines.urls')),
     url(r'^papers/', include('papers.urls')),
     url(r'^persons/', include('persons.urls')),
+    url(r'^series/', include('series.urls')),
 
     url(r'^admin/', admin.site.urls),
 ]
