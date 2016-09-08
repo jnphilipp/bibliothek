@@ -1,24 +1,37 @@
 # -*- coding: utf-8 -*-
 
 from django.db.models import Count
-from django.shortcuts import get_object_or_404, render
+from django.views import generic
 from persons.models import Person
 
 
-def persons(request):
-    o = request.GET.get('o') if request.GET.get('o') else 'name'
-    persons = Person.objects.annotate(cb=Count('books'), cp=Count('papers')).all()
-    if o.endswith('name'):
-        persons = persons.order_by('last_name', 'first_name')
-    else:
-        persons = persons.order_by(o)
-    return render(request, 'persons/person/persons.html', locals())
+class ListView(generic.ListView):
+    model = Person
 
 
-def person(request, slug):
-    bo = request.GET.get('bo') if request.GET.get('bo') else 'title'
-    po = request.GET.get('po') if request.GET.get('po') else 'title'
-    person = get_object_or_404(Person, slug=slug)
-    books = person.books.all().order_by(bo)
-    papers = person.papers.all().order_by(po)
-    return render(request, 'persons/person/person.html', locals())
+    def get_context_data(self, **kwargs):
+        context = super(ListView, self).get_context_data(**kwargs)
+        context['o'] = self.request.GET.get('o') if self.request.GET.get('o') else 'name'
+        return context
+
+
+    def get_queryset(self):
+        o = self.request.GET.get('o') if self.request.GET.get('o') else 'name'
+        persons = Person.objects.annotate(cb=Count('books'), cp=Count('papers'))
+        if o.endswith('name'):
+            persons = persons.order_by('last_name', 'first_name')
+        else:
+            persons = persons.order_by(o)
+        return persons
+
+
+class DetailView(generic.DetailView):
+    model = Person
+
+
+    def get_context_data(self, **kwargs):
+        context = super(DetailView, self).get_context_data(**kwargs)
+        context['o'] = self.request.GET.get('o') if self.request.GET.get('o') else 'title'
+        context['books'] = self.object.books.annotate(ce=Count('editions')).order_by(context['o'])
+        context['papers'] = self.object.papers.order_by(context['o'])
+        return context
