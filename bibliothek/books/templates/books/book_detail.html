@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="page-header">{{ book.title }}</h1>
+        <dl class="dl-horizontal">
+            <dt>{% trans 'Authors' %}</dt>
+            <dd>{% for author in book.authors.all %}<a href="{% url 'person' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dt>{% trans 'Series' %}</dt>
+            <dd>{% if book.series %}<a href="{% url 'series_detail' book.series.slug %}">{{ book.series.name }}</a>{% endif %}</dd>
+            <dt>{% trans 'Volume' %}</dt>
+            <dd>{{ book.volume }}</dd>
+            <dt>{% trans 'Genres' %}</dt>
+            <dd>{% for genre in book.genres.all %}<a href="">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+        </dl>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="page-header">{% trans 'Editions' %}</h2>
+        {% for edition in book.editions.all %}
+            <a href="{% url 'edition_detail' book.slug edition.id %}">
+                <figure class="figure">
+                    <img class="figure-img img-thumbnail" src="{% if edition.cover_image %}{{ edition.cover_image.url }}{% else %}{% static 'images/default_cover.jpg' %}{% endif %}" style="height: 250px;">
+                    <figcaption class="figure-caption text-center">{% trans 'Edition' %} #{{ edition.id }}</figcaption>
+                </figure>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

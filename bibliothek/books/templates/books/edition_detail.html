@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-offset-1 col-md-7">
+        <h1 class="page-header">{% trans 'Edition' %} #{{ edition.id }}</h1>
+        <dl class="dl-horizontal">
+            <dt>{% trans 'Title' %}</dt>
+            <dd>{{ edition.book.title }}</dd>
+            <dt>{% trans 'Authors' %}</dt>
+            <dd>{% for author in edition.book.authors.all %}<a href="{% url 'person' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dt>{% trans 'Series' %}</dt>
+            <dd>{% if edition.book.series %}<a href="{% url 'series_detail' edition.book.series.slug %}">{{ edition.book.series.name }}</a>{% endif %}</dd>
+            <dt>{% trans 'Volume' %}</dt>
+            <dd>{{ edition.book.volume }}</dd>
+            <dt>{% trans 'Genres' %}</dt>
+            <dd>{% for genre in edition.book.genres.all %}<a href="">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <hr>
+            <dt>{% trans 'Alternate title' %}</dt>
+            <dd>{{ edition.alternate_title|default:'' }}</dd>
+            <dt>{% trans 'ISBN' %}</dt>
+            <dd>{{ edition.isbn }}</dd>
+            <dt>{% trans 'Binding' %}</dt>
+            <dd>{{ edition.binding.name }}</dd>
+            <dt>{% trans 'Publisher' %}</dt>
+            <dd>{{ edition.publisher.name }}</dd>
+            <dt>{% trans 'Published on' %}</dt>
+            <dd>{{ edition.published_on|date:'Y-m-d' }}</dd>
+            <dt>{% trans 'Languages' %}</dt>
+            <dd>{% for language in edition.languages.all %}<a href="">{{ language.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dt>{% trans 'Files' %}</dt>
+            <dd>
+                <ul>
+                    {% for file in edition.files.all %}
+                        <li><a href="">{{ file.file.name }}</a></li>
+                    {% endfor %}
+                </ul>
+                <hr>
+            </dd>
+            <dt>{% trans 'Acquisitions' %}</dt>
+            <dd>
+                {% for acquisition in edition.acquisitions.all %}
+                    <ul>
+                        <li>
+                            {% if acquisition.date %}<b>{% trans 'Date' %}</b>: {{ acquisition.date|date:'Y-m-d' }}{% endif%}
+                            <b>{% trans 'Price' %}</b>: {{ acquisition.price }}
+                        </li>
+                    </ul>
+                {% endfor %}
+                <hr>
+            </dd>
+            <dt>{% trans 'Reads' %}</dt>
+            <dd>
+                {% for read in edition.reads.all %}
+                    <ul>
+                        <li>
+                            {% if read.started %}<b>{% trans 'Date started' %}</b>: {{ read.started|date:'Y-m-d' }}{% endif %}
+                            {% if read.finished %}<b>{% trans 'Date finished' %}</b>: {{ read.finished|date:'Y-m-d' }}{% endif %}
+                        </li>
+                    </ul>
+                {% endfor %}
+            </dd>
+        </dl>
+    </div>
+    {% if edition.cover_image %}
+        <div class="col-md-3">
+            <figure class="figure">
+                <img class="figure-img img-responsive img-thumbnail" src="{{ edition.cover_image.url }}">
+            </figure>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
