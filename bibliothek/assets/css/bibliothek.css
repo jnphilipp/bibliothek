@@ -24,3 +24,6 @@ a:active {position: relative;
 .navbar-brand img {margin-top: -5px;
     height: 30px;
     display: inline-block;}
+
+
+.figure {display: inline-block;}
