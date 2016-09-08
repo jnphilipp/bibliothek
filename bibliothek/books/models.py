@@ -61,7 +61,7 @@ class Book(models.Model):
 
 
     class Meta:
-        ordering = ('authors__last_name', 'authors__first_name', 'series', 'volume', 'title')
+        ordering = ('series', 'volume', 'title')
         verbose_name = _('Book')
         verbose_name_plural = _('Books')
 
@@ -70,6 +70,7 @@ class Edition(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    alternate_title = TextFieldSingleLine(blank=True, null=True)
     book = models.ForeignKey(Book, related_name='editions')
     isbn = models.CharField(max_length=13, blank=True, null=True)
     published_on = models.DateField(blank=True, null=True)
@@ -113,11 +114,11 @@ class Edition(models.Model):
 
 
     def save(self, *args, **kwargs):
-        if self.cover_image and not 'books' in self.cover_image.name:
+        if self.cover_image and not self.cover_image.name.startswith('books/'):
             self.move_cover_image()
         super(Edition, self).save(*args, **kwargs)
         for file in self.files.all():
-            if not 'books' in file.file:
+            if not file.file.name.startswith('books/'):
                 self.move_file(file)
 
 

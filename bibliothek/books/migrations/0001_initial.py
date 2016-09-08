@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name_plural': 'Books',
                 'verbose_name': 'Book',
-                'ordering': ('authors__last_name', 'authors__first_name', 'series', 'volume', 'title'),
+                'ordering': ('series', 'volume', 'title'),
             },
         ),
     ]
