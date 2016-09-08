@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load bootstrap i18n shelves %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-offset-1 col-md-10">
+        <h1 class="page-header">{{ series.name }}</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-offset-1 col-md-10">
+        <h2 class="page-header">{% trans 'Books' %}</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    {% sortable_th 'Title' o 'o' 'title' %}
+                    <th>{% trans 'Authors' %}</th>
+                    {% sortable_th 'Volume' o 'o' 'volume' %}
+                    {% sortable_th 'Number of Editions' o 'o' 'ce' %}
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                        <tr>
+                            <th><a href="{% url 'book_detail' book.slug %}">{{ book.title }}</a></th>
+                            <td>{% for author in book.authors.all %}<a href="{% url 'person' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{{ book.volume }}</td>
+                            <td>{{ book.ce }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
