@@ -2,8 +2,10 @@
 
 from books.models import Book, Edition, TextFieldSingleLine
 from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericStackedInline
 from django.db import models
 from django.forms import Textarea, TextInput
+from django.utils.html import format_html_join
 from django.utils.translation import ugettext as _
 from files.models import File
 from shelves.models import Acquisition, Read
@@ -25,7 +27,7 @@ class ReadInline(GenericStackedInline):
 
 
 class BookAdmin(admin.ModelAdmin):
-        def list_authors(self, obj):
+    def list_authors(self, obj):
         return format_html_join(', ', '{} {}', ((p.first_name, p.last_name) for p in obj.authors.all()))
 
     list_display = ('title', 'list_authors', 'series', 'volume')
