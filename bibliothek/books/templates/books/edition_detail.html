@@ -10,31 +10,41 @@
             <dt>{% trans 'Title' %}</dt>
             <dd>{{ edition.book.title }}</dd>
             <dt>{% trans 'Authors' %}</dt>
-            <dd>{% for author in edition.book.authors.all %}<a href="{% url 'person' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dd>{% for author in edition.book.authors.all %}<a href="{% url 'person_detail' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
             <dt>{% trans 'Series' %}</dt>
             <dd>{% if edition.book.series %}<a href="{% url 'series_detail' edition.book.series.slug %}">{{ edition.book.series.name }}</a>{% endif %}</dd>
             <dt>{% trans 'Volume' %}</dt>
-            <dd>{{ edition.book.volume }}</dd>
+            <dd>{{ edition.book.volume|default:'' }}</dd>
             <dt>{% trans 'Genres' %}</dt>
-            <dd>{% for genre in edition.book.genres.all %}<a href="">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dd>{% for genre in edition.book.genres.all %}<a href="{% url 'genre_detail' genre.slug %}">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dt>{% trans 'Links' %}</dt>
+            <dd>
+                <ul>
+                    {% for link in paper.links.all %}
+                        <li><a href="{{ link }}">{{ link }}</a></li>
+                    {% endfor %}
+                </ul>
+            </dd>
             <hr>
             <dt>{% trans 'Alternate title' %}</dt>
             <dd>{{ edition.alternate_title|default:'' }}</dd>
             <dt>{% trans 'ISBN' %}</dt>
-            <dd>{{ edition.isbn }}</dd>
+            <dd>{{ edition.isbn|default:'' }}</dd>
             <dt>{% trans 'Binding' %}</dt>
-            <dd>{{ edition.binding.name }}</dd>
+            <dd>{% if edition.binding %}{{ edition.binding.name }}{% endif %}</dd>
             <dt>{% trans 'Publisher' %}</dt>
-            <dd>{{ edition.publisher.name }}</dd>
+            <dd>{% if edition.publisher %}<a href="{% url 'publisher_detail' edition.publisher.slug %}">{{ edition.publisher.name }}</a>{% endif %}</dd>
             <dt>{% trans 'Published on' %}</dt>
             <dd>{{ edition.published_on|date:'Y-m-d' }}</dd>
             <dt>{% trans 'Languages' %}</dt>
-            <dd>{% for language in edition.languages.all %}<a href="">{{ language.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dd>{% for language in edition.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dt>{% trans 'Bibtex' %}</dt>
+            <dd>{% if paper.bibtex %}<pre>{{ paper.bibtex }}</pre>{% endif %}</dd>
             <dt>{% trans 'Files' %}</dt>
             <dd>
                 <ul>
                     {% for file in edition.files.all %}
-                        <li><a href="">{{ file.file.name }}</a></li>
+                        <li><a href="{{ file.file.url }}">{{ file }}</a></li>
                     {% endfor %}
                 </ul>
                 <hr>

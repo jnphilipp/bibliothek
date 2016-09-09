@@ -28,6 +28,7 @@ urlpatterns = [
 
     url(r'^books/', include('books.urls')),
     url(r'^journals/', include('journals.urls')),
+    url(r'^genres/', include('genres.urls')),
     url(r'^magazines/', include('magazines.urls')),
     url(r'^papers/', include('papers.urls')),
     url(r'^persons/', include('persons.urls')),

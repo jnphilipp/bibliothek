@@ -123,7 +123,7 @@ class Edition(models.Model):
 
 
     def __str__(self):
-        return '%s #%s' % (self.book, self.id)
+        return '%s #%s%s' % (self.book, self.id, ' (%s)' % self.alternate_title if self.alternate_title else '')
 
 
     class Meta:

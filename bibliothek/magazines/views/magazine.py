@@ -1,18 +1,31 @@
 # -*- coding: utf-8 -*-
 
 from django.db.models import Count
-from django.shortcuts import get_object_or_404, render
+from django.views import generic
 from magazines.models import Magazine
 
 
-def magazines(request):
-    o = request.GET.get('o') if request.GET.get('o') else 'name'
-    magazines = Magazine.objects.annotate(ci=Count('issues')).all().order_by(o)
-    return render(request, 'magazines/magazine/magazines.html', locals())
+class ListView(generic.ListView):
+    model = Magazine
 
 
-def magazine(request, slug):
-    o = request.GET.get('o') if request.GET.get('o') else '-published_on'
-    magazine = get_object_or_404(Magazine, slug=slug)
-    issues = magazine.issues.all().order_by(o)
-    return render(request, 'magazines/magazine/magazine.html', locals())
+    def get_context_data(self, **kwargs):
+        context = super(ListView, self).get_context_data(**kwargs)
+        context['o'] = self.request.GET.get('o') if self.request.GET.get('o') else 'name'
+        return context
+
+
+    def get_queryset(self):
+        o = self.request.GET.get('o') if self.request.GET.get('o') else 'name'
+        return Magazine.objects.annotate(ci=Count('issues')).order_by(o)
+
+
+class DetailView(generic.DetailView):
+    model = Magazine
+
+
+    def get_context_data(self, **kwargs):
+        context = super(DetailView, self).get_context_data(**kwargs)
+        context['o'] = self.request.GET.get('o') if self.request.GET.get('o') else '-published_on'
+        context['issues'] = self.object.issues.order_by(context['o'])
+        return context

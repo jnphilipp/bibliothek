@@ -5,18 +5,18 @@
 {% block content %}
 <div class="row">
     <div class="col-md-offset-1 col-md-10">
-        <h1 class="page-header">{% trans 'Series' %}</h1>
+        <h1 class="page-header">{% trans 'Magazines' %}</h1>
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
                     {% sortable_th 'Name' o 'o' 'name' %}
-                    {% sortable_th 'Number of Books' o 'o' 'cb' %}
+                    {% sortable_th 'Number of Issues' o 'o' 'ci' %}
                 </thead>
                 <tbody>
-                    {% for series in object_list %}
+                    {% for magazine in object_list %}
                         <tr>
-                            <th><a href="{% url 'series_detail' series.slug %}">{{ series.name }}</a></th>
-                            <th>{{ series.cb }}</th>
+                            <th><a href="{% url 'magazine_detail' magazine.slug %}">{{ magazine.name }}</a></th>
+                            <th>{{ magazine.ci }}</th>
                         </tr>
                     {% endfor %}
                 </tbody>

@@ -39,16 +39,20 @@
                         <li{% if request.path|startswith:book_list_url %} class="active"{% endif %}><a href="{{ book_list_url }}">{% trans 'Books' %}{% if request.path|startswith:book_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
                     <ul class="nav navbar-nav">
-                        {% url 'journals' as journals_url %}
-                        <li{% if request.path|startswith:journals_url %} class="active"{% endif %}><a href="{{ journals_url }}">{% trans 'Journals' %}{% if request.path|startswith:journals_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                        {% url 'journal_list' as journal_list_url %}
+                        <li{% if request.path|startswith:journal_list_url %} class="active"{% endif %}><a href="{{ journal_list_url }}">{% trans 'Journals' %}{% if request.path|startswith:journal_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
                     <ul class="nav navbar-nav">
-                        {% url 'magazines' as magazines_url %}
-                        <li{% if request.path|startswith:magazines_url %} class="active"{% endif %}><a href="{{ magazines_url }}">{% trans 'Magazines' %}{% if request.path|startswith:magazines_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                        {% url 'genre_list' as genre_list_url %}
+                        <li{% if request.path|startswith:genre_list_url %} class="active"{% endif %}><a href="{{ genre_list_url }}">{% trans 'Genres' %}{% if request.path|startswith:genre_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
                     <ul class="nav navbar-nav">
-                        {% url 'papers' as papers_url %}
-                        <li{% if request.path|startswith:papers_url %} class="active"{% endif %}><a href="{{ papers_url }}">{% trans 'Papers' %}{% if request.path|startswith:papers_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                        {% url 'magazine_list' as magazine_list_url %}
+                        <li{% if request.path|startswith:magazine_list_url %} class="active"{% endif %}><a href="{{ magazine_list_url }}">{% trans 'Magazines' %}{% if request.path|startswith:magazine_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav">
+                        {% url 'paper_list' as paper_list_url %}
+                        <li{% if request.path|startswith:paper_list_url %} class="active"{% endif %}><a href="{{ paper_list_url }}">{% trans 'Papers' %}{% if request.path|startswith:paper_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
                     <ul class="nav navbar-nav">
                         {% url 'person_list' as person_list_url %}

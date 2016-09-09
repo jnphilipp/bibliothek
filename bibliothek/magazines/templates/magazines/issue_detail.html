@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load bootstrap i18n %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-offset-1 col-md-7">
+        <h1 class="page-header">{{ issue.magazine.name }} {{ issue.issue }}</h1>
+        <dl class="dl-horizontal">
+            <dt>{% trans 'Magazine' %}</dt>
+            <dd><a href="{% url 'magazine_detail' issue.magazine.slug %}">{{ issue.magazine.name }}</a></dd>
+            <dd>{% if issue.magazine.feed %}<a href="{{ issue.magazine.feed.link }}">{{ issue.magazine.feed.link }}</a>{% endif %}</dd>
+            <dt>{% trans 'Links' %}</dt>
+            <dd>
+                <ul>
+                    {% for link in issue.magazine.links.all %}
+                        <li><a href="{{ link }}">{{ link }}</a></li>
+                    {% endfor %}
+                </ul>
+            </dd>
+            <hr>
+            <dt>{% trans 'Issue' %}</dt>
+            <dd>{{ issue.issue }}</dd>
+            <dt>{% trans 'Published on' %}</dt>
+            <dd>{{ issue.published_on|date:'Y-m-d' }}</dd>
+            <dt>{% trans 'Languages' %}</dt>
+            <dd>{% for language in issue.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dt>{% trans 'Links' %}</dt>
+            <dd>
+                <ul>
+                    {% for link in issue.links.all %}
+                        <li><a href="{{ link }}">{{ link }}</a></li>
+                    {% endfor %}
+                </ul>
+                <hr>
+            </dd>
+            <dt>{% trans 'Files' %}</dt>
+            <dd>
+                <ul>
+                    {% for file in issue.files.all %}
+                        <li><a href="{{ file.file.url }}">{{ file }}</a></li>
+                    {% endfor %}
+                </ul>
+                <hr>
+            </dd>
+            <dt>{% trans 'Acquisitions' %}</dt>
+            <dd>
+                {% for acquisition in issue.acquisitions.all %}
+                    <ul>
+                        <li>
+                            {% if acquisition.date %}<b>{% trans 'Date' %}</b>: {{ acquisition.date|date:'Y-m-d' }}{% endif%}
+                            <b>{% trans 'Price' %}</b>: {{ acquisition.price }}
+                        </li>
+                    </ul>
+                {% endfor %}
+                <hr>
+            </dd>
+            <dt>{% trans 'Reads' %}</dt>
+            <dd>
+                {% for read in issue.reads.all %}
+                    <ul>
+                        <li>
+                            {% if read.started %}<b>{% trans 'Date started' %}</b>: {{ read.started|date:'Y-m-d' }}{% endif %}
+                            {% if read.finished %}<b>{% trans 'Date finished' %}</b>: {{ read.finished|date:'Y-m-d' }}{% endif %}
+                        </li>
+                    </ul>
+                {% endfor %}
+            </dd>
+        </dl>
+    </div>
+    {% if issue.cover_image %}
+        <div class="col-md-3">
+            <figure class="figure">
+                <img class="figure-img img-responsive img-thumbnail" src="{{ issue.cover_image.url }}">
+            </figure>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

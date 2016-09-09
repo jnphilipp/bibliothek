@@ -5,7 +5,7 @@
 {% block content %}
 <div class="row">
     <div class="col-md-offset-1 col-md-10">
-        <h1 class="page-header">{{ series.name }}</h1>
+        <h1 class="page-header">{{ genre.name }}</h1>
     </div>
 </div>
 <div class="row">
@@ -16,6 +16,7 @@
                 <thead>
                     {% sortable_th 'Title' o 'o' 'title' %}
                     <th>{% trans 'Authors' %}</th>
+                    {% sortable_th 'Series' o 'o' 'series' %}
                     {% sortable_th 'Volume' o 'o' 'volume' %}
                     {% sortable_th 'Number of Editions' o 'o' 'ce' %}
                 </thead>
@@ -24,6 +25,7 @@
                         <tr>
                             <th><a href="{% url 'book_detail' book.slug %}">{{ book.title }}</a></th>
                             <td>{% for author in book.authors.all %}<a href="{% url 'person_detail' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{% if book.series %}<a href="{% url 'series_detail' book.series.slug %}">{{ book.series.name }}</a>{% endif %}</td>
                             <td>{{ book.volume|default:'' }}</td>
                             <td>{{ book.ce }}</td>
                         </tr>

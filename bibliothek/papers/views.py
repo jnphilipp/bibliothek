@@ -1,15 +1,24 @@
 # -*- coding: utf-8 -*-
 
-from django.shortcuts import get_object_or_404, render
+from django.db.models import Count
+from django.views import generic
 from papers.models import Paper
 
 
-def papers(request):
-    o = request.GET.get('o') if request.GET.get('o') else 'title'
-    papers = Paper.objects.all().order_by(o)
-    return render(request, 'papers/paper/papers.html', locals())
+class ListView(generic.ListView):
+    model = Paper
 
 
-def paper(request, slug):
-    paper = get_object_or_404(Paper, slug=slug)
-    return render(request, 'papers/paper/paper.html', locals())
+    def get_context_data(self, **kwargs):
+        context = super(ListView, self).get_context_data(**kwargs)
+        context['o'] = self.request.GET.get('o') if self.request.GET.get('o') else 'title'
+        return context
+
+
+    def get_queryset(self):
+        o = self.request.GET.get('o') if self.request.GET.get('o') else 'title'
+        return Paper.objects.order_by(o)
+
+
+class DetailView(generic.DetailView):
+    model = Paper

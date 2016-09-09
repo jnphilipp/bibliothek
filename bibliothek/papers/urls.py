@@ -5,6 +5,6 @@ from . import views
 
 
 urlpatterns = [
-    url(r'^paper/$', views.papers, name='papers'),
-    url(r'^paper/(?P<slug>[\w-]+)/$', views.paper, name='paper'),
+    url(r'^paper/$', views.ListView.as_view(), name='paper_list'),
+    url(r'^paper/(?P<slug>[\w-]+)/$', views.DetailView.as_view(), name='paper_detail'),
 ]

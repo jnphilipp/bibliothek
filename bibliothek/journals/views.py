@@ -1,18 +1,31 @@
 # -*- coding: utf-8 -*-
 
 from django.db.models import Count
-from django.shortcuts import get_object_or_404, render
+from django.views import generic
 from journals.models import Journal
 
 
-def journals(request):
-    o = request.GET.get('o') if request.GET.get('o') else 'name'
-    journals = Journal.objects.annotate(cp=Count('papers')).all().order_by(o)
-    return render(request, 'journals/journal/journals.html', locals())
+class ListView(generic.ListView):
+    model = Journal
 
 
-def journal(request, slug):
-    o = request.GET.get('o') if request.GET.get('o') else 'title'
-    journal = get_object_or_404(Journal, slug=slug)
-    papers = journal.papers.all().order_by(o)
-    return render(request, 'journals/journal/journal.html', locals())
+    def get_context_data(self, **kwargs):
+        context = super(ListView, self).get_context_data(**kwargs)
+        context['o'] = self.request.GET.get('o') if self.request.GET.get('o') else 'name'
+        return context
+
+
+    def get_queryset(self):
+        o = self.request.GET.get('o') if self.request.GET.get('o') else 'name'
+        return Journal.objects.annotate(cp=Count('papers')).order_by(o)
+
+
+class DetailView(generic.DetailView):
+    model = Journal
+
+
+    def get_context_data(self, **kwargs):
+        context = super(DetailView, self).get_context_data(**kwargs)
+        context['o'] = self.request.GET.get('o') if self.request.GET.get('o') else 'title'
+        context['papers'] = self.object.papers.order_by(context['o'])
+        return context

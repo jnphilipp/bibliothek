@@ -4,22 +4,30 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-offset-1 col-md-10">
         <h1 class="page-header">{{ book.title }}</h1>
         <dl class="dl-horizontal">
             <dt>{% trans 'Authors' %}</dt>
-            <dd>{% for author in book.authors.all %}<a href="{% url 'person' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dd>{% for author in book.authors.all %}<a href="{% url 'person_detail' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
             <dt>{% trans 'Series' %}</dt>
             <dd>{% if book.series %}<a href="{% url 'series_detail' book.series.slug %}">{{ book.series.name }}</a>{% endif %}</dd>
             <dt>{% trans 'Volume' %}</dt>
-            <dd>{{ book.volume }}</dd>
+            <dd>{{ book.volume|default:'' }}</dd>
             <dt>{% trans 'Genres' %}</dt>
-            <dd>{% for genre in book.genres.all %}<a href="">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+            <dd>{% for genre in book.genres.all %}<a href="{% url 'genre_detail' genre.slug %}">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+            <dt>{% trans 'Links' %}</dt>
+            <dd>
+                <ul>
+                    {% for link in paper.links.all %}
+                        <li><a href="{{ link }}">{{ link }}</a></li>
+                    {% endfor %}
+                </ul>
+            </dd>
         </dl>
     </div>
 </div>
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-offset-1 col-md-10">
         <h2 class="page-header">{% trans 'Editions' %}</h2>
         {% for edition in book.editions.all %}
             <a href="{% url 'edition_detail' book.slug edition.id %}">

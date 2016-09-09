@@ -5,9 +5,7 @@ from .views import issue, magazine
 
 
 urlpatterns = [
-    url(r'^magazine/$', magazine.magazines, name='magazines'),
-    url(r'^magazine/(?P<slug>[\w-]+)/$', magazine.magazine, name='magazine'),
-
-    url(r'^magazine/(?P<magazine_slug>[\w-]+)/issue/$', issue.issues, name='issues'),
-    url(r'^magazine/(?P<magazine_slug>[\w-]+)/issue/(?P<issue_slug>[\w-]+)/$', issue.issue, name='issue'),
+    url(r'^magazine/$', magazine.ListView.as_view(), name='magazine_list'),
+    url(r'^magazine/(?P<slug>[\w-]+)/$', magazine.DetailView.as_view(), name='magazine_detail'),
+    url(r'^magazine/(?P<slug>[\w-]+)/issue/(?P<pk>[0-9]+)/$', issue.DetailView.as_view(), name='issue_detail'),
 ]

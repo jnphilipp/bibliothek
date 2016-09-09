@@ -26,7 +26,7 @@
                     {% for book in books %}
                         <tr>
                             <th><a href="{% url 'book_detail' book.slug %}">{{ book.title }}</a></th>
-                            <td>{% for author in book.authors.all %}<a href="{% url 'person' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{% for author in book.authors.all %}<a href="{% url 'person_detail' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                             <th>{% if book.series %}<a href="{% url 'series_detail' book.series.slug %}">{{ book.series.name }}</a>{% endif %}</th>
                             <td>{{ book.volume|default:'' }}</td>
                         </tr>
@@ -46,15 +46,17 @@
             <table class="table table-striped table-hover">
                 <thead>
                     {% sortable_th 'Magazine' mo 'mo' 'magazine' %}
-                    {% sortable_th 'Issue' mo 'mo' 'published_on' %}
+                    {% sortable_th 'Issue' mo 'mo' 'issue' %}
+                    {% sortable_th 'Published on' mo 'mo' 'published_on' %}
                     {% sortable_th 'Acquired' mo 'mo' 'acquisitions' %}
                     {% sortable_th 'Read' mo 'mo' 'reads' %}
                 </thead>
                 <tbody>
                     {% for issue in issues %}
                         <tr>
-                            <th><a href="{% url 'magazine' issue.magazine.slug %}">{{ issue.magazine.name }}</a></th>
-                            <td><a href="{% url 'issue' issue.magazine.slug issue.slug %}">{{ issue.issue }}</a></td>
+                            <th><a href="{% url 'magazine_detail' issue.magazine.slug %}">{{ issue.magazine.name }}</a></th>
+                            <td><a href="{% url 'issue_detail' issue.magazine.slug issue.id %}">{{ issue.issue }}</a></td>
+                            <td><a href="{% url 'issue_detail' issue.magazine.slug issue.id %}">{{ issue.published_on|date:'Y-m-d' }}</a></td>
                             <td><span class="glyphicon glyphicon-{% if issue.acquisitions.exists %}ok{% else %}remove{% endif %}"></span></td>
                             <td>{% read_status issue.reads %}</td>
                         </tr>
@@ -83,10 +85,10 @@
                 <tbody>
                     {% for paper in papers %}
                         <tr>
-                            <th><a href="{% url 'paper' paper.slug %}">{{ paper.title }}</a></th>
-                            <td>{% for author in paper.authors.all %}<a href="{% url 'person' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                            <td><a href="{% url 'journal' paper.journal.slug %}">{{ paper.journal.name }}</a></td>
-                            <td>{{ paper.volume }}</td>
+                            <th><a href="{% url 'paper_detail' paper.slug %}">{{ paper.title }}</a></th>
+                            <td>{% for author in paper.authors.all %}<a href="{% url 'person_detail' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{% if paper.journal %}<a href="{% url 'journal_detail' paper.journal.slug %}">{{ paper.journal.name }}</a>{% endif %}</td>
+                            <td>{{ paper.volume|default:'' }}</td>
                             <td><span class="glyphicon glyphicon-{% if paper.acquisitions.exists %}ok{% else %}remove{% endif %}"></span></td>
                             <td>{% read_status paper.reads %}</td>
                         </tr>
