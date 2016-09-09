@@ -18,6 +18,17 @@ class PaperFunctionsTestCase(TestCase):
         self.assertEquals('Tauser', paper.authors.first().last_name)
         self.assertIsNotNone(paper.journal.id)
 
+        paper, created = functions.paper.create('AI Paper', ['Mark Tauser'], '2016-06-03', 'Science Journal', '20160603', languages=['English'])
+        self.assertTrue(created)
+        self.assertIsNotNone(paper.id)
+        self.assertEquals(1, paper.authors.count())
+        self.assertEquals('Mark', paper.authors.first().first_name)
+        self.assertEquals('Tauser', paper.authors.first().last_name)
+        self.assertIsNotNone(paper.journal.id)
+        self.assertEquals('Science Journal', paper.journal.name)
+        self.assertEquals(1, paper.languages.count())
+        self.assertEquals('English', paper.languages.first().name)
+
 
     def test_paper_parse(self):
         paper, created, acquisition = functions.paper.parse.from_dict({'title':'Parsed Paper'})
@@ -48,6 +59,18 @@ class PaperFunctionsTestCase(TestCase):
         functions.paper.edit(paper, 'journal', 'Science Journal')
         self.assertIsNotNone(paper.journal.id)
         self.assertEquals('Science Journal', paper.journal.name)
+
+        functions.paper.edit(paper, '+language', 'Deutsch')
+        self.assertEquals(1, paper.languages.count())
+        self.assertEquals('Deutsch', paper.languages.first().name)
+
+        functions.paper.edit(paper, '+language', 'English')
+        self.assertEquals(2, paper.languages.count())
+        self.assertEquals('English', paper.languages.last().name)
+
+        functions.paper.edit(paper, '-language', 'Deutsch')
+        self.assertEquals(1, paper.languages.count())
+        self.assertEquals('English', paper.languages.first().name)
 
 
     def test_paper_get(self):

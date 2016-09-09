@@ -364,12 +364,12 @@ _bibliothek()
                     esac
                     ;;
                 add)
-                    opts="-a --author -p --published_on -j --journal -v --volume -l --link -h --help"
+                    opts="-a --author -p --published_on -j --journal -v --volume -n --language -l --link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
                 edit)
-                    opts="title published_on journal volume -h --help"
+                    opts="title published_on journal volume +language -language +file -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;

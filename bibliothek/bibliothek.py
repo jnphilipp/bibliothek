@@ -237,11 +237,11 @@ def _paper(args):
         elif args.paper_acquisition_subparser == 'edit' and paper:
             papers.functions.paper.acquisition.edit(paper, args.acquisition, args.paper_acquisition_edit_subparser, args.value)
     elif args.paper_subparser == 'add':
-        papers.functions.paper.create(args.title, args.author, args.published_on, args.journal, args.volume, args.link)
+        papers.functions.paper.create(args.title, args.author, args.published_on, args.journal, args.volume, args.language, args.link)
     elif args.paper_subparser == 'edit':
         paper = papers.functions.paper.get.by_term(args.paper)
         if paper:
-            papers.functions.paper.edit(paper, args.field, args.value)
+            papers.functions.paper.edit(paper, args.paper_edit_subparser, args.value)
     elif args.paper_subparser == 'list':
         if args.shelf:
             papers.functions.paper.list.by_shelf(args.shelf)
@@ -703,10 +703,11 @@ if __name__ == "__main__":
     paper_add_parser.add_argument('-p', '--published_on', type=valid_date, help='published on')
     paper_add_parser.add_argument('-j', '--journal', help='journal')
     paper_add_parser.add_argument('-v', '--volume', help='journal volume')
+    paper_add_parser.add_argument('-n', '--language', nargs='*', default=[], help='languages')
     paper_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
 
     # paper edit
-    paper_edit_parser = paper_subparser.add_parser('edit', help='edit a paper')
+    paper_edit_parser = paper_subparser.add_parser('edit', help='edit a paper', prefix_chars='_')
     paper_edit_parser.add_argument('paper', help='which paper to edit')
     paper_edit_subparser = paper_edit_parser.add_subparsers(dest='paper_edit_subparser', help='which field to edit')
 
@@ -721,6 +722,15 @@ if __name__ == "__main__":
 
     paper_edit_volume_parser = paper_edit_subparser.add_parser('volume')
     paper_edit_volume_parser.add_argument('value', help='new value for field')
+
+    paper_edit_add_language_parser = paper_edit_subparser.add_parser('+language')
+    paper_edit_add_language_parser.add_argument('value', help='new value for field')
+
+    paper_edit_remove_language_parser = paper_edit_subparser.add_parser('-language')
+    paper_edit_remove_language_parser.add_argument('value', help='new value for field')
+
+    paper_edit_add_file_parser = paper_edit_subparser.add_parser('+file')
+    paper_edit_add_file_parser.add_argument('value', help='new value for field')
 
     # paper list
     paper_list_parser = paper_subparser.add_parser('list', help='list papers')
