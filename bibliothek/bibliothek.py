@@ -417,6 +417,12 @@ if __name__ == "__main__":
     book_edit_remove_genre_parser = book_edit_subparser.add_parser('-genre')
     book_edit_remove_genre_parser.add_argument('value', help='new value for field')
 
+    book_edit_add_link_parser = book_edit_subparser.add_parser('+link')
+    book_edit_add_link_parser.add_argument('value', help='new value for field')
+
+    book_edit_remove_link_parser = book_edit_subparser.add_parser('-link')
+    book_edit_remove_link_parser.add_argument('value', help='new value for field')
+
     # book edition
     book_edition_parser = book_subparser.add_parser('edition', help='manage editions of a book')
     book_edition_parser.add_argument('book', help='editions of which book')

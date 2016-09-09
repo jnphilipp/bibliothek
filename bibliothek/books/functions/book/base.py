@@ -57,7 +57,7 @@ def create(title, authors=[], series=None, volume=0, genres=[], links=[]):
 
 
 def edit(book, field, value):
-    assert field in ['title', '+author', '-author', 'series', 'volume', '+genre', '-genre']
+    assert field in ['title', '+author', '-author', 'series', 'volume', '+genre', '-genre', '+link', '-link']
 
     if field == 'title':
         book.title = value
@@ -83,6 +83,15 @@ def edit(book, field, value):
             book.genres.remove(genre)
         except Genre.DoesNotExist:
             stdout.p([_('Genre "%(name)s" not found.') % {'name':value}], positions=[1.])
+    elif field == '+link':
+        link, created = Link.objects.filter(Q(pk=value if value.isdigit() else None) | Q(link=value)).get_or_create(defaults={'link':value})
+        book.links.add(link)
+    elif field == '-link':
+        try:
+            link = Link.objects.get(Q(pk=value if value.isdigit() else None) | Q(link=value))
+            book.links.remove(link)
+        except Link.DoesNotExist:
+            stdout.p([_('Link "%(link)s" not found.') % {'link':value}], positions=[1.])
     book.save()
     stdout.p([_('Successfully edited book "%(title)s" with id "%(id)s".') % {'title':book.title, 'id':book.id}], positions=[1.])
 

@@ -49,7 +49,7 @@ _bibliothek()
                     return 0
                     ;;
                 edit)
-                    opts="title series volume +author -author +genre -genre -h --help"
+                    opts="title series volume +author -author +genre -genre +link -link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;

@@ -85,12 +85,24 @@ class BookFunctionsTestCase(TestCase):
 
         functions.book.edit(book, '+genre', 'SciFi')
         self.assertEquals(2, book.genres.count())
-        self.assertEquals('Romance', str(book.genres.all()[0]))
-        self.assertEquals('SciFi', str(book.genres.all()[1]))
+        self.assertEquals('Romance', book.genres.first().name)
+        self.assertEquals('SciFi', book.genres.last().name)
 
         functions.book.edit(book, '-genre', '1')
         self.assertEquals(1, book.genres.count())
-        self.assertEquals('SciFi', str(book.genres.all()[0]))
+        self.assertEquals('SciFi', book.genres.first().name)
+
+        functions.book.edit(book, '+link', 'https://deep.space')
+        self.assertEquals(1, book.links.count())
+        self.assertEquals('https://deep.space', book.links.first().link)
+
+        functions.book.edit(book, '+link', 'https://janedo.com/test2book')
+        self.assertEquals(2, book.links.count())
+        self.assertEquals('https://janedo.com/test2book', book.links.last().link)
+
+        functions.book.edit(book, '-link', 'https://deep.space')
+        self.assertEquals(1, book.links.count())
+        self.assertEquals('https://janedo.com/test2book', book.links.first().link)
 
 
     def test_book_get(self):
