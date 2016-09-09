@@ -48,7 +48,6 @@ class Issue(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    slug = models.SlugField(max_length=2048)
     issue = TextFieldSingleLine()
     magazine = models.ForeignKey(Magazine, on_delete=models.CASCADE, related_name='issues')
     published_on = models.DateField(blank=True, null=True)
@@ -92,12 +91,6 @@ class Issue(models.Model):
     def save(self, *args, **kwargs):
         if self.cover_image and not self.cover_image.name.startswith('magazines'):
             self.move_cover_image()
-        if not self.slug:
-            self.slug = slugify(self.issue)
-        else:
-            orig = Issue.objects.get(pk=self.id)
-            if orig.issue != self.issue:
-                self.slug = slugify(self.issue)
         super(Issue, self).save(*args, **kwargs)
         for file in self.files.all():
             if not file.file.name.startswith('magazines'):

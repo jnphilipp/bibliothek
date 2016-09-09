@@ -27,7 +27,6 @@ class ReadInline(GenericStackedInline):
 class IssueAdmin(admin.ModelAdmin):
     list_display = ('magazine', 'issue', 'published_on', 'updated_at')
     list_filter = ('magazine',)
-    readonly_fields = ('slug',)
     search_fields = ('magazine__name', 'issue')
 
     formfield_overrides = {
@@ -35,7 +34,7 @@ class IssueAdmin(admin.ModelAdmin):
     }
 
     fieldsets = [
-        (None, {'fields': ['slug', 'magazine', 'issue', 'published_on', 'languages', 'cover_image']}),
+        (None, {'fields': ['magazine', 'issue', 'published_on', 'languages', 'cover_image']}),
         ('Links', {'fields': ['links']}),
     ]
 

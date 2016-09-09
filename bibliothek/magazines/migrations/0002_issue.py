@@ -22,7 +22,6 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('slug', models.SlugField(max_length=2048)),
                 ('issue', magazines.models.TextFieldSingleLine()),
                 ('published_on', models.DateField(blank=True, null=True)),
                 ('cover_image', models.ImageField(blank=True, null=True, upload_to='files')),
