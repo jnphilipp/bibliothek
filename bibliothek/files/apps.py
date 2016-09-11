@@ -7,3 +7,7 @@ class FilesConfig(AppConfig):
     name = 'files'
     verbose_name = 'File'
     verbose_name_plural = 'Files'
+
+
+    def ready(self):
+        import files.signals

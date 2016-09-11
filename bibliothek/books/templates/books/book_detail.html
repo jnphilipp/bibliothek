@@ -7,6 +7,8 @@
     <div class="col-md-offset-1 col-md-10">
         <h1 class="page-header">{{ book.title }}</h1>
         <dl class="dl-horizontal">
+            <dt>{% trans 'Id' %}</dt>
+            <dd>{{ book.id }}</dd>
             <dt>{% trans 'Authors' %}</dt>
             <dd>{% for author in book.authors.all %}<a href="{% url 'person_detail' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
             <dt>{% trans 'Series' %}</dt>

@@ -215,3 +215,8 @@ STATICFILES_FINDERS = (
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') if DEVELOPMENT else APP_DATA_DIR
+
+
+# Shelves app
+
+CURRENCY_SYMBOL = config.get('shelves', 'CURRENCY_SYMBOL', fallback=None)

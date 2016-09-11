@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 
+from django.conf import settings
 from django.template import Library
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 register = Library()
 
+@register.filter
+def currency_symbol(price):
+    return '%s %s' % (price, settings.CURRENCY_SYMBOL) if settings.CURRENCY_SYMBOL else price
 
 @register.simple_tag
 def read_status(reads):

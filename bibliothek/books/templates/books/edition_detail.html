@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n shelves %}
 
 
 {% block content %}
@@ -26,6 +26,8 @@
                 </ul>
             </dd>
             <hr>
+            <dt>{% trans 'Id' %}</dt>
+            <dd>{{ edition.id }}</dd>
             <dt>{% trans 'Alternate title' %}</dt>
             <dd>{{ edition.alternate_title|default:'' }}</dd>
             <dt>{% trans 'ISBN' %}</dt>
@@ -55,7 +57,7 @@
                     <ul>
                         <li>
                             {% if acquisition.date %}<b>{% trans 'Date' %}</b>: {{ acquisition.date|date:'Y-m-d' }}{% endif%}
-                            <b>{% trans 'Price' %}</b>: {{ acquisition.price }}
+                            <b>{% trans 'Price' %}</b>: {{ acquisition.price|currency_symbol }}
                         </li>
                     </ul>
                 {% endfor %}

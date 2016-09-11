@@ -24,7 +24,7 @@ def by_shelf(book, shelf):
 
 
 def by_term(book, term):
-    editions = Edition.objects.filter(Q(book=book) & (Q(pk=term if term.isdigit() else None) | Q(isbn__icontains=term) | Q(published_on__icontains=term)))
+    editions = Edition.objects.filter(Q(book=book) & (Q(pk=term if term.isdigit() else None) | Q(alternate_title__icontains=term) | Q(isbn__icontains=term) | Q(published_on__icontains=term)))
     _list([[edition.id, edition.alternate_title, edition.isbn, edition.published_on] for edition in editions], [_('Id'), _('Alternate title'), _('ISBN'), _('Published on')], positions=[.05, .55, .75, 1.])
     return editions
 
