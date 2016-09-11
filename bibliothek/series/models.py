@@ -2,6 +2,8 @@
 
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.utils.translation import ugettext as _
+from links.models import Link
 
 
 class TextFieldSingleLine(models.TextField):
@@ -14,6 +16,7 @@ class Series(models.Model):
 
     slug = models.SlugField(max_length=2048, unique=True)
     name = TextFieldSingleLine(unique=True)
+    links = models.ManyToManyField(Link, related_name='series', blank=True)
 
 
     def save(self, *args, **kwargs):
@@ -32,5 +35,5 @@ class Series(models.Model):
 
     class Meta:
         ordering = ('name',)
-        verbose_name = 'Series'
-        verbose_name_plural = 'Series'
+        verbose_name = _('Series')
+        verbose_name_plural = _('Series')

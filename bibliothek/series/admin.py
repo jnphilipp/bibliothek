@@ -7,6 +7,7 @@ from series.models import Series, TextFieldSingleLine
 
 class SeriesAdmin(admin.ModelAdmin):
     list_display = ('name', 'updated_at')
+    list_filter = ('links', )
     readonly_fields = ('slug',)
     search_fields = ('name',)
 
@@ -16,7 +17,10 @@ class SeriesAdmin(admin.ModelAdmin):
 
     fieldsets = [
         (None, {'fields': ['slug', 'name']}),
+        ('links', {'fields': ['links']}),
     ]
+
+    filter_horizontal = ('links',)
 
 
 admin.site.register(Series, SeriesAdmin)

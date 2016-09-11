@@ -6,6 +6,16 @@
 <div class="row">
     <div class="col-md-offset-1 col-md-10">
         <h1 class="page-header">{{ series.name }}</h1>
+        <dl class="dl-horizontal">
+            <dt>{% trans 'Links' %}</dt>
+            <dd>
+                <ul>
+                    {% for link in series.links.all %}
+                        <li><a href="{{ link }}">{{ link }}</a></li>
+                    {% endfor %}
+                </ul>
+            </dd>
+        </dl>
     </div>
 </div>
 <div class="row">
