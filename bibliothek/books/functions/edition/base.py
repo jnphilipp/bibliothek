@@ -101,17 +101,17 @@ def info(edition):
     stdout.p([_('Binding'), '%s: %s' % (edition.binding.id, edition.binding.name) if edition.binding else ''], positions=positions)
     stdout.p([_('Publisher'), '%s: %s' % (edition.publisher.id, edition.publisher.name) if edition.publisher else ''], positions=positions)
 
-    if edition.files.count() > 0:
-        for (i, file), has_next in lookahead(enumerate(edition.files.all())):
-            stdout.p([_('Files') if i == 0 else '', '%s: %s' % (file.id, file)], positions=positions, after='' if has_next else '_')
-    else:
-        stdout.p([_('Files'), ''], positions=positions)
-
     if edition.languages.count() > 0:
         for (i, language), has_next in lookahead(enumerate(edition.languages.all())):
             stdout.p([_('Languages') if i == 0 else '', '%s: %s' % (language.id, language.name)], positions=positions, after='' if has_next else '_')
     else:
         stdout.p([_('Languages'), ''], positions=positions)
+
+    if edition.files.count() > 0:
+        for (i, file), has_next in lookahead(enumerate(edition.files.all())):
+            stdout.p([_('Files') if i == 0 else '', '%s: %s' % (file.id, file)], positions=positions, after='' if has_next else '_')
+    else:
+        stdout.p([_('Files'), ''], positions=positions)
 
     if edition.acquisitions.count() > 0:
         for (i, acquisition), has_next in lookahead(enumerate(edition.acquisitions.all())):

@@ -43,7 +43,7 @@
                     <ul>
                         <li>
                             {% if acquisition.date %}<b>{% trans 'Date' %}</b>: {{ acquisition.date|date:'Y-m-d' }}{% endif%}
-                            <b>{% trans 'Price' %}</b>: {{ acquisition.price }}
+                            <b>{% trans 'Price' %}</b>: {{ acquisition.price|currency_symbol }}
                         </li>
                     </ul>
                 {% endfor %}
