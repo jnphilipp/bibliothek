@@ -10,6 +10,12 @@ class SeriesFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(series.id)
 
+        series, created = functions.series.create('Secret Files', links=['https://secrectfiles.com'])
+        self.assertTrue(created)
+        self.assertIsNotNone(series.id)
+        self.assertEquals(1, series.links.count())
+        self.assertEquals('https://secrectfiles.com', series.links.first().link)
+
 
     def test_series_edit(self):
         series, created = functions.series.create('Some other Series')
@@ -18,6 +24,18 @@ class SeriesFunctionsTestCase(TestCase):
 
         functions.series.edit(series, 'name', 'Some cool Series')
         self.assertEquals('Some cool Series', series.name)
+
+        functions.series.edit(series, '+link', 'https://test.com')
+        self.assertEquals(1, series.links.count())
+        self.assertEquals('https://test.com', series.links.first().link)
+
+        functions.series.edit(series, '+link', 'https://testsome.com')
+        self.assertEquals(2, series.links.count())
+        self.assertEquals('https://testsome.com', series.links.last().link)
+
+        functions.series.edit(series, '-link', 'https://test.com')
+        self.assertEquals(1, series.links.count())
+        self.assertEquals('https://testsome.com', series.links.first().link)
 
 
     def test_series_get(self):

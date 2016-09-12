@@ -28,10 +28,19 @@ def create(name, links=[]):
 
 
 def edit(publisher, field, value):
-    assert field in ['name']
+    assert field in ['name', '+link', '-link']
 
     if field == 'name':
         publisher.name = value
+    elif field == '+link':
+        link, created = Link.objects.filter(Q(pk=value if value.isdigit() else None) | Q(link=value)).get_or_create(defaults={'link':value})
+        publisher.links.add(link)
+    elif field == '-link':
+        try:
+            link = Link.objects.get(Q(pk=value if value.isdigit() else None) | Q(link=value))
+            publisher.links.remove(link)
+        except Link.DoesNotExist:
+            stdout.p([_('Link "%(name)s" not found.') % {'name':value}], positions=[1.])
     publisher.save()
     stdout.p([_('Successfully edited publisher "%(name)s" with id "%(id)s".') % {'name':publisher.name, 'id':publisher.id}], positions=[1.])
 
@@ -44,9 +53,12 @@ def info(publisher):
 
     if publisher.links.count() > 0:
         for (i, link), has_next in lookahead(enumerate(publisher.links.all())):
-            if i == 0:
-                stdout.p([_('Links'), '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
-            else:
-                stdout.p(['', '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
+            stdout.p([_('Links') if i == 0 else '', '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
     else:
         stdout.p([_('Links'), ''], positions=positions)
+
+    if publisher.books.count() > 0:
+        for (i, book), has_next in lookahead(enumerate(publisher.books.all().order_by('volume'))):
+            stdout.p([_('Books') if i == 0 else '', '%s: %s' % (book.id, str(book))], positions=positions, after='' if has_next else '_')
+    else:
+        stdout.p([_('Books'), ''], positions=positions)

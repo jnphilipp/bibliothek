@@ -304,7 +304,7 @@ def _publisher(args):
     elif args.publisher_subparser == 'edit':
         publisher = publishers.functions.publisher.get.by_term(args.publisher)
         if publisher:
-            publishers.functions.publisher.edit(publisher, args.field, args.value)
+            publishers.functions.publisher.edit(publisher, args.series_edit_subparser, args.value)
     elif args.publisher_subparser == 'info':
         publisher = publishers.functions.publisher.get.by_term(args.publisher)
         if publisher:
@@ -321,11 +321,11 @@ def _publisher(args):
 def _series(args):
     import series.functions
     if args.series_subparser == 'add':
-        series.functions.series.create(args.name)
+        series.functions.series.create(args.name, args.link)
     elif args.series_subparser == 'edit':
         series_obj = series.functions.series.get.by_term(args.series)
         if series_obj:
-            series.functions.series.edit(series_obj, args.field, args.value)
+            series.functions.series.edit(series_obj, args.series_edit_subparser, args.value)
     elif args.series_subparser == 'info':
         series_obj = series.functions.series.get.by_term(args.series)
         if series_obj:
@@ -812,10 +812,18 @@ if __name__ == "__main__":
     publisher_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
 
     # publisher edit
-    publisher_edit_parser = publisher_subparser.add_parser('edit', help='edit a publisher')
-    publisher_edit_parser.add_argument('publisher', help='which publisher to edit')
-    publisher_edit_parser.add_argument('field', choices=['name'], help='field to edit')
-    publisher_edit_parser.add_argument('value', help='new value for field')
+    publisher_edit_parser = publisher_subparser.add_parser('edit', help='edit a book edition', prefix_chars='_')
+    publisher_edit_parser.add_argument('edition', help='which edition to edit')
+    publisher_edit_subparser = publisher_edit_parser.add_subparsers(dest='publisher_edit_subparser', help='which field to edit')
+
+    publisher_edit_name_parser = publisher_edit_subparser.add_parser('name')
+    publisher_edit_name_parser.add_argument('value', help='new value for field')
+
+    publisher_edit_add_link_parser = publisher_edit_subparser.add_parser('+link')
+    publisher_edit_add_link_parser.add_argument('value', help='new value for field')
+
+    publisher_edit_remove_link_parser = publisher_edit_subparser.add_parser('-link')
+    publisher_edit_remove_link_parser.add_argument('value', help='new value for field')
 
     # publisher info
     publisher_info_parser = publisher_subparser.add_parser('info', help='show information of a publisher')
@@ -834,9 +842,22 @@ if __name__ == "__main__":
     # series add
     series_add_parser = series_subparser.add_parser('add', help='add a series')
     series_add_parser.add_argument('name', help='name')
+    series_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
 
     # series edit
-    series_edit_parser = series_subparser.add_parser('edit', help='edit a series')
+    series_edit_parser = series_subparser.add_parser('edit', help='edit a book edition', prefix_chars='_')
+    series_edit_parser.add_argument('edition', help='which edition to edit')
+    series_edit_subparser = series_edit_parser.add_subparsers(dest='series_edit_subparser', help='which field to edit')
+
+    series_edit_name_parser = series_edit_subparser.add_parser('name')
+    series_edit_name_parser.add_argument('value', help='new value for field')
+
+    series_edit_add_link_parser = series_edit_subparser.add_parser('+link')
+    series_edit_add_link_parser.add_argument('value', help='new value for field')
+
+    series_edit_remove_link_parser = series_edit_subparser.add_parser('-link')
+    series_edit_remove_link_parser.add_argument('value', help='new value for field')
+
     series_edit_parser.add_argument('series', help='which series to edit')
     series_edit_parser.add_argument('field', choices=['name'], help='field to edit')
     series_edit_parser.add_argument('value', help='new value for field')

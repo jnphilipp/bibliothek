@@ -1,17 +1,25 @@
 # -*- coding: utf-8 -*-
 
+from django.db.models import Q
 from django.utils.translation import ugettext as _
+from links.models import Link
 from series.models import Series
 from utils import lookahead, stdout
 
 
-def create(name):
+def create(name, links=[]):
     positions = [.33, 1.]
 
     series, created = Series.objects.get_or_create(name=name)
     if created:
         stdout.p([_('Id'), series.id], positions=positions)
         stdout.p([_('Name'), series.name], positions=positions)
+
+        for (i, url), has_next in lookahead(enumerate(links)):
+            link, c = Link.objects.filter(Q(pk=url if url.isdigit() else None) | Q(link=url)).get_or_create(defaults={'link':url})
+            series.links.add(link)
+            stdout.p([_('Links') if i == 0 else '', link.link], after=None if has_next else '_', positions=positions)
+
         series.save()
         stdout.p([_('Successfully added series "%(name)s" with id "%(id)s".') % {'name':series.name, 'id':series.id}], after='=', positions=[1.])
     else:
@@ -20,10 +28,19 @@ def create(name):
 
 
 def edit(series, field, value):
-    assert field in ['name']
+    assert field in ['name', '+link', '-link']
 
     if field == 'name':
         series.name = value
+    elif field == '+link':
+        link, created = Link.objects.filter(Q(pk=value if value.isdigit() else None) | Q(link=value)).get_or_create(defaults={'link':value})
+        series.links.add(link)
+    elif field == '-link':
+        try:
+            link = Link.objects.get(Q(pk=value if value.isdigit() else None) | Q(link=value))
+            series.links.remove(link)
+        except Link.DoesNotExist:
+            stdout.p([_('Link "%(name)s" not found.') % {'name':value}], positions=[1.])
     series.save()
     stdout.p([_('Successfully edited series "%(name)s" with id "%(id)s".') % {'name':series.name, 'id':series.id}], positions=[1.])
 
@@ -34,11 +51,14 @@ def info(series):
     stdout.p([_('Id'), series.id], positions=positions)
     stdout.p([_('Name'), series.name], positions=positions)
 
+    if series.links.count() > 0:
+        for (i, link), has_next in lookahead(enumerate(series.links.all())):
+            stdout.p([_('Links') if i == 0 else '', '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
+    else:
+        stdout.p([_('Links'), ''], positions=positions)
+
     if series.books.count() > 0:
         for (i, book), has_next in lookahead(enumerate(series.books.all().order_by('volume'))):
-            if i == 0:
-                stdout.p([_('Books'), '%s: %s %s' % (book.id, book.volume, book.title)], positions=positions, after='' if has_next else '_')
-            else:
-                stdout.p(['', '%s: %s %s' % (book.id, book.volume, book.title)], positions=positions, after='' if has_next else '_')
+            stdout.p([_('Books') if i == 0 else '', '%s: %s' % (book.id, str(book))], positions=positions, after='' if has_next else '_')
     else:
         stdout.p([_('Books'), ''], positions=positions)

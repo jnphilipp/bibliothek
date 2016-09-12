@@ -24,6 +24,18 @@ class PublisherFunctionsTestCase(TestCase):
         functions.publisher.edit(publisher, 'name', 'IEEE Test Publisher')
         self.assertEquals('IEEE Test Publisher', publisher.name)
 
+        functions.publisher.edit(publisher, '+link', 'https://example.com')
+        self.assertEquals(1, publisher.links.count())
+        self.assertEquals('https://example.com', publisher.links.first().link)
+
+        functions.publisher.edit(publisher, '+link', 'https://test-publisher.com')
+        self.assertEquals(2, publisher.links.count())
+        self.assertEquals('https://test-publisher.com', publisher.links.last().link)
+
+        functions.publisher.edit(publisher, '-link', 'https://example.com')
+        self.assertEquals(1, publisher.links.count())
+        self.assertEquals('https://test-publisher.com', publisher.links.first().link)
+
 
     def test_publisher_get(self):
         publisher, created = functions.publisher.create('Test Publisher')

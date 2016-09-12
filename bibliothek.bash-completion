@@ -469,7 +469,7 @@ _bibliothek()
                     return 0
                     ;;
                 edit)
-                    opts="name -h --help"
+                    opts="name -link +link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -499,7 +499,7 @@ _bibliothek()
                     return 0
                     ;;
                 edit)
-                    opts="name -h --help"
+                    opts="name -link +link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
