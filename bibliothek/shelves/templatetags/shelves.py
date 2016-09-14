@@ -8,7 +8,7 @@ register = Library()
 
 @register.filter
 def currency_symbol(price):
-    return '%s %s' % (price, settings.CURRENCY_SYMBOL) if settings.CURRENCY_SYMBOL else price
+    return '%.02f %s' % (price, settings.CURRENCY_SYMBOL) if settings.CURRENCY_SYMBOL else price
 
 @register.simple_tag
 def read_status(reads):

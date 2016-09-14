@@ -122,3 +122,10 @@ def info(book):
             stdout.p([_('Links') if i == 0 else '', '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
     else:
         stdout.p([_('Links'), ''], positions=positions)
+
+    if book.editions.count() > 0:
+        for (i, edition), has_next in lookahead(enumerate(book.editions.all())):
+            s = '%s%s%s' % ('%s, ' % edition.alternate_title if edition.alternate_title else '', '%s, ' % edition.isbn if edition.isbn else '', edition.binding.name if edition.binding else '')
+            stdout.p([_('Editions') if i == 0 else '', '%s: %s' % (edition.id, s)], positions=positions, after='' if has_next else '_')
+    else:
+        stdout.p([_('Editions'), ''], positions=positions)
