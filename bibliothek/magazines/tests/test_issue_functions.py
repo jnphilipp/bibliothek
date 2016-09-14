@@ -16,6 +16,14 @@ class IssueFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(issue.id)
 
+        issue, created = functions.issue.create(self.magazine, '2/2016', published_on='2016-02-01', languages=['Deutsch'], links=['https://weekly.de/2-2016/'])
+        self.assertTrue(created)
+        self.assertIsNotNone(issue.id)
+        self.assertEquals(1, issue.languages.count())
+        self.assertEquals('Deutsch', issue.languages.first().name)
+        self.assertEquals(1, issue.links.count())
+        self.assertEquals('https://weekly.de/2-2016/', issue.links.first().link)
+
 
     def test_issue_edit(self):
         issue, created = functions.issue.create(self.magazine, '3/2016', published_on='2016-02-01')
@@ -27,6 +35,30 @@ class IssueFunctionsTestCase(TestCase):
 
         functions.issue.edit(issue, 'published_on', '2016-02-03')
         self.assertEquals('2016-02-03', issue.published_on)
+
+        functions.issue.edit(issue, '+language', 'Deutsch')
+        self.assertEquals(1, issue.languages.count())
+        self.assertEquals('Deutsch', issue.languages.first().name)
+
+        functions.issue.edit(issue, '+language', 'Espanol')
+        self.assertEquals(2, issue.languages.count())
+        self.assertEquals('Espanol', issue.languages.last().name)
+
+        functions.issue.edit(issue, '-language', 'Deutsch')
+        self.assertEquals(1, issue.languages.count())
+        self.assertEquals('Espanol', issue.languages.first().name)
+
+        functions.issue.edit(issue, '+link', 'https://weekly.de/3-2016/')
+        self.assertEquals(1, issue.links.count())
+        self.assertEquals('https://weekly.de/3-2016/', issue.links.first().link)
+
+        functions.issue.edit(issue, '+link', 'https://weekly.de/issue/3-2016')
+        self.assertEquals(2, issue.links.count())
+        self.assertEquals('https://weekly.de/issue/3-2016', issue.links.last().link)
+
+        functions.issue.edit(issue, '-link', 'https://weekly.de/3-2016/')
+        self.assertEquals(1, issue.links.count())
+        self.assertEquals('https://weekly.de/issue/3-2016', issue.links.first().link)
 
 
     def test_issue_get(self):

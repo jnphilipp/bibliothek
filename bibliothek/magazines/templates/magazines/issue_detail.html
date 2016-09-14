@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load bootstrap i18n %}
+{% load bootstrap i18n shelves %}
 
 
 {% block content %}
@@ -8,6 +8,8 @@
         <h1 class="page-header">{{ issue.magazine.name }} {{ issue.issue }}</h1>
         <dl class="dl-horizontal">
             <dt>{% trans 'Magazine' %}</dt>
+            <dt>{% trans 'Id' %}</dt>
+            <dd>{{ issue.magazine.id }}</dd>
             <dd><a href="{% url 'magazine_detail' issue.magazine.slug %}">{{ issue.magazine.name }}</a></dd>
             <dd>{% if issue.magazine.feed %}<a href="{{ issue.magazine.feed.link }}">{{ issue.magazine.feed.link }}</a>{% endif %}</dd>
             <dt>{% trans 'Links' %}</dt>
@@ -19,6 +21,8 @@
                 </ul>
             </dd>
             <hr>
+            <dt>{% trans 'Id' %}</dt>
+            <dd>{{ issue.id }}</dd>
             <dt>{% trans 'Issue' %}</dt>
             <dd>{{ issue.issue }}</dd>
             <dt>{% trans 'Published on' %}</dt>

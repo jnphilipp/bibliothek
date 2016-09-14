@@ -267,7 +267,7 @@ _bibliothek()
                             esac
                             ;;
                         add)
-                            opts="-p --published_on -c --cover -l --link -f --file -h --help"
+                            opts="-p --published_on -c --cover -a --language -l --link -f --file -h --help"
                             copts=$(compgen -W "${opts}" -- ${cur})
                             OLDIFS=$IFS
                             IFS=$'\n'
@@ -277,7 +277,7 @@ _bibliothek()
                             return 0
                             ;;
                         edit)
-                            opts="issue published_on cover -h --help"
+                            opts="issue published_on cover +language -language +file +link -link -h --help"
                             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                             return 0
                             ;;

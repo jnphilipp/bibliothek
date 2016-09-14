@@ -193,7 +193,7 @@ def _magazine(args):
             elif args.magazine_issue_acquisition_subparser == 'edit' and issue:
                 magazines.functions.issue.acquisition.edit(issue, args.acquisition, args.magazine_issue_acquisition_edit_subparser, args.value)
         elif args.magazine_issue_subparser == 'add' and magazine:
-            magazines.functions.issue.create(magazine, args.issue, args.published_on, args.cover, args.link, args.file)
+            magazines.functions.issue.create(magazine, args.issue, args.published_on, args.cover, args.language, args.link, args.file)
         elif args.magazine_issue_subparser == 'edit' and magazine:
             issue = magazines.functions.issue.get.by_term(magazine, args.issue)
             if issue:
@@ -627,14 +627,15 @@ if __name__ == "__main__":
     magazine_issue_add_parser.add_argument('issue', help='issue')
     magazine_issue_add_parser.add_argument('-p', '--published_on', type=valid_date, help='published on')
     magazine_issue_add_parser.add_argument('-c', '--cover', help='path to a cover image')
+    magazine_issue_add_parser.add_argument('-a', '--language', nargs='*', default=[], help='languages')
     magazine_issue_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
     magazine_issue_add_parser.add_argument('-f', '--file', nargs='*', default=[], help='files')
 
     # magazine issue edit
     magazine_issue_edit_parser = magazine_issue_subparser.add_parser('edit', help='edit a magazine issue')
     magazine_issue_edit_parser.add_argument('issue', help='which issue to edit')
-
     magazine_issue_edit_subparser = magazine_issue_edit_parser.add_subparsers(dest='magazine_issue_edit_subparser', help='which field to edit')
+
     magazine_issue_edit_issue_parser = magazine_issue_edit_subparser.add_parser('issue')
     magazine_issue_edit_issue_parser.add_argument('value', help='new value for field')
 
@@ -643,6 +644,21 @@ if __name__ == "__main__":
 
     magazine_issue_edit_cover_parser = magazine_issue_edit_subparser.add_parser('cover')
     magazine_issue_edit_cover_parser.add_argument('value', help='new value for field')
+
+    magazine_issue_edit_add_language_parser = magazine_issue_edit_subparser.add_parser('+language')
+    magazine_issue_edit_add_language_parser.add_argument('value', help='new value for field')
+
+    magazine_issue_edit_remove_language_parser = magazine_issue_edit_subparser.add_parser('-language')
+    magazine_issue_edit_remove_language_parser.add_argument('value', help='new value for field')
+
+    magazine_issue_edit_add_link_parser = magazine_issue_edit_subparser.add_parser('+link')
+    magazine_issue_edit_add_link_parser.add_argument('value', help='new value for field')
+
+    magazine_issue_edit_remove_link_parser = magazine_issue_edit_subparser.add_parser('-link')
+    magazine_issue_edit_remove_link_parser.add_argument('value', help='new value for field')
+
+    magazine_issue_edit_add_file_parser = magazine_issue_edit_subparser.add_parser('+file')
+    magazine_issue_edit_add_file_parser.add_argument('value', help='new value for field')
 
     # magazine issue info
     magazine_issue_info_parser = magazine_issue_subparser.add_parser('info', help='show information of a magazine issue')
