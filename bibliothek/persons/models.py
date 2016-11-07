@@ -21,11 +21,19 @@ class Person(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify('%s %s' % (self.first_name, self.last_name))
+            s = slugify('%s_%s' % (self.first_name, self.last_name))
+            if Person.objects.filter(slug=s).exists():
+                self.slug = slugify('%s_%s_%s' % (self.id, self.first_name, self.last_name))
+            else:
+                self.slug = s
         else:
             orig = Person.objects.get(pk=self.id)
             if orig.first_name != self.first_name or orig.last_name != self.last_name:
-                self.slug = slugify('%s %s' % (self.first_name, self.last_name))
+                s = slugify('%s_%s' % (self.first_name, self.last_name))
+                if Person.objects.filter(slug=s).exists():
+                    self.slug = slugify('%s_%s_%s' % (self.id, self.first_name, self.last_name))
+                else:
+                    self.slug = s
         super(Person, self).save(*args, **kwargs)
 
 

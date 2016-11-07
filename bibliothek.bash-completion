@@ -7,7 +7,7 @@ _bibliothek()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     subcommand="${COMP_WORDS[1]}"
 
-    opts="binding book genre journal magazine paper person publisher series runserver -h --help -v --version"
+    opts="binding book genre journal magazine paper person publisher series runserver load -h --help -v --version"
 
     case "${subcommand}" in
         binding)
@@ -278,7 +278,12 @@ _bibliothek()
                             ;;
                         edit)
                             opts="issue published_on cover +language -language +file +link -link -h --help"
-                            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                            copts=$(compgen -W "${opts}" -- ${cur})
+                            OLDIFS=$IFS
+                            IFS=$'\n'
+                            COMPREPLY=( ${copts[@]} $(compgen -f -- ${cur}) )
+                            IFS=$OLDIFS
+                            _file="-o filenames"
                             return 0
                             ;;
                         info)
@@ -519,6 +524,16 @@ _bibliothek()
                     return 0
                     ;;
             esac
+            ;;
+        load)
+            opts="-h --help"
+            copts=$(compgen -W "${opts}" -- ${cur})
+            OLDIFS=$IFS
+            IFS=$'\n'
+            COMPREPLY=( ${copts[@]} $(compgen -f -- ${cur}) )
+            IFS=$OLDIFS
+            _file="-o filenames"
+            return 0
             ;;
         *)
             ;;

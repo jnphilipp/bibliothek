@@ -17,6 +17,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+import json
 import os
 import sys
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bibliothek.settings')
@@ -197,7 +198,7 @@ def _magazine(args):
         elif args.magazine_issue_subparser == 'edit' and magazine:
             issue = magazines.functions.issue.get.by_term(magazine, args.issue)
             if issue:
-                magazines.functions.issue.edit(issue, args.field, args.value)
+                magazines.functions.issue.edit(issue, args.magazine_issue_edit_subparser, args.value)
         elif args.magazine_issue_subparser == 'info' and magazine:
             issue = magazines.functions.issue.get.by_term(magazine, args.issue)
             if issue:
@@ -327,7 +328,7 @@ def _series(args):
         if series_obj:
             series.functions.series.edit(series_obj, args.series_edit_subparser, args.value)
     elif args.series_subparser == 'info':
-        series_obj = series.functions.series.get.by_term(args.series)
+        series_obj = series.functions.series.get.by_term(args.name)
         if series_obj:
             series.functions.series.info(series_obj)
     elif args.series_subparser == 'list':
@@ -342,6 +343,47 @@ def _series(args):
 def _runserver(args):
     from django.core.management import execute_from_command_line
     execute_from_command_line(sys.argv + ['--insecure'])
+
+
+def _load(args):
+    import bindings.functions as bindings_functions
+    import books.functions as books_functions
+    import genres.functions as genres_functions
+    import persons.functions as persons_functions
+    import publishers.functions as publishers_functions
+    import series.functions as series_functions
+    with open(args.path, 'r', encoding='utf-8') as f:
+        data = json.loads(f.read())
+
+    if 'books' in data:
+        print(data['books'])
+
+        for b in data['books']:
+            authors = []
+            for a in b['authors']:
+                person, created = persons_functions.person.create(a['first_name'], a['last_name'], a['links'])
+                authors.append(str(person.id))
+
+            genres = []
+            for g in b['genres']:
+                genre, created = genres_functions.genre.create(g['name'])
+                genres.append(str(genre.id))
+
+            series, created = series_functions.series.create(b['series']['name'], b['series']['links'])
+            book, created = books_functions.book.create(b['title'], authors, str(series.id), b['volume'], genres, b['links'])
+
+            for e in b['editions']:
+                binding, created = bindings_functions.binding.create(e['binding']['name'])
+                publisher, created = publishers_functions.publisher.create(e['publisher']['name'], e['publisher']['links'])
+                edition, created = books_functions.edition.create(book, e['isbn'], e['published_on'], e['cover'], str(binding.id), str(publisher.id), e['languages'], e['files'])
+
+                for a in e['acquisitions']:
+                    if not edition.acquisitions.filter(date=a['date']).filter(price=a['price']).exists() and a['date'] and a['price']:
+                        acquisition = books_functions.edition.acquisition.add(edition, a['date'], a['price'])
+
+                for r in e['reads']:
+                    if not edition.reads.filter(started=r['started']).filter(finished=r['finished']).exists() and r['started'] and r['finished']:
+                        read = books_functions.edition.read.add(edition, r['started'], r['finished'])
 
 
 if __name__ == "__main__":
@@ -890,6 +932,12 @@ if __name__ == "__main__":
     # create the parser for the "runserver" subcommand
     runserver_parser = subparsers.add_parser('runserver', help='start local http server')
     runserver_parser.set_defaults(func=_runserver)
+
+
+    # create the parser for the "runserver" subcommand
+    load_parser = subparsers.add_parser('load', help='load data from json')
+    load_parser.set_defaults(func=_load)
+    load_parser.add_argument('path', help='path to json file')
 
 
     args = parser.parse_args()

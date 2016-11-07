@@ -7,6 +7,8 @@
     <div class="col-md-offset-1 col-md-7">
         <h1 class="page-header">{% trans 'Edition' %} #{{ edition.id }}</h1>
         <dl class="dl-horizontal">
+            <dt>{% trans 'Id' %}</dt>
+            <dd>{{ edition.book.id }}</dd>
             <dt>{% trans 'Title' %}</dt>
             <dd><a href="{% url 'book_detail' edition.book.slug %}">{{ edition.book.title }}</a></dd>
             <dt>{% trans 'Authors' %}</dt>
