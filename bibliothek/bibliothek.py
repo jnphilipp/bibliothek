@@ -28,6 +28,7 @@ django.setup()
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from bibliothek import settings
 from datetime import datetime
+from django.utils.translation import ugettext as _
 from utils import lookahead, stdout
 
 
@@ -384,6 +385,21 @@ def _load(args):
                 for r in e['reads']:
                     if not edition.reads.filter(started=r['started']).filter(finished=r['finished']).exists() and (r['started'] or r['finished']):
                         read = books_functions.edition.read.add(edition, r['started'], r['finished'])
+
+
+def _statistics(args):
+    positions = [.50, .66, .82, 1.]
+
+    from books.models import Book, Edition
+    from magazines.models import Magazine, Issue
+    from papers.models import Paper
+
+    stdout.p([_('Type'), _('Count'), _('Read'), _('Read %(year)d' % {'year': datetime.now().year})], after='=', positions=positions)
+    stdout.p([_('Books'), Book.objects.count(), Book.objects.filter(editions__reads__isnull=False).count(), Book.objects.filter(editions__reads__finished__year=datetime.now().year).count()], positions=positions)
+    stdout.p([_('Editions'), Edition.objects.count(), Edition.objects.filter(reads__isnull=False).count(), Edition.objects.filter(reads__finished__year=datetime.now().year).count()], positions=positions)
+    stdout.p([_('Magazines'), Magazine.objects.count(), 0, 0], positions=positions)
+    stdout.p([_('Issues'), Issue.objects.count(), 0, 0], positions=positions)
+    stdout.p([_('Papers'), Paper.objects.count(), Paper.objects.filter(reads__isnull=False).count(), Paper.objects.filter(reads__finished__year=datetime.now().year).count()], positions=positions)
 
 
 if __name__ == "__main__":
@@ -938,6 +954,11 @@ if __name__ == "__main__":
     load_parser = subparsers.add_parser('load', help='load data from json')
     load_parser.set_defaults(func=_load)
     load_parser.add_argument('path', help='path to json file')
+
+
+    # create the parser for the "statistics" subcommand
+    statistics_parser = subparsers.add_parser('statistics', help='show statistics')
+    statistics_parser.set_defaults(func=_statistics)
 
 
     args = parser.parse_args()
