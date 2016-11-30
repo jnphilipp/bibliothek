@@ -378,11 +378,11 @@ def _load(args):
                 edition, created = books_functions.edition.create(book, e['isbn'], e['published_on'], e['cover'], str(binding.id), str(publisher.id), e['languages'], e['files'])
 
                 for a in e['acquisitions']:
-                    if not edition.acquisitions.filter(date=a['date']).filter(price=a['price']).exists() and a['date'] and a['price']:
+                    if not edition.acquisitions.filter(date=a['date']).filter(price=a['price']).exists() and (a['date'] or a['price']):
                         acquisition = books_functions.edition.acquisition.add(edition, a['date'], a['price'])
 
                 for r in e['reads']:
-                    if not edition.reads.filter(started=r['started']).filter(finished=r['finished']).exists() and r['started'] and r['finished']:
+                    if not edition.reads.filter(started=r['started']).filter(finished=r['finished']).exists() and (r['started'] or r['finished']):
                         read = books_functions.edition.read.add(edition, r['started'], r['finished'])
 
 
@@ -934,7 +934,7 @@ if __name__ == "__main__":
     runserver_parser.set_defaults(func=_runserver)
 
 
-    # create the parser for the "runserver" subcommand
+    # create the parser for the "load" subcommand
     load_parser = subparsers.add_parser('load', help='load data from json')
     load_parser.set_defaults(func=_load)
     load_parser.add_argument('path', help='path to json file')
