@@ -1,19 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from books.models import Book
+from books.models import Edition
+from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404, render
 from magazines.models import Issue
 from papers.models import Paper
+from shelves.models import Read
 
 
 def dashboard(request):
-    bo = request.GET.get('bo') if request.GET.get('bo') else 'title'
-    books = Book.objects.filter(editions__reads__started__isnull=False).filter(editions__reads__finished__isnull=True).order_by(bo)
-
-    mo = request.GET.get('mo') if request.GET.get('mo') else 'magazine'
-    issues = Issue.objects.filter(reads__started__isnull=False).filter(reads__finished__isnull=True).order_by(mo)
-
-    po = request.GET.get('po') if request.GET.get('po') else 'title'
-    papers = Paper.objects.filter(reads__started__isnull=False).filter(reads__finished__isnull=True).order_by(po)
-
+    edition_reads = Read.objects.filter(content_type=ContentType.objects.get_for_model(Edition)).filter(started__isnull=False).filter(finished__isnull=True).order_by('started')
+    issue_reads = Read.objects.filter(content_type=ContentType.objects.get_for_model(Issue)).filter(started__isnull=False).filter(finished__isnull=True).order_by('started')
+    paper_reads = Read.objects.filter(content_type=ContentType.objects.get_for_model(Paper)).filter(started__isnull=False).filter(finished__isnull=True).order_by('started')
     return render(request, 'bibliothek/dashboard.html', locals())

@@ -28,7 +28,7 @@ def create(title, authors=[], series=None, volume=0, genres=[], links=[]):
             stdout.p([_('Authors'), ''], positions=positions)
 
         if series:
-            book.series, c = Series.objects.filter(Q(pk=series if series.isdigit() else None) | Q(name__icontains=series)).get_or_create(defaults={'name':series})
+            book.series, c = Series.objects.filter(Q(pk=series) if series.isdigit() else Q(name__icontains=series)).get_or_create(defaults={'name':series})
             stdout.p([_('Series'), '%s: %s' % (book.series.id, book.series.name)], positions=positions)
         else:
             stdout.p([_('Series'), ''], positions=positions)

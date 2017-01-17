@@ -26,6 +26,6 @@ class DetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DetailView, self).get_context_data(**kwargs)
-        context['o'] = self.request.GET.get('o') if self.request.GET.get('o') else 'title'
+        context['o'] = self.request.GET.get('o') if self.request.GET.get('o') else 'volume'
         context['books'] = self.object.books.annotate(ce=Count('editions')).order_by(context['o'])
         return context

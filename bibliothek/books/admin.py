@@ -54,7 +54,7 @@ class BookAdmin(admin.ModelAdmin):
 
 class EditionAdmin(admin.ModelAdmin):
     list_display = ('book', 'isbn', 'binding', 'publisher', 'published_on')
-    list_filter = ('book', 'binding', 'publisher')
+    list_filter = ('book', 'binding', 'publisher', 'languages')
     search_fields = ('book__title', 'book__authors__first_name', 'book__authors__last_name', 'book__series__name', 'book__volume', 'isbn', 'binding__name', 'publisher__name')
 
     formfield_overrides = {

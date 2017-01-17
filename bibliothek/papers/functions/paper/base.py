@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import os
+
+from django.core.files import File as DJFile
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
 from django.utils.translation import ugettext as _
+from files.models import File
 from journals.models import Journal
 from languages.models import Language
 from papers.models import Paper

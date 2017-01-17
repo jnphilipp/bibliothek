@@ -357,8 +357,6 @@ def _load(args):
         data = json.loads(f.read())
 
     if 'books' in data:
-        print(data['books'])
-
         for b in data['books']:
             authors = []
             for a in b['authors']:
