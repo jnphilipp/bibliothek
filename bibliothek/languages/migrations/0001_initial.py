@@ -24,7 +24,8 @@ class Migration(migrations.Migration):
                 ('name', languages.models.TextFieldSingleLine(unique=True)),
             ],
             options={
-                'verbose_name': ' language',
+                'verbose_name': 'Language',
+                'verbose_name_plural': 'Languages',
                 'ordering': ('name',),
             },
         ),

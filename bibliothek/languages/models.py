@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.utils.translation import ugettext as _
 
 
 class TextFieldSingleLine(models.TextField):
@@ -32,4 +33,5 @@ class Language(models.Model):
 
     class Meta:
         ordering = ('name',)
-        verbose_name = ' language'
+        verbose_name = _('Language')
+        verbose_name_plural = _('Languages')
