@@ -22,7 +22,10 @@ def parse(bibtex_file):
                 authors.append({'first_name':s[1].strip(), 'last_name':s[0].strip()})
             else:
                 s = author.rsplit(' ', 1)
-                authors.append({'first_name':s[0].strip(), 'last_name':s[1].strip()})
+                if len(s) == 1:
+                    authors.append({'first_name': s[0].strip(), 'last_name': None})
+                else:
+                    authors.append({'first_name': s[0].strip(), 'last_name': s[1].strip()})
 
         journal = entry['journal'].strip() if 'journal' in entry else ''
         volume = entry['volume'].strip() if 'volume' in entry else ''

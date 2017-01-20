@@ -44,7 +44,7 @@ def info(person):
     stdout.p([_('Field'), _('Value')], positions=positions, after='=')
     stdout.p([_('Id'), person.id], positions=positions)
     stdout.p([_('First name'), person.first_name], positions=positions)
-    stdout.p([_('Last name'), person.last_name], positions=positions)
+    stdout.p([_('Last name'), person.last_name if person.last_name else ''], positions=positions)
 
     if person.links.count() > 0:
         for (i, link), has_next in lookahead(enumerate(person.links.all())):
