@@ -22,7 +22,7 @@ def delete(issue, acquisition_id):
         acquisition.delete()
         stdout.p([_('Successfully deleted acquisition.')], positions=[1.])
     except Acquisition.DoesNotExist:
-        stdout.p([_('A acquisition with id "%(acquisition)s" for this issue does not exist.') % {'acquisition':acquisition_id}], after='=', positions=[1.])
+        stdout.p([_('An acquisition with id "%(acquisition)s" for this issue does not exist.') % {'acquisition':acquisition_id}], after='=', positions=[1.])
 
 
 def edit(issue, acquisition_id, field, value):
@@ -38,7 +38,7 @@ def edit(issue, acquisition_id, field, value):
         stdout.p([_('Successfully edited acquisition "%(acquisition)s".') % {'acquisition':acquisition.id}], positions=[1.])
         _print(acquisition)
     except Acquisition.DoesNotExist:
-        stdout.p(['A acquisition with id "%(acquisition)s" for this issue does not exist.' % {'acquisition':acquisition_id}], after='=', positions=[1.])
+        stdout.p(['An acquisition with id "%(acquisition)s" for this issue does not exist.' % {'acquisition':acquisition_id}], after='=', positions=[1.])
 
 
 def _print(acquisition):
