@@ -410,27 +410,27 @@ if __name__ == "__main__":
 
 
     # create the parser for the "binding" subcommand
-    binding_parser = subparsers.add_parser('binding', help='manage bindings')
+    binding_parser = subparsers.add_parser('binding', help=_('manage bindings'))
     binding_parser.set_defaults(func=_binding)
     binding_subparser = binding_parser.add_subparsers(dest='binding_subparser')
 
     # binding add
-    binding_add_parser = binding_subparser.add_parser('add', help='add a binding')
-    binding_add_parser.add_argument('name', help='name')
+    binding_add_parser = binding_subparser.add_parser('add', help=_('add a new binding'))
+    binding_add_parser.add_argument('name', help=_('name'))
 
     # binding edit
-    binding_edit_parser = binding_subparser.add_parser('edit', help='edit a binding')
-    binding_edit_parser.add_argument('binding', help='which binding to edit')
-    binding_edit_parser.add_argument('field', choices=['name'], help='which field to edit')
-    binding_edit_parser.add_argument('value', help='new value for field')
+    binding_edit_parser = binding_subparser.add_parser('edit', help=_('edit an existing binding'))
+    binding_edit_parser.add_argument('binding', help=_('which binding'))
+    binding_edit_parser.add_argument('field', choices=['name'], help=_('which field to edit'))
+    binding_edit_parser.add_argument('value', help=_('new value for field'))
 
     # binding info
-    binding_info_parser = binding_subparser.add_parser('info', help='show information of a binding')
-    binding_info_parser.add_argument('binding', help='of which binding to show information')
+    binding_info_parser = binding_subparser.add_parser('info', help=_('show information of a binding'))
+    binding_info_parser.add_argument('binding', help=_('which binding'))
 
     # binding list
-    binding_list_parser = binding_subparser.add_parser('list', help='list bindings')
-    binding_list_parser.add_argument('--search', help='filter by term')
+    binding_list_parser = binding_subparser.add_parser('list', help=_('list bindings'))
+    binding_list_parser.add_argument('--search', help=_('filter by term'))
 
 
     # create the parser for the "book" subcommand
