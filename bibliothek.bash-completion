@@ -29,7 +29,7 @@ _bibliothek()
                     return 0
                     ;;
                 list)
-                    opts="-s --search -h --help"
+                    opts="--search -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -44,7 +44,7 @@ _bibliothek()
             subcommand="${COMP_WORDS[2]}"
             case "${subcommand}" in
                 add)
-                    opts="-a --author -s --series -v --volume -g --genre -l --link -h --help"
+                    opts="--author --series --volume --genre --link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -82,7 +82,7 @@ _bibliothek()
                             esac
                             ;;
                         add)
-                            opts="-i --isbn -p --published_on -c --cover -b --binding -u --publisher -f --file -h --help"
+                            opts="--isbn --published_on --cover --binding --publisher --file -h --help"
                             copts=$(compgen -W "${opts}" -- ${cur})
                             OLDIFS=$IFS
                             IFS=$'\n'
@@ -107,7 +107,7 @@ _bibliothek()
                             return 0
                             ;;
                         list)
-                            opts="-s --search --shelf -h --help"
+                            opts="--search --shelf -h --help"
                             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                             return 0
                             ;;
@@ -149,7 +149,7 @@ _bibliothek()
                     return 0
                     ;;
                 list)
-                    opts="-s --search --shelf -h --help"
+                    opts="--search --shelf -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -179,7 +179,7 @@ _bibliothek()
                     return 0
                     ;;
                 list)
-                    opts="-s --search -h --help"
+                    opts="--search -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -194,7 +194,7 @@ _bibliothek()
             subcommand="${COMP_WORDS[2]}"
             case "${subcommand}" in
                 add)
-                    opts="-l --link -h --help"
+                    opts="--link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -209,7 +209,7 @@ _bibliothek()
                     return 0
                     ;;
                 list)
-                    opts="-s --search -h --help"
+                    opts="--search -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -224,7 +224,7 @@ _bibliothek()
             subcommand="${COMP_WORDS[2]}"
             case "${subcommand}" in
                 add)
-                    opts="-f --feed -l --link -h --help"
+                    opts="--feed --link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -267,7 +267,7 @@ _bibliothek()
                             esac
                             ;;
                         add)
-                            opts="-p --published_on -c --cover -a --language -l --link -f --file -h --help"
+                            opts="--published_on --cover --language --link --file -h --help"
                             copts=$(compgen -W "${opts}" -- ${cur})
                             OLDIFS=$IFS
                             IFS=$'\n'
@@ -292,7 +292,7 @@ _bibliothek()
                             return 0
                             ;;
                         list)
-                            opts="--shelf -s --search -h --help"
+                            opts="--shelf --search -h --help"
                             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                             return 0
                             ;;
@@ -329,7 +329,7 @@ _bibliothek()
                     esac
                     ;;
                 list)
-                    opts="-s --search -h --help"
+                    opts="--search -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -369,7 +369,7 @@ _bibliothek()
                     esac
                     ;;
                 add)
-                    opts="-a --author -p --published_on -j --journal -v --volume -n --language -l --link -h --help"
+                    opts="--author --published_on --journal --volume --language --link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -379,7 +379,7 @@ _bibliothek()
                     return 0
                     ;;
                 list)
-                    opts="-s --search --shelf -h --help"
+                    opts="--search --shelf -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -394,7 +394,7 @@ _bibliothek()
                     return 0
                     ;;
                 parse)
-                    opts="-f --file -h --help"
+                    opts="--file -h --help"
                     copts=$(compgen -W "${opts}" -- ${cur})
                     OLDIFS=$IFS
                     IFS=$'\n'
@@ -439,7 +439,7 @@ _bibliothek()
             subcommand="${COMP_WORDS[2]}"
             case "${subcommand}" in
                 add)
-                    opts="-l --link -h --help"
+                    opts="--link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -454,7 +454,7 @@ _bibliothek()
                     return 0
                     ;;
                 list)
-                    opts="-s --search -h --help"
+                    opts="--search -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -469,7 +469,7 @@ _bibliothek()
             subcommand="${COMP_WORDS[2]}"
             case "${subcommand}" in
                 add)
-                    opts="-l --link -h --help"
+                    opts="--link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -484,7 +484,7 @@ _bibliothek()
                     return 0
                     ;;
                 list)
-                    opts="-s --search -h --help"
+                    opts="--search -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -514,7 +514,7 @@ _bibliothek()
                     return 0
                     ;;
                 list)
-                    opts="-s --search -h --help"
+                    opts="--search -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;

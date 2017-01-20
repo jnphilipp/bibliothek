@@ -430,7 +430,7 @@ if __name__ == "__main__":
 
     # binding list
     binding_list_parser = binding_subparser.add_parser('list', help='list bindings')
-    binding_list_parser.add_argument('-s', '--search', help='filter by term')
+    binding_list_parser.add_argument('--search', help='filter by term')
 
 
     # create the parser for the "book" subcommand
@@ -441,11 +441,11 @@ if __name__ == "__main__":
     # book add
     book_add_parser = book_subparser.add_parser('add', help='add a book')
     book_add_parser.add_argument('title', help='title')
-    book_add_parser.add_argument('-a', '--author', nargs='*', default=[], help='authors')
-    book_add_parser.add_argument('-s', '--series', default=None, help='series')
-    book_add_parser.add_argument('-v', '--volume', default=None, type=float, help='series volume')
-    book_add_parser.add_argument('-g', '--genre', nargs='*', default=[], help='genres')
-    book_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
+    book_add_parser.add_argument('--author', nargs='*', default=[], help='authors')
+    book_add_parser.add_argument('--series', default=None, help='series')
+    book_add_parser.add_argument('--volume', default=None, type=float, help='series volume')
+    book_add_parser.add_argument('--genre', nargs='*', default=[], help='genres')
+    book_add_parser.add_argument('--link', nargs='*', default=[], help='links')
 
     # book edit
     book_edit_parser = book_subparser.add_parser('edit', help='edit a book', prefix_chars='_')
@@ -508,13 +508,13 @@ if __name__ == "__main__":
 
     # book edition add
     book_edition_add_parser = book_edition_subparser.add_parser('add', help='add an edition to a book')
-    book_edition_add_parser.add_argument('-i', '--isbn', help='ISBN')
-    book_edition_add_parser.add_argument('-p', '--published_on', type=valid_date, help='published on')
-    book_edition_add_parser.add_argument('-c', '--cover', help='path to a cover image')
-    book_edition_add_parser.add_argument('-b', '--binding', help='binding')
-    book_edition_add_parser.add_argument('-u', '--publisher', help='publisher')
-    book_edition_add_parser.add_argument('-f', '--file', nargs='*', default=[], help='files')
-    book_edition_add_parser.add_argument('-l', '--language', nargs='*', default=[], help='languages')
+    book_edition_add_parser.add_argument('--isbn', help='ISBN')
+    book_edition_add_parser.add_argument('--published_on', type=valid_date, help='published on')
+    book_edition_add_parser.add_argument('--cover', help='path to a cover image')
+    book_edition_add_parser.add_argument('--binding', help='binding')
+    book_edition_add_parser.add_argument('--publisher', help='publisher')
+    book_edition_add_parser.add_argument('--file', nargs='*', default=[], help='files')
+    book_edition_add_parser.add_argument('--language', nargs='*', default=[], help='languages')
 
     # book edition edit
     book_edition_edit_parser = book_edition_subparser.add_parser('edit', help='edit a book edition', prefix_chars='_')
@@ -552,7 +552,7 @@ if __name__ == "__main__":
     # book edition list
     book_edition_list_parser = book_edition_subparser.add_parser('list', help='list editions of a book')
     book_edition_list_parser.add_argument('--shelf', choices=['read', 'unread'], help='filter on shelves')
-    book_edition_list_parser.add_argument('-s', '--search', help='search by term')
+    book_edition_list_parser.add_argument('--search', help='search by term')
 
     # book edition reads
     book_edition_read_parser = book_edition_subparser.add_parser('read', help='manage read of papers')
@@ -578,7 +578,7 @@ if __name__ == "__main__":
     # book list
     book_list_parser = book_subparser.add_parser('list', help='list books')
     book_list_parser.add_argument('--shelf', choices=['read', 'unread'], help='filter on shelves')
-    book_list_parser.add_argument('-s', '--search', help='search by term')
+    book_list_parser.add_argument('--search', help='search by term')
 
 
     # create the parser for the "genre" subcommand
@@ -602,7 +602,7 @@ if __name__ == "__main__":
 
     # genre list
     genre_list_parser = genre_subparser.add_parser('list', help='list genres')
-    genre_list_parser.add_argument('-s', '--search', help='filter by term')
+    genre_list_parser.add_argument('--search', help='filter by term')
 
 
     # create the parser for the "journal" subcommand
@@ -613,7 +613,7 @@ if __name__ == "__main__":
     # journal add
     journal_add_parser = journal_subparser.add_parser('add', help='add a journal')
     journal_add_parser.add_argument('name', help='name')
-    journal_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
+    journal_add_parser.add_argument('--link', nargs='*', default=[], help='links')
 
     # journal edit
     journal_edit_parser = journal_subparser.add_parser('edit', help='edit a journal')
@@ -627,7 +627,7 @@ if __name__ == "__main__":
 
     # journal list
     journal_list_parser = journal_subparser.add_parser('list', help='list journals')
-    journal_list_parser.add_argument('-s', '--search', help='filter by term')
+    journal_list_parser.add_argument('--search', help='filter by term')
 
 
     # create the parser for the "magazine" subcommand
@@ -638,8 +638,8 @@ if __name__ == "__main__":
     # magazine add
     magazine_add_parser = magazine_subparser.add_parser('add', help='add a magazine')
     magazine_add_parser.add_argument('name', help='name')
-    magazine_add_parser.add_argument('-f', '--feed', help='feed url')
-    magazine_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
+    magazine_add_parser.add_argument('--feed', help='feed url')
+    magazine_add_parser.add_argument('--link', nargs='*', default=[], help='links')
 
     # magazine edit
     magazine_edit_parser = magazine_subparser.add_parser('edit', help='edit a magazine')
@@ -681,11 +681,11 @@ if __name__ == "__main__":
     # magazine issue add
     magazine_issue_add_parser = magazine_issue_subparser.add_parser('add', help='add an issue to a magazine')
     magazine_issue_add_parser.add_argument('issue', help='issue')
-    magazine_issue_add_parser.add_argument('-p', '--published_on', type=valid_date, help='published on')
-    magazine_issue_add_parser.add_argument('-c', '--cover', help='path to a cover image')
-    magazine_issue_add_parser.add_argument('-a', '--language', nargs='*', default=[], help='languages')
-    magazine_issue_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
-    magazine_issue_add_parser.add_argument('-f', '--file', nargs='*', default=[], help='files')
+    magazine_issue_add_parser.add_argument('--published_on', type=valid_date, help='published on')
+    magazine_issue_add_parser.add_argument('--cover', help='path to a cover image')
+    magazine_issue_add_parser.add_argument('--language', nargs='*', default=[], help='languages')
+    magazine_issue_add_parser.add_argument('--link', nargs='*', default=[], help='links')
+    magazine_issue_add_parser.add_argument('--file', nargs='*', default=[], help='files')
 
     # magazine issue edit
     magazine_issue_edit_parser = magazine_issue_subparser.add_parser('edit', help='edit a magazine issue')
@@ -723,7 +723,7 @@ if __name__ == "__main__":
     # magazine issue list
     magazine_issue_list_parser = magazine_issue_subparser.add_parser('list', help='list issues of a magazine')
     magazine_issue_list_parser.add_argument('--shelf', choices=['read', 'unread'], help='filter on shelves')
-    magazine_issue_list_parser.add_argument('-s', '--search', help='search by term')
+    magazine_issue_list_parser.add_argument('--search', help='search by term')
 
     # magazine issue reads
     magazine_issue_read_parser = magazine_issue_subparser.add_parser('read', help='manage read of papers')
@@ -744,7 +744,7 @@ if __name__ == "__main__":
 
     # magazine list
     magazine_list_parser = magazine_subparser.add_parser('list', help='list magazines')
-    magazine_list_parser.add_argument('-s', '--search', help='search by term')
+    magazine_list_parser.add_argument('--search', help='search by term')
 
 
     # create the parser for the "paper" subcommand
@@ -777,12 +777,12 @@ if __name__ == "__main__":
     # paper add
     paper_add_parser = paper_subparser.add_parser('add', help='add a paper')
     paper_add_parser.add_argument('title', help='title')
-    paper_add_parser.add_argument('-a', '--author', nargs='*', default=[], help='authors')
-    paper_add_parser.add_argument('-p', '--published_on', type=valid_date, help='published on')
-    paper_add_parser.add_argument('-j', '--journal', help='journal')
-    paper_add_parser.add_argument('-v', '--volume', help='journal volume')
-    paper_add_parser.add_argument('-n', '--language', nargs='*', default=[], help='languages')
-    paper_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
+    paper_add_parser.add_argument('--author', nargs='*', default=[], help='authors')
+    paper_add_parser.add_argument('--published_on', type=valid_date, help='published on')
+    paper_add_parser.add_argument('--journal', help='journal')
+    paper_add_parser.add_argument('--volume', help='journal volume')
+    paper_add_parser.add_argument('--language', nargs='*', default=[], help='languages')
+    paper_add_parser.add_argument('--link', nargs='*', default=[], help='links')
 
     # paper edit
     paper_edit_parser = paper_subparser.add_parser('edit', help='edit a paper', prefix_chars='_')
@@ -813,7 +813,7 @@ if __name__ == "__main__":
     # paper list
     paper_list_parser = paper_subparser.add_parser('list', help='list papers')
     paper_list_parser.add_argument('--shelf', choices=['read', 'unread'], nargs='?', help='filter on shelves')
-    paper_list_parser.add_argument('-s', '--search', help='search by term')
+    paper_list_parser.add_argument('--search', help='search by term')
 
     # paper info
     paper_info_parser = paper_subparser.add_parser('info', help='show information of a paper')
@@ -856,7 +856,7 @@ if __name__ == "__main__":
     person_add_parser = person_subparser.add_parser('add', help='add a person')
     person_add_parser.add_argument('first_name', help='first name')
     person_add_parser.add_argument('last_name', help='last name')
-    person_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
+    person_add_parser.add_argument('--link', nargs='*', default=[], help='links')
 
     # person edit
     person_edit_parser = person_subparser.add_parser('edit', help='edit a person')
@@ -870,7 +870,7 @@ if __name__ == "__main__":
 
     # person list
     person_list_parser = person_subparser.add_parser('list', help='list persons')
-    person_list_parser.add_argument('-s', '--search', help='search by term')
+    person_list_parser.add_argument('--search', help='search by term')
 
 
     # create the parser for the "publisher" subcommand
@@ -881,7 +881,7 @@ if __name__ == "__main__":
     # publisher add
     publisher_add_parser = publisher_subparser.add_parser('add', help='add a publisher')
     publisher_add_parser.add_argument('name', help='name')
-    publisher_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
+    publisher_add_parser.add_argument('--link', nargs='*', default=[], help='links')
 
     # publisher edit
     publisher_edit_parser = publisher_subparser.add_parser('edit', help='edit a book edition', prefix_chars='_')
@@ -903,7 +903,7 @@ if __name__ == "__main__":
 
     # publisher list
     publisher_list_parser = publisher_subparser.add_parser('list', help='list publishers')
-    publisher_list_parser.add_argument('-s', '--search', help='search by term')
+    publisher_list_parser.add_argument('--search', help='search by term')
 
 
     # create the parser for the "series" subcommand
@@ -914,7 +914,7 @@ if __name__ == "__main__":
     # series add
     series_add_parser = series_subparser.add_parser('add', help='add a series')
     series_add_parser.add_argument('name', help='name')
-    series_add_parser.add_argument('-l', '--link', nargs='*', default=[], help='links')
+    series_add_parser.add_argument('--link', nargs='*', default=[], help='links')
 
     # series edit
     series_edit_parser = series_subparser.add_parser('edit', help='edit a book edition', prefix_chars='_')
@@ -940,7 +940,7 @@ if __name__ == "__main__":
 
     # series list
     series_list_parser = series_subparser.add_parser('list', help='list seriess')
-    series_list_parser.add_argument('-s', '--search', help='search by term')
+    series_list_parser.add_argument('--search', help='search by term')
 
 
     # create the parser for the "runserver" subcommand
