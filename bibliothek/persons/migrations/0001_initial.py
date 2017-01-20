@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('slug', models.SlugField(max_length=2048, unique=True)),
                 ('first_name', persons.models.TextFieldSingleLine()),
-                ('last_name', persons.models.TextFieldSingleLine()),
+                ('last_name', persons.models.TextFieldSingleLine(blank=True, null=True)),
                 ('links', models.ManyToManyField(blank=True, related_name='persons', to='links.Link')),
             ],
             options={

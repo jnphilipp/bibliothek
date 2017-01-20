@@ -15,7 +15,7 @@ class Person(models.Model):
 
     slug = models.SlugField(max_length=2048, unique=True)
     first_name = TextFieldSingleLine()
-    last_name = TextFieldSingleLine()
+    last_name = TextFieldSingleLine(blank=True, null=True)
     links = models.ManyToManyField(Link, related_name='persons', blank=True)
 
 
@@ -42,7 +42,7 @@ class Person(models.Model):
 
 
     def __str__(self):
-        return '%s %s' % (self.first_name, self.last_name)
+        return ('%s %s' % (self.first_name, self.last_name if self.last_name else '')).strip()
 
 
     class Meta:
