@@ -144,6 +144,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -195,6 +196,14 @@ USE_I18N = config.getboolean('i18n', 'USE_I18N', fallback=True)
 USE_L10N = config.getboolean('i18n', 'USE_L10N', fallback=True)
 
 USE_TZ = config.getboolean('i18n', 'USE_TZ', fallback=True)
+
+
+# Locale messag files for translation
+# https://docs.djangoproject.com/en/1.8/topics/i18n/translation/
+
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
 
 
 # Static files (CSS, JavaScript, Images)
