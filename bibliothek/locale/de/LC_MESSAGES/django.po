@@ -1,0 +1,935 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-01-20 14:40+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: bibliothek.py:395
+msgid "Type"
+msgstr "Art"
+
+#: bibliothek.py:395
+msgid "Count"
+msgstr "Anzahl"
+
+#: bibliothek.py:395 books/functions/edition/base.py:124
+#: books/functions/edition/base.py:126 magazines/functions/issue/base.py:131
+#: magazines/functions/issue/base.py:133 papers/functions/paper/base.py:165
+#: papers/functions/paper/base.py:169
+msgid "Read"
+msgstr "Lesen"
+
+#: bibliothek.py:395
+#, python-format
+msgid "Read %(year)d"
+msgstr "Lesen %(year)d"
+
+#: bibliothek.py:396 bibliothek/templates/base.html:39
+#: bibliothek/templates/bibliothek/dashboard.html:15 books/models.py:66
+#: books/templates/books/book_list.html:8 genres/functions/genre/base.py:40
+#: genres/functions/genre/base.py:44
+#: genres/templates/genres/genre_detail.html:13
+#: persons/functions/person/base.py:61 persons/functions/person/base.py:65
+#: persons/templates/persons/person_detail.html:23
+#: publishers/functions/publisher/base.py:62
+#: publishers/functions/publisher/base.py:64 series/functions/series/base.py:62
+#: series/functions/series/base.py:64
+#: series/templates/series/series_detail.html:23
+msgid "Books"
+msgstr "Bücher"
+
+#: bibliothek.py:397 books/functions/book/base.py:129
+#: books/functions/book/base.py:131 books/models.py:132
+#: books/templates/books/book_detail.html:33
+#: publishers/templates/publishers/publisher_detail.html:25
+msgid "Editions"
+msgstr "Editionen"
+
+#: bibliothek.py:398 bibliothek/templates/base.html:51
+#: bibliothek/templates/bibliothek/dashboard.html:47
+#: magazines/templates/magazines/magazine_list.html:8
+msgid "Magazines"
+msgstr "Magazine"
+
+#: bibliothek.py:399 magazines/templates/magazines/magazine_detail.html:25
+msgid "Issues"
+msgstr "Ausgaben"
+
+#: bibliothek.py:400 bibliothek/templates/base.html:55
+#: bibliothek/templates/bibliothek/dashboard.html:75
+#: journals/functions/journal/base.py:57 journals/functions/journal/base.py:61
+#: journals/templates/journals/journal_detail.html:23
+#: papers/templates/papers/paper_list.html:8
+#: persons/functions/person/base.py:70 persons/functions/person/base.py:74
+#: persons/templates/persons/person_detail.html:50
+msgid "Papers"
+msgstr "Papiere"
+
+#: bibliothek.py:413
+msgid "manage bindings"
+msgstr "Bindungen verwalten"
+
+#: bibliothek.py:418
+msgid "add a new binding"
+msgstr "Neue Bindung hinzufügen"
+
+#: bibliothek.py:419
+msgid "name"
+msgstr "Name"
+
+#: bibliothek.py:422
+msgid "edit an existing binding"
+msgstr "bestehende Bindung bearbeiten"
+
+#: bibliothek.py:423 bibliothek.py:429
+msgid "which binding"
+msgstr "welche Bindung"
+
+#: bibliothek.py:424
+msgid "which field to edit"
+msgstr "zu bearbeitendes Feld"
+
+#: bibliothek.py:425
+msgid "new value for field"
+msgstr "neuer Wert des Feldes"
+
+#: bibliothek.py:428
+msgid "show information of a binding"
+msgstr "zeige Informationen einer Bindung"
+
+#: bibliothek.py:432
+msgid "list bindings"
+msgstr "Bindungen auflisten"
+
+#: bibliothek.py:433
+msgid "filter by term"
+msgstr "filtern bei Begriff"
+
+#: bibliothek/templates/base.html:43
+#: journals/templates/journals/journal_list.html:8
+msgid "Journals"
+msgstr "Journale"
+
+#: bibliothek/templates/base.html:47 books/functions/book/base.py:45
+#: books/functions/book/base.py:116 books/functions/book/base.py:118
+#: books/templates/books/book_detail.html:18
+#: books/templates/books/edition_detail.html:20 genres/models.py:37
+#: genres/templates/genres/genre_list.html:8
+#: persons/templates/persons/person_detail.html:31
+msgid "Genres"
+msgstr "Genres"
+
+#: bibliothek/templates/base.html:59
+#: persons/templates/persons/person_list.html:8
+msgid "Persons"
+msgstr "Personen"
+
+#: bibliothek/templates/base.html:63 publishers/models.py:39
+#: publishers/templates/publishers/publisher_list.html:8
+msgid "Publishers"
+msgstr "Verlage"
+
+#: bibliothek/templates/base.html:67
+#: bibliothek/templates/bibliothek/dashboard.html:22
+#: books/functions/book/base.py:32 books/functions/book/base.py:34
+#: books/functions/book/base.py:111 books/functions/book/list.py:11
+#: books/functions/book/list.py:22 books/functions/book/list.py:28
+#: books/templates/books/book_detail.html:14
+#: books/templates/books/edition_detail.html:16 series/models.py:38
+#: series/models.py:39 series/templates/series/series_list.html:8
+msgid "Series"
+msgstr "Serien"
+
+#: bibliothek/templates/bibliothek/dashboard.html:8
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: bibliothek/templates/bibliothek/dashboard.html:20
+#: bibliothek/templates/bibliothek/dashboard.html:80
+#: books/functions/book/base.py:20 books/functions/book/base.py:103
+#: books/functions/book/list.py:11 books/functions/book/list.py:22
+#: books/functions/book/list.py:28 books/templates/books/edition_detail.html:12
+#: papers/functions/paper/base.py:23 papers/functions/paper/base.py:111
+#: papers/functions/paper/list.py:12 papers/functions/paper/list.py:22
+#: papers/functions/paper/list.py:28 papers/functions/paper/parse.py:36
+msgid "Title"
+msgstr "Titel"
+
+#: bibliothek/templates/bibliothek/dashboard.html:21
+#: bibliothek/templates/bibliothek/dashboard.html:81 books/admin.py:39
+#: books/functions/book/base.py:26 books/functions/book/base.py:28
+#: books/functions/book/base.py:107 books/functions/book/base.py:109
+#: books/functions/book/list.py:11 books/functions/book/list.py:22
+#: books/functions/book/list.py:28 books/templates/books/book_detail.html:12
+#: books/templates/books/book_list.html:13
+#: books/templates/books/edition_detail.html:14
+#: genres/templates/genres/genre_detail.html:18
+#: journals/templates/journals/journal_detail.html:28
+#: papers/functions/paper/base.py:29 papers/functions/paper/base.py:31
+#: papers/functions/paper/base.py:116 papers/functions/paper/base.py:120
+#: papers/functions/paper/parse.py:50
+#: papers/templates/papers/paper_detail.html:10
+#: papers/templates/papers/paper_list.html:13
+#: persons/templates/persons/person_detail.html:28
+#: persons/templates/persons/person_detail.html:55
+#: publishers/templates/publishers/publisher_detail.html:31
+#: series/templates/series/series_detail.html:28
+msgid "Authors"
+msgstr "Autoren"
+
+#: bibliothek/templates/bibliothek/dashboard.html:23
+#: bibliothek/templates/bibliothek/dashboard.html:83
+#: books/functions/book/base.py:38 books/functions/book/base.py:40
+#: books/functions/book/base.py:112 books/functions/book/list.py:11
+#: books/functions/book/list.py:22 books/functions/book/list.py:28
+#: books/templates/books/book_detail.html:16
+#: books/templates/books/edition_detail.html:18
+#: papers/functions/paper/base.py:47 papers/functions/paper/base.py:49
+#: papers/functions/paper/base.py:123 papers/functions/paper/list.py:12
+#: papers/functions/paper/list.py:22 papers/functions/paper/list.py:28
+#: papers/functions/paper/parse.py:59
+#: papers/templates/papers/paper_detail.html:14
+msgid "Volume"
+msgstr "Band"
+
+#: bibliothek/templates/bibliothek/dashboard.html:24
+#: books/functions/edition/base.py:32 books/functions/edition/base.py:34
+#: books/functions/edition/base.py:101
+#: books/templates/books/edition_detail.html:37
+msgid "Binding"
+msgstr "Bindung"
+
+#: bibliothek/templates/bibliothek/dashboard.html:25
+#: bibliothek/templates/bibliothek/dashboard.html:55
+#: bibliothek/templates/bibliothek/dashboard.html:84
+#: books/functions/edition/read.py:48
+#: books/templates/books/edition_detail.html:73
+#: magazines/functions/issue/read.py:48
+#: magazines/templates/magazines/issue_detail.html:67
+#: papers/templates/papers/paper_detail.html:57
+msgid "Date started"
+msgstr ""
+
+#: bibliothek/templates/bibliothek/dashboard.html:52
+#: magazines/functions/issue/base.py:100
+#: magazines/templates/magazines/issue_detail.html:10
+msgid "Magazine"
+msgstr "Magazin"
+
+#: bibliothek/templates/bibliothek/dashboard.html:53
+#: magazines/functions/issue/base.py:21 magazines/functions/issue/base.py:101
+#: magazines/functions/issue/list.py:11 magazines/functions/issue/list.py:22
+#: magazines/functions/issue/list.py:28 magazines/functions/magazine/base.py:65
+#: magazines/functions/magazine/base.py:69
+#: magazines/templates/magazines/issue_detail.html:26
+msgid "Issue"
+msgstr "Ausgabe"
+
+#: bibliothek/templates/bibliothek/dashboard.html:54
+#: books/functions/edition/base.py:99 books/functions/edition/list.py:11
+#: books/functions/edition/list.py:22 books/functions/edition/list.py:28
+#: books/templates/books/edition_detail.html:41
+#: magazines/functions/issue/base.py:25 magazines/functions/issue/base.py:27
+#: magazines/functions/issue/base.py:102 magazines/functions/issue/list.py:11
+#: magazines/functions/issue/list.py:22 magazines/functions/issue/list.py:28
+#: magazines/templates/magazines/issue_detail.html:28
+#: papers/functions/paper/base.py:35 papers/functions/paper/base.py:37
+#: papers/functions/paper/base.py:124 papers/functions/paper/parse.py:63
+#: papers/templates/papers/paper_detail.html:16
+msgid "Published on"
+msgstr "Veröffenlicht am"
+
+#: bibliothek/templates/bibliothek/dashboard.html:82
+#: papers/functions/paper/base.py:41 papers/functions/paper/base.py:43
+#: papers/functions/paper/base.py:122 papers/functions/paper/list.py:12
+#: papers/functions/paper/list.py:22 papers/functions/paper/list.py:28
+#: papers/functions/paper/parse.py:55
+#: papers/templates/papers/paper_detail.html:12
+msgid "Journal"
+msgstr "Journal"
+
+#: bindings/functions/binding/base.py:13 bindings/functions/binding/base.py:34
+#: bindings/functions/binding/list.py:11 bindings/functions/binding/list.py:17
+#: books/functions/book/base.py:19 books/functions/book/base.py:102
+#: books/functions/book/list.py:11 books/functions/book/list.py:22
+#: books/functions/book/list.py:28 books/functions/edition/acquisition.py:47
+#: books/functions/edition/base.py:21 books/functions/edition/base.py:96
+#: books/functions/edition/list.py:11 books/functions/edition/list.py:22
+#: books/functions/edition/list.py:28 books/functions/edition/read.py:47
+#: books/templates/books/book_detail.html:10
+#: books/templates/books/edition_detail.html:10
+#: books/templates/books/edition_detail.html:31
+#: genres/functions/genre/base.py:13 genres/functions/genre/base.py:34
+#: genres/functions/genre/list.py:11 genres/functions/genre/list.py:17
+#: journals/functions/journal/base.py:15 journals/functions/journal/base.py:42
+#: journals/functions/journal/list.py:11 journals/functions/journal/list.py:17
+#: magazines/functions/issue/acquisition.py:47
+#: magazines/functions/issue/base.py:20 magazines/functions/issue/base.py:99
+#: magazines/functions/issue/list.py:11 magazines/functions/issue/list.py:22
+#: magazines/functions/issue/list.py:28 magazines/functions/issue/read.py:47
+#: magazines/functions/magazine/base.py:15
+#: magazines/functions/magazine/base.py:49
+#: magazines/functions/magazine/list.py:11
+#: magazines/functions/magazine/list.py:17
+#: magazines/templates/magazines/issue_detail.html:11
+#: magazines/templates/magazines/issue_detail.html:24
+#: papers/functions/paper/acquisition.py:47 papers/functions/paper/base.py:22
+#: papers/functions/paper/base.py:110 papers/functions/paper/list.py:12
+#: papers/functions/paper/list.py:22 papers/functions/paper/list.py:28
+#: papers/functions/paper/parse.py:35 persons/functions/person/base.py:15
+#: persons/functions/person/base.py:45 persons/functions/person/list.py:12
+#: persons/functions/person/list.py:18
+#: publishers/functions/publisher/base.py:15
+#: publishers/functions/publisher/base.py:51
+#: publishers/functions/publisher/list.py:11
+#: publishers/functions/publisher/list.py:17
+#: publishers/templates/publishers/publisher_detail.html:10
+#: series/functions/series/base.py:15 series/functions/series/base.py:51
+#: series/functions/series/list.py:11 series/functions/series/list.py:17
+msgid "Id"
+msgstr "Id"
+
+#: bindings/functions/binding/base.py:14 bindings/functions/binding/base.py:35
+#: bindings/functions/binding/list.py:11 bindings/functions/binding/list.py:17
+#: genres/functions/genre/base.py:14 genres/functions/genre/base.py:35
+#: genres/functions/genre/list.py:11 genres/functions/genre/list.py:17
+#: journals/functions/journal/base.py:16 journals/functions/journal/base.py:43
+#: journals/functions/journal/list.py:11 journals/functions/journal/list.py:17
+#: magazines/functions/magazine/base.py:16
+#: magazines/functions/magazine/base.py:50
+#: magazines/functions/magazine/list.py:11
+#: magazines/functions/magazine/list.py:17
+#: publishers/functions/publisher/base.py:16
+#: publishers/functions/publisher/base.py:52
+#: publishers/functions/publisher/list.py:11
+#: publishers/functions/publisher/list.py:17 series/functions/series/base.py:16
+#: series/functions/series/base.py:52 series/functions/series/list.py:11
+#: series/functions/series/list.py:17
+msgid "Name"
+msgstr "Name"
+
+#: bindings/functions/binding/base.py:16
+#, python-format
+msgid "Successfully added binding \"%(name)s\" with id \"%(id)s\"."
+msgstr ""
+"Die Binung \"%(name)s\" wurde erfolgreich mit id \"%(id)s\" hinzugefügt."
+
+#: bindings/functions/binding/base.py:18
+#, python-format
+msgid "The binding \"%(name)s\" already exists with id \"%(id)s\", aborting..."
+msgstr ""
+"Die Bindung \"%(name)s\" existiert bereits mit id \"%(id)s\", beenden..."
+
+#: bindings/functions/binding/base.py:28
+#, python-format
+msgid "Successfully edited binding \"%(name)s\" with id \"%(id)s\"."
+msgstr ""
+"Der Verlag \"%(name)s\" wurde erfolgreich mit Id \"%(id)s\" hinzugefügt."
+
+#: bindings/functions/binding/base.py:33 books/functions/book/base.py:101
+#: books/functions/edition/acquisition.py:46 books/functions/edition/base.py:95
+#: books/functions/edition/read.py:46 genres/functions/genre/base.py:33
+#: journals/functions/journal/base.py:41
+#: magazines/functions/issue/acquisition.py:46
+#: magazines/functions/issue/base.py:98 magazines/functions/issue/read.py:46
+#: magazines/functions/magazine/base.py:48
+#: papers/functions/paper/acquisition.py:46 papers/functions/paper/base.py:109
+#: persons/functions/person/base.py:44
+#: publishers/functions/publisher/base.py:50 series/functions/series/base.py:50
+msgid "Field"
+msgstr "Feld"
+
+#: bindings/functions/binding/base.py:33 books/functions/book/base.py:101
+#: books/functions/edition/acquisition.py:46 books/functions/edition/base.py:95
+#: books/functions/edition/read.py:46 genres/functions/genre/base.py:33
+#: journals/functions/journal/base.py:41
+#: magazines/functions/issue/acquisition.py:46
+#: magazines/functions/issue/base.py:98 magazines/functions/issue/read.py:46
+#: magazines/functions/magazine/base.py:48
+#: papers/functions/paper/acquisition.py:46 papers/functions/paper/base.py:109
+#: persons/functions/person/base.py:44
+#: publishers/functions/publisher/base.py:50 series/functions/series/base.py:50
+msgid "Value"
+msgstr "Wert"
+
+#: bindings/functions/binding/get.py:13
+msgid "No binding found."
+msgstr "Keine Bindung gefunden."
+
+#: bindings/functions/binding/get.py:16
+msgid "More than one binding found."
+msgstr "Mehr als eine Bindung gefunden."
+
+#: books/functions/book/base.py:50 books/functions/book/base.py:122
+#: books/functions/book/base.py:124 books/templates/books/book_detail.html:20
+#: books/templates/books/edition_detail.html:22
+#: journals/functions/journal/base.py:21 journals/functions/journal/base.py:48
+#: journals/functions/journal/base.py:52
+#: journals/templates/journals/journal_detail.html:10
+#: magazines/functions/issue/base.py:43 magazines/functions/issue/base.py:119
+#: magazines/functions/issue/base.py:121
+#: magazines/functions/magazine/base.py:27
+#: magazines/functions/magazine/base.py:56
+#: magazines/functions/magazine/base.py:60
+#: magazines/templates/magazines/issue_detail.html:15
+#: magazines/templates/magazines/issue_detail.html:32
+#: magazines/templates/magazines/magazine_detail.html:12
+#: papers/functions/paper/base.py:59 papers/functions/paper/base.py:147
+#: papers/functions/paper/base.py:151 papers/functions/paper/parse.py:68
+#: papers/templates/papers/paper_detail.html:22
+#: persons/functions/person/base.py:22 persons/functions/person/base.py:52
+#: persons/functions/person/base.py:56
+#: persons/templates/persons/person_detail.html:10
+#: publishers/functions/publisher/base.py:21
+#: publishers/functions/publisher/base.py:56
+#: publishers/functions/publisher/base.py:58
+#: publishers/templates/publishers/publisher_detail.html:12
+#: series/functions/series/base.py:21 series/functions/series/base.py:56
+#: series/functions/series/base.py:58
+#: series/templates/series/series_detail.html:10
+msgid "Links"
+msgstr "Links"
+
+#: books/functions/book/base.py:53
+#, python-format
+msgid "Successfully added book \"%(title)s\" with id \"%(id)s\"."
+msgstr ""
+"Das Buch \"%(title)s\" wurde erfolgreich mit der Id \"%(id)s\" hinzugefügt."
+
+#: books/functions/book/base.py:55
+#, python-format
+msgid "The book \"%(title)s\" already exists with id \"%(id)s\", aborting..."
+msgstr "Das Buch \"%(title)s\" existiert bereits mit Id \"%(id)s\", beenden..."
+
+#: books/functions/book/base.py:72 papers/functions/paper/base.py:81
+#, python-format
+msgid "Author \"%(name)s\" not found."
+msgstr "Der Autor \"%(name)s\" wurde nicht gefunden."
+
+#: books/functions/book/base.py:85
+#, python-format
+msgid "Genre \"%(name)s\" not found."
+msgstr "Das Genre \"%(name)s\" wurde nicht gefunden."
+
+#: books/functions/book/base.py:94 magazines/functions/issue/base.py:91
+#, python-format
+msgid "Link \"%(link)s\" not found."
+msgstr "Der Link \"%(link)s\" wurde nicht gefunden."
+
+#: books/functions/book/base.py:96
+#, python-format
+msgid "Successfully edited book \"%(title)s\" with id \"%(id)s\"."
+msgstr "Das Buch \"%(title)s\" mit Id \"%(id)s\" wurde erfolgreich bearbeitet."
+
+#: books/functions/edition/acquisition.py:13
+#, python-format
+msgid "Successfully added acquisition \"%(id)s\" to edition \"%(edition)s\"."
+msgstr ""
+"Der Kauf \"%(id)s\" wurde erfolgreich zur Edition \"%(edition)s\" "
+"hinzugefügt."
+
+#: books/functions/edition/acquisition.py:23
+#: magazines/functions/issue/acquisition.py:23
+#: papers/functions/paper/acquisition.py:23
+msgid "Successfully deleted acquisition."
+msgstr "Der Kauf wurde erfolgreich gelöscht."
+
+#: books/functions/edition/acquisition.py:25
+#, python-format
+msgid ""
+"An acquisition with id \"%(acquisition)s\" for this edition does not exist."
+msgstr ""
+"Ein Kauf mit der Id \"%(acquisition)s\" existiert für diese Edition nicht."
+
+#: books/functions/edition/acquisition.py:38
+#: magazines/functions/issue/acquisition.py:38
+#: papers/functions/paper/acquisition.py:38
+#, python-format
+msgid "Successfully edited acquisition \"%(acquisition)s\"."
+msgstr "Der Kauf \"%(acquisition)s\" wurde erfolgreich bearbeitet."
+
+#: books/functions/edition/acquisition.py:48
+#: books/templates/books/edition_detail.html:61
+#: magazines/functions/issue/acquisition.py:48
+#: magazines/templates/magazines/issue_detail.html:55
+#: papers/functions/paper/acquisition.py:48
+#: papers/templates/papers/paper_detail.html:45
+msgid "Date"
+msgstr "Datum"
+
+#: books/functions/edition/acquisition.py:49
+#: books/templates/books/edition_detail.html:62
+#: magazines/functions/issue/acquisition.py:49
+#: magazines/templates/magazines/issue_detail.html:56
+#: papers/functions/paper/acquisition.py:49
+#: papers/templates/papers/paper_detail.html:46
+msgid "Price"
+msgstr "Preis"
+
+#: books/functions/edition/base.py:22 books/functions/edition/base.py:97
+#: books/models.py:65
+msgid "Book"
+msgstr "Buch"
+
+#: books/functions/edition/base.py:26 books/functions/edition/base.py:28
+#: magazines/functions/issue/base.py:31 magazines/functions/issue/base.py:33
+msgid "Cover image"
+msgstr "Coverbild"
+
+#: books/functions/edition/base.py:38 books/functions/edition/base.py:40
+#: books/functions/edition/base.py:102
+#: books/templates/books/edition_detail.html:39 publishers/models.py:38
+msgid "Publisher"
+msgstr "Verlag"
+
+#: books/functions/edition/base.py:45 books/functions/edition/base.py:106
+#: books/functions/edition/base.py:108
+#: books/templates/books/edition_detail.html:43 languages/models.py:37
+#: magazines/functions/issue/base.py:38 magazines/functions/issue/base.py:107
+#: magazines/functions/issue/base.py:109
+#: magazines/templates/magazines/issue_detail.html:30
+#: papers/functions/paper/base.py:54 papers/functions/paper/base.py:129
+#: papers/functions/paper/base.py:133
+#: papers/templates/papers/paper_detail.html:18
+msgid "Languages"
+msgstr "Sprachen"
+
+#: books/functions/edition/base.py:53 books/functions/edition/base.py:112
+#: books/functions/edition/base.py:114
+#: books/templates/books/edition_detail.html:47
+#: magazines/functions/issue/base.py:51 magazines/functions/issue/base.py:113
+#: magazines/functions/issue/base.py:115
+#: magazines/templates/magazines/issue_detail.html:41
+#: papers/functions/paper/base.py:138 papers/functions/paper/base.py:142
+#: papers/functions/paper/parse.py:76
+#: papers/templates/papers/paper_detail.html:31
+msgid "Files"
+msgstr "Dateien"
+
+#: books/functions/edition/base.py:55
+#, python-format
+msgid "Successfully added edition \"%(edition)s\" with id \"%(id)s\"."
+msgstr ""
+"Die Edition \"%(edition)s\" wurde erfolgreich mit der Id \"%(id)s\" "
+"hinzugefügt."
+
+#: books/functions/edition/base.py:57
+#, python-format
+msgid ""
+"The edition \"%(edition)s\" already exists with id \"%(id)s\", aborting..."
+msgstr ""
+"Die Edition \"%(edition)s\" existiert bereits mit Id \"%(id)s\", beenden..."
+
+#: books/functions/edition/base.py:82 magazines/functions/issue/base.py:76
+#: papers/functions/paper/base.py:96
+#, python-format
+msgid "Language \"%(name)s\" not found."
+msgstr ""
+
+#: books/functions/edition/base.py:90
+#, python-format
+msgid "Successfully edited edition \"%(edition)s\" with id \"%(id)s\"."
+msgstr ""
+"Die Edition \"%(edition)s\" mit Id \"%(id)s\" wurde erfolgreich bearbeitet."
+
+#: books/functions/edition/base.py:98 books/functions/edition/list.py:11
+#: books/functions/edition/list.py:22 books/functions/edition/list.py:28
+#: books/templates/books/edition_detail.html:35
+msgid "ISBN"
+msgstr "ISBN"
+
+#: books/functions/edition/base.py:100 magazines/functions/issue/base.py:103
+msgid "Cover"
+msgstr ""
+
+#: books/functions/edition/base.py:118 books/functions/edition/base.py:120
+#: books/templates/books/edition_detail.html:56
+#: magazines/functions/issue/base.py:125 magazines/functions/issue/base.py:127
+#: magazines/templates/magazines/issue_detail.html:50
+#: papers/functions/paper/base.py:156 papers/functions/paper/base.py:160
+#: papers/templates/papers/paper_detail.html:40
+msgid "Acquisitions"
+msgstr ""
+
+#: books/functions/edition/list.py:11 books/functions/edition/list.py:22
+#: books/functions/edition/list.py:28
+#: books/templates/books/edition_detail.html:33
+msgid "Alternate title"
+msgstr ""
+
+#: books/functions/edition/read.py:13
+#, python-format
+msgid "Successfully added read \"%(id)s\" to edition \"%(edition)s\"."
+msgstr ""
+"Das Lesen \"%(id)s\" wurde erfolgreich mit der Id \"%(id)s\" zur Edition "
+"\"%(edition)s\" hinzugefügt."
+
+#: books/functions/edition/read.py:23 magazines/functions/issue/read.py:23
+msgid "Successfully deleted read."
+msgstr "Das Lesen wurde erfolgreich gelöscht."
+
+#: books/functions/edition/read.py:25 books/functions/edition/read.py:41
+#, python-format
+msgid "A read with id \"%(id)s\" for this edition does not exist."
+msgstr ""
+
+#: books/functions/edition/read.py:38 magazines/functions/issue/read.py:38
+#, python-format
+msgid "Successfully edited read \"%(id)s\"."
+msgstr "Das Lesen \"%(id)s\" wurde erfolgreich bearbeitet."
+
+#: books/functions/edition/read.py:49
+#: books/templates/books/edition_detail.html:74
+#: magazines/functions/issue/read.py:49
+#: magazines/templates/magazines/issue_detail.html:68
+#: papers/templates/papers/paper_detail.html:58
+msgid "Date finished"
+msgstr ""
+
+#: books/models.py:131 books/templates/books/book_detail.html:38
+#: books/templates/books/edition_detail.html:8
+msgid "Edition"
+msgstr "Edition"
+
+#: books/templates/books/edition_detail.html:45
+#: papers/templates/papers/paper_detail.html:20
+msgid "Bibtex"
+msgstr "Bibtex"
+
+#: books/templates/books/edition_detail.html:68
+#: magazines/templates/magazines/issue_detail.html:62
+#: papers/templates/papers/paper_detail.html:52
+msgid "Reads"
+msgstr ""
+
+#: genres/functions/genre/base.py:16
+#, python-format
+msgid "Successfully added genre \"%(name)s\" with id \"%(id)s\"."
+msgstr ""
+"Das Genre \"%(name)s\" wurde erfolgreich mit der Id \"%(id)s\" hinzugefügt."
+
+#: genres/functions/genre/base.py:18
+#, python-format
+msgid "The genre \"%(name)s\" already exists with id \"%(id)s\", aborting..."
+msgstr ""
+"Das Genre \"%(name)s\" existiert bereits mit der Id \"%(id)s\", beenden..."
+
+#: genres/functions/genre/base.py:28
+#, python-format
+msgid "Successfully edited genre \"%(name)s\" with id \"%(id)s\"."
+msgstr ""
+"Das Genre \"%(name)s\" mit der Id \"%(id)s\" wurde erfolgreich bearbeitet."
+
+#: genres/functions/genre/get.py:13
+msgid "No genre found."
+msgstr "Kein Genre gefunden."
+
+#: genres/functions/genre/get.py:16
+msgid "More than one genre found."
+msgstr "Mehr als ein Genre gefunden."
+
+#: genres/models.py:36
+msgid "Genre"
+msgstr "Genre"
+
+#: journals/functions/journal/base.py:24
+#, python-format
+msgid "Successfully added journal \"%(name)s\" with id \"%(id)s\"."
+msgstr ""
+"Das Journal \"%(name)s\" wurde erfolgreich mit der Id \"%(id)s\" hinzugefügt."
+
+#: journals/functions/journal/base.py:26
+#, python-format
+msgid "The journal \"%(name)s\" already exists with id \"%(id)s\", aborting..."
+msgstr ""
+"Das Journal \"%(name)s\" existiert bereits mit der Id \"%(id)s\", beenden..."
+
+#: journals/functions/journal/get.py:13
+msgid "No journal found."
+msgstr "Kein Journal gefunden."
+
+#: journals/functions/journal/get.py:16
+msgid "More than one journal found."
+msgstr "Mehr als ein Journal gefunden."
+
+#: journals/functions/journal/list.py:11 journals/functions/journal/list.py:17
+#: persons/functions/person/list.py:12 persons/functions/person/list.py:18
+msgid "#Papers"
+msgstr "#Papiere"
+
+#: languages/models.py:36
+msgid "Language"
+msgstr "Sprache"
+
+#: magazines/functions/issue/acquisition.py:13
+#, python-format
+msgid ""
+"Successfully added acquisition \"%(id)s\" to issue \"%(magazine)s %(issue)s"
+"\"."
+msgstr ""
+"Der Kauf \"%(id)s\" wurde erfolgreich zur Ausgabe \"\"%(magazine)s %(issue)s"
+"\" hinzugefügt."
+
+#: magazines/functions/issue/acquisition.py:25
+#, python-format
+msgid ""
+"An acquisition with id \"%(acquisition)s\" for this issue does not exist."
+msgstr ""
+"Ein Kauf mit der Id \"%(acquisition)s\" existiert für diese Ausgabe nicht."
+
+#: magazines/functions/issue/base.py:53
+#, python-format
+msgid "Successfully added issue \"%(magazine)s %(issue)s\" with id \"%(id)s\"."
+msgstr ""
+"Die Ausgabe \"%(magazine)s %(issue)s\" wurde erfolgreich mit der Id \"%(id)s"
+"\" hinzugefügt."
+
+#: magazines/functions/issue/base.py:55
+#, python-format
+msgid ""
+"The issue \"%(magazine)s %(issue)s\" already exists with id \"%(id)s\", "
+"aborting..."
+msgstr ""
+"Die Ausgabe \"%(magazine)s %(issue)s\" existiert bereits mit der Id \"%(id)s"
+"\", beenden..."
+
+#: magazines/functions/issue/base.py:93
+#, python-format
+msgid ""
+"Successfully edited issue \"%(magazine)s %(issue)s\" with id \"%(id)s\"."
+msgstr ""
+"Die Ausgabe \"%(magazine)s %(issue)s\" mit der Id \"%(id)s\" wurde "
+"erfolgreich bearbeitet."
+
+#: magazines/functions/issue/get.py:13
+msgid "No issue found."
+msgstr "Keine Ausgabe gefunden."
+
+#: magazines/functions/issue/get.py:16
+msgid "More than one issue found."
+msgstr "Mehr als eine Ausgabe gefunden."
+
+#: magazines/functions/issue/list.py:11 magazines/functions/issue/list.py:22
+#: magazines/functions/issue/list.py:28
+msgid "#Files"
+msgstr "#Dateien"
+
+#: magazines/functions/issue/read.py:13
+#, python-format
+msgid "Successfully added read \"%(id)s\" to issue \"%(magazine)s %(issue)s\"."
+msgstr ""
+"Das Lesen \"%(id)s\" wurde erfolgreich zur Ausgabe \"%(magazine)s %(issue)s"
+"\" hinzugefügt."
+
+#: magazines/functions/issue/read.py:25 magazines/functions/issue/read.py:41
+#, python-format
+msgid "A read with id \"%(id)s\" for this issue does not exist."
+msgstr ""
+
+#: magazines/functions/magazine/base.py:20
+#: magazines/functions/magazine/base.py:22
+#: magazines/functions/magazine/base.py:51
+#: magazines/templates/magazines/magazine_detail.html:10
+msgid "Feed"
+msgstr "Feed"
+
+#: magazines/functions/magazine/base.py:29
+#, python-format
+msgid "Successfully added magazine \"%(name)s\" with id \"%(id)s\"."
+msgstr ""
+"Das Magazin \"%(name)s\" wurde erfolgreich mit der Id \"%(id)s\" hinzugefügt."
+
+#: magazines/functions/magazine/base.py:31
+#, python-format
+msgid ""
+"The magazine \"%(name)s\" already exists with id \"%(id)s\", aborting..."
+msgstr ""
+"Das Magazin \"%(name)s\" existiert bereits mit der Id \"%(id)s\", beenden..."
+
+#: magazines/functions/magazine/base.py:43
+#, python-format
+msgid "Successfully edited magazine \"%(name)s\" with id \"%(id)s\"."
+msgstr ""
+"Das Magazin \"%(name)s\" mit der Id \"%(id)s\" wurde erfolgreich bearbeitet."
+
+#: magazines/functions/magazine/get.py:13
+msgid "No magazine found."
+msgstr "Kein Magazin gefunden."
+
+#: magazines/functions/magazine/get.py:16
+msgid "More than one magazine found."
+msgstr "Mehr als eine Magazin gefunden."
+
+#: magazines/functions/magazine/list.py:11
+#: magazines/functions/magazine/list.py:17
+msgid "#Issues"
+msgstr "#Ausgaben"
+
+#: papers/functions/paper/acquisition.py:13
+#, python-format
+msgid "Successfully added acquisition \"%(id)s\" to paper \"%(paper)s\"."
+msgstr ""
+"Der Kauf \"%(id)s\" wurde erfolgreich zum Papier \"%(paper)s\" hinzugefügt."
+
+#: papers/functions/paper/acquisition.py:25
+#, python-format
+msgid ""
+"An acquisition with id \"%(acquisition)s\" for this paper does not exist."
+msgstr ""
+"Ein Kauf mit der Id \"%(acquisition)s\" existiert für dieses Papier nicht."
+
+#: papers/functions/paper/base.py:62 papers/functions/paper/parse.py:78
+#, python-format
+msgid "Successfully added paper \"%(title)s\" with id \"%(id)s\"."
+msgstr ""
+"Das Papier \"%(title)s\" wurde erfolgreich mit der Id \"%(id)s\" hinzugefügt."
+
+#: papers/functions/paper/base.py:64 papers/functions/paper/parse.py:38
+#, python-format
+msgid "The paper \"%(title)s\" already exists with id \"%(id)s\", aborting..."
+msgstr ""
+"Das Papier \"%(title)s\" existiert bereits mit der Id \"%(id)s\", beenden..."
+
+#: papers/functions/paper/base.py:104
+#, python-format
+msgid "Successfully edited paper \"%(title)s\" with id \"%(id)s\"."
+msgstr ""
+"Das Papier \"%(title)s\" mit der Id \"%(id)s\" wurde erfolgreich bearbeitet."
+
+#: papers/functions/paper/get.py:13
+msgid "No paper found."
+msgstr "Keinen Papier gefunden."
+
+#: papers/functions/paper/get.py:16
+msgid "More than one paper found."
+msgstr "Mehr als eine Papier gefunden."
+
+#: papers/functions/paper/parse.py:43
+msgid "No title given, aborting..."
+msgstr "Kein Titel angegeben, beenden..."
+
+#: papers/functions/paper/parse.py:81
+#, python-format
+msgid "Successfully added acquisition on \"%(date)s\" with id \"%(id)s\"."
+msgstr ""
+"Der Kauf am \"%(date)s\" mit der Id \"%(id)s\" wurde erfolgreich hinzugefügt."
+
+#: persons/functions/person/base.py:16 persons/functions/person/base.py:46
+#: persons/functions/person/list.py:12 persons/functions/person/list.py:18
+msgid "First name"
+msgstr "Vorname"
+
+#: persons/functions/person/base.py:17 persons/functions/person/base.py:47
+#: persons/functions/person/list.py:12 persons/functions/person/list.py:18
+msgid "Last name"
+msgstr "Nachname"
+
+#: persons/functions/person/base.py:25
+#, python-format
+msgid ""
+"Successfully added person \"%(first_name)s %(last_name)s\" with id \"%(id)s"
+"\"."
+msgstr ""
+"Die Person \"%(first_name)s %(last_name)s\" wurde erfolgreich mit der Id "
+"\"%(id)s\" hinzugefügt."
+
+#: persons/functions/person/base.py:27
+#, python-format
+msgid ""
+"The person \"%(first_name)s %(last_name)s\" already exists with id \"%(id)s"
+"\", aborting..."
+msgstr ""
+"Der Person \"%(first_name)s %(last_name)s\" existiert bereits mit der Id "
+"\"%(id)s\", beenden..."
+
+#: persons/functions/person/base.py:39
+#, python-format
+msgid ""
+"Successfully edited person \"%(first_name)s %(last_name)s\" with id \"%(id)s"
+"\"."
+msgstr ""
+"Die Person \"%(first_name)s %(last_name)s\" mit Id \"%(id)s\" wurde "
+"erfolgreich bearbeitet."
+
+#: persons/functions/person/get.py:13
+msgid "No person found."
+msgstr "Keine Person gefunden."
+
+#: persons/functions/person/get.py:16
+msgid "More than one person found."
+msgstr "Mehr als eine Person gefunden."
+
+#: persons/functions/person/list.py:12 persons/functions/person/list.py:18
+msgid "#Books"
+msgstr "#Bücher"
+
+#: publishers/functions/publisher/base.py:24
+#, python-format
+msgid "Successfully added publisher \"%(name)s\" with id \"%(id)s\"."
+msgstr ""
+"Der Verlag \"%(name)s\" wurde erfolgreich mit der Id \"%(id)s\" hinzugefügt."
+
+#: publishers/functions/publisher/base.py:26
+#, python-format
+msgid ""
+"The publisher \"%(name)s\" already exists with id \"%(id)s\", aborting..."
+msgstr ""
+"Der Verlag \"%(name)s\" existiert bereits mit der Id \"%(id)s\", beenden..."
+
+#: publishers/functions/publisher/base.py:43 series/functions/series/base.py:43
+#, python-format
+msgid "Link \"%(name)s\" not found."
+msgstr "Der Link \"%(name)s\" wurde nicht gefunden."
+
+#: publishers/functions/publisher/base.py:45
+#, python-format
+msgid "Successfully edited publisher \"%(name)s\" with id \"%(id)s\"."
+msgstr ""
+"Der Verlag \"%(name)s\" mit Id \"%(id)s\" wurde erfolgreich bearbeitet."
+
+#: publishers/functions/publisher/get.py:13
+msgid "No publisher found."
+msgstr "Keinen Verlag gefunden."
+
+#: publishers/functions/publisher/get.py:16
+msgid "More than one publisher found."
+msgstr "Mehr als einen Verlag gefunden."
+
+#: series/functions/series/base.py:24
+#, python-format
+msgid "Successfully added series \"%(name)s\" with id \"%(id)s\"."
+msgstr ""
+"Die Serie \"%(name)s\" wurde erfolgreich mit der Id \"%(id)s\" hinzugefügt."
+
+#: series/functions/series/base.py:26
+#, python-format
+msgid "The series \"%(name)s\" already exists with id \"%(id)s\", aborting..."
+msgstr ""
+"Die Serie \"%(name)s\" existiert bereits mit der Id \"%(id)s\", beenden..."
+
+#: series/functions/series/base.py:45
+#, python-format
+msgid "Successfully edited series \"%(name)s\" with id \"%(id)s\"."
+msgstr "Die Serie \"%(name)s\" mit Id \"%(id)s\" wurde erfolgreich bearbeitet."
+
+#: series/functions/series/get.py:13
+msgid "No series found."
+msgstr "Keine Serie gefunden."
+
+#: series/functions/series/get.py:16
+msgid "More than one series found."
+msgstr "Mehr als eine Serie gefunden."
