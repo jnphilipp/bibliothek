@@ -162,8 +162,8 @@ def info(paper):
     if paper.reads.count() > 0:
         for (i, read), has_next in lookahead(enumerate(paper.reads.all())):
             if i == 0:
-                stdout.p([_('Read'), '%s: date started=%s, date finished=%s' % (read.id, read.started, read.finished)], positions=positions, after='' if has_next else '=')
+                stdout.p([_('Reads'), '%s: date started=%s, date finished=%s' % (read.id, read.started, read.finished)], positions=positions, after='' if has_next else '=')
             else:
                 stdout.p(['', '%s: date started=%s, date finished=%s' % (read.id, read.started, read.finished)], positions=positions, after='' if has_next else '=')
     else:
-        stdout.p([_('Read'), ''], positions=positions, after='=')
+        stdout.p([_('Reads'), ''], positions=positions, after='=')

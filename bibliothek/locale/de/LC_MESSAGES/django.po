@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-20 14:40+0000\n"
+"POT-Creation-Date: 2017-01-22 15:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,27 +18,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: bibliothek.py:395
+#: bibliothek.py:411
 msgid "Type"
 msgstr "Art"
 
-#: bibliothek.py:395
+#: bibliothek.py:411
 msgid "Count"
 msgstr "Anzahl"
 
-#: bibliothek.py:395 books/functions/edition/base.py:124
+#: bibliothek.py:411 books/functions/edition/base.py:124
 #: books/functions/edition/base.py:126 magazines/functions/issue/base.py:131
-#: magazines/functions/issue/base.py:133 papers/functions/paper/base.py:165
-#: papers/functions/paper/base.py:169
+#: magazines/functions/issue/base.py:133
 msgid "Read"
-msgstr "Lesen"
+msgstr "Lesung"
 
-#: bibliothek.py:395
+#: bibliothek.py:411
 #, python-format
 msgid "Read %(year)d"
-msgstr "Lesen %(year)d"
+msgstr "Gelesen %(year)d"
 
-#: bibliothek.py:396 bibliothek/templates/base.html:39
+#: bibliothek.py:412 bibliothek/templates/base.html:39
 #: bibliothek/templates/bibliothek/dashboard.html:15 books/models.py:66
 #: books/templates/books/book_list.html:8 genres/functions/genre/base.py:40
 #: genres/functions/genre/base.py:44
@@ -52,24 +51,24 @@ msgstr "Lesen %(year)d"
 msgid "Books"
 msgstr "Bücher"
 
-#: bibliothek.py:397 books/functions/book/base.py:129
+#: bibliothek.py:413 books/functions/book/base.py:129
 #: books/functions/book/base.py:131 books/models.py:132
 #: books/templates/books/book_detail.html:33
 #: publishers/templates/publishers/publisher_detail.html:25
 msgid "Editions"
 msgstr "Editionen"
 
-#: bibliothek.py:398 bibliothek/templates/base.html:51
+#: bibliothek.py:414 bibliothek/templates/base.html:51
 #: bibliothek/templates/bibliothek/dashboard.html:47
 #: magazines/templates/magazines/magazine_list.html:8
 msgid "Magazines"
 msgstr "Magazine"
 
-#: bibliothek.py:399 magazines/templates/magazines/magazine_detail.html:25
+#: bibliothek.py:415 magazines/templates/magazines/magazine_detail.html:25
 msgid "Issues"
 msgstr "Ausgaben"
 
-#: bibliothek.py:400 bibliothek/templates/base.html:55
+#: bibliothek.py:416 bibliothek/templates/base.html:55
 #: bibliothek/templates/bibliothek/dashboard.html:75
 #: journals/functions/journal/base.py:57 journals/functions/journal/base.py:61
 #: journals/templates/journals/journal_detail.html:23
@@ -79,45 +78,53 @@ msgstr "Ausgaben"
 msgid "Papers"
 msgstr "Papiere"
 
-#: bibliothek.py:413
+#: bibliothek.py:429
 msgid "manage bindings"
 msgstr "Bindungen verwalten"
 
-#: bibliothek.py:418
+#: bibliothek.py:434
 msgid "add a new binding"
 msgstr "Neue Bindung hinzufügen"
 
-#: bibliothek.py:419
+#: bibliothek.py:435
 msgid "name"
 msgstr "Name"
 
-#: bibliothek.py:422
+#: bibliothek.py:438
 msgid "edit an existing binding"
 msgstr "bestehende Bindung bearbeiten"
 
-#: bibliothek.py:423 bibliothek.py:429
+#: bibliothek.py:439 bibliothek.py:445
 msgid "which binding"
 msgstr "welche Bindung"
 
-#: bibliothek.py:424
+#: bibliothek.py:440
 msgid "which field to edit"
 msgstr "zu bearbeitendes Feld"
 
-#: bibliothek.py:425
+#: bibliothek.py:441
 msgid "new value for field"
 msgstr "neuer Wert des Feldes"
 
-#: bibliothek.py:428
+#: bibliothek.py:444
 msgid "show information of a binding"
 msgstr "zeige Informationen einer Bindung"
 
-#: bibliothek.py:432
+#: bibliothek.py:448
 msgid "list bindings"
 msgstr "Bindungen auflisten"
 
-#: bibliothek.py:433
+#: bibliothek.py:449
 msgid "filter by term"
 msgstr "filtern bei Begriff"
+
+#: bibliothek.py:974
+msgid "show reading-list"
+msgstr ""
+
+#: bibliothek.py:980
+msgid "show statistics"
+msgstr ""
 
 #: bibliothek/templates/base.html:43
 #: journals/templates/journals/journal_list.html:8
@@ -164,8 +171,9 @@ msgstr "Dashboard"
 #: books/functions/book/list.py:11 books/functions/book/list.py:22
 #: books/functions/book/list.py:28 books/templates/books/edition_detail.html:12
 #: papers/functions/paper/base.py:23 papers/functions/paper/base.py:111
-#: papers/functions/paper/list.py:12 papers/functions/paper/list.py:22
-#: papers/functions/paper/list.py:28 papers/functions/paper/parse.py:36
+#: papers/functions/paper/list.py:12 papers/functions/paper/list.py:17
+#: papers/functions/paper/list.py:27 papers/functions/paper/list.py:33
+#: papers/functions/paper/parse.py:36
 msgid "Title"
 msgstr "Titel"
 
@@ -200,8 +208,8 @@ msgstr "Autoren"
 #: books/templates/books/edition_detail.html:18
 #: papers/functions/paper/base.py:47 papers/functions/paper/base.py:49
 #: papers/functions/paper/base.py:123 papers/functions/paper/list.py:12
-#: papers/functions/paper/list.py:22 papers/functions/paper/list.py:28
-#: papers/functions/paper/parse.py:59
+#: papers/functions/paper/list.py:17 papers/functions/paper/list.py:27
+#: papers/functions/paper/list.py:33 papers/functions/paper/parse.py:59
 #: papers/templates/papers/paper_detail.html:14
 msgid "Volume"
 msgstr "Band"
@@ -222,7 +230,7 @@ msgstr "Bindung"
 #: magazines/templates/magazines/issue_detail.html:67
 #: papers/templates/papers/paper_detail.html:57
 msgid "Date started"
-msgstr ""
+msgstr "Anfangsdatum"
 
 #: bibliothek/templates/bibliothek/dashboard.html:52
 #: magazines/functions/issue/base.py:100
@@ -251,13 +259,13 @@ msgstr "Ausgabe"
 #: papers/functions/paper/base.py:124 papers/functions/paper/parse.py:63
 #: papers/templates/papers/paper_detail.html:16
 msgid "Published on"
-msgstr "Veröffenlicht am"
+msgstr "Veröffentlicht am"
 
 #: bibliothek/templates/bibliothek/dashboard.html:82
 #: papers/functions/paper/base.py:41 papers/functions/paper/base.py:43
 #: papers/functions/paper/base.py:122 papers/functions/paper/list.py:12
-#: papers/functions/paper/list.py:22 papers/functions/paper/list.py:28
-#: papers/functions/paper/parse.py:55
+#: papers/functions/paper/list.py:17 papers/functions/paper/list.py:27
+#: papers/functions/paper/list.py:33 papers/functions/paper/parse.py:55
 #: papers/templates/papers/paper_detail.html:12
 msgid "Journal"
 msgstr "Journal"
@@ -289,10 +297,10 @@ msgstr "Journal"
 #: magazines/templates/magazines/issue_detail.html:24
 #: papers/functions/paper/acquisition.py:47 papers/functions/paper/base.py:22
 #: papers/functions/paper/base.py:110 papers/functions/paper/list.py:12
-#: papers/functions/paper/list.py:22 papers/functions/paper/list.py:28
-#: papers/functions/paper/parse.py:35 persons/functions/person/base.py:15
-#: persons/functions/person/base.py:45 persons/functions/person/list.py:12
-#: persons/functions/person/list.py:18
+#: papers/functions/paper/list.py:17 papers/functions/paper/list.py:27
+#: papers/functions/paper/list.py:33 papers/functions/paper/parse.py:35
+#: persons/functions/person/base.py:15 persons/functions/person/base.py:45
+#: persons/functions/person/list.py:12 persons/functions/person/list.py:18
 #: publishers/functions/publisher/base.py:15
 #: publishers/functions/publisher/base.py:51
 #: publishers/functions/publisher/list.py:11
@@ -563,34 +571,34 @@ msgstr ""
 #: papers/functions/paper/base.py:156 papers/functions/paper/base.py:160
 #: papers/templates/papers/paper_detail.html:40
 msgid "Acquisitions"
-msgstr ""
+msgstr "Käufe"
 
 #: books/functions/edition/list.py:11 books/functions/edition/list.py:22
 #: books/functions/edition/list.py:28
 #: books/templates/books/edition_detail.html:33
 msgid "Alternate title"
-msgstr ""
+msgstr "Alternativer Titel"
 
 #: books/functions/edition/read.py:13
 #, python-format
 msgid "Successfully added read \"%(id)s\" to edition \"%(edition)s\"."
 msgstr ""
-"Das Lesen \"%(id)s\" wurde erfolgreich mit der Id \"%(id)s\" zur Edition "
+"Die Lesung \"%(id)s\" wurde erfolgreich mit der Id \"%(id)s\" zur Edition "
 "\"%(edition)s\" hinzugefügt."
 
 #: books/functions/edition/read.py:23 magazines/functions/issue/read.py:23
 msgid "Successfully deleted read."
-msgstr "Das Lesen wurde erfolgreich gelöscht."
+msgstr "Die Lesung wurde erfolgreich gelöscht."
 
 #: books/functions/edition/read.py:25 books/functions/edition/read.py:41
 #, python-format
 msgid "A read with id \"%(id)s\" for this edition does not exist."
-msgstr ""
+msgstr "Die Lesung mit der Id\"%(id)s\" für diese Edition existiert nicht."
 
 #: books/functions/edition/read.py:38 magazines/functions/issue/read.py:38
 #, python-format
 msgid "Successfully edited read \"%(id)s\"."
-msgstr "Das Lesen \"%(id)s\" wurde erfolgreich bearbeitet."
+msgstr "Die Lesung \"%(id)s\" wurde erfolgreich bearbeitet."
 
 #: books/functions/edition/read.py:49
 #: books/templates/books/edition_detail.html:74
@@ -598,7 +606,7 @@ msgstr "Das Lesen \"%(id)s\" wurde erfolgreich bearbeitet."
 #: magazines/templates/magazines/issue_detail.html:68
 #: papers/templates/papers/paper_detail.html:58
 msgid "Date finished"
-msgstr ""
+msgstr "Enddatum"
 
 #: books/models.py:131 books/templates/books/book_detail.html:38
 #: books/templates/books/edition_detail.html:8
@@ -612,9 +620,10 @@ msgstr "Bibtex"
 
 #: books/templates/books/edition_detail.html:68
 #: magazines/templates/magazines/issue_detail.html:62
+#: papers/functions/paper/base.py:165 papers/functions/paper/base.py:169
 #: papers/templates/papers/paper_detail.html:52
 msgid "Reads"
-msgstr ""
+msgstr "Lesungen"
 
 #: genres/functions/genre/base.py:16
 #, python-format
@@ -732,13 +741,13 @@ msgstr "#Dateien"
 #, python-format
 msgid "Successfully added read \"%(id)s\" to issue \"%(magazine)s %(issue)s\"."
 msgstr ""
-"Das Lesen \"%(id)s\" wurde erfolgreich zur Ausgabe \"%(magazine)s %(issue)s"
+"Die Lesung \"%(id)s\" wurde erfolgreich zur Ausgabe \"%(magazine)s %(issue)s"
 "\" hinzugefügt."
 
 #: magazines/functions/issue/read.py:25 magazines/functions/issue/read.py:41
 #, python-format
 msgid "A read with id \"%(id)s\" for this issue does not exist."
-msgstr ""
+msgstr "Eine Lesung mit der Id \"%(id)s\" existiert für diese Ausgabe nicht."
 
 #: magazines/functions/magazine/base.py:20
 #: magazines/functions/magazine/base.py:22
