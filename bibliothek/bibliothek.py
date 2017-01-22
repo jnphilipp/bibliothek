@@ -27,7 +27,7 @@ django.setup()
 
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from bibliothek import settings
-from datetime import datetime
+from datetime import date, datetime
 from django.utils.translation import ugettext as _
 from utils import lookahead, stdout
 
@@ -383,6 +383,33 @@ def _load(args):
                 for r in e['reads']:
                     if not edition.reads.filter(started=r['started']).filter(finished=r['finished']).exists() and (r['started'] or r['finished']):
                         read = books_functions.edition.read.add(edition, r['started'], r['finished'])
+
+
+def _reading_list(args):
+    from books.models import Edition
+    from magazines.models import Issue
+    from papers.models import Paper
+    from shelves.models import Acquisition
+
+    reading_list = set()
+    for acquisition in Acquisition.objects.all():
+        if acquisition.content_object.reads.count() == 0:
+            reading_list.add((acquisition.content_object, acquisition.date))
+    reading_list = sorted(reading_list, key=lambda x: x[1] if x[1] else date.min)
+    if args.limit:
+        reading_list = reading_list[:args.limit]
+
+    positions = [.1, 0.15, .85, 1.]
+    stdout.p([_('Type'), _('Id'), _('Title'), _('Acquisition')], positions=positions, after='=')
+    for item, has_next in lookahead(reading_list):
+        stype = ''
+        if isinstance(item[0], Paper):
+            stype = 'Paper'
+        elif isinstance(item[0], Edition):
+            stype = 'Book'
+        elif isinstance(item[0], Issue):
+            stype = 'Issue'
+        stdout.p([stype, item[0].id, str(item[0]), item[1] if item[1] else ''], positions=positions, after='_' if has_next else '=')
 
 
 def _statistics(args):
@@ -954,8 +981,14 @@ if __name__ == "__main__":
     load_parser.add_argument('path', help='path to json file')
 
 
+    # create the parser for the "reading-list" subcommand
+    reading_list_parser = subparsers.add_parser('reading-list', help=_('show reading-list'))
+    reading_list_parser.set_defaults(func=_reading_list)
+    reading_list_parser.add_argument('--limit', type=int, help='limit list to n entries')
+
+
     # create the parser for the "statistics" subcommand
-    statistics_parser = subparsers.add_parser('statistics', help='show statistics')
+    statistics_parser = subparsers.add_parser('statistics', help=_('show statistics'))
     statistics_parser.set_defaults(func=_statistics)
 
 
