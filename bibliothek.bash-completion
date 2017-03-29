@@ -7,7 +7,7 @@ _bibliothek()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     subcommand="${COMP_WORDS[1]}"
 
-    opts="binding book genre journal load magazine paper person publisher runserver series statistics -h --help -v --version"
+    opts="binding book genre journal magazine paper person publisher series runserver load reading-list statistics -h --help -v --version"
 
     case "${subcommand}" in
         binding)
@@ -49,7 +49,7 @@ _bibliothek()
                     return 0
                     ;;
                 edit)
-                    opts="title series volume +author -author +genre -genre +link -link -h --help"
+                    opts="title +author -author series volume +genre -genre +link -link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -82,7 +82,7 @@ _bibliothek()
                             esac
                             ;;
                         add)
-                            opts="--isbn --published_on --cover --binding --publisher --file -h --help"
+                            opts="--isbn --published_on --cover --binding --publisher --file --language -h --help"
                             copts=$(compgen -W "${opts}" -- ${cur})
                             OLDIFS=$IFS
                             IFS=$'\n'
@@ -228,6 +228,11 @@ _bibliothek()
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
+                delete)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
                 edit)
                     opts="name feed -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
@@ -267,7 +272,7 @@ _bibliothek()
                             esac
                             ;;
                         add)
-                            opts="--published_on --cover --language --link --file -h --help"
+                            opts="--isbn --published_on --cover --binding --publisher --file --language -h --help"
                             copts=$(compgen -W "${opts}" -- ${cur})
                             OLDIFS=$IFS
                             IFS=$'\n'
@@ -334,7 +339,7 @@ _bibliothek()
                     return 0
                     ;;
                 *)
-                    opts="add edit info issue list -h --help"
+                    opts="add delete edit info issue list -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -533,6 +538,11 @@ _bibliothek()
             COMPREPLY=( ${copts[@]} $(compgen -f -- ${cur}) )
             IFS=$OLDIFS
             _file="-o filenames"
+            return 0
+            ;;
+        reading-list)
+            opts="--limit -h --help"
+            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
             return 0
             ;;
         *)

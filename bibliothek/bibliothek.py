@@ -176,6 +176,10 @@ def _magazine(args):
     import magazines.functions
     if args.magazine_subparser == 'add':
         magazines.functions.magazine.create(args.name, args.feed, args.link)
+    elif args.magazine_subparser == 'delete':
+        magazine = magazines.functions.magazine.get.by_term(args.magazine)
+        if magazine:
+            magazines.functions.magazine.delete(magazine)
     elif args.magazine_subparser == 'edit':
         magazine = magazines.functions.magazine.get.by_term(args.magazine)
         if magazine:
@@ -668,6 +672,10 @@ if __name__ == "__main__":
     magazine_add_parser.add_argument('--feed', help='feed url')
     magazine_add_parser.add_argument('--link', nargs='*', default=[], help='links')
 
+    # magazine delete
+    magazine_delete_parser = magazine_subparser.add_parser('delete', help='delete a magazine')
+    magazine_delete_parser.add_argument('magazine', help='which magazine')
+
     # magazine edit
     magazine_edit_parser = magazine_subparser.add_parser('edit', help='edit a magazine')
     magazine_edit_parser.add_argument('magazine', help='which magazine to edit')
@@ -997,7 +1005,3 @@ if __name__ == "__main__":
         args.func(args)
     else:
         parser.print_usage()
-
-    # from bibliothek.functions.parsers.freies_magazin import FreiesMagazinRSSParser
-    # parser = FreiesMagazinRSSParser()
-    # parser.archive()

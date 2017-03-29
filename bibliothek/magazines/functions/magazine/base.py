@@ -32,6 +32,49 @@ def create(name, feed=None, links=[]):
     return magazine, created
 
 
+def delete(magazine):
+    stdout.p([_('Deleting magazine "%(name)s" with id "%(id)s".') % {'name': magazine.name, 'id': magazine.id}], positions=[1.])
+
+    positions=[.1, .25, 1.]
+    if magazine.issues.count() > 0:
+        stdout.p([_('Deleting the issues:')], positions=[1.])
+        stdout.p([_('Id'), _('Related object'), _('Issue')], positions=positions, after='=')
+        for (i, issue), has_next in lookahead(enumerate(magazine.issues.all().order_by('published_on'))):
+            stdout.p([issue.id, '', issue.issue], positions=positions, after='')
+
+            if issue.files.count() > 0:
+                for i, file in enumerate(issue.files.all()):
+                    stdout.p(['', _('Files') if i == 0 else '', '%s: %s' % (file.id, file)], positions=positions, after='')
+                    file.delete()
+            else:
+                stdout.p(['', _('Files'), ''], positions=positions, after='')
+
+            if issue.links.count() > 0:
+                for i, link in enumerate(issue.links.all()):
+                    stdout.p(['', _('Links') if i == 0 else '', '%s: %s' % (link.id, link.link)], positions=positions, after='')
+                    links.delete()
+            else:
+                stdout.p(['', _('Links'), ''], positions=positions, after='')
+
+            if issue.acquisitions.count() > 0:
+                for i, acquisition in enumerate(issue.acquisitions.all()):
+                    stdout.p(['', _('Acquisitions') if i == 0 else '', '%s: date=%s, price=%0.2f' % (acquisition.id, acquisition.date, acquisition.price)], positions=positions, after='')
+                    acquisition.delete()
+            else:
+                stdout.p(['', _('Acquisitions'), ''], positions=positions, after='')
+
+            if issue.reads.count() > 0:
+                for i, read in enumerate(issue.reads.all()):
+                    stdout.p(['', _('Read') if i == 0 else '', '%s: date started=%s, date finished=%s' % (read.id, read.started, read.finished)], positions=positions, after='_' if has_next else '=')
+                    read.delete()
+            else:
+                stdout.p(['', _('Read'), ''], positions=positions, after='_' if has_next else '=')
+            issue.delete()
+    else:
+        stdout.p([_('No issues to delete.')], positions=[1.])
+    magazine.delete()
+
+
 def edit(magazine, field, value):
     assert field in ['name', 'feed']
 

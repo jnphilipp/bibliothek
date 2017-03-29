@@ -120,7 +120,7 @@ def info(paper):
         stdout.p([_('Authors'), ''], positions=positions)
 
     stdout.p([_('Journal'), '%s: %s' % (paper.journal.id, paper.journal.name) if paper.journal else ''], positions=positions)
-    stdout.p([_('Volume'), paper.volume], positions=positions)
+    stdout.p([_('Volume'), paper.volume if paper.volume else ''], positions=positions)
     stdout.p([_('Published on'), paper.published_on], positions=positions)
 
     if paper.languages.count() > 0:
