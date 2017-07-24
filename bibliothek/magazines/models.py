@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.utils.translation import ugettext_lazy as _
 from languages.models import Language
 from links.models import Link
 
@@ -16,15 +17,14 @@ class TextFieldSingleLine(models.TextField):
 
 
 class Magazine(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
 
-    slug = models.SlugField(max_length=2048, unique=True)
-    name = TextFieldSingleLine(unique=True)
+    slug = models.SlugField(max_length=2048, unique=True, verbose_name=_('Slug'))
+    name = TextFieldSingleLine(unique=True, verbose_name=_('Name'))
 
-    feed = models.ForeignKey(Link, on_delete=models.CASCADE, related_name='magazine_feed', blank=True, null=True)
-    links = models.ManyToManyField(Link, related_name='magazines', blank=True)
-
+    feed = models.ForeignKey(Link, on_delete=models.CASCADE, related_name='magazine_feed', blank=True, null=True, verbose_name=_('Feed'))
+    links = models.ManyToManyField(Link, related_name='magazines', blank=True, verbose_name=_('Links'))
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -35,31 +35,30 @@ class Magazine(models.Model):
                 self.slug = slugify(self.name)
         super(Magazine, self).save(*args, **kwargs)
 
-
     def __str__(self):
         return self.name
 
-
     class Meta:
         ordering = ('name',)
+        verbose_name = _('Magazine')
+        verbose_name_plural = _('Magazines')
 
 
 class Issue(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
 
-    issue = TextFieldSingleLine()
-    magazine = models.ForeignKey(Magazine, on_delete=models.CASCADE, related_name='issues')
-    published_on = models.DateField(blank=True, null=True)
-    languages = models.ManyToManyField(Language, related_name='issues', blank=True)
+    issue = TextFieldSingleLine(verbose_name=_('Issue'))
+    magazine = models.ForeignKey(Magazine, on_delete=models.CASCADE, related_name='issues', verbose_name=_('Magazine'))
+    published_on = models.DateField(blank=True, null=True, verbose_name=_('Published on'))
+    languages = models.ManyToManyField(Language, related_name='issues', blank=True, verbose_name=_('Languages'))
 
-    files = GenericRelation('files.File')
-    cover_image = models.ImageField(upload_to='files', blank=True, null=True)
-    links = models.ManyToManyField(Link, related_name='issues', blank=True)
+    files = GenericRelation('files.File', verbose_name=_('Files'))
+    cover_image = models.ImageField(upload_to='files', blank=True, null=True, verbose_name=_('Cover image'))
+    links = models.ManyToManyField(Link, related_name='issues', blank=True, verbose_name=_('Links'))
 
-    acquisitions = GenericRelation('shelves.Acquisition')
-    reads = GenericRelation('shelves.Read')
-
+    acquisitions = GenericRelation('shelves.Acquisition', verbose_name=_('Acquisitions'))
+    reads = GenericRelation('shelves.Read', verbose_name=_('Reads'))
 
     def move_file(self, file):
         save_name = os.path.join('magazines', str(self.magazine.id), str(self.id), os.path.basename(file.file.name))
@@ -74,7 +73,6 @@ class Issue(models.Model):
             file.file.name = save_name
             file.save()
 
-
     def move_cover_image(self):
         save_name = os.path.join('magazines', str(self.magazine.id), str(self.id), 'cover%s' % os.path.splitext(self.cover_image.name)[1])
 
@@ -87,20 +85,19 @@ class Issue(models.Model):
             shutil.move(current_path, new_path)
             self.cover_image.name = save_name
 
-
     def save(self, *args, **kwargs):
         if self.cover_image and not self.cover_image.name.startswith('magazines'):
             self.move_cover_image()
         super(Issue, self).save(*args, **kwargs)
         for file in self.files.all():
-            if not file.file.name.startswith('magazines'):
+            if not file.file.name.startswith(os.path.join('magazines', str(self.id))):
                 self.move_file(file)
-
 
     def __str__(self):
         return '%s %s' % (self.magazine.name, self.issue)
 
-
     class Meta:
         ordering = ('magazine', 'issue')
         unique_together = ('magazine', 'issue')
+        verbose_name = _('Issue')
+        verbose_name_plural = _('Issues')

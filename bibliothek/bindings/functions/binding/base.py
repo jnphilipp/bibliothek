@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from bindings.models import Binding
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from utils import lookahead, stdout
 
 

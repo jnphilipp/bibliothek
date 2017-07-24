@@ -6,7 +6,7 @@ from django.contrib.contenttypes.admin import GenericStackedInline
 from django.db import models
 from django.forms import Textarea, TextInput
 from django.utils.html import format_html_join
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from files.models import File
 from shelves.models import Acquisition, Read
 
@@ -39,7 +39,7 @@ class BookAdmin(admin.ModelAdmin):
     list_authors.short_description = _('Authors')
 
     formfield_overrides = {
-        TextFieldSingleLine: {'widget': TextInput(attrs={'autocomplete':'off', 'style':'min-width:50%;'})},
+        TextFieldSingleLine: {'widget': TextInput(attrs={'autocomplete': 'off', 'style': 'min-width:50%;'})},
     }
 
     fieldsets = [
@@ -58,8 +58,8 @@ class EditionAdmin(admin.ModelAdmin):
     search_fields = ('book__title', 'book__authors__first_name', 'book__authors__last_name', 'book__series__name', 'book__volume', 'isbn', 'binding__name', 'publisher__name')
 
     formfield_overrides = {
-        TextFieldSingleLine: {'widget': TextInput(attrs={'autocomplete':'off', 'style':'min-width:50%;'})},
-        models.TextField: {'widget': Textarea(attrs={'autocomplete':'off', 'rows':20, 'style':'width: 100%; resize: none;'})},
+        TextFieldSingleLine: {'widget': TextInput(attrs={'autocomplete': 'off', 'style': 'min-width:50%;'})},
+        models.TextField: {'widget': Textarea(attrs={'autocomplete': 'off', 'rows':20, 'style': 'width: 100%; resize: none;'})},
     }
 
     fieldsets = [

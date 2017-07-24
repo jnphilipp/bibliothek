@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.utils.translation import ugettext_lazy as _
 from journals.models import Journal
 from languages.models import Language
 from links.models import Link
@@ -18,26 +19,25 @@ class TextFieldSingleLine(models.TextField):
 
 
 class Paper(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
 
-    slug = models.SlugField(max_length=2048, unique=True)
-    title = TextFieldSingleLine(unique=True)
-    authors = models.ManyToManyField(Person, related_name='papers', blank=True)
+    slug = models.SlugField(max_length=2048, unique=True, verbose_name=_('Slug'))
+    title = TextFieldSingleLine(unique=True, verbose_name=_('Title'))
+    authors = models.ManyToManyField(Person, related_name='papers', blank=True, verbose_name=_('Authors'))
 
-    journal = models.ForeignKey(Journal, on_delete=models.SET_NULL, related_name='papers', blank=True, null=True)
-    volume = TextFieldSingleLine(blank=True, null=True)
-    published_on = models.DateField(blank=True, null=True)
-    languages = models.ManyToManyField(Language, related_name='papers', blank=True)
+    journal = models.ForeignKey(Journal, on_delete=models.SET_NULL, related_name='papers', blank=True, null=True, verbose_name=_('Journal'))
+    volume = TextFieldSingleLine(blank=True, null=True, verbose_name=_('Volume'))
+    published_on = models.DateField(blank=True, null=True, verbose_name=_('Published on'))
+    languages = models.ManyToManyField(Language, related_name='papers', blank=True, verbose_name=_('Languages'))
 
-    files = GenericRelation('files.File')
-    bibtex = models.TextField(blank=True, null=True)
+    files = GenericRelation('files.File', verbose_name=_('Files'))
+    bibtex = models.TextField(blank=True, null=True, verbose_name=_('BibTex'))
 
-    links = models.ManyToManyField(Link, related_name='papers', blank=True)
+    links = models.ManyToManyField(Link, related_name='papers', blank=True, verbose_name=_('Links'))
 
-    acquisitions = GenericRelation('shelves.Acquisition')
-    reads = GenericRelation('shelves.Read')
-
+    acquisitions = GenericRelation('shelves.Acquisition', verbose_name=_('Acquisitions'))
+    reads = GenericRelation('shelves.Read', verbose_name=_('Reads'))
 
     def move_file(self, file):
         save_name = os.path.join('papers', str(self.id), os.path.basename(file.file.name))
@@ -52,7 +52,6 @@ class Paper(models.Model):
             file.file.name = save_name
             file.save()
 
-
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
@@ -62,9 +61,8 @@ class Paper(models.Model):
                 self.slug = slugify(self.title)
         super(Paper, self).save(*args, **kwargs)
         for file in self.files.all():
-            if not file.file.name.startswith('papers'):
+            if not file.file.name.startswith(os.path.join('papers', str(self.id))):
                 self.move_file(file)
-
 
     def to_json(self):
         data = {'title': self.title}
@@ -88,11 +86,11 @@ class Paper(models.Model):
             data['reads'] = [read.to_json() for read in self.reads.all()]
         return data
 
-
     def __str__(self):
         return '%s%s' % (self.title, '' if self.authors.count() == 0 else ' - %s' % ', '.join([str(a) for a in self.authors.all()]))
-
 
     class Meta:
         ordering = ('journal__name', 'volume', 'title')
         unique_together = ('journal', 'volume')
+        verbose_name = _('Paper')
+        verbose_name_plural = _('Papers')

@@ -3,7 +3,7 @@
 import re
 
 from datetime import datetime
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from shelves.models import Read
 from utils import lookahead, stdout
 

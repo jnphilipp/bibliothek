@@ -4,7 +4,7 @@ import os
 
 from django.core.files import File as DJFile
 from django.db.models import Q
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from files.models import File
 from languages.models import Language
 from links.models import Link

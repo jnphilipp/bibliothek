@@ -28,7 +28,7 @@ django.setup()
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from bibliothek import settings
 from datetime import date, datetime
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from utils import lookahead, stdout
 
 
