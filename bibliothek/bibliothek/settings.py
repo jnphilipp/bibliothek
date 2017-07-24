@@ -100,7 +100,7 @@ INSTALLED_APPS = [
     'bibliothek',
     'bindings',
     'books',
-    'bootstrap',
+    'django-bootstrap3',
     'files',
     'genres',
     'journals',
@@ -211,9 +211,6 @@ LOCALE_PATHS = (
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'assets'),
-)
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
