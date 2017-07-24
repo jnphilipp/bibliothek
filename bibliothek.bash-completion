@@ -82,7 +82,7 @@ _bibliothek()
                             esac
                             ;;
                         add)
-                            opts="--isbn --published_on --cover --binding --publisher --file --language -h --help"
+                            opts="--alternate_title --isbn --published_on --cover --binding --publisher --file --language -h --help"
                             copts=$(compgen -W "${opts}" -- ${cur})
                             OLDIFS=$IFS
                             IFS=$'\n'
@@ -92,7 +92,7 @@ _bibliothek()
                             return 0
                             ;;
                         edit)
-                            opts="isbn published_on cover binding publisher +language -language +file -h --help"
+                            opts="alternate_title isbn published_on cover binding publisher +language -language +file -h --help"
                             copts=$(compgen -W "${opts}" -- ${cur})
                             OLDIFS=$IFS
                             IFS=$'\n'
@@ -380,7 +380,12 @@ _bibliothek()
                     ;;
                 edit)
                     opts="title published_on journal volume +language -language +file -h --help"
-                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    copts=$(compgen -W "${opts}" -- ${cur})
+                    OLDIFS=$IFS
+                    IFS=$'\n'
+                    COMPREPLY=( ${copts[@]} $(compgen -f -- ${cur}) )
+                    IFS=$OLDIFS
+                    _file="-o filenames"
                     return 0
                     ;;
                 list)

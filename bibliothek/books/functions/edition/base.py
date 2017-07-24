@@ -13,13 +13,19 @@ from publishers.models import Publisher
 from utils import lookahead, stdout
 
 
-def create(book, isbn=None, published_on=None, cover_image=None, binding=None, publisher=None, languages=[], files=[]):
+def create(book, alternate_title=None, isbn=None, published_on=None, cover_image=None, binding=None, publisher=None, languages=[], files=[]):
     positions = [.33, 1.]
 
     edition, created = Edition.objects.get_or_create(book=book, isbn=isbn, published_on=published_on, defaults={'isbn':isbn, 'published_on':published_on})
     if created:
         stdout.p([_('Id'), edition.id], positions=positions)
         stdout.p([_('Book'), edition.book], positions=positions)
+
+        if alternate_title:
+            edition.alternate_title = alternate_title
+            stdout.p([_('Alternate title'), alternate_title], positions=positions)
+        else:
+            stdout.p([_('Alternate title'), ''], positions=positions)
 
         if cover_image:
             edition.cover_image.save(os.path.basename(cover_image), DJFile(open(cover_image, 'rb')))
@@ -59,9 +65,11 @@ def create(book, isbn=None, published_on=None, cover_image=None, binding=None, p
 
 
 def edit(edition, field, value):
-    assert field in ['binding', 'cover', 'isbn', 'published_on', 'publisher', '+language', '-language', '+file']
+    assert field in ['alternate_title', 'binding', 'cover', 'isbn', 'published_on', 'publisher', '+language', '-language', '+file']
 
-    if field == 'binding':
+    if field == 'alternate_title':
+        edition.alternate_title = value
+    elif field == 'binding':
         edition.binding, created = Binding.objects.filter(Q(pk=value if value.isdigit() else None) | Q(name__icontains=value)).get_or_create(defaults={'name':value})
     elif field == 'cover':
         edition.cover_image.save(os.path.basename(value), DJFile(open(value, 'rb')))
@@ -95,6 +103,7 @@ def info(edition):
     stdout.p([_('Field'), _('Value')], positions=positions, after='=')
     stdout.p([_('Id'), edition.id], positions=positions)
     stdout.p([_('Book'), str(edition.book)], positions=positions)
+    stdout.p([_('Alternate title'), edition.alternate_title if edition.alternate_title else ''], positions=positions)
     stdout.p([_('ISBN'), edition.isbn if edition.isbn else ''], positions=positions)
     stdout.p([_('Published on'), edition.published_on if edition.published_on else ''], positions=positions)
     stdout.p([_('Cover'), edition.cover_image if edition.cover_image else ''], positions=positions)

@@ -57,8 +57,8 @@ def info(publisher):
     else:
         stdout.p([_('Links'), ''], positions=positions)
 
-    if publisher.books.count() > 0:
-        for (i, book), has_next in lookahead(enumerate(publisher.books.all().order_by('volume'))):
-            stdout.p([_('Books') if i == 0 else '', '%s: %s' % (book.id, str(book))], positions=positions, after='' if has_next else '_')
+    if publisher.editions.count() > 0:
+        for (i, edition), has_next in lookahead(enumerate(publisher.editions.all().order_by('published_on'))):
+            stdout.p([_('Editions') if i == 0 else '', '%s: %s' % (edition.id, str(edition))], positions=positions, after='' if has_next else '_')
     else:
-        stdout.p([_('Books'), ''], positions=positions)
+        stdout.p([_('Editions'), ''], positions=positions)
