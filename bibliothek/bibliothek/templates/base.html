@@ -1,20 +1,14 @@
 {% load bibliothek bootstrap i18n static %}
 
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE|default:'en' }}">
+<html lang="{{ LANGUAGE_CODE|default:"en" }}">
     <head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-        <link rel="shortcut icon" href="{% static 'images/icon.png' %}"/>
-        <link rel="stylesheet" media="all" href="{% static 'css/bootstrap.min.css' %}"/>
-        <link rel="stylesheet" media="all" href="{% static 'css/bootstrap-theme.min.css' %}"/>
-        <link rel="stylesheet" media="all" href="{% static 'css/jquery-ui.min.css' %}"/>
-        <link rel="stylesheet" media="all" href="{% static 'css/jquery-ui.structure.min.css' %}"/>
-        <link rel="stylesheet" media="all" href="{% static 'css/jquery-ui.theme.min.css' %}"/>
-        <link rel="stylesheet" href="{% static 'css/bibliothek.css' %}"/>
-        <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
-        <script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
-        <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+        <link rel="shortcut icon" href="{% static "images/icon.png" %}"/>
+        {% bootstrap_css %}
+        {% bootstrap_js %}
+        <link rel="stylesheet" href="{% static "css/bibliothek.css" %}"/>
         <title>{% block title %}bibliothek{% endblock %}</title>
         {% block extrahead %}{% endblock %}
     </head>
@@ -28,43 +22,43 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="{% url 'dashboard' %}">
-                        <img alt="Brand" src="{% static 'images/icon.png' %}"/> bibliothek
+                    <a class="navbar-brand" href="{% url "dashboard" %}">
+                        <img alt="Brand" src="{% static "images/icon.png" %}"/> bibliothek
                     </a>
                 </div>
 
                 <div class="collapse navbar-collapse" id="bibliothek-navbar-collapse">
                     <ul class="nav navbar-nav">
-                        {% url 'book_list' as book_list_url %}
-                        <li{% if request.path|startswith:book_list_url %} class="active"{% endif %}><a href="{{ book_list_url }}">{% trans 'Books' %}{% if request.path|startswith:book_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                        {% url "book_list" as book_list_url %}
+                        <li{% if request.path|startswith:book_list_url %} class="active"{% endif %}><a href="{{ book_list_url }}">{% trans "Books" %}{% if request.path|startswith:book_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
                     <ul class="nav navbar-nav">
-                        {% url 'journal_list' as journal_list_url %}
-                        <li{% if request.path|startswith:journal_list_url %} class="active"{% endif %}><a href="{{ journal_list_url }}">{% trans 'Journals' %}{% if request.path|startswith:journal_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                        {% url "journal_list" as journal_list_url %}
+                        <li{% if request.path|startswith:journal_list_url %} class="active"{% endif %}><a href="{{ journal_list_url }}">{% trans "Journals" %}{% if request.path|startswith:journal_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
                     <ul class="nav navbar-nav">
-                        {% url 'genre_list' as genre_list_url %}
-                        <li{% if request.path|startswith:genre_list_url %} class="active"{% endif %}><a href="{{ genre_list_url }}">{% trans 'Genres' %}{% if request.path|startswith:genre_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                        {% url "genre_list" as genre_list_url %}
+                        <li{% if request.path|startswith:genre_list_url %} class="active"{% endif %}><a href="{{ genre_list_url }}">{% trans "Genres" %}{% if request.path|startswith:genre_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
                     <ul class="nav navbar-nav">
-                        {% url 'magazine_list' as magazine_list_url %}
-                        <li{% if request.path|startswith:magazine_list_url %} class="active"{% endif %}><a href="{{ magazine_list_url }}">{% trans 'Magazines' %}{% if request.path|startswith:magazine_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                        {% url "magazine_list" as magazine_list_url %}
+                        <li{% if request.path|startswith:magazine_list_url %} class="active"{% endif %}><a href="{{ magazine_list_url }}">{% trans "Magazines" %}{% if request.path|startswith:magazine_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
                     <ul class="nav navbar-nav">
-                        {% url 'paper_list' as paper_list_url %}
-                        <li{% if request.path|startswith:paper_list_url %} class="active"{% endif %}><a href="{{ paper_list_url }}">{% trans 'Papers' %}{% if request.path|startswith:paper_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                        {% url "paper_list" as paper_list_url %}
+                        <li{% if request.path|startswith:paper_list_url %} class="active"{% endif %}><a href="{{ paper_list_url }}">{% trans "Papers" %}{% if request.path|startswith:paper_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
                     <ul class="nav navbar-nav">
-                        {% url 'person_list' as person_list_url %}
-                        <li{% if request.path|startswith:person_list_url %} class="active"{% endif %}><a href="{{ person_list_url }}">{% trans 'Persons' %}{% if request.path|startswith:person_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                        {% url "person_list" as person_list_url %}
+                        <li{% if request.path|startswith:person_list_url %} class="active"{% endif %}><a href="{{ person_list_url }}">{% trans "Persons" %}{% if request.path|startswith:person_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
                     <ul class="nav navbar-nav">
-                        {% url 'publisher_list' as publisher_list_url %}
-                        <li{% if request.path|startswith:publisher_list_url %} class="active"{% endif %}><a href="{{ publisher_list_url }}">{% trans 'Publishers' %}{% if request.path|startswith:publisher_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                        {% url "publisher_list" as publisher_list_url %}
+                        <li{% if request.path|startswith:publisher_list_url %} class="active"{% endif %}><a href="{{ publisher_list_url }}">{% trans "Publishers" %}{% if request.path|startswith:publisher_list_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
                     <ul class="nav navbar-nav">
-                        {% url 'series_list' as series_url %}
-                        <li{% if request.path|startswith:series_url %} class="active"{% endif %}><a href="{{ series_url }}">{% trans 'Series' %}{% if request.path|startswith:series_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+                        {% url "series_list" as series_url %}
+                        <li{% if request.path|startswith:series_url %} class="active"{% endif %}><a href="{{ series_url }}">{% trans "Series" %}{% if request.path|startswith:series_url %} <span class="sr-only">(current)</span>{% endif %}</a></li>
                     </ul>
                 </div>
             </div>
