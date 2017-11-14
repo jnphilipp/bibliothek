@@ -1,3 +1,6 @@
 [submodule "bibliothek/django-bootstrap3"]
 	path = bibliothek/django-bootstrap3
 	url = git@github.com:jnphilipp/django-bootstrap3
+[submodule "bibliothek/django_bootstrap3"]
+	path = bibliothek/django_bootstrap3
+	url = git@github.com:/jnphilipp/django_bootstrap3.git
