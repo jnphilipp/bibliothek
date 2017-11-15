@@ -2,21 +2,6 @@ body {font-family: monospace;
     font-size: 10pt;
     padding-top: 70px;}
 
-a:active {position: relative;
-    top: 1px;
-    right: -1px;}
-
-
-
-/* Collapse link */
-
-.collapse-link:after {font-family:'Glyphicons Halflings';
-    content:"\e114";
-    color: grey;}
-
-.collapse-link:hover {text-decoration: none;}
-.collapse-link.collapsed:after {content:"\e080";}
-
 
 
 /* Navbar brand */

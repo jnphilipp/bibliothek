@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from files.models import File
 from journals.models import Journal
 from languages.models import Language
+from links.models import Link
 from papers.models import Paper
 from persons.models import Person
 from utils import lookahead, stdout
@@ -66,7 +67,7 @@ def create(title, authors=[], published_on=None, journal=None, volume=None, lang
 
 
 def edit(paper, field, value):
-    assert field in ['title', '+author', '-author', 'published_on', 'journal', 'volume', '+language', '-language', '+file']
+    assert field in ['title', '+author', '-author', 'published_on', 'journal', 'volume', '+language', '-language', '+file', '+link']
 
     if field == 'title':
         paper.title = value
@@ -94,6 +95,9 @@ def edit(paper, field, value):
             paper.languages.remove(language)
         except Language.DoesNotExist:
             stdout.p([_('Language "%(name)s" not found.') % {'name':value}], positions=[1.])
+    elif field == '+link':
+        link, created = Link.objects.filter(Q(pk=value if value.isdigit() else None) | Q(link=value)).get_or_create(defaults={'link': value})
+        paper.links.add(link)
     elif field == '+file':
         file_name = os.path.basename(value)
         file_obj = File()
