@@ -1,4 +1,20 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2016-2017 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+#
+# This file is part of bibliothek.
+#
+# bibliothek is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bibliothek is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
@@ -16,14 +32,23 @@ def create(name, links=[]):
         stdout.p([_('Name'), journal.name], positions=positions)
 
         for (i, url), has_next in lookahead(enumerate(links)):
-            link, c = Link.objects.filter(Q(pk=url if url.isdigit() else None) | Q(link=url)).get_or_create(defaults={'link':url})
+            link, c = Link.objects.filter(
+                Q(pk=url if url.isdigit() else None) | Q(link=url)). \
+                get_or_create(defaults={'link':url})
             journal.links.add(link)
-            stdout.p([_('Links') if i == 0 else '', '%s: %s' % (link.id, link.link)], after=None if has_next else '_', positions=positions)
+            stdout.p([_('Links') if i == 0 else '',
+                      '%s: %s' % (link.id, link.link)],
+                     after=None if has_next else '_', positions=positions)
 
         journal.save()
-        stdout.p([_('Successfully added journal "%(name)s" with id "%(id)s".') % {'name':journal.name, 'id':journal.id}], after='=', positions=[1.])
+        msg = _('Successfully added journal "%(name)s" with id "%(id)s".')
+        stdout.p([msg % {'name':journal.name, 'id':journal.id}], after='=',
+                 positions=[1.])
     else:
-        stdout.p([_('The journal "%(name)s" already exists with id "%(id)s", aborting...') % {'name':journal.name, 'id':journal.id}], after='=', positions=[1.])
+        msg = _('The journal "%(name)s" already exists with id "%(id)s", ' +
+                'aborting...')
+        stdout.p([msg % {'name':journal.name, 'id':journal.id}], after='=',
+                 positions=[1.])
     return journal, created
 
 
@@ -33,7 +58,8 @@ def edit(journal, field, value):
     if field == 'name':
         journal.name = value
     journal.save()
-    stdout.p(['Successfully edited journal "%s" with id "%s".' % (journal.name, journal.id)], positions=[1.])
+    msg = _('Successfully edited journal "%s" with id "%s".')
+    stdout.p([msg % (journal.name, journal.id)], positions=[1.])
 
 
 def info(journal):
@@ -45,17 +71,22 @@ def info(journal):
     if journal.links.count() > 0:
         for (i, link), has_next in lookahead(enumerate(journal.links.all())):
             if i == 0:
-                stdout.p([_('Links'), '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
+                stdout.p([_('Links'),
+                          '%s: %s' % (link.id, link.link)],
+                         positions=positions, after='' if has_next else '_')
             else:
-                stdout.p(['', '%s: %s' % (link.id, link.link)], positions=positions, after='' if has_next else '_')
+                stdout.p(['', '%s: %s' % (link.id, link.link)],
+                         positions=positions, after='' if has_next else '_')
     else:
         stdout.p([_('Links'), ''], positions=positions)
 
     if journal.papers.count() > 0:
         for (i, paper), has_next in lookahead(enumerate(journal.papers.all())):
             if i == 0:
-                stdout.p([_('Papers'), '%s: %s' % (paper.id, paper.title)], positions=positions, after='' if has_next else '_')
+                stdout.p([_('Papers'), '%s: %s' % (paper.id, paper.title)],
+                         positions=positions, after='' if has_next else '_')
             else:
-                stdout.p(['', '%s: %s' % (paper.id, paper.title)], positions=positions, after='' if has_next else '_')
+                stdout.p(['', '%s: %s' % (paper.id, paper.title)],
+                         positions=positions, after='' if has_next else '_')
     else:
         stdout.p([_('Papers'), ''], positions=positions)

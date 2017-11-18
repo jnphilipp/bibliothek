@@ -1,4 +1,20 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2016-2017 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+#
+# This file is part of bibliothek.
+#
+# bibliothek is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bibliothek is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.test import TestCase
 from journals import functions
@@ -10,10 +26,10 @@ class JournalFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(journal.id)
 
-        journal, created = functions.journal.create('Scince Journal', ['https://sj.com'])
+        journal, created = functions.journal.create('Scince Journal',
+                                                    ['https://sj.com'])
         self.assertTrue(created)
         self.assertIsNotNone(journal.id)
-
 
     def test_journal_edit(self):
         journal, created = functions.journal.create('Test2 Journal')
@@ -22,7 +38,6 @@ class JournalFunctionsTestCase(TestCase):
 
         functions.journal.edit(journal, 'name', 'IEEE Journal')
         self.assertEquals('IEEE Journal', journal.name)
-
 
     def test_journal_get(self):
         journal, created = functions.journal.create('Space Journal')
@@ -36,7 +51,6 @@ class JournalFunctionsTestCase(TestCase):
         journal2 = functions.journal.get.by_term(str(journal.id))
         self.assertIsNotNone(journal2)
         self.assertEquals(journal, journal2)
-
 
     def test_journal_list(self):
         journal, created = functions.journal.create('Medicine Journal')
