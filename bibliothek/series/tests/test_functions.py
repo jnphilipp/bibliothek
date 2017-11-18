@@ -1,4 +1,20 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2016-2017 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+#
+# This file is part of bibliothek.
+#
+# bibliothek is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bibliothek is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.test import TestCase
 from series import functions
@@ -10,12 +26,15 @@ class SeriesFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(series.id)
 
-        series, created = functions.series.create('Secret Files', links=['https://secrectfiles.com'])
+        series, created = functions.series.create(
+            'Secret Files',
+            links=['https://secrectfiles.com']
+        )
         self.assertTrue(created)
         self.assertIsNotNone(series.id)
         self.assertEquals(1, series.links.count())
-        self.assertEquals('https://secrectfiles.com', series.links.first().link)
-
+        self.assertEquals('https://secrectfiles.com',
+                          series.links.first().link)
 
     def test_series_edit(self):
         series, created = functions.series.create('Some other Series')
@@ -37,7 +56,6 @@ class SeriesFunctionsTestCase(TestCase):
         self.assertEquals(1, series.links.count())
         self.assertEquals('https://testsome.com', series.links.first().link)
 
-
     def test_series_get(self):
         series, created = functions.series.create('Space Series')
         self.assertTrue(created)
@@ -50,7 +68,6 @@ class SeriesFunctionsTestCase(TestCase):
         series2 = functions.series.get.by_term(str(series.id))
         self.assertIsNotNone(series)
         self.assertEquals(series, series2)
-
 
     def test_series_list(self):
         series, created = functions.series.create('Space')
