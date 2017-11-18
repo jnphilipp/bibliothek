@@ -22,8 +22,8 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
                 ('slug', models.SlugField(max_length=2048, unique=True, verbose_name='Slug')),
-                ('first_name', persons.models.TextFieldSingleLine(verbose_name='First name')),
-                ('last_name', persons.models.TextFieldSingleLine(blank=True, null=True, verbose_name='Last name')),
+                ('first_name', persons.models.SingleLineTextField(verbose_name='First name')),
+                ('last_name', persons.models.SingleLineTextField(blank=True, null=True, verbose_name='Last name')),
                 ('links', models.ManyToManyField(blank=True, related_name='persons', to='links.Link', verbose_name='Links')),
             ],
             options={

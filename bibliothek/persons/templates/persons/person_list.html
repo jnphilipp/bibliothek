@@ -1,22 +1,25 @@
-{% extends 'base.html' %}
+{% extends "bibliothek/base.html" %}
 {% load bootstrap i18n %}
 
 
 {% block content %}
 <div class="row">
     <div class="col-md-offset-1 col-md-10">
-        <h1 class="page-header">{% trans 'Persons' %}</h1>
+        <h1 class="page-header">{% trans "Persons" %}</h1>
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
-                    {% sortable_th 'Name' o 'o' 'name' %}
-                    {% sortable_th 'Number of Books' o 'o' 'cb' %}
-                    {% sortable_th 'Number of Papers' o 'o' 'cp' %}
+                    {% trans "Name" as name_trans %}
+                    {% sortable_th name_trans o "o" "name" %}
+                    {% trans "Number of Books" as nb_nooks_trans %}
+                    {% sortable_th nb_nooks_trans o "o" "cb" %}
+                    {% trans "Number of Papers" as nb_papers_trans %}
+                    {% sortable_th nb_papers_trans o "o" "cp" %}
                 </thead>
                 <tbody>
                     {% for person in object_list %}
                         <tr>
-                            <th><a href="{% url 'person_detail' person.slug %}">{{ person.first_name }} {{ person.last_name|default:'' }}</a></th>
+                            <th><a href="{% url "person_detail" person.slug %}">{{ person.first_name }} {{ person.last_name|default:"" }}</a></th>
                             <td>{{ person.cb }}</td>
                             <td>{{ person.cp }}</td>
                         </tr>

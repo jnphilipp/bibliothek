@@ -1,15 +1,15 @@
-{% extends 'base.html' %}
+{% extends "bibliothek/base.html" %}
 {% load bootstrap i18n shelves %}
 
 
 {% block content %}
 <div class="row">
     <div class="col-md-offset-1 col-md-10">
-        <h1 class="page-header">{{ person.first_name }} {{ person.last_name|default:'' }}</h1>
+        <h1 class="page-header">{{ person.first_name }} {{ person.last_name|default:"" }}</h1>
         <dl class="dl-horizontal">
-            <dt>{% trans 'Id' %}</dt>
+            <dt>{% trans "Id" %}</dt>
             <dd>{{ person.id }}</dd>
-            <dt>{% trans 'Links' %}</dt>
+            <dt>{% trans "Links" %}</dt>
             <dd>
                 <ul>
                     {% for link in person.links.all %}
@@ -22,24 +22,27 @@
 </div>
 <div class="row">
     <div class="col-md-offset-1 col-md-10">
-        <h2 class="page-header">{% trans 'Books' %}</h2>
+        <h2 class="page-header">{% trans "Books" %}</h2>
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
-                    {% sortable_th 'Title' bo 'bo' 'title' %}
-                    <th>{% trans 'Authors' %}</th>
-                    {% sortable_th 'Series' bo 'bo' 'series' %}
-                    {% sortable_th 'Volume' bo 'bo' 'volume' %}
-                    <th>{% trans 'Genres' %}</th>
+                    {% trans "Title" as title_trans %}
+                    {% sortable_th title_trans bo "bo" "title" %}
+                    <th>{% trans "Authors" %}</th>
+                    {% trans "Series" as series_trans %}
+                    {% sortable_th series_trans bo "bo" "series" %}
+                    {% trans "Volume" as volume_trans %}
+                    {% sortable_th volume_trans bo "bo" "volume" %}
+                    <th>{% trans "Genres" %}</th>
                 </thead>
                 <tbody>
                     {% for book in books %}
                         <tr>
-                            <th><a href="{% url 'book_detail' book.slug %}">{{ book.title }}</a></th>
-                            <td>{% for author in book.authors.all %}<a href="{% url 'person_detail' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                            <td>{% if book.series %}<a href="{% url 'series_detail' book.series.slug %}">{{ book.series.name }}</a>{% endif %}</td>
-                            <td>{{ book.volume|default:'' }}</td>
-                            <td>{% for genre in book.genres.all %}<a href="{% url 'genre_detail' genre.slug %}">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <th><a href="{% url "book_detail" book.slug %}">{{ book.title }}</a></th>
+                            <td>{% for author in book.authors.all %}<a href="{% url "person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{% if book.series %}<a href="{% url "series_detail" book.series.slug %}">{{ book.series.name }}</a>{% endif %}</td>
+                            <td>{{ book.volume|default:"" }}</td>
+                            <td>{% for genre in book.genres.all %}<a href="{% url "genre_detail" genre.slug %}">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -49,24 +52,27 @@
 </div>
 <div class="row">
     <div class="col-md-offset-1 col-md-10">
-        <h2 class="page-header">{% trans 'Papers' %}</h2>
+        <h2 class="page-header">{% trans "Papers" %}</h2>
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
-                    {% sortable_th 'Title' po 'po' 'title' %}
-                    <th>{% trans 'Authors' %}</th>
-                    {% sortable_th 'Journal' po 'po' 'journal' %}
-                    {% sortable_th 'Volume' po 'po' 'volume' %}
-                    {% sortable_th 'Acquired' po 'po' 'acquisitions' %}
-                    {% sortable_th 'Read' po 'po' 'reads' %}
+                    {% sortable_th title_trans po "po" "title" %}
+                    <th>{% trans "Authors" %}</th>
+                    {% trans "Journal" journal_trans %}
+                    {% sortable_th journal_trans po "po" "journal" %}
+                    {% sortable_th volume_trans po "po" "volume" %}
+                    {% traans "Acquired" as acquired_trans %}
+                    {% sortable_th acquired_trans po "po" "acquisitions" %}
+                    {% traans "Read" as read_trans %}
+                    {% sortable_th read_trans po "po" "reads" %}
                 </thead>
                 <tbody>
                     {% for paper in papers %}
                         <tr>
-                            <th><a href="{% url 'paper_detail' paper.slug %}">{{ paper.title }}</a></th>
-                            <td>{% for author in paper.authors.all %}<a href="{% url 'person_detail' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                            <td>{% if paper.journal %}<a href="{% url 'journal_detail' paper.journal.slug %}">{{ paper.journal.name }}</a>{% endif %}</td>
-                            <td>{{ paper.volume|default:'' }}</td>
+                            <th><a href="{% url "paper_detail" paper.slug %}">{{ paper.title }}</a></th>
+                            <td>{% for author in paper.authors.all %}<a href="{% url "person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{% if paper.journal %}<a href="{% url "journal_detail" paper.journal.slug %}">{{ paper.journal.name }}</a>{% endif %}</td>
+                            <td>{{ paper.volume|default:"" }}</td>
                             <td><span class="glyphicon glyphicon-{% if paper.acquisitions.exists %}ok{% else %}remove{% endif %}"></span></td>
                             <td>{% read_status paper.reads %}</td>
                         </tr>
