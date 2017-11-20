@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('issue', magazines.models.TextFieldSingleLine(verbose_name='Issue')),
+                ('issue', magazines.models.SingleLineTextField(verbose_name='Issue')),
                 ('published_on', models.DateField(blank=True, null=True, verbose_name='Published on')),
                 ('cover_image', models.ImageField(blank=True, null=True, upload_to='files', verbose_name='Cover image')),
                 ('languages', models.ManyToManyField(blank=True, related_name='issues', to='languages.Language', verbose_name='Languages')),
