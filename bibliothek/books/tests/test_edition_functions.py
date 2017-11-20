@@ -1,4 +1,20 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2016-2017 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+#
+# This file is part of bibliothek.
+#
+# bibliothek is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bibliothek is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from bindings import functions as bfunctions
 from books import functions
@@ -8,7 +24,9 @@ from publishers import functions as pfunctions
 
 class BookFunctionsTestCase(TestCase):
     def setUp(self):
-        self.book, created = functions.book.create('A book about something', ['John Do'], 'Some Series', 1)
+        self.book, created = functions.book.create('A book about something',
+                                                   ['John Do'], 'Some Series',
+                                                   1)
         self.assertTrue(created)
         self.assertIsNotNone(self.book.id)
         self.assertEquals(1, self.book.authors.count())
@@ -18,7 +36,6 @@ class BookFunctionsTestCase(TestCase):
         self.assertIsNotNone(self.book.series.id)
         self.assertEquals('Some Series', self.book.series.name)
         self.assertEquals(1, self.book.volume)
-
 
     def test_book_create(self):
         binding, created = bfunctions.binding.create('Taschenbuch')
@@ -37,7 +54,13 @@ class BookFunctionsTestCase(TestCase):
         self.assertIsNone(edition.binding)
         self.assertIsNone(edition.publisher)
 
-        edition, created = functions.edition.create(self.book, '9783555464652', '2016-05-01', binding=str(binding.id), publisher=str(publisher.id))
+        edition, created = functions.edition.create(
+            self.book,
+            isbn='9783555464652',
+            published_on='2016-05-01',
+            binding=str(binding.id),
+            publisher=str(publisher.id)
+        )
         self.assertTrue(created)
         self.assertIsNotNone(edition.id)
         self.assertEquals('9783555464652', edition.isbn)
@@ -45,7 +68,14 @@ class BookFunctionsTestCase(TestCase):
         self.assertEquals(binding, edition.binding)
         self.assertEquals(publisher, edition.publisher)
 
-        edition, created = functions.edition.create(self.book, '9783365469875', '2016-06-01', binding='Taschenbuch', publisher='Book Printer', languages=['Deutsch', 'Español'])
+        edition, created = functions.edition.create(
+            self.book,
+            isbn='9783365469875',
+            published_on='2016-06-01',
+            binding='Taschenbuch',
+            publisher='Book Printer',
+            languages=['Deutsch', 'Español']
+        )
         self.assertTrue(created)
         self.assertIsNotNone(edition.id)
         self.assertEquals('9783365469875', edition.isbn)
@@ -56,7 +86,13 @@ class BookFunctionsTestCase(TestCase):
         self.assertEquals('Deutsch', edition.languages.first().name)
         self.assertEquals('Español', edition.languages.last().name)
 
-        edition, created = functions.edition.create(self.book, published_on='2016-06-01', binding='Paperpback', publisher='Printers', languages=['English'])
+        edition, created = functions.edition.create(
+            self.book,
+            published_on='2016-06-01',
+            binding='Paperpback',
+            publisher='Printers',
+            languages=['English']
+        )
         self.assertTrue(created)
         self.assertIsNotNone(edition.id)
         self.assertIsNone(edition.isbn)
@@ -67,7 +103,6 @@ class BookFunctionsTestCase(TestCase):
         self.assertIsNotNone(edition.publisher.id)
         self.assertEquals(1, edition.languages.count())
         self.assertEquals('English', edition.languages.first().name)
-
 
     def test_book_edit(self):
         edition, created = functions.edition.create(self.book)
@@ -101,12 +136,13 @@ class BookFunctionsTestCase(TestCase):
         self.assertEquals(1, edition.languages.count())
         self.assertEquals('Deutsch', edition.languages.first().name)
 
-
     def test_book_get(self):
-        edition, created = functions.edition.create(self.book, '9783365469875', '2016-06-01')
+        edition, created = functions.edition.create(self.book, '9783365469875',
+                                                    '2016-06-01')
         self.assertTrue(created)
 
-        edition2, created = functions.edition.create(self.book, published_on='2016-06-02')
+        edition2, created = functions.edition.create(self.book,
+                                                     published_on='2016-06-02')
         self.assertTrue(created)
 
         e = functions.edition.get.by_term(self.book, '9783365469875')
@@ -117,18 +153,20 @@ class BookFunctionsTestCase(TestCase):
         self.assertIsNotNone(e)
         self.assertEquals(edition2, e)
 
-
     def test_book_list(self):
         edition, created = functions.edition.create(self.book)
         self.assertTrue(created)
 
-        edition, created = functions.edition.create(self.book, '9783555464652', '2016-05-01')
+        edition, created = functions.edition.create(self.book, '9783555464652',
+                                                    '2016-05-01')
         self.assertTrue(created)
 
-        edition, created = functions.edition.create(self.book, '9783365469875', '2016-06-01')
+        edition, created = functions.edition.create(self.book, '9783365469875',
+                                                    '2016-06-01')
         self.assertTrue(created)
 
-        edition, created = functions.edition.create(self.book, published_on='2016-06-01')
+        edition, created = functions.edition.create(self.book,
+                                                    published_on='2016-06-01')
         self.assertTrue(created)
 
         editions = functions.edition.list.all(self.book)
@@ -140,22 +178,23 @@ class BookFunctionsTestCase(TestCase):
         editions = functions.edition.list.by_term(self.book, '2016-06')
         self.assertEquals(2, len(editions))
 
-
     def test_edition_acquisition(self):
         edition, created = functions.edition.create(self.book)
         self.assertTrue(created)
 
-        acquisition = functions.edition.acquisition.add(edition, date='2016-06-02', price=2.5)
+        acquisition = functions.edition.acquisition.add(edition,
+                                                        date='2016-06-02',
+                                                        price=2.5)
         self.assertIsNotNone(acquisition)
         self.assertIsNotNone(acquisition.id)
         self.assertEquals(1, edition.acquisitions.count())
 
-        functions.edition.acquisition.edit(edition, acquisition.id, 'price', 5.75)
+        functions.edition.acquisition.edit(edition, acquisition.id, 'price',
+                                           5.75)
         self.assertIsNotNone(5.75, acquisition.price)
 
         functions.edition.acquisition.delete(edition, acquisition.id)
         self.assertEquals(0, edition.acquisitions.count())
-
 
     def test_edition_read(self):
         edition, created = functions.edition.create(self.book)

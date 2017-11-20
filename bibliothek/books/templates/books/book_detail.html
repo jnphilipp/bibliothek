@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "bibliothek/base.html" %}
 {% load i18n static %}
 
 
@@ -7,17 +7,17 @@
     <div class="col-md-offset-1 col-md-10">
         <h1 class="page-header">{{ book.title }}</h1>
         <dl class="dl-horizontal">
-            <dt>{% trans 'Id' %}</dt>
+            <dt>{% trans "Id" %}</dt>
             <dd>{{ book.id }}</dd>
-            <dt>{% trans 'Authors' %}</dt>
-            <dd>{% for author in book.authors.all %}<a href="{% url 'person_detail' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
-            <dt>{% trans 'Series' %}</dt>
-            <dd>{% if book.series %}<a href="{% url 'series_detail' book.series.slug %}">{{ book.series.name }}</a>{% endif %}</dd>
-            <dt>{% trans 'Volume' %}</dt>
-            <dd>{{ book.volume|default:'' }}</dd>
-            <dt>{% trans 'Genres' %}</dt>
-            <dd>{% for genre in book.genres.all %}<a href="{% url 'genre_detail' genre.slug %}">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
-            <dt>{% trans 'Links' %}</dt>
+            <dt>{% trans "Authors" %}</dt>
+            <dd>{% for author in book.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dt>{% trans "Series" %}</dt>
+            <dd>{% if book.series %}<a href="{% url "series:series_detail" book.series.slug %}">{{ book.series.name }}</a>{% endif %}</dd>
+            <dt>{% trans "Volume" %}</dt>
+            <dd>{{ book.volume|default:"" }}</dd>
+            <dt>{% trans "Genres" %}</dt>
+            <dd>{% for genre in book.genres.all %}<a href="{% url "genres:genre_detail" genre.slug %}">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+            <dt>{% trans "Links" %}</dt>
             <dd>
                 <ul>
                     {% for link in paper.links.all %}
@@ -30,12 +30,12 @@
 </div>
 <div class="row">
     <div class="col-md-offset-1 col-md-10">
-        <h2 class="page-header">{% trans 'Editions' %}</h2>
+        <h2 class="page-header">{% trans "Editions" %}</h2>
         {% for edition in book.editions.all %}
-            <a href="{% url 'edition_detail' book.slug edition.id %}">
+            <a href="{% url "books:edition_detail" book.slug edition.id %}">
                 <figure class="figure">
-                    <img class="figure-img img-thumbnail" src="{% if edition.cover_image %}{{ edition.cover_image.url }}{% else %}{% static 'images/default_cover.jpg' %}{% endif %}" style="height: 250px;">
-                    <figcaption class="figure-caption text-center">{% trans 'Edition' %} #{{ edition.id }}</figcaption>
+                    <img class="figure-img img-thumbnail" src="{% if edition.cover_image %}{{ edition.cover_image.url }}{% else %}{% static "images/default_cover.jpg" %}{% endif %}" style="height: 250px;">
+                    <figcaption class="figure-caption text-center">{% trans "Edition" %} #{{ edition.id }}</figcaption>
                 </figure>
             </a>
         {% endfor %}

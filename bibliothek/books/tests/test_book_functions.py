@@ -1,4 +1,20 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2016-2017 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+#
+# This file is part of bibliothek.
+#
+# bibliothek is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bibliothek is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from books import functions
 from django.test import TestCase
@@ -20,7 +36,13 @@ class BookFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(series.id)
 
-        book, created = functions.book.create('Some Test Book', [str(person.id)], str(series.id), 1.0, ['SciFi', 'Romance'])
+        book, created = functions.book.create(
+            'Some Test Book',
+            [str(person.id)],
+            str(series.id),
+            1.0,
+            ['SciFi', 'Romance']
+        )
         self.assertTrue(created)
         self.assertIsNotNone(book.id)
         self.assertEquals(1, book.authors.count())
@@ -30,7 +52,13 @@ class BookFunctionsTestCase(TestCase):
         self.assertEquals('Romance', book.genres.first().name)
         self.assertEquals('SciFi', book.genres.last().name)
 
-        book, created = functions.book.create('Some Test Book 2', ['%s %s' % (person.first_name, person.last_name)], series.name, 1.0, ['SciFi', 'Romance'])
+        book, created = functions.book.create(
+            'Some Test Book 2',
+            ['%s %s' % (person.first_name, person.last_name)],
+            series.name,
+            1.0,
+            ['SciFi', 'Romance']
+        )
         self.assertTrue(created)
         self.assertIsNotNone(book.id)
         self.assertEquals(1, book.authors.count())
@@ -38,7 +66,6 @@ class BookFunctionsTestCase(TestCase):
         self.assertEquals(series, book.series)
         self.assertEquals('Romance', book.genres.first().name)
         self.assertEquals('SciFi', book.genres.last().name)
-
 
     def test_book_edit(self):
         series, created = sfunctions.series.create('Test Series')
@@ -49,7 +76,13 @@ class BookFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 
-        book, created = functions.book.create('Test2 Book', [str(person.id)], series=str(series.id), volume=1.0, genres=['Romance'])
+        book, created = functions.book.create(
+            'Test2 Book',
+            [str(person.id)],
+            series=str(series.id),
+            volume=1.0,
+            genres=['Romance']
+        )
         self.assertTrue(created)
         self.assertIsNotNone(book.id)
         self.assertEquals(series, book.series)
@@ -98,12 +131,13 @@ class BookFunctionsTestCase(TestCase):
 
         functions.book.edit(book, '+link', 'https://janedo.com/test2book')
         self.assertEquals(2, book.links.count())
-        self.assertEquals('https://janedo.com/test2book', book.links.last().link)
+        self.assertEquals('https://janedo.com/test2book',
+                          book.links.last().link)
 
         functions.book.edit(book, '-link', 'https://deep.space')
         self.assertEquals(1, book.links.count())
-        self.assertEquals('https://janedo.com/test2book', book.links.first().link)
-
+        self.assertEquals('https://janedo.com/test2book',
+                          book.links.first().link)
 
     def test_book_get(self):
         book, created = functions.book.create('Test Book')
@@ -117,7 +151,6 @@ class BookFunctionsTestCase(TestCase):
         book2 = functions.book.get.by_term(str(book.id))
         self.assertIsNotNone(book2)
         self.assertEquals(book, book2)
-
 
     def test_book_list(self):
         book, created = functions.book.create('About Stuff')

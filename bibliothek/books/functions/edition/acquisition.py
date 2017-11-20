@@ -1,4 +1,20 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2016-2017 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+#
+# This file is part of bibliothek.
+#
+# bibliothek is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bibliothek is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 
@@ -9,8 +25,11 @@ from utils import lookahead, stdout
 
 
 def add(edition, date=None, price=0.0):
-    acquisition = Acquisition.objects.create(date=date, price=price, content_object=edition)
-    stdout.p([_('Successfully added acquisition "%(id)s" to edition "%(edition)s".') % {'id':acquisition.id, 'edition':str(edition)}], positions=[1.])
+    acquisition = Acquisition.objects.create(date=date, price=price,
+                                             content_object=edition)
+    msg = _('Successfully added acquisition "%(id)s" to edition "%(edition)s".')
+    stdout.p([msg % {'id': acquisition.id, 'edition': str(edition)}],
+             positions=[1.])
     _print(acquisition)
     return acquisition
 
@@ -22,7 +41,10 @@ def delete(edition, acquisition_id):
         acquisition.delete()
         stdout.p([_('Successfully deleted acquisition.')], positions=[1.])
     except Acquisition.DoesNotExist:
-        stdout.p([_('An acquisition with id "%(acquisition)s" for this edition does not exist.') % {'acquisition':acquisition_id}], after='=', positions=[1.])
+        msg = _('An acquisition with id "%(acquisition)s" for this edition ' +
+                 'does not exist.')
+        stdout.p([msg % {'acquisition':acquisition_id}], after='=',
+                 positions=[1.])
 
 
 def edit(edition, acquisition_id, field, value):
@@ -35,10 +57,15 @@ def edit(edition, acquisition_id, field, value):
         elif field == 'price':
             acquisition.price = value
         acquisition.save()
-        stdout.p([_('Successfully edited acquisition "%(acquisition)s".') % {'acquisition':acquisition.id}], positions=[1.])
+
+        msg = _('Successfully edited acquisition "%(acquisition)s".')
+        stdout.p([msg % {'acquisition': acquisition.id}], positions=[1.])
         _print(acquisition)
     except Acquisition.DoesNotExist:
-        stdout.p(['An acquisition with id "%(acquisition)s" for this edition does not exist.' % {'acquisition':acquisition_id}], after='=', positions=[1.])
+        msg = _('An acquisition with id "%(acquisition)s" for this edition ' +
+                'does not exist.')
+        stdout.p([msg % {'acquisition': acquisition_id}], after='=',
+                 positions=[1.])
 
 
 def _print(acquisition):

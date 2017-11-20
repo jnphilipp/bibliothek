@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
                 ('slug', models.SlugField(max_length=2048, unique=True, verbose_name='Slug')),
-                ('title', books.models.TextFieldSingleLine(unique=True, verbose_name='Title')),
+                ('title', books.models.SingleLineTextField(unique=True, verbose_name='Title')),
                 ('volume', models.FloatField(blank=True, default=0, verbose_name='Volume')),
                 ('authors', models.ManyToManyField(blank=True, related_name='books', to='persons.Person', verbose_name='Authors')),
                 ('genres', models.ManyToManyField(blank=True, related_name='books', to='genres.Genre', verbose_name='Genres')),
