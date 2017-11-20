@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
                 ('slug', models.SlugField(max_length=2048, unique=True, verbose_name='Slug')),
-                ('name', genres.models.TextFieldSingleLine(unique=True, verbose_name='Name')),
+                ('name', genres.models.SingleLineTextField(unique=True, verbose_name='Name')),
             ],
             options={
                 'verbose_name': 'Genre',

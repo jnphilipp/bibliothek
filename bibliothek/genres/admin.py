@@ -18,7 +18,7 @@
 
 from django.contrib import admin
 from django.forms import TextInput
-from genres.models import Genre, TextFieldSingleLine
+from genres.models import Genre, SingleLineTextField
 
 
 @admin.register(Genre)
@@ -27,7 +27,7 @@ class GenreAdmin(admin.ModelAdmin):
         (None, {'fields': ['slug', 'name']}),
     ]
     formfield_overrides = {
-        TextFieldSingleLine: {
+        SingleLineTextField: {
             'widget': TextInput(attrs={'autocomplete':'off'})
         },
     }
