@@ -14,18 +14,22 @@
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
-                    {% sortable_th "Title" o "o" "title" %}
+                    {% trans "Title" as title_trans %}
+                    {% sortable_th title_trans o "o" "title" %}
                     <th>{% trans "Authors" %}</th>
-                    {% sortable_th "Series" o "o" "series" %}
-                    {% sortable_th "Volume" o "o" "volume" %}
-                    {% sortable_th "Number of Editions" o "o" "ce" %}
+                    {% trans "Series" as series_trans %}
+                    {% sortable_th series_trans o "o" "series" %}
+                    {% trans "Volume" as volume_trans %}
+                    {% sortable_th volume_trans o "o" "volume" %}
+                    {% trans "Number of Editions" as nb_editions_trans %}
+                    {% sortable_th nb_editions_trans o "o" "ce" %}
                 </thead>
                 <tbody>
                     {% for book in books %}
                         <tr>
-                            <th><a href="{% url "book_detail" book.slug %}">{{ book.title }}</a></th>
-                            <td>{% for author in book.authors.all %}<a href="{% url "person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                            <td>{% if book.series %}<a href="{% url "series_detail" book.series.slug %}">{{ book.series.name }}</a>{% endif %}</td>
+                            <th><a href="{% url "books:book_detail" book.slug %}">{{ book.title }}</a></th>
+                            <td>{% for author in book.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{% if book.series %}<a href="{% url "series:series_detail" book.series.slug %}">{{ book.series.name }}</a>{% endif %}</td>
                             <td>{{ book.volume|default:"" }}</td>
                             <td>{{ book.ce }}</td>
                         </tr>

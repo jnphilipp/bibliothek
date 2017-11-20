@@ -9,13 +9,15 @@
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
-                    {% sortable_th "Name" o "o" "name" %}
-                    {% sortable_th "Number of Papers" o "o" "cp" %}
+                    {% trans "Name" as name_trans %}
+                    {% sortable_th name_trans o "o" "name" %}
+                    {% trans "Number of Papers" as nb_papers_trans %}
+                    {% sortable_th nb_papers_trans o "o" "cp" %}
                 </thead>
                 <tbody>
                     {% for journal in object_list %}
                         <tr>
-                            <th><a href="{% url "journal_detail" journal.slug %}">{{ journal.name }}</a></th>
+                            <th><a href="{% url "journals:journal_detail" journal.slug %}">{{ journal.name }}</a></th>
                             <th>{{ journal.cp }}</th>
                         </tr>
                     {% endfor %}

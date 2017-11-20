@@ -1,28 +1,33 @@
-{% extends 'base.html' %}
+{% extends "bibliothek/base.html" %}
 {% load bootstrap i18n shelves %}
 
 
 {% block content %}
 <div class="row">
     <div class="col-md-offset-1 col-md-10">
-        <h1 class="page-header">{% trans 'Papers' %}</h1>
+        <h1 class="page-header">{% trans "Papers" %}</h1>
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
-                    {% sortable_th 'Title' o 'o' 'title' %}
-                    <th>{% trans 'Authors' %}</th>
-                    {% sortable_th 'Journal' o 'o' 'journal' %}
-                    {% sortable_th 'Volume' o 'o' 'volume' %}
-                    {% sortable_th 'Acquired' o 'o' 'acquisitions' %}
-                    {% sortable_th 'Read' o 'o' 'reads' %}
+                    {% trans "Title" as title_trans %}
+                    {% sortable_th title_trans o "o" "title" %}
+                    <th>{% trans "Authors" %}</th>
+                    {% trans "Journal" as journal_trans %}
+                    {% sortable_th journal_trans o "o" "journal" %}
+                    {% trans "Volume" as volume_trans %}
+                    {% sortable_th volume_trans o "o" "volume" %}
+                    {% trans "Acquired" as acquired_trans %}
+                    {% sortable_th acquired_trans o "o" "acquisitions" %}
+                    {% trans "Read" as read_trans %}
+                    {% sortable_th read_trans o "o" "reads" %}
                 </thead>
                 <tbody>
                     {% for paper in object_list %}
                         <tr>
-                            <th><a href="{% url 'paper_detail' paper.slug %}">{{ paper.title }}</a></th>
-                            <td>{% for author in paper.authors.all %}<a href="{% url 'person_detail' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                            <td>{% if paper.journal %}<a href="{% url 'journal_detail' paper.journal.slug %}">{{ paper.journal.name }}</a>{% endif %}</td>
-                            <td>{{ paper.volume|default:'' }}</td>
+                            <th><a href="{% url "papers:paper_detail" paper.slug %}">{{ paper.title }}</a></th>
+                            <td>{% for author in paper.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{% if paper.journal %}<a href="{% url "journals:journal_detail" paper.journal.slug %}">{{ paper.journal.name }}</a>{% endif %}</td>
+                            <td>{{ paper.volume|default:"" }}</td>
                             <td><span class="glyphicon glyphicon-{% if paper.acquisitions.exists %}ok{% else %}remove{% endif %}"></span></td>
                             <td>{% read_status paper.reads %}</td>
                         </tr>

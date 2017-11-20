@@ -1,21 +1,23 @@
-{% extends 'base.html' %}
+{% extends "bibliothek/base.html" %}
 {% load bootstrap i18n %}
 
 
 {% block content %}
 <div class="row">
     <div class="col-md-offset-1 col-md-10">
-        <h1 class="page-header">{% trans 'Magazines' %}</h1>
+        <h1 class="page-header">{% trans "Magazines" %}</h1>
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
-                    {% sortable_th 'Name' o 'o' 'name' %}
-                    {% sortable_th 'Number of Issues' o 'o' 'ci' %}
+                    {% trans "Name" as name_trans %}
+                    {% sortable_th name_trans o "o" "name" %}
+                    {% trans "Number of Issues" as nb_issues_trans %}
+                    {% sortable_th nb_issues_trans o "o" "ci" %}
                 </thead>
                 <tbody>
                     {% for magazine in object_list %}
                         <tr>
-                            <th><a href="{% url 'magazine_detail' magazine.slug %}">{{ magazine.name }}</a></th>
+                            <th><a href="{% url "magazines:magazine_detail" magazine.slug %}">{{ magazine.name }}</a></th>
                             <th>{{ magazine.ci }}</th>
                         </tr>
                     {% endfor %}

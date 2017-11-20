@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "bibliothek/base.html" %}
 {% load i18n shelves %}
 
 
@@ -7,19 +7,19 @@
     <div class="col-m-offset-1 col-md-10">
         <h1 class="page-header">{{ paper.title }}</h1>
         <dl class="dl-horizontal">
-            <dt>{% trans 'Authors' %}</dt>
-            <dd>{% for author in paper.authors.all %}<a href="{% url 'person_detail' author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
-            <dt>{% trans 'Journal' %}</dt>
-            <dd>{% if paper.journal %}<a href="{% url 'journal_detail' paper.journal.slug %}">{{ paper.journal.name }}</a>{% endif %}</dd>
-            <dt>{% trans 'Volume' %}</dt>
-            <dd>{{ paper.volume|default:'' }}</dd>
-            <dt>{% trans 'Published on' %}</dt>
-            <dd>{{ paper.published_on|date:'Y-m-d' }}</dd>
-            <dt>{% trans 'Languages' %}</dt>
+            <dt>{% trans "Authors" %}</dt>
+            <dd>{% for author in paper.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dt>{% trans "Journal" %}</dt>
+            <dd>{% if paper.journal %}<a href="{% url "journals:journal_detail" paper.journal.slug %}">{{ paper.journal.name }}</a>{% endif %}</dd>
+            <dt>{% trans "Volume" %}</dt>
+            <dd>{{ paper.volume|default:"" }}</dd>
+            <dt>{% trans "Published on" %}</dt>
+            <dd>{{ paper.published_on|date:"Y-m-d" }}</dd>
+            <dt>{% trans "Languages" %}</dt>
             <dd>{% for language in paper.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
-            <dt>{% trans 'Bibtex' %}</dt>
+            <dt>{% trans "Bibtex" %}</dt>
             <dd><pre>{{ paper.bibtex }}</pre></dd>
-            <dt>{% trans 'Links' %}</dt>
+            <dt>{% trans "Links" %}</dt>
             <dd>
                 <ul>
                     {% for link in paper.links.all %}
@@ -28,7 +28,7 @@
                 </ul>
                 <hr>
             </dd>
-            <dt>{% trans 'Files' %}</dt>
+            <dt>{% trans "Files" %}</dt>
             <dd>
                 <ul>
                     {% for file in paper.files.all %}
@@ -37,25 +37,25 @@
                 </ul>
                 <hr>
             </dd>
-            <dt>{% trans 'Acquisitions' %}</dt>
+            <dt>{% trans "Acquisitions" %}</dt>
             <dd>
                 {% for acquisition in paper.acquisitions.all %}
                     <ul>
                         <li>
-                            {% if acquisition.date %}<b>{% trans 'Date' %}</b>: {{ acquisition.date|date:'Y-m-d' }}{% endif%}
-                            <b>{% trans 'Price' %}</b>: {{ acquisition.price|currency_symbol }}
+                            {% if acquisition.date %}<b>{% trans "Date" %}</b>: {{ acquisition.date|date:"Y-m-d" }}{% endif%}
+                            <b>{% trans "Price" %}</b>: {{ acquisition.price|currency_symbol }}
                         </li>
                     </ul>
                 {% endfor %}
                 <hr>
             </dd>
-            <dt>{% trans 'Reads' %}</dt>
+            <dt>{% trans "Reads" %}</dt>
             <dd>
                 {% for read in paper.reads.all %}
                     <ul>
                         <li>
-                            {% if read.started %}<b>{% trans 'Date started' %}</b>: {{ read.started|date:'Y-m-d' }}{% endif %}
-                            {% if read.finished %}<b>{% trans 'Date finished' %}</b>: {{ read.finished|date:'Y-m-d' }}{% endif %}
+                            {% if read.started %}<b>{% trans "Date started" %}</b>: {{ read.started|date:"Y-m-d" }}{% endif %}
+                            {% if read.finished %}<b>{% trans "Date finished" %}</b>: {{ read.finished|date:"Y-m-d" }}{% endif %}
                         </li>
                     </ul>
                 {% endfor %}

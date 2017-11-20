@@ -19,7 +19,7 @@
                 <tbody>
                     {% for person in object_list %}
                         <tr>
-                            <th><a href="{% url "person_detail" person.slug %}">{{ person.first_name }} {{ person.last_name|default:"" }}</a></th>
+                            <th><a href="{% url "persons:person_detail" person.slug %}">{{ person.first_name }} {{ person.last_name|default:"" }}</a></th>
                             <td>{{ person.cb }}</td>
                             <td>{{ person.cp }}</td>
                         </tr>

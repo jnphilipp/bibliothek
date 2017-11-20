@@ -38,11 +38,11 @@
                 <tbody>
                     {% for book in books %}
                         <tr>
-                            <th><a href="{% url "book_detail" book.slug %}">{{ book.title }}</a></th>
-                            <td>{% for author in book.authors.all %}<a href="{% url "person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                            <td>{% if book.series %}<a href="{% url "series_detail" book.series.slug %}">{{ book.series.name }}</a>{% endif %}</td>
+                            <th><a href="{% url "books:book_detail" book.slug %}">{{ book.title }}</a></th>
+                            <td>{% for author in book.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{% if book.series %}<a href="{% url "series:series_detail" book.series.slug %}">{{ book.series.name }}</a>{% endif %}</td>
                             <td>{{ book.volume|default:"" }}</td>
-                            <td>{% for genre in book.genres.all %}<a href="{% url "genre_detail" genre.slug %}">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{% for genre in book.genres.all %}<a href="{% url "genres:genre_detail" genre.slug %}">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -58,20 +58,20 @@
                 <thead>
                     {% sortable_th title_trans po "po" "title" %}
                     <th>{% trans "Authors" %}</th>
-                    {% trans "Journal" journal_trans %}
+                    {% trans "Journal" as journal_trans %}
                     {% sortable_th journal_trans po "po" "journal" %}
                     {% sortable_th volume_trans po "po" "volume" %}
-                    {% traans "Acquired" as acquired_trans %}
+                    {% trans "Acquired" as acquired_trans %}
                     {% sortable_th acquired_trans po "po" "acquisitions" %}
-                    {% traans "Read" as read_trans %}
+                    {% trans "Read" as read_trans %}
                     {% sortable_th read_trans po "po" "reads" %}
                 </thead>
                 <tbody>
                     {% for paper in papers %}
                         <tr>
-                            <th><a href="{% url "paper_detail" paper.slug %}">{{ paper.title }}</a></th>
-                            <td>{% for author in paper.authors.all %}<a href="{% url "person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                            <td>{% if paper.journal %}<a href="{% url "journal_detail" paper.journal.slug %}">{{ paper.journal.name }}</a>{% endif %}</td>
+                            <th><a href="{% url "papers:paper_detail" paper.slug %}">{{ paper.title }}</a></th>
+                            <td>{% for author in paper.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{% if paper.journal %}<a href="{% url "journals:journal_detail" paper.journal.slug %}">{{ paper.journal.name }}</a>{% endif %}</td>
                             <td>{{ paper.volume|default:"" }}</td>
                             <td><span class="glyphicon glyphicon-{% if paper.acquisitions.exists %}ok{% else %}remove{% endif %}"></span></td>
                             <td>{% read_status paper.reads %}</td>
