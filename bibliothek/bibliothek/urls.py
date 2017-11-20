@@ -1,4 +1,21 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2016-2017 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+#
+# This file is part of bibliothek.
+#
+# bibliothek is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bibliothek is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+
 """bibliothek URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -26,17 +43,18 @@ admin.site.site_header = 'Bibliothek administration'
 urlpatterns = [
     url(r'^$', views.dashboard, name='dashboard'),
 
-    url(r'^books/', include('books.urls')),
-    url(r'^journals/', include('journals.urls')),
-    url(r'^genres/', include('genres.urls')),
-    url(r'^magazines/', include('magazines.urls')),
-    url(r'^papers/', include('papers.urls')),
-    url(r'^persons/', include('persons.urls')),
-    url(r'^publishers/', include('publishers.urls')),
-    url(r'^series/', include('series.urls')),
+    url(r'^books/', include('books.urls', 'books')),
+    url(r'^journals/', include('journals.urls', 'journals')),
+    url(r'^genres/', include('genres.urls', 'genres')),
+    url(r'^magazines/', include('magazines.urls', 'magazines')),
+    url(r'^papers/', include('papers.urls', 'papers')),
+    url(r'^persons/', include('persons.urls', 'persons')),
+    url(r'^publishers/', include('publishers.urls', 'publishers')),
+    url(r'^series/', include('series.urls', 'series')),
 
     url(r'^admin/', admin.site.urls),
 ]
 
 if settings.DEBUG:
-    urlpatterns += [url(r'^media/(?P<path>.*)$', static.serve, {'document_root': settings.MEDIA_ROOT})]
+    urlpatterns += [url(r'^media/(?P<path>.*)$', static.serve,
+                        {'document_root': settings.MEDIA_ROOT})]
