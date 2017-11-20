@@ -1,4 +1,20 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2016-2017 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+#
+# This file is part of bibliothek.
+#
+# bibliothek is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bibliothek is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.test import TestCase
 from papers import functions
@@ -10,7 +26,9 @@ class PaperFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
 
-        paper, created = functions.paper.create('Science Paper', ['Mark Tauser'], '2016-05-03', 'Science Journal', '20160501')
+        paper, created = functions.paper.create('Science Paper',
+                                                ['Mark Tauser'], '2016-05-03',
+                                                'Science Journal', '20160501')
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
         self.assertEquals(1, paper.authors.count())
@@ -18,7 +36,10 @@ class PaperFunctionsTestCase(TestCase):
         self.assertEquals('Tauser', paper.authors.first().last_name)
         self.assertIsNotNone(paper.journal.id)
 
-        paper, created = functions.paper.create('AI Paper', ['Mark Tauser'], '2016-06-03', 'Science Journal', '20160603', languages=['English'])
+        paper, created = functions.paper.create('AI Paper', ['Mark Tauser'],
+                                                '2016-06-03',
+                                                'Science Journal', '20160603',
+                                                languages=['English'])
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
         self.assertEquals(1, paper.authors.count())
@@ -29,14 +50,22 @@ class PaperFunctionsTestCase(TestCase):
         self.assertEquals(1, paper.languages.count())
         self.assertEquals('English', paper.languages.first().name)
 
-
     def test_paper_parse(self):
-        paper, created, acquisition = functions.paper.parse.from_dict({'title':'Parsed Paper'})
+        paper, created, acquisition = functions.paper.parse.from_dict(
+            {'title': 'Parsed Paper'}
+        )
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
         self.assertIsNotNone(acquisition.id)
 
-        paper, created, acquisition = functions.paper.parse.from_dict({'title':'Parsed Paper Next Gen', 'authors':[{'first_name':'Jen', 'last_name':'Yen'}], 'journal':'Science Journal', 'volume':'20160603', 'published_on':'2016-06-03', 'url':'https://papers.com/paper20160603'})
+        paper, created, acquisition = functions.paper.parse.from_dict({
+            'title': 'Parsed Paper Next Gen',
+            'authors': [{'first_name': 'Jen', 'last_name': 'Yen'}],
+            'journal': 'Science Journal',
+            'volume': '20160603',
+            'published_on': '2016-06-03',
+            'url': 'https://papers.com/paper20160603'
+        })
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
         self.assertIsNotNone(acquisition.id)
@@ -46,7 +75,6 @@ class PaperFunctionsTestCase(TestCase):
         self.assertIsNotNone(paper.journal.id)
         self.assertEquals(1, paper.links.count())
         self.assertIsNotNone(paper.links.first().id)
-
 
     def test_paper_edit(self):
         paper, created = functions.paper.create('Paper 2')
@@ -72,7 +100,6 @@ class PaperFunctionsTestCase(TestCase):
         self.assertEquals(1, paper.languages.count())
         self.assertEquals('English', paper.languages.first().name)
 
-
     def test_paper_get(self):
         paper, created = functions.paper.create('Paper')
         self.assertTrue(created)
@@ -85,7 +112,6 @@ class PaperFunctionsTestCase(TestCase):
         paper2 = functions.paper.get.by_term(str(paper.id))
         self.assertIsNotNone(paper)
         self.assertEquals(paper, paper2)
-
 
     def test_paper_list(self):
         paper, created = functions.paper.create('Paper')
@@ -102,13 +128,14 @@ class PaperFunctionsTestCase(TestCase):
         papers = functions.paper.list.by_term('Two')
         self.assertEquals(1, len(papers))
 
-
     def test_paper_acquisition(self):
-        paper, created = functions.paper.create('Super Important Stuff', published_on='2016-06-01')
+        paper, created = functions.paper.create('Super Important Stuff',
+                                                published_on='2016-06-01')
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
 
-        acquisition = functions.paper.acquisition.add(paper, date='2016-06-02', price=2.5)
+        acquisition = functions.paper.acquisition.add(paper, date='2016-06-02',
+                                                      price=2.5)
         self.assertIsNotNone(acquisition)
         self.assertEquals(1, paper.acquisitions.count())
 
@@ -119,9 +146,11 @@ class PaperFunctionsTestCase(TestCase):
         functions.paper.acquisition.delete(paper, acquisition.id)
         self.assertEquals(0, paper.acquisitions.count())
 
-
     def test_paper_read(self):
-        paper, created = functions.paper.create('Super Important Stuff (Second Edition)', published_on='2016-07-01')
+        paper, created = functions.paper.create(
+            'Super Important Stuff (Second Edition)',
+            published_on='2016-07-01'
+        )
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
 

@@ -1,4 +1,20 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2016-2017 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+#
+# This file is part of bibliothek.
+#
+# bibliothek is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bibliothek is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 
@@ -35,7 +51,9 @@ def from_dict(paper_dict, files=[]):
         stdout.p([_('Id'), paper.id], positions=positions)
         stdout.p([_('Title'), paper.title], positions=positions)
         if not created:
-            stdout.p([_('The paper "%(title)s" already exists with id "%(id)s", aborting...') % {'title':paper.title, 'id':paper.id}], after='=')
+            msg = _('The paper "%(title)s" already exists with id "%(id)s", ' +
+                    'aborting...')
+            stdout.p([msg % {'title': paper.title, 'id': paper.id}], after='=')
             return paper, created, None
         if 'bibtex' in paper_dict and paper_dict['bibtex']:
             paper.bibtex = paper_dict['bibtex']
@@ -44,15 +62,22 @@ def from_dict(paper_dict, files=[]):
         return None, False, None
 
     if 'authors' in paper_dict and paper_dict['authors']:
-        for (i, author), has_next in lookahead(enumerate(paper_dict['authors'])):
-            person, c = Person.objects.get_or_create(first_name=author['first_name'], last_name=author['last_name'])
+        authors = paper_dict['authors']
+        for (i, author), has_next in lookahead(enumerate(authors)):
+            person, c = Person.objects.get_or_create(
+                first_name=author['first_name'], last_name=author['last_name']
+            )
             paper.authors.add(person)
-            stdout.p([_('Authors') if i == 0 else '', '%s: %s' % (person.id, str(person))], after=None if has_next else '_', positions=positions)
+            stdout.p([_('Authors') if i == 0 else '',
+                      '%s: %s' % (person.id, str(person))],
+                     after=None if has_next else '_', positions=positions)
 
     if 'journal' in paper_dict and paper_dict['journal']:
         journal, c = Journal.objects.get_or_create(name=paper_dict['journal'])
         paper.journal = journal
-        stdout.p([_('Journal'), '%s: %s' % (paper.journal.id, paper.journal.name)], positions=positions)
+        stdout.p([_('Journal'),
+                  '%s: %s' % (paper.journal.id, paper.journal.name)],
+                 positions=positions)
 
     if 'volume' in paper_dict and paper_dict['volume']:
         paper.volume = paper_dict['volume']
@@ -65,7 +90,8 @@ def from_dict(paper_dict, files=[]):
     if 'url' in paper_dict and paper_dict['url']:
         link, c = Link.objects.get_or_create(link=paper_dict['url'])
         paper.links.add(link)
-        stdout.p([_('Links'), '%s: %s' % (link.id, link.link)], positions=positions)
+        stdout.p([_('Links'), '%s: %s' % (link.id, link.link)],
+                 positions=positions)
 
     for (i, file), has_next in lookahead(enumerate(files)):
         file_name = os.path.basename(file)
@@ -73,10 +99,17 @@ def from_dict(paper_dict, files=[]):
         file_obj.file.save(file_name, DJFile(open(file, 'rb')))
         file_obj.content_object = paper
         file_obj.save()
-        stdout.p([_('Files') if i == 0 else '', '%s: %s' % (file_obj.id, file_obj)], after=None if has_next else '_', positions=positions)
+        stdout.p([_('Files') if i == 0 else '',
+                  '%s: %s' % (file_obj.id, file_obj)],
+                 after=None if has_next else '_', positions=positions)
     paper.save()
-    stdout.p([_('Successfully added paper "%(title)s" with id "%(id)s".') % {'title':paper.title, 'id':paper.id}], positions=[1.])
 
-    acquisition = Acquisition.objects.create(date=date.today(), content_object=paper)
-    stdout.p([_('Successfully added acquisition on "%(date)s" with id "%(id)s".') % {'date':acquisition.date, 'id':acquisition.id}], after='=', positions=[1.])
+    msg = _('Successfully added paper "%(title)s" with id "%(id)s".')
+    stdout.p([msg % {'title': paper.title, 'id': paper.id}], positions=[1.])
+
+    acquisition = Acquisition.objects.create(date=date.today(),
+                                             content_object=paper)
+    msg = _('Successfully added acquisition on "%(date)s" with id "%(id)s".')
+    stdout.p([msg % {'date': acquisition.date, 'id': acquisition.id}],
+             after='=', positions=[1.])
     return paper, created, acquisition

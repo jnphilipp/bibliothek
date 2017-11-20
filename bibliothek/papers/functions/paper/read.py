@@ -1,4 +1,20 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2016-2017 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+#
+# This file is part of bibliothek.
+#
+# bibliothek is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bibliothek is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 
@@ -9,8 +25,10 @@ from utils import lookahead, stdout
 
 
 def add(paper, started=None, finished=None):
-    read = Read.objects.create(started=started, finished=finished, content_object=paper)
-    stdout.p(['Successfully added read "%s" to paper "%s".' % (read.id, paper.title)], positions=[1.])
+    read = Read.objects.create(started=started, finished=finished,
+                               content_object=paper)
+    msg = 'Successfully added read "%s" to paper "%s".'
+    stdout.p([msg % (read.id, paper.title)], positions=[1.])
     _print(read)
     return read
 
@@ -22,7 +40,8 @@ def delete(paper, id):
         read.delete()
         stdout.p(['Successfully deleted read.'], positions=[1.])
     except Read.DoesNotExist:
-        stdout.p(['A read with id "%s" for this paper does not exist.' % id], after='=', positions=[1.])
+        stdout.p(['A read with id "%s" for this paper does not exist.' % id],
+                 after='=', positions=[1.])
 
 
 def edit(paper, id, field, value):
@@ -39,7 +58,8 @@ def edit(paper, id, field, value):
         _print(read)
         return read
     except Read.DoesNotExist:
-        stdout.p(['A read with id "%s" for this paper does not exist.' % id], after='=', positions=[1.])
+        stdout.p(['A read with id "%s" for this paper does not exist.' % id],
+                 after='=', positions=[1.])
         return None
 
 

@@ -1,4 +1,20 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2016-2017 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+#
+# This file is part of bibliothek.
+#
+# bibliothek is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bibliothek is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import shutil
@@ -14,33 +30,90 @@ from links.models import Link
 from persons.models import Person
 
 
-class TextFieldSingleLine(models.TextField):
+class SingleLineTextField(models.TextField):
     pass
 
 
 class Paper(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Created at')
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Updated at')
+    )
 
-    slug = models.SlugField(max_length=2048, unique=True, verbose_name=_('Slug'))
-    title = TextFieldSingleLine(unique=True, verbose_name=_('Title'))
-    authors = models.ManyToManyField(Person, related_name='papers', blank=True, verbose_name=_('Authors'))
+    slug = models.SlugField(
+        max_length=2048,
+        unique=True,
+        verbose_name=_('Slug')
+    )
+    title = SingleLineTextField(
+        unique=True,
+        verbose_name=_('Title')
+    )
+    authors = models.ManyToManyField(
+        Person,
+        blank=True,
+        related_name='papers',
+        verbose_name=_('Authors')
+    )
 
-    journal = models.ForeignKey(Journal, on_delete=models.SET_NULL, related_name='papers', blank=True, null=True, verbose_name=_('Journal'))
-    volume = TextFieldSingleLine(blank=True, null=True, verbose_name=_('Volume'))
-    published_on = models.DateField(blank=True, null=True, verbose_name=_('Published on'))
-    languages = models.ManyToManyField(Language, related_name='papers', blank=True, verbose_name=_('Languages'))
+    journal = models.ForeignKey(
+        Journal,
+        models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='papers',
+        verbose_name=_('Journal')
+    )
+    volume = SingleLineTextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Volume')
+    )
+    published_on = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Published on')
+    )
+    languages = models.ManyToManyField(
+        Language,
+        blank=True,
+        related_name='papers',
+        verbose_name=_('Languages')
+    )
 
-    files = GenericRelation('files.File', verbose_name=_('Files'))
-    bibtex = models.TextField(blank=True, null=True, verbose_name=_('BibTex'))
+    files = GenericRelation(
+        'files.File',
+        verbose_name=_('Files')
+    )
+    bibtex = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('BibTex')
+    )
 
-    links = models.ManyToManyField(Link, related_name='papers', blank=True, verbose_name=_('Links'))
+    links = models.ManyToManyField(
+        Link,
+        blank=True,
+        related_name='papers',
+        verbose_name=_('Links')
+    )
 
-    acquisitions = GenericRelation('shelves.Acquisition', verbose_name=_('Acquisitions'))
-    reads = GenericRelation('shelves.Read', verbose_name=_('Reads'))
+    acquisitions = GenericRelation(
+        'shelves.Acquisition',
+        verbose_name=_('Acquisitions')
+    )
+    reads = GenericRelation(
+        'shelves.Read',
+        verbose_name=_('Reads')
+    )
 
     def move_file(self, file):
-        save_name = os.path.join('papers', str(self.id), os.path.basename(file.file.name))
+        save_name = os.path.join('papers', str(self.id),
+                                 os.path.basename(file.file.name))
 
         current_path = os.path.join(settings.MEDIA_ROOT, file.file.name)
         new_path = os.path.join(settings.MEDIA_ROOT, save_name)
@@ -61,13 +134,16 @@ class Paper(models.Model):
                 self.slug = slugify(self.title)
         super(Paper, self).save(*args, **kwargs)
         for file in self.files.all():
-            if not file.file.name.startswith(os.path.join('papers', str(self.id))):
+            path = os.path.join('papers', str(self.id))
+            if not file.file.name.startswith(path):
                 self.move_file(file)
 
     def to_json(self):
         data = {'title': self.title}
         if self.authors.all():
-            data['authors'] = [author.to_json() for author in self.authors.all()]
+            data['authors'] = [
+                author.to_json() for author in self.authors.all()
+            ]
         if self.journal:
             data['journal'] = self.journal.to_json()
         if self.volume:
@@ -75,19 +151,27 @@ class Paper(models.Model):
         if self.published_on:
             data['published_on'] = str(self.published_on)
         if self.languages.all():
-            data['languages'] = [language.to_json() for language in self.languages.all()]
+            data['languages'] = [
+                language.to_json() for language in self.languages.all()
+            ]
         if self.links.all():
             data['links'] = [link.to_json() for link in self.links.all()]
         if self.files.all():
             data['files'] = [file.to_json() for file in self.files.all()]
         if self.acquisitions.all():
-            data['acquisitions'] = [acquisition.to_json() for acquisition in self.acquisitions.all()]
+            data['acquisitions'] = [
+                acquisition.to_json() for acquisition in self.acquisitions.all()
+            ]
         if self.reads.all():
             data['reads'] = [read.to_json() for read in self.reads.all()]
         return data
 
     def __str__(self):
-        return '%s%s' % (self.title, '' if self.authors.count() == 0 else ' - %s' % ', '.join([str(a) for a in self.authors.all()]))
+        authors = ', '.join([str(a) for a in self.authors.all()])
+        return '%s%s' % (
+            self.title,
+            '' if self.authors.count() == 0 else ' - %s' % authors
+        )
 
     class Meta:
         ordering = ('journal__name', 'volume', 'title')
