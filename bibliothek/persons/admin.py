@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.db.models import Count
 from django.forms import TextInput
 from django.utils.translation import ugettext_lazy as _
-from persons.models import Person, TextFieldSingleLine
+from persons.models import Person, SingleLineTextField
 
 
 @admin.register(Person)
@@ -37,7 +37,7 @@ class PersonAdmin(admin.ModelAdmin):
     ]
     filter_horizontal = ('links',)
     formfield_overrides = {
-        TextFieldSingleLine: {
+        SingleLineTextField: {
             'widget': TextInput(attrs={'autocomplete':'off'})
         },
     }

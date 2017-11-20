@@ -18,7 +18,7 @@
 
 from django.contrib import admin
 from django.forms import TextInput
-from publishers.models import Publisher, TextFieldSingleLine
+from publishers.models import Publisher, SingleLineTextField
 
 
 @admin.register(Publisher)
@@ -29,7 +29,7 @@ class PublisherAdmin(admin.ModelAdmin):
     ]
     filter_horizontal = ('links',)
     formfield_overrides = {
-        TextFieldSingleLine: {
+        SingleLineTextField: {
             'widget': TextInput(attrs={'autocomplete':'off'})
         },
     }

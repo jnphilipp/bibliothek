@@ -18,7 +18,7 @@
 
 from django.contrib import admin
 from django.forms import TextInput
-from series.models import Series, TextFieldSingleLine
+from series.models import Series, SingleLineTextField
 
 
 @admin.register(Series)
@@ -29,7 +29,7 @@ class SeriesAdmin(admin.ModelAdmin):
     ]
     filter_horizontal = ('links',)
     formfield_overrides = {
-        TextFieldSingleLine: {
+        SingleLineTextField: {
             'widget': TextInput(attrs={'autocomplete':'off'})
         },
     }
