@@ -53,7 +53,7 @@ class PaperAdmin(admin.ModelAdmin):
 
     fieldsets = [
         (None, {'fields': ['slug', 'title', 'authors', 'languages']}),
-        (_('Journal'), {'fields': ['journal', 'volume', 'published_on']}),
+        (_('Journal'), {'fields': ['journal', 'volume', 'publishing_date']}),
         (_('Bibtex'), {'fields': ['bibtex']}),
         (_('Links'), {'fields': ['links']}),
     ]

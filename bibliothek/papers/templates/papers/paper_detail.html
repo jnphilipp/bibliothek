@@ -13,8 +13,8 @@
             <dd>{% if paper.journal %}<a href="{% url "journals:journal_detail" paper.journal.slug %}">{{ paper.journal.name }}</a>{% endif %}</dd>
             <dt>{% trans "Volume" %}</dt>
             <dd>{{ paper.volume|default:"" }}</dd>
-            <dt>{% trans "Published on" %}</dt>
-            <dd>{{ paper.published_on|date:"Y-m-d" }}</dd>
+            <dt>{% trans "Publishing date" %}</dt>
+            <dd>{{ paper.publishing_date|date:"Y-m-d" }}</dd>
             <dt>{% trans "Languages" %}</dt>
             <dd>{% for language in paper.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
             <dt>{% trans "Bibtex" %}</dt>

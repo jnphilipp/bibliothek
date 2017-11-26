@@ -83,9 +83,10 @@ def from_dict(paper_dict, files=[]):
         paper.volume = paper_dict['volume']
         stdout.p([_('Volume'), paper.volume], positions=positions)
 
-    if 'published_on' in paper_dict and paper_dict['published_on']:
-        paper.published_on = paper_dict['published_on']
-        stdout.p([_('Published on'), paper.published_on], positions=positions)
+    if 'publishing_date' in paper_dict and paper_dict['publishing_date']:
+        paper.publishing_date = paper_dict['publishing_date']
+        stdout.p([_('Publishing date'), paper.publishing_date],
+                 positions=positions)
 
     if 'url' in paper_dict and paper_dict['url']:
         link, c = Link.objects.get_or_create(link=paper_dict['url'])

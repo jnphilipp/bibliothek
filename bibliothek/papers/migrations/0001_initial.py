@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField(max_length=2048, unique=True, verbose_name='Slug')),
                 ('title', papers.models.SingleLineTextField(unique=True, verbose_name='Title')),
                 ('volume', papers.models.SingleLineTextField(blank=True, null=True, verbose_name='Volume')),
-                ('published_on', models.DateField(blank=True, null=True, verbose_name='Published on')),
+                ('publishing_date', models.DateField(blank=True, null=True, verbose_name='Publishing date')),
                 ('bibtex', models.TextField(blank=True, null=True, verbose_name='BibTex')),
                 ('authors', models.ManyToManyField(blank=True, related_name='papers', to='persons.Person', verbose_name='Authors')),
                 ('journal', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='papers', to='journals.Journal', verbose_name='Journal')),

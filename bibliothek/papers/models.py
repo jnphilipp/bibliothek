@@ -73,10 +73,10 @@ class Paper(models.Model):
         null=True,
         verbose_name=_('Volume')
     )
-    published_on = models.DateField(
+    publishing_date = models.DateField(
         blank=True,
         null=True,
-        verbose_name=_('Published on')
+        verbose_name=_('Publishing date')
     )
     languages = models.ManyToManyField(
         Language,
@@ -148,8 +148,8 @@ class Paper(models.Model):
             data['journal'] = self.journal.to_json()
         if self.volume:
             data['volume'] = self.volume
-        if self.published_on:
-            data['published_on'] = str(self.published_on)
+        if self.publishing_date:
+            data['publishing_date'] = str(self.publishing_date)
         if self.languages.all():
             data['languages'] = [
                 language.to_json() for language in self.languages.all()

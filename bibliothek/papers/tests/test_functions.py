@@ -34,6 +34,8 @@ class PaperFunctionsTestCase(TestCase):
         self.assertEquals(1, paper.authors.count())
         self.assertEquals('Mark', paper.authors.first().first_name)
         self.assertEquals('Tauser', paper.authors.first().last_name)
+        self.assertEquals('2016-05-03', paper.publishing_date)
+        self.assertEquals('20160501', paper.volume)
         self.assertIsNotNone(paper.journal.id)
 
         paper, created = functions.paper.create('AI Paper', ['Mark Tauser'],
@@ -45,6 +47,8 @@ class PaperFunctionsTestCase(TestCase):
         self.assertEquals(1, paper.authors.count())
         self.assertEquals('Mark', paper.authors.first().first_name)
         self.assertEquals('Tauser', paper.authors.first().last_name)
+        self.assertEquals('2016-06-03', paper.publishing_date)
+        self.assertEquals('20160603', paper.volume)
         self.assertIsNotNone(paper.journal.id)
         self.assertEquals('Science Journal', paper.journal.name)
         self.assertEquals(1, paper.languages.count())
@@ -63,7 +67,7 @@ class PaperFunctionsTestCase(TestCase):
             'authors': [{'first_name': 'Jen', 'last_name': 'Yen'}],
             'journal': 'Science Journal',
             'volume': '20160603',
-            'published_on': '2016-06-03',
+            'publishing_date': '2016-06-03',
             'url': 'https://papers.com/paper20160603'
         })
         self.assertTrue(created)
@@ -73,6 +77,8 @@ class PaperFunctionsTestCase(TestCase):
         self.assertEquals('Jen', paper.authors.first().first_name)
         self.assertEquals('Yen', paper.authors.first().last_name)
         self.assertIsNotNone(paper.journal.id)
+        self.assertEquals('2016-06-03', paper.publishing_date)
+        self.assertEquals('20160603', paper.volume)
         self.assertEquals(1, paper.links.count())
         self.assertIsNotNone(paper.links.first().id)
 
@@ -130,7 +136,7 @@ class PaperFunctionsTestCase(TestCase):
 
     def test_paper_acquisition(self):
         paper, created = functions.paper.create('Super Important Stuff',
-                                                published_on='2016-06-01')
+                                                publishing_date='2016-06-01')
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
 
@@ -149,7 +155,7 @@ class PaperFunctionsTestCase(TestCase):
     def test_paper_read(self):
         paper, created = functions.paper.create(
             'Super Important Stuff (Second Edition)',
-            published_on='2016-07-01'
+            publishing_date='2016-07-01'
         )
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)

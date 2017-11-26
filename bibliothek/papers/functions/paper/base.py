@@ -31,7 +31,7 @@ from persons.models import Person
 from utils import lookahead, stdout
 
 
-def create(title, authors=[], published_on=None, journal=None, volume=None,
+def create(title, authors=[], publishing_date=None, journal=None, volume=None,
            languages=[], links=[]):
     positions = [.33, 1.]
 
@@ -57,12 +57,12 @@ def create(title, authors=[], published_on=None, journal=None, volume=None,
         else:
             stdout.p([_('Authors'), ''], positions=positions)
 
-        if published_on:
-            paper.published_on = published_on
-            stdout.p([_('Published on'), paper.published_on],
+        if publishing_date:
+            paper.publishing_date = publishing_date
+            stdout.p([_('Publishing date'), paper.publishing_date],
                      positions=positions)
         else:
-            stdout.p([_('Published on'), ''], positions=positions)
+            stdout.p([_('Publishing date'), ''], positions=positions)
 
         if journal:
             paper.journal, c = Journal.objects.filter(
@@ -112,8 +112,10 @@ def create(title, authors=[], published_on=None, journal=None, volume=None,
 
 
 def edit(paper, field, value):
-    assert field in ['title', '+author', '-author', 'published_on', 'journal',
-                     'volume', '+language', '-language', '+file', '+link']
+    fields = ['title', '+author', '-author', 'publishing_date',
+              'publishing-date', 'journal', 'volume', '+language', '-language',
+              '+file', '+link']
+    assert field in fields
 
     if field == 'title':
         paper.title = value
@@ -138,8 +140,8 @@ def edit(paper, field, value):
         except Person.DoesNotExist:
             stdout.p([_('Author "%(name)s" not found.') % {'name': value}],
                      positions=[1.])
-    elif field == 'published_on':
-        paper.published_on = value
+    elif field == 'publishing_date' or field == 'publishing-date':
+        paper.publishing_date = value
     elif field == 'journal':
         paper.journal, c = Journal.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(name__icontains=value)
@@ -199,7 +201,7 @@ def info(paper):
              positions=positions)
     stdout.p([_('Volume'), paper.volume if paper.volume else ''],
              positions=positions)
-    stdout.p([_('Published on'), paper.published_on],
+    stdout.p([_('Publishing date'), paper.publishing_date],
              positions=positions)
 
     if paper.languages.count() > 0:

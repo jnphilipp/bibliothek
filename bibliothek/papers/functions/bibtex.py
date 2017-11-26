@@ -72,10 +72,10 @@ def parse(bibtex_file):
             date = datetime(year, 1, 1)
 
         if 'timestamp' in entry:
-            published_on = datetime.strptime(entry['timestamp'].strip(),
+            publishing_date = datetime.strptime(entry['timestamp'].strip(),
                                              '%a, %d %b %Y %H:%M:%S %z').date()
         else:
-            published_on = date.date()
+            publishing_date = date.date()
         url = entry['link'].strip() if 'link' in entry else ''
 
         entries.append({
@@ -84,7 +84,7 @@ def parse(bibtex_file):
             'journal': journal,
             'volume': volume,
             'publisher': publisher,
-            'published_on': published_on,
+            'publishing_date': publishing_date,
             'url': url,
             'bibtex': bibtex
         })
