@@ -91,7 +91,7 @@ def info(publisher):
         stdout.p([_('Links'), ''], positions=positions)
 
     if publisher.editions.count() > 0:
-        editions = publisher.editions.all().order_by('published_on')
+        editions = publisher.editions.all().order_by('publishing_date')
         for (i, edition), has_next in lookahead(enumerate(editions)):
             stdout.p([_('Editions') if i == 0 else '',
                       '%s: %s' % (edition.id, str(edition))],

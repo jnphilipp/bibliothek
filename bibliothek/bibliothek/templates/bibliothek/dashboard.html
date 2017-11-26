@@ -51,7 +51,7 @@
                 <thead>
                     <th>{% trans "Magazine" %}</th>
                     <th>{% trans "Issue" %}</th>
-                    <th>{% trans "Published on" %}</th>
+                    <th>{% trans "Publishing date" %}</th>
                     <th>{% trans "Date started" %}</th>
                 </thead>
                 <tbody>
@@ -59,7 +59,7 @@
                         <tr>
                             <th><a href="{% url "magazines:magazine_detail" issue.magazine.slug %}">{{ issue.magazine.name }}</a></th>
                             <td><a href="{% url "magazines:issue_detail" issue.magazine.slug issue.id %}">{{ issue.issue }}</a></td>
-                            <td><a href="{% url "magazines:issue_detail" issue.magazine.slug issue.id %}">{{ issue.published_on|date:"Y-m-d" }}</a></td>
+                            <td><a href="{% url "magazines:issue_detail" issue.magazine.slug issue.id %}">{{ issue.publishing_date|date:"Y-m-d" }}</a></td>
                             <td>{{ read.started|date:"Y-m-d" }}</td>
                         </tr>
                     {% endfor %}
