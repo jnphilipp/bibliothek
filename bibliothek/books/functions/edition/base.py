@@ -29,7 +29,7 @@ from publishers.models import Publisher
 from utils import lookahead, stdout
 
 
-def create(book, alternate_title=None, isbn=None, published_on=None,
+def create(book, alternate_title=None, isbn=None, publishing_date=None,
            cover_image=None, binding=None, publisher=None, languages=[],
            files=[]):
     positions = [.33, 1.]
@@ -37,10 +37,10 @@ def create(book, alternate_title=None, isbn=None, published_on=None,
     edition, created = Edition.objects.get_or_create(
         book=book,
         isbn=isbn,
-        published_on=published_on,
+        publishing_date=publishing_date,
         defaults={
             'isbn': isbn,
-            'published_on':published_on
+            'publishing_date':publishing_date
         }
     )
     if created:
@@ -116,11 +116,12 @@ def create(book, alternate_title=None, isbn=None, published_on=None,
 
 
 def edit(edition, field, value):
-    assert field in ['alternate_title', 'binding', 'cover', 'isbn',
-                     'published_on', 'publisher', '+language', '-language',
-                     '+file']
+    fields = ['alternate_title', 'alternate-title', 'binding', 'cover', 'isbn',
+              'publishing_date', 'publishing-date', 'publisher', '+language',
+              '-language', '+file']
+    assert field in fields
 
-    if field == 'alternate_title':
+    if field == 'alternate_title' or field == 'alternate-title':
         edition.alternate_title = value
     elif field == 'binding':
         edition.binding, created = Binding.objects.filter(
@@ -131,8 +132,8 @@ def edit(edition, field, value):
                                  DJFile(open(value, 'rb')))
     elif field == 'isbn':
         edition.isbn = value
-    elif field == 'published_on':
-        edition.published_on = value
+    elif field == 'publishing_date' or field == 'publishing-date':
+        edition.publishing_date = value
     elif field == 'publisher':
         edition.publisher, created = Publisher.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(name__icontains=value)
@@ -173,8 +174,8 @@ def info(edition):
              positions=positions)
     stdout.p([_('ISBN'), edition.isbn if edition.isbn else ''],
              positions=positions)
-    stdout.p([_('Published on'),
-              edition.published_on if edition.published_on else ''],
+    stdout.p([_('Publishing date'),
+              edition.publishing_date if edition.publishing_date else ''],
              positions=positions)
     stdout.p([_('Cover'), edition.cover_image if edition.cover_image else ''],
              positions=positions)

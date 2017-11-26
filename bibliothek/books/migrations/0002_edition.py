@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
                 ('alternate_title', books.models.SingleLineTextField(blank=True, null=True, verbose_name='Alternate title')),
                 ('isbn', models.CharField(blank=True, max_length=13, null=True, verbose_name='ISBN')),
-                ('published_on', models.DateField(blank=True, null=True, verbose_name='Published on')),
+                ('publishing_date', models.DateField(blank=True, null=True, verbose_name='Publishing date')),
                 ('cover_image', models.ImageField(blank=True, null=True, upload_to='files', verbose_name='Cover image')),
                 ('bibtex', models.TextField(blank=True, null=True, verbose_name='BibTex')),
                 ('binding', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='editions', to='bindings.Binding', verbose_name='Binding')),
@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Edition',
                 'verbose_name_plural': 'Editions',
-                'ordering': ('book', 'published_on'),
+                'ordering': ('book', 'publishing_date'),
             },
         ),
     ]

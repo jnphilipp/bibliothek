@@ -25,8 +25,8 @@ from utils import lookahead, stdout
 def all(book):
     editions = Edition.objects.filter(book=book)
     _list([[edition.id, edition.alternate_title, edition.isbn,
-            edition.published_on] for edition in editions],
-          [_('Id'), _('Alternate title'), _('ISBN'), _('Published on')],
+            edition.publishing_date] for edition in editions],
+          [_('Id'), _('Alternate title'), _('ISBN'), _('Publishing date')],
           positions=[.05, .55, .75, 1.])
     return editions
 
@@ -41,8 +41,8 @@ def by_shelf(book, shelf):
         )
     editions = editions.distinct()
     _list([[edition.id, edition.alternate_title, edition.isbn,
-            edition.published_on] for edition in editions],
-          [_('Id'), _('Alternate title'), _('ISBN'), _('Published on')],
+            edition.publishing_date] for edition in editions],
+          [_('Id'), _('Alternate title'), _('ISBN'), _('Publishing date')],
           positions=[.05, .55, .75, 1.])
     return editions
 
@@ -52,11 +52,11 @@ def by_term(book, term):
         Q(book=book) & (Q(pk=term if term.isdigit() else None) |
                         Q(alternate_title__icontains=term) |
                         Q(isbn__icontains=term) |
-                        Q(published_on__icontains=term))
+                        Q(publishing_date__icontains=term))
     )
     _list([[edition.id, edition.alternate_title, edition.isbn,
-            edition.published_on] for edition in editions],
-          [_('Id'), _('Alternate title'), _('ISBN'), _('Published on')],
+            edition.publishing_date] for edition in editions],
+          [_('Id'), _('Alternate title'), _('ISBN'), _('Publishing date')],
           positions=[.05, .55, .75, 1.])
     return editions
 

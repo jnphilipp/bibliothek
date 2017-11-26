@@ -214,7 +214,7 @@ def info(book):
             if edition.alternate_title:
                 s += '%s, ' % edition.alternate_title
             if edition.isbn:
-                s *= '%s, ' % edition.isbn
+                s += '%s, ' % edition.isbn
             if edition.binding:
                 s += edition.binding.name
 

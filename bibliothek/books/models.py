@@ -151,10 +151,10 @@ class Edition(models.Model):
         null=True,
         verbose_name=_('ISBN')
     )
-    published_on = models.DateField(
+    publishing_date = models.DateField(
         blank=True,
         null=True,
-        verbose_name=_('Published on')
+        verbose_name=_('Publishing date')
     )
     cover_image = models.ImageField(
         upload_to='files',
@@ -252,6 +252,6 @@ class Edition(models.Model):
         )
 
     class Meta:
-        ordering = ('book', 'published_on')
+        ordering = ('book', 'publishing_date')
         verbose_name = _('Edition')
         verbose_name_plural = _('Editions')

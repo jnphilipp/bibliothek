@@ -38,8 +38,8 @@
             <dd>{% if edition.binding %}{{ edition.binding.name }}{% endif %}</dd>
             <dt>{% trans "Publisher" %}</dt>
             <dd>{% if edition.publisher %}<a href="{% url "publishers:publisher_detail" edition.publisher.slug %}">{{ edition.publisher.name }}</a>{% endif %}</dd>
-            <dt>{% trans "Published on" %}</dt>
-            <dd>{{ edition.published_on|date:"Y-m-d" }}</dd>
+            <dt>{% trans "Publishing date" %}</dt>
+            <dd>{{ edition.publishing_date|date:"Y-m-d" }}</dd>
             <dt>{% trans "Languages" %}</dt>
             <dd>{% for language in edition.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
             <dt>{% trans "Bibtex" %}</dt>

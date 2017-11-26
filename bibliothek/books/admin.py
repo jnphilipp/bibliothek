@@ -74,7 +74,7 @@ class BookAdmin(admin.ModelAdmin):
 class EditionAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['book', 'alternate_title', 'isbn', 'binding',
-                           'published_on', 'publisher', 'cover_image']}),
+                           'publishing_date', 'publisher', 'cover_image']}),
         (_('Languages'), {'fields': ['languages']}),
         (_('Bibtex'), {'fields': ['bibtex']}),
     ]
@@ -92,7 +92,7 @@ class EditionAdmin(admin.ModelAdmin):
         },
     }
     inlines = [FileInline, AcquisitionInline, ReadInline]
-    list_display = ('book', 'isbn', 'binding', 'publisher', 'published_on')
+    list_display = ('book', 'isbn', 'binding', 'publisher', 'publishing_date')
     list_filter = ('book', 'binding', 'publisher', 'languages')
     search_fields = ('book__title', 'book__authors__first_name',
                      'book__authors__last_name', 'book__series__name',
