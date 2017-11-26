@@ -25,8 +25,8 @@
             <dd>{{ issue.id }}</dd>
             <dt>{% trans "Issue" %}</dt>
             <dd>{{ issue.issue }}</dd>
-            <dt>{% trans "Published on" %}</dt>
-            <dd>{{ issue.published_on|date:"Y-m-d" }}</dd>
+            <dt>{% trans "Publishing date" %}</dt>
+            <dd>{{ issue.publishing_date|date:"Y-m-d" }}</dd>
             <dt>{% trans "Languages" %}</dt>
             <dd>{% for language in issue.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
             <dt>{% trans "Links" %}</dt>

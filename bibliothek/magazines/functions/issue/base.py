@@ -28,7 +28,7 @@ from magazines.models import Issue
 from utils import lookahead, stdout
 
 
-def create(magazine, issue_name, published_on=None, cover_image=None,
+def create(magazine, issue_name, publishing_date=None, cover_image=None,
            languages=[], links=[], files=[]):
     positions = [.33, 1.]
 
@@ -38,11 +38,11 @@ def create(magazine, issue_name, published_on=None, cover_image=None,
         stdout.p([_('Id'), issue.id], positions=positions)
         stdout.p([_('Issue'), issue.issue], positions=positions)
 
-        if published_on:
-            issue.published_on = published_on
-            stdout.p([_('Published on'), published_on], positions=positions)
+        if publishing_date:
+            issue.publishing_date = publishing_date
+            stdout.p([_('Publishing date'), publishing_date], positions=positions)
         else:
-            stdout.p([_('Published on'), ''], positions=positions)
+            stdout.p([_('Publishing date'), ''], positions=positions)
 
         if cover_image:
             issue.cover_image = cover_image
@@ -92,13 +92,14 @@ def create(magazine, issue_name, published_on=None, cover_image=None,
 
 
 def edit(issue, field, value):
-    assert field in ['issue', 'published_on', 'cover', '+language',
-                     '-language', '+file', '+link', '-link']
+    fields = ['issue', 'publishing_date', 'publishing-date', 'cover',
+              '+language', '-language', '+file', '+link', '-link']
+    assert field in fields
 
     if field == 'issue':
         issue.issue = value
-    elif field == 'published_on':
-        issue.published_on = value
+    elif field == 'publishing_date' or field == 'publishing-date':
+        issue.publishing_date = value
     elif field == 'cover':
         issue.cover_image = value
     elif field == '+language':
@@ -151,8 +152,8 @@ def info(issue):
               '%s: %s' % (issue.magazine.id, issue.magazine.name)],
              positions=positions)
     stdout.p([_('Issue'), issue.issue], positions=positions)
-    stdout.p([_('Published on'),
-              issue.published_on if issue.published_on else ''],
+    stdout.p([_('Publishing date'),
+              issue.publishing_date if issue.publishing_date else ''],
              positions=positions)
     stdout.p([_('Cover'), issue.cover_image.name if issue.cover_image else ''],
              positions=positions)

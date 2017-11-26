@@ -29,14 +29,14 @@ class IssueFunctionsTestCase(TestCase):
 
     def test_issue_create(self):
         issue, created = functions.issue.create(self.magazine, '1/2016',
-                                                published_on='2016-01-01')
+                                                publishing_date='2016-01-01')
         self.assertTrue(created)
         self.assertIsNotNone(issue.id)
 
         issue, created = functions.issue.create(
             self.magazine,
             '2/2016',
-            published_on='2016-02-01',
+            publishing_date='2016-02-01',
             languages=['Deutsch'],
             links=['https://weekly.de/2-2016/']
         )
@@ -45,20 +45,21 @@ class IssueFunctionsTestCase(TestCase):
         self.assertEquals(1, issue.languages.count())
         self.assertEquals('Deutsch', issue.languages.first().name)
         self.assertEquals(1, issue.links.count())
-        self.assertEquals('https://weekly.de/2-2016/', issue.links.first().link)
+        self.assertEquals('https://weekly.de/2-2016/',
+                          issue.links.first().link)
 
 
     def test_issue_edit(self):
         issue, created = functions.issue.create(self.magazine, '3/2016',
-                                                published_on='2016-02-01')
+                                                publishing_date='2016-02-01')
         self.assertTrue(created)
         self.assertIsNotNone(issue.id)
 
         functions.issue.edit(issue, 'issue', '2/2016')
         self.assertEquals('2/2016', issue.issue)
 
-        functions.issue.edit(issue, 'published_on', '2016-02-03')
-        self.assertEquals('2016-02-03', issue.published_on)
+        functions.issue.edit(issue, 'publishing_date', '2016-02-03')
+        self.assertEquals('2016-02-03', issue.publishing_date)
 
         functions.issue.edit(issue, '+language', 'Deutsch')
         self.assertEquals(1, issue.languages.count())
@@ -89,7 +90,7 @@ class IssueFunctionsTestCase(TestCase):
 
     def test_issue_get(self):
         issue, created = functions.issue.create(self.magazine, '3/2016',
-                                                published_on='2016-03-01')
+                                                publishing_date='2016-03-01')
         self.assertTrue(created)
         self.assertIsNotNone(issue.id)
 
@@ -103,12 +104,12 @@ class IssueFunctionsTestCase(TestCase):
 
     def test_issue_list(self):
         issue, created = functions.issue.create(self.magazine, '4/2016',
-                                                published_on='2016-04-01')
+                                                publishing_date='2016-04-01')
         self.assertTrue(created)
         self.assertIsNotNone(issue.id)
 
         issue, created = functions.issue.create(self.magazine, '5/2016',
-                                                published_on='2016-05-01')
+                                                publishing_date='2016-05-01')
         self.assertTrue(created)
         self.assertIsNotNone(issue.id)
 
@@ -120,7 +121,7 @@ class IssueFunctionsTestCase(TestCase):
 
     def test_issue_acquisition(self):
         issue, created = functions.issue.create(self.magazine, '6/2016',
-                                                published_on='2016-06-01')
+                                                publishing_date='2016-06-01')
         self.assertTrue(created)
         self.assertIsNotNone(issue.id)
 
@@ -137,7 +138,7 @@ class IssueFunctionsTestCase(TestCase):
 
     def test_issue_read(self):
         issue, created = functions.issue.create(self.magazine, '7/2016',
-                                                published_on='2016-07-01')
+                                                publishing_date='2016-07-01')
         self.assertTrue(created)
         self.assertIsNotNone(issue.id)
 

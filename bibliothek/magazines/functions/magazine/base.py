@@ -72,7 +72,7 @@ def delete(magazine):
         stdout.p([_('Id'), _('Related object'), _('Issue')],
                  positions=positions, after='=')
 
-        issues = magazine.issues.all().order_by('published_on')
+        issues = magazine.issues.all().order_by('publishing_date')
         for (i, issue), has_next in lookahead(enumerate(issues)):
             stdout.p([issue.id, '', issue.issue], positions=positions,
                      after='')
@@ -169,7 +169,7 @@ def info(magazine):
         stdout.p([_('Links'), ''], positions=positions)
 
     if magazine.issues.count() > 0:
-        issues = magazine.issues.all().order_by('published_on')
+        issues = magazine.issues.all().order_by('publishing_date')
         for (i, issue), has_next in lookahead(enumerate(issues)):
             if i == 0:
                 stdout.p([_('Issue'), '%s: %s' % (issue.id, issue.issue)],

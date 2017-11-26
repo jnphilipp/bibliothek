@@ -44,7 +44,7 @@ class ReadInline(GenericStackedInline):
 @admin.register(Issue)
 class IssueAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['magazine', 'issue', 'published_on', 'languages',
+        (None, {'fields': ['magazine', 'issue', 'publishing_date', 'languages',
                            'cover_image']}),
         (_('Links'), {'fields': ['links']}),
     ]
@@ -55,7 +55,7 @@ class IssueAdmin(admin.ModelAdmin):
         },
     }
     inlines = [FileInline, AcquisitionInline, ReadInline]
-    list_display = ('magazine', 'issue', 'published_on', 'updated_at')
+    list_display = ('magazine', 'issue', 'publishing_date', 'updated_at')
     list_filter = ('magazine',)
     search_fields = ('magazine__name', 'issue')
 

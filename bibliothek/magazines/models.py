@@ -104,10 +104,10 @@ class Issue(models.Model):
         related_name='issues',
         verbose_name=_('Magazine')
     )
-    published_on = models.DateField(
+    publishing_date = models.DateField(
         blank=True,
         null=True,
-        verbose_name=_('Published on')
+        verbose_name=_('Publishing date')
     )
     languages = models.ManyToManyField(
         Language,

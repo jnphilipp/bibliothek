@@ -28,8 +28,8 @@
                 <thead>
                     {% trans "Issue" as issue_trans %}
                     {% sortable_th issue_trans o "o" "issue" %}
-                    {% trans "Published on" as published_on_trans %}
-                    {% sortable_th published_on_trans o "o" "published_on" %}
+                    {% trans "Publishing date" as publishing_date_trans %}
+                    {% sortable_th publishing_date_trans o "o" "publishing_date" %}
                     {% trans "Acquired" as acquired_trans %}
                     {% sortable_th acquired_trans o "o" "acquisitions" %}
                     {% trans "Read" as read_trans %}
@@ -39,7 +39,7 @@
                     {% for issue in issues %}
                         <tr>
                             <th><a href="{% url "magazines:issue_detail" magazine.slug issue.id %}">{{ issue.issue }}</a></th>
-                            <td>{{ issue.published_on|date:"Y-m-d" }}</td>
+                            <td>{{ issue.publishing_date|date:"Y-m-d" }}</td>
                             <td><span class="glyphicon glyphicon-{% if issue.acquisitions.exists %}ok{% else %}remove{% endif %}"></span></td>
                             <td>{% read_status issue.reads %}</td>
                         </tr>

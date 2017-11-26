@@ -23,10 +23,10 @@ from utils import lookahead, stdout
 
 
 def all(magazine):
-    issues = Issue.objects.filter(magazine=magazine).order_by('published_on')
-    _list([[issue.id, issue.issue, issue.published_on,
+    issues = Issue.objects.filter(magazine=magazine).order_by('publishing_date')
+    _list([[issue.id, issue.issue, issue.publishing_date,
             issue.files.count()] for issue in issues],
-          [_('Id'), _('Issue'), _('Published on'), _('#Files')],
+          [_('Id'), _('Issue'), _('Publishing date'), _('#Files')],
           positions=[.05, .45, .60, 1.])
     return issues
 
@@ -38,9 +38,9 @@ def by_shelf(magazine, shelf):
     elif shelf == 'unread':
         issues = issues.filter(issues__reads__isnull=True)
     magazines = magazines.distinct()
-    _list([[issue.id, issue.issue, issue.published_on,
+    _list([[issue.id, issue.issue, issue.publishing_date,
             issue.files.count()] for issue in issues],
-          [_('Id'), _('Issue'), _('Published on'), _('#Files')],
+          [_('Id'), _('Issue'), _('Publishing date'), _('#Files')],
           positions=[.05, .45, .60, 1.])
     return issues
 
@@ -50,9 +50,9 @@ def by_term(magazine, term):
         Q(magazine=magazine) & (Q(pk=term if term.isdigit() else None) |
         Q(issue__icontains=term))
     )
-    _list([[issue.id, issue.issue, issue.published_on,
+    _list([[issue.id, issue.issue, issue.publishing_date,
             issue.files.count()] for issue in issues],
-          [_('Id'), _('Issue'), _('Published on'), _('#Files')],
+          [_('Id'), _('Issue'), _('Publishing date'), _('#Files')],
           positions=[.05, .45, .60, 1.])
     return issues
 

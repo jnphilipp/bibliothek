@@ -41,7 +41,7 @@ class DetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DetailView, self).get_context_data(**kwargs)
-        context['o'] = '-published_on'
+        context['o'] = '-publishing_date'
         if self.request.GET.get('o'):
             context['o'] = self.request.GET.get('o')
         context['issues'] = self.object.issues.order_by(context['o'])

@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
                 ('issue', magazines.models.SingleLineTextField(verbose_name='Issue')),
-                ('published_on', models.DateField(blank=True, null=True, verbose_name='Published on')),
+                ('publishing_date', models.DateField(blank=True, null=True, verbose_name='Publishing date')),
                 ('cover_image', models.ImageField(blank=True, null=True, upload_to='files', verbose_name='Cover image')),
                 ('languages', models.ManyToManyField(blank=True, related_name='issues', to='languages.Language', verbose_name='Languages')),
                 ('links', models.ManyToManyField(blank=True, related_name='issues', to='links.Link', verbose_name='Links')),
