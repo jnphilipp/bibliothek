@@ -19,6 +19,7 @@
 import os
 import shutil
 
+from bibliothek.fields import SingleLineTextField
 from bindings.models import Binding
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
@@ -31,10 +32,6 @@ from links.models import Link
 from persons.models import Person
 from publishers.models import Publisher
 from series.models import Series
-
-
-class SingleLineTextField(models.TextField):
-    pass
 
 
 class Book(models.Model):

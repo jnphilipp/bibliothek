@@ -19,6 +19,7 @@
 import os
 import shutil
 
+from bibliothek.fields import SingleLineTextField
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
@@ -28,10 +29,6 @@ from journals.models import Journal
 from languages.models import Language
 from links.models import Link
 from persons.models import Person
-
-
-class SingleLineTextField(models.TextField):
-    pass
 
 
 class Paper(models.Model):

@@ -16,14 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
+from bibliothek.fields import SingleLineTextField
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 from links.models import Link
-
-
-class SingleLineTextField(models.TextField):
-    pass
 
 
 class Journal(models.Model):

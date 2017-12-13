@@ -22,7 +22,7 @@ from django.db.models import Count
 from django.forms import TextInput
 from django.utils.translation import ugettext_lazy as _
 from files.models import File
-from magazines.models import Issue, Magazine, SingleLineTextField
+from magazines.models import Issue, Magazine
 from shelves.models import Acquisition, Read
 
 
@@ -49,11 +49,6 @@ class IssueAdmin(admin.ModelAdmin):
         (_('Links'), {'fields': ['links']}),
     ]
     filter_horizontal = ('languages', 'links')
-    formfield_overrides = {
-        SingleLineTextField: {
-            'widget': TextInput(attrs={'autocomplete': 'off'})
-        },
-    }
     inlines = [FileInline, AcquisitionInline, ReadInline]
     list_display = ('magazine', 'issue', 'publishing_date', 'updated_at')
     list_filter = ('magazine',)
@@ -73,11 +68,6 @@ class MagazineAdmin(admin.ModelAdmin):
         (_('Links'), {'fields': ['links']}),
     ]
     filter_horizontal = ('links',)
-    formfield_overrides = {
-        SingleLineTextField: {
-            'widget': TextInput(attrs={'autocomplete': 'off'})
-        },
-    }
     list_display = ('name', 'feed', 'show_magazine_count', 'updated_at')
     readonly_fields = ('slug',)
     search_fields = ('name',)

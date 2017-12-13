@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.db.models import Count
 from django.forms import TextInput
 from django.utils.translation import ugettext_lazy as _
-from journals.models import Journal, SingleLineTextField
+from journals.models import Journal
 
 
 @admin.register(Journal)
@@ -36,11 +36,6 @@ class JournalAdmin(admin.ModelAdmin):
         ('Links', {'fields': ['links']}),
     ]
     filter_horizontal = ('links',)
-    formfield_overrides = {
-        SingleLineTextField: {
-            'widget': TextInput(attrs={'autocomplete':'off'})
-        },
-    }
     list_display = ('name', 'show_paper_count', 'updated_at')
     readonly_fields = ('slug',)
     search_fields = ('name',)

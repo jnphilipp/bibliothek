@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from bindings.models import Binding, SingleLineTextField
+from bindings.models import Binding
 from django.contrib import admin
 from django.forms import TextInput
 
@@ -26,14 +26,6 @@ class BindingAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['slug', 'name']}),
     ]
-    formfield_overrides = {
-        SingleLineTextField: {
-            'widget': TextInput(attrs={
-                'autocomplete':'off',
-                'style': 'min-width:50%;'
-            })
-        },
-    }
     list_display = ('name', 'updated_at')
     readonly_fields = ('slug',)
     search_fields = ('name',)

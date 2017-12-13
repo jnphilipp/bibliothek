@@ -19,6 +19,7 @@
 import os
 import shutil
 
+from bibliothek.fields import SingleLineTextField
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
@@ -26,10 +27,6 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 from languages.models import Language
 from links.models import Link
-
-
-class SingleLineTextField(models.TextField):
-    pass
 
 
 class Magazine(models.Model):

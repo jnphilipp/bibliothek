@@ -23,7 +23,7 @@ from django.forms import Textarea, TextInput
 from django.utils.html import format_html_join
 from django.utils.translation import ugettext_lazy as _
 from files.models import File
-from papers.models import Paper, SingleLineTextField
+from papers.models import Paper
 from shelves.models import Acquisition, Read
 
 
@@ -59,9 +59,6 @@ class PaperAdmin(admin.ModelAdmin):
     ]
     filter_horizontal = ('authors', 'languages', 'links')
     formfield_overrides = {
-        SingleLineTextField: {
-            'widget': TextInput(attrs={'autocomplete': 'off'})
-        },
         models.TextField: {
             'widget': Textarea(attrs={
                 'autocomplete': 'off',

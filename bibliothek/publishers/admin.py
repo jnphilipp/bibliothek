@@ -18,7 +18,7 @@
 
 from django.contrib import admin
 from django.forms import TextInput
-from publishers.models import Publisher, SingleLineTextField
+from publishers.models import Publisher
 
 
 @admin.register(Publisher)
@@ -28,11 +28,6 @@ class PublisherAdmin(admin.ModelAdmin):
         ('links', {'fields': ['links']}),
     ]
     filter_horizontal = ('links',)
-    formfield_overrides = {
-        SingleLineTextField: {
-            'widget': TextInput(attrs={'autocomplete':'off'})
-        },
-    }
     list_display = ('name', 'updated_at')
     list_filter = ('links', )
     readonly_fields = ('slug',)

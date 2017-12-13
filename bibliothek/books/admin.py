@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from books.models import Book, Edition, SingleLineTextField
+from books.models import Book, Edition
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
 from django.db import models
@@ -55,11 +55,6 @@ class BookAdmin(admin.ModelAdmin):
         (_('Genres'), {'fields': ['genres']}),
         (_('Links'), {'fields': ['links']}),
     ]
-    formfield_overrides = {
-        SingleLineTextField: {
-            'widget': TextInput(attrs={'autocomplete': 'off'})
-        },
-    }
     filter_horizontal = ('authors', 'genres', 'links')
     list_authors.admin_order_field = 'authors'
     list_authors.short_description = _('Authors')
@@ -80,9 +75,6 @@ class EditionAdmin(admin.ModelAdmin):
     ]
     filter_horizontal = ('languages',)
     formfield_overrides = {
-        SingleLineTextField: {
-            'widget': TextInput(attrs={'autocomplete': 'off'})
-        },
         models.TextField: {
             'widget': Textarea(attrs={
                 'autocomplete': 'off',
