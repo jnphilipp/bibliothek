@@ -19,42 +19,43 @@
 """bibliothek URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.10/topics/http/urls/
+    https://docs.djangoproject.com/en/2.0/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
 Class-based views
     1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
 Including another URLconf
-    1. Import the include() function: from django.conf.urls import url, include
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.conf import settings
-from django.conf.urls import include, url
+from django.conf.urls.static import static
 from django.contrib import admin
-from django.views import static
+from django.urls import include, path
 from . import views
 
 admin.site.site_header = 'Bibliothek administration'
 
 
 urlpatterns = [
-    url(r'^$', views.dashboard, name='dashboard'),
+    path('', views.dashboard, name='dashboard'),
 
-    url(r'^books/', include('books.urls', 'books')),
-    url(r'^journals/', include('journals.urls', 'journals')),
-    url(r'^genres/', include('genres.urls', 'genres')),
-    url(r'^magazines/', include('magazines.urls', 'magazines')),
-    url(r'^papers/', include('papers.urls', 'papers')),
-    url(r'^persons/', include('persons.urls', 'persons')),
-    url(r'^publishers/', include('publishers.urls', 'publishers')),
-    url(r'^series/', include('series.urls', 'series')),
+    path('books/', include('books.urls')),
+    path('journals/', include('journals.urls')),
+    path('genres/', include('genres.urls')),
+    path('magazines/', include('magazines.urls')),
+    path('papers/', include('papers.urls')),
+    path('persons/', include('persons.urls')),
+    path('publishers/', include('publishers.urls')),
+    path('series/', include('series.urls')),
 
-    url(r'^admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
 ]
 
 if settings.DEBUG:
-    urlpatterns += [url(r'^media/(?P<path>.*)$', static.serve,
-                        {'document_root': settings.MEDIA_ROOT})]
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
