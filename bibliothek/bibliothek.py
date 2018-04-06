@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# Copyright (C) 2016-2017 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+#
+# This file is part of bibliothek.
+#
+# bibliothek is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bibliothek is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-"""bibliothek
-Copyright (C) 2016 jnphilipp <me@jnphilipp.org>
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
 import json
 import os
 import sys
@@ -26,20 +26,23 @@ import django
 django.setup()
 
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
-from bibliothek import settings
 from datetime import date, datetime
 from django.utils.translation import ugettext_lazy as _
-from utils import lookahead, stdout
+
+from bibliothek import (__app_name__, __description__, __version__,
+                        __license__, __author__, __email__, settings)
+from utils import app_version, lookahead, stdout
 
 
 def init():
     from django.core.management import execute_from_command_line
-    if settings.DEVELOPMENT:
+    # if settings.DEBUG:
+    #     execute_from_command_line(['', 'migrate'])
+    # else:
+    if not os.path.exists(settings.APP_DATA_DIR):
+        from django.core.management import execute_from_command_line
+        os.makedirs(settings.APP_DATA_DIR)
         execute_from_command_line(['', 'migrate'])
-    else:
-        if not os.path.exists(settings.APP_DATA_DIR):
-            os.makedirs(settings.APP_DATA_DIR)
-            execute_from_command_line(['', 'migrate'])
 
 
 def valid_date(s):
@@ -75,27 +78,43 @@ def _binding(args):
 def _book(args):
     import books.functions
     if args.book_subparser == 'add':
-        books.functions.book.create(args.title, args.author, args.series, args.volume, args.genre, args.link)
+        books.functions.book.create(args.title, args.author, args.series,
+                                    args.volume, args.genre, args.link)
     elif args.book_subparser == 'edit':
         book = books.functions.book.get.by_term(args.book)
         if book:
-            books.functions.book.edit(book, args.book_edit_subparser, args.value)
+            books.functions.book.edit(book, args.book_edit_subparser,
+                                      args.value)
     elif args.book_subparser == 'edition':
         book = books.functions.book.get.by_term(args.book)
         if args.book_edition_subparser == 'acquisition' and book:
             edition = books.functions.edition.get.by_term(book, args.edition)
             if args.book_edition_acquisition_subparser == 'add' and edition:
-                books.functions.edition.acquisition.add(edition, args.date, args.price)
-            elif args.book_edition_acquisition_subparser == 'delete' and edition:
-                books.functions.edition.acquisition.delete(edition, args.acquisition)
+                books.functions.edition.acquisition.add(edition, args.date,
+                                                        args.price)
+            elif args.book_edition_acquisition_subparser == 'delete' and \
+                    edition:
+                books.functions.edition.acquisition.delete(edition,
+                                                           args.acquisition)
             elif args.book_edition_acquisition_subparser == 'edit' and edition:
-                books.functions.edition.acquisition.edit(edition, args.acquisition, args.book_edition_acquisition_edit_subparser, args.value)
+                books.functions.edition.acquisition.edit(
+                    edition,
+                    args.acquisition,
+                    args.book_edition_acquisition_edit_subparser,
+                    args.value
+                )
         elif args.book_edition_subparser == 'add' and book:
-            books.functions.edition.create(book, args.alternate_title, args.isbn, args.published_on, args.cover, args.binding, args.publisher, args.language, args.file)
+            books.functions.edition.create(book, args.alternate_title,
+                                           args.isbn, args.publishing_date,
+                                           args.cover, args.binding,
+                                           args.publisher, args.language,
+                                           args.file)
         elif args.book_edition_subparser == 'edit' and book:
             edition = books.functions.edition.get.by_term(book, args.edition)
             if edition:
-                books.functions.edition.edit(edition, args.book_edition_edit_subparser, args.value)
+                books.functions.edition.edit(edition,
+                                             args.book_edition_edit_subparser,
+                                             args.value)
         elif args.book_edition_subparser == 'info' and book:
             edition = books.functions.edition.get.by_term(book, args.edition)
             if edition:
@@ -108,11 +127,13 @@ def _book(args):
         elif args.book_edition_subparser == 'read' and book:
             edition = books.functions.edition.get.by_term(book, args.edition)
             if args.book_edition_read_subparsers == 'add' and edition:
-                books.functions.edition.read.add(edition, args.started, args.finished)
+                books.functions.edition.read.add(edition, args.started,
+                                                 args.finished)
             elif args.book_edition_read_subparsers == 'delete' and edition:
                 books.functions.edition.read.delete(edition, args.read)
             elif args.book_edition_read_subparsers == 'edit' and edition:
-                books.functions.edition.read.edit(edition, args.read, args.field, args.value)
+                books.functions.edition.read.edit(edition, args.read,
+                                                  args.field, args.value)
         else:
             book_edition_parser.print_help()
     elif args.book_subparser == 'info':
@@ -193,17 +214,32 @@ def _magazine(args):
         if args.magazine_issue_subparser == 'acquisition' and magazine:
             issue = magazines.functions.issue.get.by_term(magazine, args.issue)
             if args.magazine_issue_acquisition_subparser == 'add' and issue:
-                magazines.functions.issue.acquisition.add(issue, args.date, args.price)
-            elif args.magazine_issue_acquisition_subparser == 'delete' and issue:
-                magazines.functions.issue.acquisition.delete(issue, args.acquisition)
+                magazines.functions.issue.acquisition.add(issue, args.date,
+                                                          args.price)
+            elif args.magazine_issue_acquisition_subparser == 'delete' and \
+                    issue:
+                magazines.functions.issue.acquisition.delete(issue,
+                                                             args.acquisition)
             elif args.magazine_issue_acquisition_subparser == 'edit' and issue:
-                magazines.functions.issue.acquisition.edit(issue, args.acquisition, args.magazine_issue_acquisition_edit_subparser, args.value)
+                magazines.functions.issue.acquisition.edit(
+                    issue,
+                    args.acquisition,
+                    args.magazine_issue_acquisition_edit_subparser,
+                    args.value
+                )
         elif args.magazine_issue_subparser == 'add' and magazine:
-            magazines.functions.issue.create(magazine, args.issue, args.published_on, args.cover, args.language, args.link, args.file)
+            magazines.functions.issue.create(magazine, args.issue,
+                                             args.publishing_date, args.cover,
+                                             args.language, args.link,
+                                             args.file)
         elif args.magazine_issue_subparser == 'edit' and magazine:
             issue = magazines.functions.issue.get.by_term(magazine, args.issue)
             if issue:
-                magazines.functions.issue.edit(issue, args.magazine_issue_edit_subparser, args.value)
+                magazines.functions.issue.edit(
+                    issue,
+                    args.magazine_issue_edit_subparser,
+                    args.value
+                )
         elif args.magazine_issue_subparser == 'info' and magazine:
             issue = magazines.functions.issue.get.by_term(magazine, args.issue)
             if issue:
@@ -216,11 +252,13 @@ def _magazine(args):
         elif args.magazine_issue_subparser == 'read' and magazine:
             issue = magazines.functions.issue.get.by_term(magazine, args.issue)
             if args.magazine_issue_read_subparsers == 'add' and issue:
-                magazines.functions.issue.read.add(issue, args.started, args.finished)
+                magazines.functions.issue.read.add(issue, args.started,
+                                                   args.finished)
             elif args.magazine_issue_read_subparsers == 'delete' and issue:
                 magazines.functions.issue.read.delete(issue, args.read)
             elif args.magazine_issue_read_subparsers == 'edit' and issue:
-                magazines.functions.issue.read.edit(issue, args.read, args.field, args.value)
+                magazines.functions.issue.read.edit(issue, args.read,
+                                                    args.field, args.value)
         else:
             magazine_issue_parser.print_help()
     elif args.magazine_subparser == 'list':
@@ -237,17 +275,26 @@ def _paper(args):
     if args.paper_subparser == 'acquisition':
         paper = papers.functions.paper.get.by_term(args.paper)
         if args.paper_acquisition_subparser == 'add' and paper:
-            papers.functions.paper.acquisition.add(paper, args.date, args.price)
+            papers.functions.paper.acquisition.add(paper, args.date,
+                                                   args.price)
         elif args.paper_acquisition_subparser == 'delete' and paper:
             papers.functions.paper.acquisition.delete(paper, args.acquisition)
         elif args.paper_acquisition_subparser == 'edit' and paper:
-            papers.functions.paper.acquisition.edit(paper, args.acquisition, args.paper_acquisition_edit_subparser, args.value)
+            papers.functions.paper.acquisition.edit(
+                paper,
+                args.acquisition,
+                args.paper_acquisition_edit_subparser,
+                args.value
+            )
     elif args.paper_subparser == 'add':
-        papers.functions.paper.create(args.title, args.author, args.published_on, args.journal, args.volume, args.language, args.link)
+        papers.functions.paper.create(args.title, args.author,
+                                      args.publishing_date, args.journal,
+                                      args.volume, args.language, args.link)
     elif args.paper_subparser == 'edit':
         paper = papers.functions.paper.get.by_term(args.paper)
         if paper:
-            papers.functions.paper.edit(paper, args.paper_edit_subparser, args.value)
+            papers.functions.paper.edit(paper, args.paper_edit_subparser,
+                                        args.value)
     elif args.paper_subparser == 'list':
         if args.shelf:
             papers.functions.paper.list.by_shelf(args.shelf)
@@ -273,11 +320,13 @@ def _paper(args):
     elif args.paper_subparser == 'read':
         paper = papers.functions.paper.get.by_term(args.paper)
         if args.paper_read_subparsers == 'add' and paper:
-            papers.functions.paper.read.add(paper, args.started, args.finished)
+            papers.functions.paper.read.add(paper, args.started,
+                                            args.finished)
         elif args.paper_read_subparsers == 'delete' and paper:
             papers.functions.paper.read.delete(paper, args.read)
         elif args.paper_read_subparsers == 'edit' and paper:
-            papers.functions.paper.read.edit(paper, args.read, args.field, args.value)
+            papers.functions.paper.read.edit(paper, args.read, args.field,
+                                             args.value)
     else:
         paper_parser.print_help()
 
@@ -285,7 +334,8 @@ def _paper(args):
 def _person(args):
     import persons.functions
     if args.person_subparser == 'add':
-        persons.functions.person.create(args.first_name, args.last_name, args.link)
+        persons.functions.person.create(args.first_name, args.last_name,
+                                        args.link)
     elif args.person_subparser == 'edit':
         person = persons.functions.person.get.by_term(args.person)
         if person:
@@ -310,7 +360,9 @@ def _publisher(args):
     elif args.publisher_subparser == 'edit':
         publisher = publishers.functions.publisher.get.by_term(args.publisher)
         if publisher:
-            publishers.functions.publisher.edit(publisher, args.publisher_edit_subparser, args.value)
+            publishers.functions.publisher.edit(publisher,
+                                                args.publisher_edit_subparser,
+                                                args.value)
     elif args.publisher_subparser == 'info':
         publisher = publishers.functions.publisher.get.by_term(args.publisher)
         if publisher:
@@ -331,7 +383,9 @@ def _series(args):
     elif args.series_subparser == 'edit':
         series_obj = series.functions.series.get.by_term(args.series)
         if series_obj:
-            series.functions.series.edit(series_obj, args.series_edit_subparser, args.value)
+            series.functions.series.edit(series_obj,
+                                         args.series_edit_subparser,
+                                         args.value)
     elif args.series_subparser == 'info':
         series_obj = series.functions.series.get.by_term(args.name)
         if series_obj:
@@ -347,7 +401,7 @@ def _series(args):
 
 def _runserver(args):
     from django.core.management import execute_from_command_line
-    execute_from_command_line(sys.argv + ['--insecure'])
+    execute_from_command_line(['', 'runserver'])
 
 
 def _load(args):
@@ -364,7 +418,11 @@ def _load(args):
         for b in data['books']:
             authors = []
             for a in b['authors']:
-                person, created = persons_functions.person.create(a['first_name'], a['last_name'], a['links'])
+                person, created = persons_functions.person.create(
+                    a['first_name'],
+                    a['last_name'],
+                    a['links']
+                )
                 authors.append(str(person.id))
 
             genres = []
@@ -372,21 +430,57 @@ def _load(args):
                 genre, created = genres_functions.genre.create(g['name'])
                 genres.append(str(genre.id))
 
-            series, created = series_functions.series.create(b['series']['name'], b['series']['links'])
-            book, created = books_functions.book.create(b['title'], authors, str(series.id), b['volume'], genres, b['links'])
+            series, created = series_functions.series.create(
+                b['series']['name'],
+                b['series']['links']
+            )
+            book, created = books_functions.book.create(
+                b['title'],
+                authors,
+                str(series.id),
+                b['volume'],
+                genres,
+                b['links']
+            )
 
             for e in b['editions']:
-                binding, created = bindings_functions.binding.create(e['binding']['name'])
-                publisher, created = publishers_functions.publisher.create(e['publisher']['name'], e['publisher']['links'])
-                edition, created = books_functions.edition.create(book, e['isbn'], e['published_on'], e['cover'], str(binding.id), str(publisher.id), e['languages'], e['files'])
+                binding, created = bindings_functions.binding.create(
+                    e['binding']['name']
+                )
+                publisher, created = publishers_functions.publisher.create(
+                    e['publisher']['name'],
+                    e['publisher']['links']
+                )
+                edition, created = books_functions.edition.create(
+                    book,
+                    e['isbn'],
+                    e['publishing_date'],
+                    e['cover'],
+                    str(binding.id),
+                    str(publisher.id),
+                    e['languages'],
+                    e['files']
+                )
 
                 for a in e['acquisitions']:
-                    if not edition.acquisitions.filter(date=a['date']).filter(price=a['price']).exists() and (a['date'] or a['price']):
-                        acquisition = books_functions.edition.acquisition.add(edition, a['date'], a['price'])
+                    if not edition.acquisitions.filter(date=a['date']). \
+                            filter(price=a['price']).exists() and \
+                            (a['date'] or a['price']):
+                        acquisition = books_functions.edition.acquisition.add(
+                            edition,
+                            a['date'],
+                            a['price']
+                        )
 
                 for r in e['reads']:
-                    if not edition.reads.filter(started=r['started']).filter(finished=r['finished']).exists() and (r['started'] or r['finished']):
-                        read = books_functions.edition.read.add(edition, r['started'], r['finished'])
+                    if not edition.reads.filter(started=r['started']). \
+                            filter(finished=r['finished']).exists() and \
+                            (r['started'] or r['finished']):
+                        read = books_functions.edition.read.add(
+                            edition,
+                            r['started'],
+                            r['finished']
+                        )
 
 
 def _reading_list(args):
@@ -399,12 +493,14 @@ def _reading_list(args):
     for acquisition in Acquisition.objects.all():
         if acquisition.content_object.reads.count() == 0:
             reading_list.add((acquisition.content_object, acquisition.date))
-    reading_list = sorted(reading_list, key=lambda x: x[1] if x[1] else date.min)
+    reading_list = sorted(reading_list,
+                          key=lambda x: x[1] if x[1] else date.min)
     if args.limit:
         reading_list = reading_list[:args.limit]
 
     positions = [.1, 0.15, .85, 1.]
-    stdout.p([_('Type'), _('Id'), _('Title'), _('Acquisition')], positions=positions, after='=')
+    stdout.p([_('Type'), _('Id'), _('Title'), _('Acquisition')],
+             positions=positions, after='=')
     for item, has_next in lookahead(reading_list):
         stype = ''
         if isinstance(item[0], Paper):
@@ -413,7 +509,8 @@ def _reading_list(args):
             stype = 'Book'
         elif isinstance(item[0], Issue):
             stype = 'Issue'
-        stdout.p([stype, item[0].id, str(item[0]), item[1] if item[1] else ''], positions=positions, after='_' if has_next else '=')
+        stdout.p([stype, item[0].id, str(item[0]), item[1] if item[1] else ''],
+                 positions=positions, after='_' if has_next else '=')
 
 
 def _statistics(args):
@@ -423,45 +520,91 @@ def _statistics(args):
     from magazines.models import Magazine, Issue
     from papers.models import Paper
 
-    stdout.p([_('Type'), _('Count'), _('Read'), _('Read %(year)d' % {'year': datetime.now().year})], after='=', positions=positions)
-    stdout.p([_('Books'), Book.objects.count(), Book.objects.filter(editions__reads__isnull=False).count(), Book.objects.filter(editions__reads__finished__year=datetime.now().year).count()], positions=positions)
-    stdout.p([_('Editions'), Edition.objects.count(), Edition.objects.filter(reads__isnull=False).count(), Edition.objects.filter(reads__finished__year=datetime.now().year).count()], positions=positions)
-    stdout.p([_('Magazines'), Magazine.objects.count(), 0, 0], positions=positions)
-    stdout.p([_('Issues'), Issue.objects.count(), 0, 0], positions=positions)
-    stdout.p([_('Papers'), Paper.objects.count(), Paper.objects.filter(reads__isnull=False).count(), Paper.objects.filter(reads__finished__year=datetime.now().year).count()], positions=positions)
+    stdout.p([_('Type'), _('Count'), _('Read'),
+              _('Read %(year)d' % {'year': datetime.now().year})], after='=',
+             positions=positions)
+    stdout.p([
+        _('Books'),
+        Book.objects.count(),
+        Book.objects.filter(editions__reads__isnull=False).count(),
+        Book.objects.filter(
+            editions__reads__finished__year=datetime.now().year
+        ).count()
+    ], positions=positions)
+    stdout.p([
+        _('Editions'),
+        Edition.objects.count(),
+        Edition.objects.filter(reads__isnull=False).count(),
+        Edition.objects.filter(
+            reads__finished__year=datetime.now().year
+        ).count()
+    ], positions=positions)
+    stdout.p([_('Magazines'), Magazine.objects.count(), 0, 0],
+             positions=positions)
+    stdout.p([_('Issues'), Issue.objects.count(), 0, 0],
+             positions=positions)
+    stdout.p([
+        _('Papers'),
+        Paper.objects.count(),
+        Paper.objects.filter(reads__isnull=False).count(),
+        Paper.objects.filter(reads__finished__year=datetime.now().year).count()
+    ], positions=positions)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     init()
 
-
-    parser = ArgumentParser(prog=settings.APP_NAME, formatter_class=RawTextHelpFormatter)
-    parser.add_argument('-v', '--version', action='version', version=settings.APP_VERSION)
+    parser = ArgumentParser(prog=__app_name__,
+                            formatter_class=RawTextHelpFormatter)
+    parser.add_argument('-v', '--version', action='version',
+                        version=app_version(__app_name__, __description__,
+                                            __version__, __license__,
+                                            __author__, __email__))
     subparsers = parser.add_subparsers(dest='subparser')
 
-
     # create the parser for the "binding" subcommand
-    binding_parser = subparsers.add_parser('binding', help=_('manage bindings'))
+    binding_parser = subparsers.add_parser('binding',
+                                           help=_('Manage bindings'))
     binding_parser.set_defaults(func=_binding)
     binding_subparser = binding_parser.add_subparsers(dest='binding_subparser')
 
     # binding add
-    binding_add_parser = binding_subparser.add_parser('add', help=_('add a new binding'))
-    binding_add_parser.add_argument('name', help=_('name'))
+    binding_add_parser = binding_subparser.add_parser(
+        'add',
+        help=_('Add a new binding')
+    )
+    binding_add_parser.add_argument('name', help=_('Name'))
 
     # binding edit
-    binding_edit_parser = binding_subparser.add_parser('edit', help=_('edit an existing binding'))
-    binding_edit_parser.add_argument('binding', help=_('which binding'))
-    binding_edit_parser.add_argument('field', choices=['name'], help=_('which field to edit'))
-    binding_edit_parser.add_argument('value', help=_('new value for field'))
+    binding_edit_parser = binding_subparser.add_parser(
+        'edit',
+        help=_('Edit an existing binding')
+    )
+    binding_edit_parser.add_argument(
+        'binding',
+        help=_('Which binding')
+    )
+    binding_edit_parser.add_argument(
+        'field',
+        choices=['name'],
+        help=_('Which field to edit')
+    )
+    binding_edit_parser.add_argument(
+        'value',
+        help=_('New value for field')
+    )
 
     # binding info
-    binding_info_parser = binding_subparser.add_parser('info', help=_('show information of a binding'))
-    binding_info_parser.add_argument('binding', help=_('which binding'))
+    binding_info_parser = binding_subparser.add_parser(
+        'info',
+        help=_('Show information of a binding')
+    )
+    binding_info_parser.add_argument('binding', help=_('Which binding'))
 
     # binding list
-    binding_list_parser = binding_subparser.add_parser('list', help=_('list bindings'))
-    binding_list_parser.add_argument('--search', help=_('filter by term'))
+    binding_list_parser = binding_subparser.add_parser('list',
+                                                       help=_('List bindings'))
+    binding_list_parser.add_argument('--search', help=_('Filter by term'))
 
 
     # create the parser for the "book" subcommand
@@ -472,81 +615,130 @@ if __name__ == "__main__":
     # book add
     book_add_parser = book_subparser.add_parser('add', help='add a book')
     book_add_parser.add_argument('title', help='title')
-    book_add_parser.add_argument('--author', nargs='*', default=[], help='authors')
-    book_add_parser.add_argument('--series', default=None, help='series')
-    book_add_parser.add_argument('--volume', default=None, type=float, help='series volume')
-    book_add_parser.add_argument('--genre', nargs='*', default=[], help='genres')
-    book_add_parser.add_argument('--link', nargs='*', default=[], help='links')
+    book_add_parser.add_argument('--author', nargs='*', default=[],
+                                 help=_('Authors'))
+    book_add_parser.add_argument('--series', default=None, help=_('Series'))
+    book_add_parser.add_argument('--volume', default=None, type=float,
+                                 help=_('Series volume'))
+    book_add_parser.add_argument('--genre', nargs='*', default=[],
+                                 help=_('Genres'))
+    book_add_parser.add_argument('--link', nargs='*', default=[],
+                                 help=_('Links'))
 
     # book edit
-    book_edit_parser = book_subparser.add_parser('edit', help='edit a book', prefix_chars='_')
+    book_edit_parser = book_subparser.add_parser('edit', help=_('Edit a book'),
+                                                 prefix_chars='_')
     book_edit_parser.add_argument('book', help='which book to edit')
-    book_edit_subparser = book_edit_parser.add_subparsers(dest='book_edit_subparser', help='which field to edit')
+    book_edit_subparser = book_edit_parser.add_subparsers(
+        dest='book_edit_subparser',
+        help=_('Which field to edit')
+    )
 
     book_edit_title_parser = book_edit_subparser.add_parser('title')
-    book_edit_title_parser.add_argument('value', help='new value for field')
+    book_edit_title_parser.add_argument('value', help=_('new value for field'))
 
     book_edit_add_author_parser = book_edit_subparser.add_parser('+author')
-    book_edit_add_author_parser.add_argument('value', help='new value for field')
+    book_edit_add_author_parser.add_argument('value',
+                                             help=_('new value for field'))
 
     book_edit_remove_author_parser = book_edit_subparser.add_parser('-author')
-    book_edit_remove_author_parser.add_argument('value', help='new value for field')
+    book_edit_remove_author_parser.add_argument('value',
+                                                help=_('new value for field'))
 
     book_edit_series_parser = book_edit_subparser.add_parser('series')
-    book_edit_series_parser.add_argument('value', help='new value for field')
+    book_edit_series_parser.add_argument('value',
+                                         help=_('new value for field'))
 
     book_edit_volume_parser = book_edit_subparser.add_parser('volume')
-    book_edit_volume_parser.add_argument('value', type=float, help='new value for field')
+    book_edit_volume_parser.add_argument('value', type=float,
+                                         help=_('new value for field'))
 
     book_edit_add_genre_parser = book_edit_subparser.add_parser('+genre')
-    book_edit_add_genre_parser.add_argument('value', help='new value for field')
+    book_edit_add_genre_parser.add_argument('value',
+                                            help=_('new value for field'))
 
     book_edit_remove_genre_parser = book_edit_subparser.add_parser('-genre')
-    book_edit_remove_genre_parser.add_argument('value', help='new value for field')
+    book_edit_remove_genre_parser.add_argument('value',
+                                               help=_('new value for field'))
 
     book_edit_add_link_parser = book_edit_subparser.add_parser('+link')
-    book_edit_add_link_parser.add_argument('value', help='new value for field')
+    book_edit_add_link_parser.add_argument('value',
+                                           help=_('new value for field'))
 
     book_edit_remove_link_parser = book_edit_subparser.add_parser('-link')
-    book_edit_remove_link_parser.add_argument('value', help='new value for field')
+    book_edit_remove_link_parser.add_argument('value',
+                                              help=_('new value for field'))
 
     # book edition
-    book_edition_parser = book_subparser.add_parser('edition', help='manage editions of a book')
+    book_edition_parser = book_subparser.add_parser(
+        'edition',
+        help=_('Manage book editions')
+    )
     book_edition_parser.add_argument('book', help='editions of which book')
-    book_edition_subparser = book_edition_parser.add_subparsers(dest='book_edition_subparser')
+    book_edition_subparser = book_edition_parser.add_subparsers(
+        dest='book_edition_subparser'
+    )
 
     # book edition acquisitions
-    book_edition_acquisition_parser = book_edition_subparser.add_parser('acquisition', help='manage acquisition of a book edition')
-    book_edition_acquisition_parser.add_argument('edition', help='of which edition to manage an acquisition')
-    book_edition_acquisition_subparser = book_edition_acquisition_parser.add_subparsers(dest='book_edition_acquisition_subparser')
+    book_edition_acquisition_parser = book_edition_subparser.add_parser(
+        'acquisition',
+        help=_('Manage acquisition of an edition')
+    )
+    book_edition_acquisition_parser.add_argument(
+        'edition',
+        help=_('Manage an acquisition')
+    )
+    book_edition_acquisition_subparser = book_edition_acquisition_parser. \
+        add_subparsers(dest='book_edition_acquisition_subparser')
 
-    book_edition_acquisition_add_parser = book_edition_acquisition_subparser.add_parser('add', help='add an acquisition')
-    book_edition_acquisition_add_parser.add_argument('--date', default=None, type=valid_date, help='date')
-    book_edition_acquisition_add_parser.add_argument('--price', default=0, type=float, help='price')
+    book_edition_acquisition_add_parser = book_edition_acquisition_subparser. \
+        add_parser('add', help=_('Add an acquisition'))
+    book_edition_acquisition_add_parser.add_argument('--date', default=None,
+                                                     type=valid_date,
+                                                     help=_('Date'))
+    book_edition_acquisition_add_parser.add_argument('--price', default=0,
+                                                     type=float,
+                                                     help=_('Price'))
 
-    book_edition_acquisition_delete_parser = book_edition_acquisition_subparser.add_parser('delete', help='delete an acquisition')
-    book_edition_acquisition_delete_parser.add_argument('acquisition', type=int, help='which acquisition to delete')
+    book_edition_acquisition_delete_parser = \
+        book_edition_acquisition_subparser.add_parser(
+            'delete',
+            help=_('Delete an acquisition')
+    )
+    book_edition_acquisition_delete_parser.add_argument(
+        'acquisition',
+        type=int,
+        help='ID of the acquisition to delete'
+    )
 
-    book_edition_acquisition_edit_parser = book_edition_acquisition_subparser.add_parser('edit', help='edit an acquisition')
-    book_edition_acquisition_edit_parser.add_argument('acquisition', type=int, help='which acquisition to edit')
+    book_edition_acquisition_edit_parser = book_edition_acquisition_subparser.add_parser('edit', help=_('Edit an acquisition'))
+    book_edition_acquisition_edit_parser.add_argument('acquisition', type=int, help=_('Which acquisition to edit'))
 
-    book_edition_acquisition_edit_subparser = book_edition_acquisition_edit_parser.add_subparsers(dest='book_edition_acquisition_edit_subparser', help='which field to edit')
+    book_edition_acquisition_edit_subparser = book_edition_acquisition_edit_parser.add_subparsers(dest='book_edition_acquisition_edit_subparser', help=_('Which field to edit'))
     book_edition_acquisition_edit_date_parser = book_edition_acquisition_edit_subparser.add_parser('date')
-    book_edition_acquisition_edit_date_parser.add_argument('value', type=valid_date, help='new value for field')
+    book_edition_acquisition_edit_date_parser.add_argument('value', type=valid_date, help=_('New value for field'))
 
     book_edition_acquisition_edit_price_parser = book_edition_acquisition_edit_subparser.add_parser('price')
-    book_edition_acquisition_edit_price_parser.add_argument('value', type=float, help='new value for field')
+    book_edition_acquisition_edit_price_parser.add_argument('value', type=float, help=_('New value for field'))
 
     # book edition add
-    book_edition_add_parser = book_edition_subparser.add_parser('add', help='add an edition to a book')
-    book_edition_add_parser.add_argument('--alternate_title', help='alternate title')
+    book_edition_add_parser = book_edition_subparser.add_parser(
+        'add',
+        help=_('Add an edition to a book')
+    )
+    book_edition_add_parser.add_argument('--alternate_title',
+                                         help=_('Alternate title'))
     book_edition_add_parser.add_argument('--isbn', help='ISBN')
-    book_edition_add_parser.add_argument('--published_on', type=valid_date, help='published on')
-    book_edition_add_parser.add_argument('--cover', help='path to a cover image')
-    book_edition_add_parser.add_argument('--binding', help='binding')
-    book_edition_add_parser.add_argument('--publisher', help='publisher')
-    book_edition_add_parser.add_argument('--file', nargs='*', default=[], help='files')
-    book_edition_add_parser.add_argument('--language', nargs='*', default=[], help='languages')
+    book_edition_add_parser.add_argument('--publishing-date', type=valid_date,
+                                         help=_('Publishing date'))
+    book_edition_add_parser.add_argument('--cover',
+                                         help=_('Path to a cover image'))
+    book_edition_add_parser.add_argument('--binding', help=_('Binding'))
+    book_edition_add_parser.add_argument('--publisher', help=_('Publisher'))
+    book_edition_add_parser.add_argument('--file', nargs='*', default=[],
+                                         help=_('Files'))
+    book_edition_add_parser.add_argument('--language', nargs='*', default=[],
+                                         help=_('Languages'))
 
     # book edition edit
     book_edition_edit_parser = book_edition_subparser.add_parser('edit', help='edit a book edition', prefix_chars='_')
@@ -559,8 +751,8 @@ if __name__ == "__main__":
     book_edition_edit_edition_parser = book_edition_edit_subparser.add_parser('isbn')
     book_edition_edit_edition_parser.add_argument('value', help='new value for field')
 
-    book_edition_edit_published_on_parser = book_edition_edit_subparser.add_parser('published_on')
-    book_edition_edit_published_on_parser.add_argument('value', type=valid_date, help='new value for field')
+    book_edition_edit_published_parser = book_edition_edit_subparser.add_parser('publishing-date')
+    book_edition_edit_published_parser.add_argument('value', type=valid_date, help='new value for field')
 
     book_edition_edit_cover_parser = book_edition_edit_subparser.add_parser('cover')
     book_edition_edit_cover_parser.add_argument('value', help='new value for field')
@@ -720,7 +912,7 @@ if __name__ == "__main__":
     # magazine issue add
     magazine_issue_add_parser = magazine_issue_subparser.add_parser('add', help='add an issue to a magazine')
     magazine_issue_add_parser.add_argument('issue', help='issue')
-    magazine_issue_add_parser.add_argument('--published_on', type=valid_date, help='published on')
+    magazine_issue_add_parser.add_argument('--publishing-date', type=valid_date, help='Publishing date')
     magazine_issue_add_parser.add_argument('--cover', help='path to a cover image')
     magazine_issue_add_parser.add_argument('--language', nargs='*', default=[], help='languages')
     magazine_issue_add_parser.add_argument('--link', nargs='*', default=[], help='links')
@@ -734,8 +926,8 @@ if __name__ == "__main__":
     magazine_issue_edit_issue_parser = magazine_issue_edit_subparser.add_parser('issue')
     magazine_issue_edit_issue_parser.add_argument('value', help='new value for field')
 
-    magazine_issue_edit_published_on_parser = magazine_issue_edit_subparser.add_parser('published_on')
-    magazine_issue_edit_published_on_parser.add_argument('value', type=valid_date, help='new value for field')
+    magazine_issue_edit_published_parser = magazine_issue_edit_subparser.add_parser('publishing-date')
+    magazine_issue_edit_published_parser.add_argument('value', type=valid_date, help='new value for field')
 
     magazine_issue_edit_cover_parser = magazine_issue_edit_subparser.add_parser('cover')
     magazine_issue_edit_cover_parser.add_argument('value', help='new value for field')
@@ -817,7 +1009,7 @@ if __name__ == "__main__":
     paper_add_parser = paper_subparser.add_parser('add', help='add a paper')
     paper_add_parser.add_argument('title', help='title')
     paper_add_parser.add_argument('--author', nargs='*', default=[], help='authors')
-    paper_add_parser.add_argument('--published_on', type=valid_date, help='published on')
+    paper_add_parser.add_argument('--publishing-date', type=valid_date, help='Publishing date')
     paper_add_parser.add_argument('--journal', help='journal')
     paper_add_parser.add_argument('--volume', help='journal volume')
     paper_add_parser.add_argument('--language', nargs='*', default=[], help='languages')
@@ -831,8 +1023,8 @@ if __name__ == "__main__":
     paper_edit_title_parser = paper_edit_subparser.add_parser('title')
     paper_edit_title_parser.add_argument('value', help='new value for field')
 
-    paper_edit_published_on_parser = paper_edit_subparser.add_parser('published_on')
-    paper_edit_published_on_parser.add_argument('value', type=valid_date, help='new value for field')
+    paper_edit_published_parser = paper_edit_subparser.add_parser('publishing-date')
+    paper_edit_published_parser.add_argument('value', type=valid_date, help='new value for field')
 
     paper_edit_journal_parser = paper_edit_subparser.add_parser('journal')
     paper_edit_journal_parser.add_argument('value', help='new value for field')
@@ -845,6 +1037,9 @@ if __name__ == "__main__":
 
     paper_edit_remove_language_parser = paper_edit_subparser.add_parser('-language')
     paper_edit_remove_language_parser.add_argument('value', help='new value for field')
+
+    paper_edit_add_link_parser = paper_edit_subparser.add_parser('+link')
+    paper_edit_add_link_parser.add_argument('value', help='new value for field')
 
     paper_edit_add_file_parser = paper_edit_subparser.add_parser('+file')
     paper_edit_add_file_parser.add_argument('value', help='new value for field')
@@ -946,44 +1141,62 @@ if __name__ == "__main__":
 
 
     # create the parser for the "series" subcommand
-    series_parser = subparsers.add_parser('series', help='manage series')
+    series_parser = subparsers.add_parser('series', help=_('Manage series'))
     series_parser.set_defaults(func=_series)
     series_subparser = series_parser.add_subparsers(dest='series_subparser')
 
     # series add
-    series_add_parser = series_subparser.add_parser('add', help='add a series')
+    series_add_parser = series_subparser.add_parser('add',
+                                                    help=_('Add a new series'))
     series_add_parser.add_argument('name', help='name')
-    series_add_parser.add_argument('--link', nargs='*', default=[], help='links')
+    series_add_parser.add_argument('--link', nargs='*', default=[],
+                                   help=_('Links'))
 
     # series edit
-    series_edit_parser = series_subparser.add_parser('edit', help='edit a book edition', prefix_chars='_')
-    series_edit_parser.add_argument('edition', help='which edition to edit')
-    series_edit_subparser = series_edit_parser.add_subparsers(dest='series_edit_subparser', help='which field to edit')
+    series_edit_parser = series_subparser.add_parser(
+        'edit',
+        help=_('Edit a book edition'),
+        prefix_chars='_'
+    )
+    series_edit_parser.add_argument('edition', help=_('Which edition to edit'))
+    series_edit_subparser = series_edit_parser.add_subparsers(
+        dest='series_edit_subparser',
+        help=_('Which field to edit')
+    )
 
     series_edit_name_parser = series_edit_subparser.add_parser('name')
-    series_edit_name_parser.add_argument('value', help='new value for field')
+    series_edit_name_parser.add_argument('value',
+                                         help=_('New value for field'))
 
     series_edit_add_link_parser = series_edit_subparser.add_parser('+link')
-    series_edit_add_link_parser.add_argument('value', help='new value for field')
+    series_edit_add_link_parser.add_argument('value',
+                                             help=_('New value for field'))
 
     series_edit_remove_link_parser = series_edit_subparser.add_parser('-link')
-    series_edit_remove_link_parser.add_argument('value', help='new value for field')
+    series_edit_remove_link_parser.add_argument('value',
+                                                help=_('New value for field'))
 
-    series_edit_parser.add_argument('series', help='which series to edit')
-    series_edit_parser.add_argument('field', choices=['name'], help='field to edit')
-    series_edit_parser.add_argument('value', help='new value for field')
+    series_edit_parser.add_argument('series', help=_('Which series to edit'))
+    series_edit_parser.add_argument('field', choices=['name'],
+                                    help=_('Field to edit'))
+    series_edit_parser.add_argument('value', help=_('New value for field'))
 
     # series info
-    series_info_parser = series_subparser.add_parser('info', help='show information of series')
-    series_info_parser.add_argument('name', help='series name')
+    series_info_parser = series_subparser.add_parser(
+        'info',
+        help=_('Show information of series')
+    )
+    series_info_parser.add_argument('name', help=_('Series name'))
 
     # series list
-    series_list_parser = series_subparser.add_parser('list', help='list seriess')
-    series_list_parser.add_argument('--search', help='search by term')
+    series_list_parser = series_subparser.add_parser('list',
+                                                     help=_('List series'))
+    series_list_parser.add_argument('--search', help=_('Search by term'))
 
 
     # create the parser for the "runserver" subcommand
-    runserver_parser = subparsers.add_parser('runserver', help='start local http server')
+    runserver_parser = subparsers.add_parser('runserver',
+                                             help=_('Start local http server'))
     runserver_parser.set_defaults(func=_runserver)
 
 
