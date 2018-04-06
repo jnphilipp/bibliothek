@@ -16,12 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import url
-from . import views
+from django.urls import path
+from .views import DetailView, ListView
 
 
+app_name = 'persons'
 urlpatterns = [
-    url(r'^person/$', views.ListView.as_view(), name='person_list'),
-    url(r'^person/(?P<slug>[\w-]+)/$', views.DetailView.as_view(),
-        name='person_detail'),
+    path('person/', ListView.as_view(), name='person_list'),
+    path('person/<slug:slug>/', DetailView.as_view(), name='person_detail'),
 ]

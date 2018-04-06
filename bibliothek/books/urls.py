@@ -16,15 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import url
+from django.urls import path
 from .views.book import DetailView as BookDetailView, ListView
 from .views.edition import DetailView as EditionDetailView
 
 
+app_name = 'books'
 urlpatterns = [
-    url(r'^book/$', ListView.as_view(), name='book_list'),
-    url(r'^book/(?P<slug>[\w-]+)/$', BookDetailView.as_view(),
-        name='book_detail'),
-    url(r'^book/(?P<slug>[\w-]+)/edition/(?P<pk>[0-9]+)/$',
-        EditionDetailView.as_view(), name='edition_detail'),
+    path('book/', ListView.as_view(), name='book_list'),
+    path('book/<slug:slug>/', BookDetailView.as_view(), name='book_detail'),
+    path('book/<slug:slug>/edition/<int:pk>/', EditionDetailView.as_view(),
+         name='edition_detail'),
 ]
