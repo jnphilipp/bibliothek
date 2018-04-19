@@ -4,4 +4,4 @@ feedparser==5.2.1
 future==0.16.0
 Pillow==5.1.0
 pyparsing==2.2.0
-pytz==2018.3
+pytz==2018.4
