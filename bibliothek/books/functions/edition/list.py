@@ -23,15 +23,22 @@ from utils import lookahead, stdout
 
 
 def all(book):
+    fields = [_('Id'), _('Alternate title'), _('Binding'), _('ISBN'),
+              _('Publishing date')]
+
     editions = Edition.objects.filter(book=book)
-    _list([[edition.id, edition.alternate_title, edition.isbn,
-            edition.publishing_date] for edition in editions],
-          [_('Id'), _('Alternate title'), _('ISBN'), _('Publishing date')],
-          positions=[.05, .55, .75, 1.])
+    _list([[edition.id,
+            edition.alternate_title if edition.alternate_title else '',
+            edition.binding, edition.isbn,
+            edition.publishing_date] for edition in editions], fields,
+          positions=[.05, .35, .55, .75, 1.])
     return editions
 
 
 def by_shelf(book, shelf):
+    fields = [_('Id'), _('Alternate title'), _('Binding'), _('ISBN'),
+              _('Publishing date')]
+
     editions = Book.objects.filter(book=book)
     if shelf == 'read':
         editions = editions.filter(reads__isnull=False)
@@ -40,24 +47,29 @@ def by_shelf(book, shelf):
             Q(reads__isnull=True) | Q(reads__finished__isnull=True)
         )
     editions = editions.distinct()
-    _list([[edition.id, edition.alternate_title, edition.isbn,
-            edition.publishing_date] for edition in editions],
-          [_('Id'), _('Alternate title'), _('ISBN'), _('Publishing date')],
-          positions=[.05, .55, .75, 1.])
+    _list([[edition.id,
+            edition.alternate_title if edition.alternate_title else '',
+            edition.binding, edition.isbn,
+            edition.publishing_date] for edition in editions], fields,
+          positions=[.05, .35, .55, .75, 1.])
     return editions
 
 
 def by_term(book, term):
+    fields = [_('Id'), _('Alternate title'), _('Binding'), _('ISBN'),
+              _('Publishing date')]
+
     editions = Edition.objects.filter(
         Q(book=book) & (Q(pk=term if term.isdigit() else None) |
                         Q(alternate_title__icontains=term) |
                         Q(isbn__icontains=term) |
                         Q(publishing_date__icontains=term))
     )
-    _list([[edition.id, edition.alternate_title, edition.isbn,
-            edition.publishing_date] for edition in editions],
-          [_('Id'), _('Alternate title'), _('ISBN'), _('Publishing date')],
-          positions=[.05, .55, .75, 1.])
+    _list([[edition.id,
+            edition.alternate_title if edition.alternate_title else '',
+            edition.binding, edition.isbn,
+            edition.publishing_date] for edition in editions], fields,
+          positions=[.05, .35, .55, .75, 1.])
     return editions
 
 

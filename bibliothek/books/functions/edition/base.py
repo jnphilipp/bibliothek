@@ -117,8 +117,8 @@ def create(book, alternate_title=None, isbn=None, publishing_date=None,
 
 def edit(edition, field, value):
     fields = ['alternate_title', 'alternate-title', 'binding', 'cover', 'isbn',
-              'publishing_date', 'publishing-date', 'publisher', '+language',
-              '-language', '+file']
+              'publishing_date', 'publishing-date', 'publisher', 'language',
+              'file']
     assert field in fields
 
     if field == 'alternate_title' or field == 'alternate-title':
@@ -138,21 +138,15 @@ def edit(edition, field, value):
         edition.publisher, created = Publisher.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(name__icontains=value)
         ).get_or_create(defaults={'name': value})
-    elif field == '+language':
+    elif field == 'language':
         language, created = Language.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(name=value)
         ).get_or_create(defaults={'name': value})
-        edition.languages.add(language)
-    elif field == '-language':
-        try:
-            language = Language.objects.get(
-                Q(pk=value if value.isdigit() else None) | Q(name=value)
-            )
+        if edition.languages.filter(pk=language.pk).exists():
             edition.languages.remove(language)
-        except Language.DoesNotExist:
-            stdout.p([_('Language "%(name)s" not found.') % {'name':value}],
-                     positions=[1.])
-    elif field == '+file':
+        else:
+            edition.languages.add(language)
+    elif field == 'file':
         file_name = os.path.basename(value)
         file_obj = File()
         file_obj.file.save(file_name, DJFile(open(value, 'rb')))

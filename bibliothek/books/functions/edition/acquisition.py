@@ -27,7 +27,8 @@ from utils import lookahead, stdout
 def add(edition, date=None, price=0.0):
     acquisition = Acquisition.objects.create(date=date, price=price,
                                              content_object=edition)
-    msg = _('Successfully added acquisition "%(id)s" to edition "%(edition)s".')
+    msg = _('Successfully added acquisition "%(id)s" to edition ' +
+            '"%(edition)s".')
     stdout.p([msg % {'id': acquisition.id, 'edition': str(edition)}],
              positions=[1.])
     _print(acquisition)
@@ -42,7 +43,7 @@ def delete(edition, acquisition_id):
         stdout.p([_('Successfully deleted acquisition.')], positions=[1.])
     except Acquisition.DoesNotExist:
         msg = _('An acquisition with id "%(acquisition)s" for this edition ' +
-                 'does not exist.')
+                'does not exist.')
         stdout.p([msg % {'acquisition':acquisition_id}], after='=',
                  positions=[1.])
 

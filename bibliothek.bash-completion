@@ -49,7 +49,7 @@ _bibliothek()
                     return 0
                     ;;
                 edit)
-                    opts="title +author -author series volume +genre -genre +link -link -h --help"
+                    opts="title author series volume genre link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -92,7 +92,7 @@ _bibliothek()
                             return 0
                             ;;
                         edit)
-                            opts="alternate_title isbn publishing-date cover binding publisher +language -language +file -h --help"
+                            opts="alternate_title isbn publishing-date cover binding publisher language file -h --help"
                             copts=$(compgen -W "${opts}" -- ${cur})
                             OLDIFS=$IFS
                             IFS=$'\n'
