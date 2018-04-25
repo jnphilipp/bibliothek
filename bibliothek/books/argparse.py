@@ -24,7 +24,6 @@ from shelves.argparse import acquisition_subparser, read_subparser
 
 
 def _book(args):
-    print(args)
     if args.subparser == 'add':
         fbook.create(args.title, args.author, args.series, args.volume,
                      args.genre, args.link)
@@ -193,5 +192,5 @@ def edition_subparser(parser):
     # edition list
     list_parser = subparser.add_parser('list', help=_('List editions'))
     list_parser.add_argument('--shelf', choices=['read', 'unread'],
-                             help=_('Filter editions by shelves'))
+                             help=_('Filter editions by shelf'))
     list_parser.add_argument('--search', help=_('Filter editions by term'))

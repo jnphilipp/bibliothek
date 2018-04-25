@@ -45,7 +45,7 @@ def create(title, authors=[], series=None, volume=0, genres=[], links=[]):
                 ).get_or_create(
                     defaults={
                         'first_name': a[:a.rfind(' ')],
-                        'last_name': a[a.rfind(' ') + 1 :]}
+                        'last_name': a[a.rfind(' ') + 1:]}
                 )
                 book.authors.add(author)
                 stdout.p([_('Authors') if i == 0 else '',
@@ -91,12 +91,12 @@ def create(title, authors=[], series=None, volume=0, genres=[], links=[]):
         book.save()
 
         msg = _('Successfully added book "%(title)s" with id "%(id)s".')
-        stdout.p([msg % {'title':book.title, 'id':book.id}], after='=',
+        stdout.p([msg % {'title': book.title, 'id': book.id}], after='=',
                  positions=[1.])
     else:
         msg = _('The book "%(title)s" already exists with id "%(id)s", ' +
                 'aborting...')
-        stdout.p([msg % {'title':book.title, 'id':book.id}], after='=',
+        stdout.p([msg % {'title': book.title, 'id': book.id}], after='=',
                  positions=[1.])
     return book, created
 
@@ -114,7 +114,7 @@ def edit(book, field, value):
         ).get_or_create(
             defaults={
                 'first_name': value[:value.rfind(' ')],
-                'last_name': value[value.rfind(' ') + 1 :]}
+                'last_name': value[value.rfind(' ') + 1:]}
         )
         if book.authors.filter(pk=author.pk).exists():
             book.authors.remove(author)
@@ -134,7 +134,7 @@ def edit(book, field, value):
             book.genres.remove(genre)
         else:
             book.genres.add(genre)
-    elif field == '+link':
+    elif field == 'link':
         link, created = Link.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(link=value)
         ).get_or_create(defaults={'link': value})
@@ -149,7 +149,7 @@ def edit(book, field, value):
 
 
 def info(book):
-    positions=[.33, 1.]
+    positions = [.33, 1.]
     stdout.p([_('Field'), _('Value')], positions=positions, after='=')
     stdout.p([_('Id'), book.id], positions=positions)
     stdout.p([_('Title'), book.title], positions=positions)
