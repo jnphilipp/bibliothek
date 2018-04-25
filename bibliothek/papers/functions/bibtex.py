@@ -19,22 +19,26 @@
 import bibtexparser
 import re
 
+from bibtexparser.bparser import BibTexParser
 from datetime import datetime
 
 
-def parse(bibtex_file):
-    with open(bibtex_file, 'r', encoding='utf-8') as f:
-        bibtex = f.read()
-        bib_database = bibtexparser.loads(bibtex)
+def from_file(path):
+    with open(path, 'r', encoding='utf-8') as f:
+        return parse(f.read())
+
+
+def parse(bibtex):
+    bib_database = BibTexParser(common_strings=True,
+                                homogenize_fields=True).parse(bibtex)
 
     entries = []
     for entry in bib_database.entries:
         title = entry['title'].strip() if 'title' in entry else ''
 
         authors = []
-        for author in re.compile(r'\s+and\s+').split(re.sub(r'(?s)\s*\n\s*',
-                                                            ' ',
-                                                            entry['author'])):
+        entry['author'] = re.sub(r'\s*\n\s*', ' ', entry['author'], flags=re.S)
+        for author in re.compile(r'\s+and\s+').split(entry['author']):
             if ',' in author:
                 s = author.split(',')
                 authors.append({
@@ -67,16 +71,22 @@ def parse(bibtex_file):
         year = int(entry['year'].strip()) if 'year' in entry else None
         month = entry['month'].strip() if 'month' in entry else None
         if year and month:
-            date = datetime.strptime('%s %s' % (month, year), '%b %Y')
+            date = datetime.strptime('%s %s' % (month, year), '%B %Y')
         elif year:
             date = datetime(year, 1, 1)
 
         if 'timestamp' in entry:
-            publishing_date = datetime.strptime(entry['timestamp'].strip(),
-                                             '%a, %d %b %Y %H:%M:%S %z').date()
+            pub_date = datetime.strptime(entry['timestamp'].strip(),
+                                         '%a, %d %b %Y %H:%M:%S %z').date()
         else:
-            publishing_date = date.date()
-        url = entry['link'].strip() if 'link' in entry else ''
+            pub_date = date.date()
+
+        if 'link' in entry:
+            url = entry['link'].strip()
+        elif 'url' in entry:
+            url = entry['url'].strip()
+        else:
+            url = None
 
         entries.append({
             'title': title,
@@ -84,7 +94,7 @@ def parse(bibtex_file):
             'journal': journal,
             'volume': volume,
             'publisher': publisher,
-            'publishing_date': publishing_date,
+            'publishing_date': pub_date,
             'url': url,
             'bibtex': bibtex
         })
