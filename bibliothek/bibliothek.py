@@ -27,6 +27,7 @@ django.setup()
 
 import bindings.argparse
 import books.argparse
+import genres.argparse
 
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from datetime import date, datetime
@@ -55,27 +56,6 @@ def valid_date(s):
         return datetime.strptime(s, "%Y-%m-%d").date()
     except ValueError:
         raise ArgumentTypeError('Not a valid date: "{0}".'.format(s))
-
-
-def _genre(args):
-    import genres.functions
-    if args.genre_subparser == 'add':
-        genres.functions.genre.create(args.name)
-    elif args.genre_subparser == 'edit':
-        genre = genres.functions.genre.get.by_term(args.genre)
-        if genre:
-            genres.functions.genre.edit(genre, args.field, args.value)
-    elif args.genre_subparser == 'info':
-        genre = genres.functions.genre.get.by_term(args.genre)
-        if genre:
-            genres.functions.genre.info(genre)
-    elif args.genre_subparser == 'list':
-        if args.search:
-            genres.functions.genre.list.by_term(args.search)
-        else:
-            genres.functions.genre.list.all()
-    else:
-        genre_parser.print_help()
 
 
 def _journal(args):
@@ -475,27 +455,7 @@ if __name__ == '__main__':
     books.argparse.add_subparser(subparsers)
 
     # create the parser for the "genre" subcommand
-    genre_parser = subparsers.add_parser('genre', help='manage genres')
-    genre_parser.set_defaults(func=_genre)
-    genre_subparser = genre_parser.add_subparsers(dest='genre_subparser')
-
-    # genre add
-    genre_add_parser = genre_subparser.add_parser('add', help='add a genre')
-    genre_add_parser.add_argument('name', help='name')
-
-    # genre edit
-    genre_edit_parser = genre_subparser.add_parser('edit', help='edit a genre')
-    genre_edit_parser.add_argument('genre', help='which genre to edit')
-    genre_edit_parser.add_argument('field', choices=['name'], help='which field to edit')
-    genre_edit_parser.add_argument('value', help='new value for field')
-
-    # genre info
-    genre_info_parser = genre_subparser.add_parser('info', help='show information of a genre')
-    genre_info_parser.add_argument('genre', help='of which genre to show information')
-
-    # genre list
-    genre_list_parser = genre_subparser.add_parser('list', help='list genres')
-    genre_list_parser.add_argument('--search', help='filter by term')
+    genres.argparse.add_subparser(subparsers)
 
 
     # create the parser for the "journal" subcommand
