@@ -33,7 +33,7 @@ from .. import bibtex
 
 
 def from_bibtex(bibtex_file, files=[]):
-    papers = bibtex.parse(bibtex_file)
+    papers = bibtex.from_file(bibtex_file)
     if len(papers) != len(files):
         for i in range(len(files), len(papers)):
             files.append(None)

@@ -112,14 +112,13 @@ def create(title, authors=[], publishing_date=None, journal=None, volume=None,
 
 
 def edit(paper, field, value):
-    fields = ['title', '+author', '-author', 'publishing_date',
-              'publishing-date', 'journal', 'volume', '+language', '-language',
-              '+file', '+link']
+    fields = ['title', 'author', 'publishing_date', 'publishing-date',
+              'journal', 'volume', 'language', 'file', 'link']
     assert field in fields
 
     if field == 'title':
         paper.title = value
-    elif field == '+author':
+    elif field == 'author':
         author, created = Person.objects.annotate(
             name=Concat('first_name', Value(' '), 'last_name')
         ).filter(
@@ -128,18 +127,10 @@ def edit(paper, field, value):
             'first_name': value[:value.rfind(' ')],
             'last_name': value[value.rfind(' ') + 1 :]
         })
-        paper.authors.add(author)
-    elif field == '-author':
-        try:
-            author = Person.objects.annotate(
-                name=Concat('first_name', Value(' '), 'last_name')
-            ).get(
-                Q(pk=value if value.isdigit() else None) | Q(name__icontains=value)
-            )
+        if paper.authors.filter(pk=author.pk).exists():
             paper.authors.remove(author)
-        except Person.DoesNotExist:
-            stdout.p([_('Author "%(name)s" not found.') % {'name': value}],
-                     positions=[1.])
+        else:
+            paper.authors.add(author)
     elif field == 'publishing_date' or field == 'publishing-date':
         paper.publishing_date = value
     elif field == 'journal':
@@ -148,26 +139,23 @@ def edit(paper, field, value):
         ).get_or_create(defaults={'name': value})
     elif field == 'volume':
         paper.volume = value
-    elif field == '+language':
+    elif field == 'language':
         language, created = Language.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(name=value)
         ).get_or_create(defaults={'name': value})
-        paper.languages.add(language)
-    elif field == '-language':
-        try:
-            language = Language.objects.get(
-                Q(pk=value if value.isdigit() else None) | Q(name=value)
-            )
+        if paper.languages.filter(pk=language.pk).exists():
             paper.languages.remove(language)
-        except Language.DoesNotExist:
-            stdout.p([_('Language "%(name)s" not found.') % {'name': value}],
-                     positions=[1.])
-    elif field == '+link':
+        else:
+            paper.languages.add(language)
+    elif field == 'link':
         link, created = Link.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(link=value)
         ).get_or_create(defaults={'link': value})
-        paper.links.add(link)
-    elif field == '+file':
+        if paper.links.filter(pk=link.pk).exists():
+            paper.links.remove(link)
+        else:
+            paper.links.add(link)
+    elif field == 'file':
         file_name = os.path.basename(value)
         file_obj = File()
         file_obj.file.save(file_name, DJFile(open(value, 'rb')))

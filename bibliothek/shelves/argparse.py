@@ -21,10 +21,10 @@ from bibliothek.argparse import valid_date
 from django.utils.translation import ugettext_lazy as _
 
 
-def acquisition_subparser(parser, arg_name, help_text):
+def acquisition_subparser(parser, arg_name, help_txt):
     acquisition_parser = parser.add_parser('acquisition',
                                            help=_('Manage acquisition'))
-    acquisition_parser.add_argument(arg_name, help=help_text)
+    acquisition_parser.add_argument(arg_name, help=help_txt)
     subparser = acquisition_parser.add_subparsers(dest='acquisition_subparser')
 
     add_parser = subparser.add_parser('add', help=_('Add an acquisition'))
@@ -50,9 +50,9 @@ def acquisition_subparser(parser, arg_name, help_text):
                                    help=_('New value for field'))
 
 
-def read_subparser(parser, arg_name, help_text):
+def read_subparser(parser, arg_name, help_txt):
     read_parser = parser.add_parser('read', help=_('Manage read'))
-    read_parser.add_argument(arg_name, help=help_text)
+    read_parser.add_argument(arg_name, help=help_txt)
     subparser = read_parser.add_subparsers(dest='read_subparser')
 
     add_parser = subparser.add_parser('add', help=_('Add a read'))
