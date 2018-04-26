@@ -30,6 +30,7 @@ import books.argparse
 import genres.argparse
 import journals.argparse
 import papers.argparse
+import persons.argparse
 
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from datetime import date, datetime
@@ -135,28 +136,6 @@ def _magazine(args):
             magazines.functions.magazine.list.all()
     else:
         magazine_parser.print_help()
-
-
-def _person(args):
-    import persons.functions
-    if args.person_subparser == 'add':
-        persons.functions.person.create(args.first_name, args.last_name,
-                                        args.link)
-    elif args.person_subparser == 'edit':
-        person = persons.functions.person.get.by_term(args.person)
-        if person:
-            persons.functions.person.edit(person, args.field, args.value)
-    elif args.person_subparser == 'info':
-        person = persons.functions.person.get.by_term(args.person)
-        if person:
-            persons.functions.person.info(person)
-    elif args.person_subparser == 'list':
-        if args.search:
-            persons.functions.person.list.by_term(args.search)
-        else:
-            persons.functions.person.list.all()
-    else:
-        person_parser.print_help()
 
 
 def _publisher(args):
@@ -504,30 +483,7 @@ if __name__ == '__main__':
     papers.argparse.add_subparser(subparsers)
 
     # create the parser for the "person" subcommand
-    person_parser = subparsers.add_parser('person', help='manage persons')
-    person_parser.set_defaults(func=_person)
-    person_subparser = person_parser.add_subparsers(dest='person_subparser')
-
-    # person add
-    person_add_parser = person_subparser.add_parser('add', help='add a person')
-    person_add_parser.add_argument('first_name', help='first name')
-    person_add_parser.add_argument('last_name', help='last name')
-    person_add_parser.add_argument('--link', nargs='*', default=[], help='links')
-
-    # person edit
-    person_edit_parser = person_subparser.add_parser('edit', help='edit a person')
-    person_edit_parser.add_argument('person', help='which person to edit')
-    person_edit_parser.add_argument('field', choices=['first_name', 'last_name'], help='field to edit')
-    person_edit_parser.add_argument('value', help='new value for field')
-
-    # person info
-    person_info_parser = person_subparser.add_parser('info', help='show information of a person')
-    person_info_parser.add_argument('person', help='of which person to show information')
-
-    # person list
-    person_list_parser = person_subparser.add_parser('list', help='list persons')
-    person_list_parser.add_argument('--search', help='search by term')
-
+    persons.argparse.add_subparser(subparsers)
 
     # create the parser for the "publisher" subcommand
     publisher_parser = subparsers.add_parser('publisher', help='manage publishers')

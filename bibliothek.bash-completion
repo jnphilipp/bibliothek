@@ -454,7 +454,7 @@ _bibliothek()
                     return 0
                     ;;
                 edit)
-                    opts="first_name last_name -h --help"
+                    opts="first-name last-name -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
