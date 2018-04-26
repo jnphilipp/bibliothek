@@ -17,7 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+import sys
+
 from bibliothek.argparse import valid_date
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from papers.functions import paper as fpaper
 from shelves.argparse import acquisition_subparser, read_subparser
@@ -132,7 +136,7 @@ def add_subparser(parser):
     info_parser.add_argument('paper', help=_('Paper'))
 
     # paper open
-    help_txt=_('Open a file associated with a paper')
+    help_txt = _('Open a file associated with a paper')
     open_parser = subparser.add_parser('open', help=help_txt)
     open_parser.add_argument('paper', nargs='?', help=_('Paper'))
     open_parser.add_argument('file', type=int, help=_('File to open'))

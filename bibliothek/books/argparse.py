@@ -17,8 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+import sys
+
 from bibliothek.argparse import valid_date
 from books.functions import book as fbook, edition as fedition
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from shelves.argparse import acquisition_subparser, read_subparser
 
@@ -59,6 +63,15 @@ def _book(args):
                 fedition.list.by_term(book, args.search)
             else:
                 fedition.list.all(book)
+        elif args.edition_subparser == 'open' and book:
+            edition = fedition.get.by_term(book, args.edition)
+            if edition:
+                file = edition.files.get(pk=args.file)
+                path = os.path.join(settings.MEDIA_ROOT, file.file.path)
+                if sys.platform == 'linux':
+                    os.system('xdg-open "%s"' % path)
+                else:
+                    os.system('open "%s"' % path)
         elif args.edition_subparser == 'read' and book:
             edition = fedition.get.by_term(book, args.edition)
             if args.read_subparser == 'add' and edition:
@@ -194,3 +207,9 @@ def edition_subparser(parser):
     list_parser.add_argument('--shelf', choices=['read', 'unread'],
                              help=_('Filter editions by shelf'))
     list_parser.add_argument('--search', help=_('Filter editions by term'))
+
+    # paper open
+    help_txt=_('Open a file associated with an edition')
+    open_parser = subparser.add_parser('open', help=help_txt)
+    open_parser.add_argument('edition', nargs='?', help=_('Edition'))
+    open_parser.add_argument('file', type=int, help=_('File to open'))

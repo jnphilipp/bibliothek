@@ -111,6 +111,11 @@ _bibliothek()
                             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                             return 0
                             ;;
+                        open)
+                            opts="-h --help"
+                            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                            return 0
+                            ;;
                         read)
                             subcommand="${COMP_WORDS[6]}"
                             case "${subcommand}" in
@@ -379,7 +384,7 @@ _bibliothek()
                     return 0
                     ;;
                 edit)
-                    opts="title publishing-date journal volume +language -language +file -h --help"
+                    opts="title publishing-date journal volume language link file -h --help"
                     copts=$(compgen -W "${opts}" -- ${cur})
                     OLDIFS=$IFS
                     IFS=$'\n'
