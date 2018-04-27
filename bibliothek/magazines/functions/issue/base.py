@@ -40,7 +40,8 @@ def create(magazine, issue_name, publishing_date=None, cover_image=None,
 
         if publishing_date:
             issue.publishing_date = publishing_date
-            stdout.p([_('Publishing date'), publishing_date], positions=positions)
+            stdout.p([_('Publishing date'), publishing_date],
+                     positions=positions)
         else:
             stdout.p([_('Publishing date'), ''], positions=positions)
 
@@ -93,7 +94,7 @@ def create(magazine, issue_name, publishing_date=None, cover_image=None,
 
 def edit(issue, field, value):
     fields = ['issue', 'publishing_date', 'publishing-date', 'cover',
-              '+language', '-language', '+file', '+link', '-link']
+              'language', 'file', 'link']
     assert field in fields
 
     if field == 'issue':
@@ -102,40 +103,28 @@ def edit(issue, field, value):
         issue.publishing_date = value
     elif field == 'cover':
         issue.cover_image = value
-    elif field == '+language':
+    elif field == 'language':
         language, created = Language.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(name=value)
         ).get_or_create(defaults={'name': value})
-        issue.languages.add(language)
-    elif field == '-language':
-        try:
-            language = Language.objects.get(
-                Q(pk=value if value.isdigit() else None) | Q(name=value)
-            )
+        if issue.languages.filter(pk=language.pk).exists():
             issue.languages.remove(language)
-        except Language.DoesNotExist:
-            stdout.p([_('Language "%(name)s" not found.') % {'name': value}],
-                     positions=[1.])
-    elif field == '+file':
+        else:
+            issue.languages.add(language)
+    elif field == 'file':
         file_name = os.path.basename(value)
         file_obj = File()
         file_obj.file.save(file_name, DJFile(open(value, 'rb')))
         file_obj.content_object = issue
         file_obj.save()
-    elif field == '+link':
+    elif field == 'link':
         link, created = Link.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(link=value)
         ).get_or_create(defaults={'link': value})
-        issue.links.add(link)
-    elif field == '-link':
-        try:
-            link = Link.objects.get(
-                Q(pk=value if value.isdigit() else None) | Q(link=value)
-            )
+        if issue.links.filter(pk=link.pk).exists():
             issue.links.remove(link)
-        except Link.DoesNotExist:
-            stdout.p([_('Link "%(link)s" not found.') % {'link': value}],
-                     positions=[1.])
+        else:
+            issue.links.add(link)
     issue.save()
 
     msg = _('Successfully edited issue "%(magazine)s %(issue)s" with id ' +
@@ -145,7 +134,7 @@ def edit(issue, field, value):
 
 
 def info(issue):
-    positions=[.33, 1.]
+    positions = [.33, 1.]
     stdout.p([_('Field'), _('Value')], positions=positions, after='=')
     stdout.p([_('Id'), issue.id], positions=positions)
     stdout.p([_('Magazine'),

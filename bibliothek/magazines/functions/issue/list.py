@@ -23,37 +23,36 @@ from utils import lookahead, stdout
 
 
 def all(magazine):
-    issues = Issue.objects.filter(magazine=magazine).order_by('publishing_date')
+    issues = Issue.objects.filter(magazine=magazine). \
+        order_by('publishing_date')
     _list([[issue.id, issue.issue, issue.publishing_date,
             issue.files.count()] for issue in issues],
           [_('Id'), _('Issue'), _('Publishing date'), _('#Files')],
-          positions=[.05, .45, .60, 1.])
+          positions=[.05, .45, .70, 1.])
     return issues
 
 
 def by_shelf(magazine, shelf):
     issues = Issue.objects.filter(magazine=magazine)
     if shelf == 'read':
-        issues = issues.filter(issues__reads__isnull=False)
+        issues = issues.filter(reads__isnull=False)
     elif shelf == 'unread':
-        issues = issues.filter(issues__reads__isnull=True)
-    magazines = magazines.distinct()
+        issues = issues.filter(reads__isnull=True)
     _list([[issue.id, issue.issue, issue.publishing_date,
             issue.files.count()] for issue in issues],
           [_('Id'), _('Issue'), _('Publishing date'), _('#Files')],
-          positions=[.05, .45, .60, 1.])
+          positions=[.05, .45, .70, 1.])
     return issues
 
 
 def by_term(magazine, term):
-    issues = Issue.objects.filter(
-        Q(magazine=magazine) & (Q(pk=term if term.isdigit() else None) |
-        Q(issue__icontains=term))
-    )
+    issues = Issue.objects.filter(Q(magazine=magazine) &
+                                  (Q(pk=term if term.isdigit() else None) |
+                                   Q(issue__icontains=term)))
     _list([[issue.id, issue.issue, issue.publishing_date,
             issue.files.count()] for issue in issues],
           [_('Id'), _('Issue'), _('Publishing date'), _('#Files')],
-          positions=[.05, .45, .60, 1.])
+          positions=[.05, .45, .70, 1.])
     return issues
 
 

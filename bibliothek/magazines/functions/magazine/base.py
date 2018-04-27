@@ -51,12 +51,12 @@ def create(name, feed=None, links=[]):
                      after=None if has_next else '_', positions=positions)
         magazine.save()
         msg = _('Successfully added magazine "%(name)s" with id "%(id)s".')
-        stdout.p([msg % {'name':magazine.name, 'id':magazine.id}], after='=',
+        stdout.p([msg % {'name': magazine.name, 'id': magazine.id}], after='=',
                  positions=[1.])
     else:
         msg = _('The magazine "%(name)s" already exists with id "%(id)s", ' +
                 'aborting...')
-        stdout.p([msg % {'name':magazine.name, 'id':magazine.id}], after='=',
+        stdout.p([msg % {'name': magazine.name, 'id': magazine.id}], after='=',
                  positions=[1.])
     return magazine, created
 
@@ -66,7 +66,7 @@ def delete(magazine):
     stdout.p([msg % {'name': magazine.name, 'id': magazine.id}],
              positions=[1.])
 
-    positions=[.1, .25, 1.]
+    positions = [.1, .25, 1.]
     if magazine.issues.count() > 0:
         stdout.p([_('Deleting the issues:')], positions=[1.])
         stdout.p([_('Id'), _('Related object'), _('Issue')],
@@ -134,7 +134,7 @@ def delete(magazine):
 
 
 def edit(magazine, field, value):
-    assert field in ['name', 'feed']
+    assert field in ['name', 'feed', 'link']
 
     if field == 'name':
         magazine.name = value
@@ -142,13 +142,22 @@ def edit(magazine, field, value):
         magazine.feed, created = Link.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(link=value)
         ).get_or_create(defaults={'link': value})
+    elif field == 'link':
+        link, created = Link.objects.filter(
+            Q(pk=value if value.isdigit() else None) | Q(link=value)
+        ).get_or_create(defaults={'link': value})
+        if magazine.links.filter(pk=link.pk).exists():
+            magazine.links.remove(link)
+        else:
+            magazine.links.add(link)
     magazine.save()
     msg = _('Successfully edited magazine "%(name)s" with id "%(id)s".')
-    stdout.p([msg % {'name':magazine.name, 'id':magazine.id}], positions=[1.])
+    stdout.p([msg % {'name': magazine.name, 'id': magazine.id}],
+             positions=[1.])
 
 
 def info(magazine):
-    positions=[.33, 1.]
+    positions = [.33, 1.]
     stdout.p([_('Field'), _('Value')], positions=positions, after='=')
     stdout.p([_('Id'), magazine.id], positions=positions)
     stdout.p([_('Name'), magazine.name], positions=positions)
