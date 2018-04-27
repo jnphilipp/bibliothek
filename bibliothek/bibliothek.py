@@ -32,6 +32,7 @@ import journals.argparse
 import magazines.argparse
 import papers.argparse
 import persons.argparse
+import publishers.argparse
 
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from datetime import date, datetime
@@ -60,29 +61,6 @@ def valid_date(s):
         return datetime.strptime(s, "%Y-%m-%d").date()
     except ValueError:
         raise ArgumentTypeError('Not a valid date: "{0}".'.format(s))
-
-
-def _publisher(args):
-    import publishers.functions
-    if args.publisher_subparser == 'add':
-        publishers.functions.publisher.create(args.name, args.link)
-    elif args.publisher_subparser == 'edit':
-        publisher = publishers.functions.publisher.get.by_term(args.publisher)
-        if publisher:
-            publishers.functions.publisher.edit(publisher,
-                                                args.publisher_edit_subparser,
-                                                args.value)
-    elif args.publisher_subparser == 'info':
-        publisher = publishers.functions.publisher.get.by_term(args.publisher)
-        if publisher:
-            publishers.functions.publisher.info(publisher)
-    elif args.publisher_subparser == 'list':
-        if args.search:
-            publishers.functions.publisher.list.by_term(args.search)
-        else:
-            publishers.functions.publisher.list.all()
-    else:
-        publisher_parser.print_help()
 
 
 def _series(args):
@@ -293,37 +271,7 @@ if __name__ == '__main__':
     persons.argparse.add_subparser(subparser)
 
     # create the parser for the "publisher" subcommand
-    publisher_parser = subparsers.add_parser('publisher', help='manage publishers')
-    publisher_parser.set_defaults(func=_publisher)
-    publisher_subparser = publisher_parser.add_subparsers(dest='publisher_subparser')
-
-    # publisher add
-    publisher_add_parser = publisher_subparser.add_parser('add', help='add a publisher')
-    publisher_add_parser.add_argument('name', help='name')
-    publisher_add_parser.add_argument('--link', nargs='*', default=[], help='links')
-
-    # publisher edit
-    publisher_edit_parser = publisher_subparser.add_parser('edit', help='edit a book publisher', prefix_chars='_')
-    publisher_edit_parser.add_argument('publisher', help='which publisher to edit')
-    publisher_edit_subparser = publisher_edit_parser.add_subparsers(dest='publisher_edit_subparser', help='which field to edit')
-
-    publisher_edit_name_parser = publisher_edit_subparser.add_parser('name')
-    publisher_edit_name_parser.add_argument('value', help='new value for field')
-
-    publisher_edit_add_link_parser = publisher_edit_subparser.add_parser('+link')
-    publisher_edit_add_link_parser.add_argument('value', help='new value for field')
-
-    publisher_edit_remove_link_parser = publisher_edit_subparser.add_parser('-link')
-    publisher_edit_remove_link_parser.add_argument('value', help='new value for field')
-
-    # publisher info
-    publisher_info_parser = publisher_subparser.add_parser('info', help='show information of a publisher')
-    publisher_info_parser.add_argument('publisher', help='of which publisher to show information')
-
-    # publisher list
-    publisher_list_parser = publisher_subparser.add_parser('list', help='list publishers')
-    publisher_list_parser.add_argument('--search', help='search by term')
-
+    publishers.argparse.add_subparser(subparser)
 
     # create the parser for the "series" subcommand
     series_parser = subparsers.add_parser('series', help=_('Manage series'))

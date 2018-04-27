@@ -34,50 +34,44 @@ def create(name, links=[]):
         for (i, url), has_next in lookahead(enumerate(links)):
             link, c = Link.objects.filter(
                 Q(pk=url if url.isdigit() else None) | Q(link=url)
-            ).get_or_create(defaults={'link':url})
+            ).get_or_create(defaults={'link': url})
             publisher.links.add(link)
             stdout.p([_('Links') if i == 0 else '', link.link],
                      after=None if has_next else '_', positions=positions)
 
         publisher.save()
         msg = _('Successfully added publisher "%(name)s" with id "%(id)s".')
-        stdout.p([msg % {'name':publisher.name, 'id':publisher.id}], after='=',
-                 positions=[1.])
+        msg %= {'name': publisher.name, 'id': publisher.id}
+        stdout.p([msg], after='=', positions=[1.])
     else:
         msg = _('The publisher "%(name)s" already exists with id "%(id)s", ' +
                 'aborting...')
-        stdout.p([msg % {'name':publisher.name, 'id':publisher.id}], after='=',
-                 positions=[1.])
+        msg %= {'name': publisher.name, 'id': publisher.id}
+        stdout.p([msg], after='=', positions=[1.])
     return publisher, created
 
 
 def edit(publisher, field, value):
-    assert field in ['name', '+link', '-link']
+    assert field in ['name', 'link']
 
     if field == 'name':
         publisher.name = value
     elif field == '+link':
         link, created = Link.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(link=value)
-        ).get_or_create(defaults={'link':value})
-        publisher.links.add(link)
-    elif field == '-link':
-        try:
-            link = Link.objects.get(
-                Q(pk=value if value.isdigit() else None) | Q(link=value)
-            )
+        ).get_or_create(defaults={'link': value})
+        if publisher.links.filter(pk=link.pk).exists():
             publisher.links.remove(link)
-        except Link.DoesNotExist:
-            stdout.p([_('Link "%(name)s" not found.') % {'name':value}],
-                     positions=[1.])
+        else:
+            publisher.links.add(link)
     publisher.save()
     msg = _('Successfully edited publisher "%(name)s" with id "%(id)s".')
-    stdout.p([msg % {'name':publisher.name, 'id':publisher.id}],
+    stdout.p([msg % {'name': publisher.name, 'id': publisher.id}],
              positions=[1.])
 
 
 def info(publisher):
-    positions=[.33, 1.]
+    positions = [.33, 1.]
     stdout.p([_('Field'), _('Value')], positions=positions, after='=')
     stdout.p([_('Id'), publisher.id], positions=positions)
     stdout.p([_('Name'), publisher.name], positions=positions)
