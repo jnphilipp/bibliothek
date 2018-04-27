@@ -34,49 +34,43 @@ def create(name, links=[]):
         for (i, url), has_next in lookahead(enumerate(links)):
             link, c = Link.objects.filter(
                 Q(pk=url if url.isdigit() else None) | Q(link=url)
-            ).get_or_create(defaults={'link':url})
+            ).get_or_create(defaults={'link': url})
             series.links.add(link)
             stdout.p([_('Links') if i == 0 else '', link.link],
                      after=None if has_next else '_', positions=positions)
 
         series.save()
         msg = _('Successfully added series "%(name)s" with id "%(id)s".')
-        stdout.p([msg % {'name':series.name, 'id':series.id}], after='=',
+        stdout.p([msg % {'name': series.name, 'id': series.id}], after='=',
                  positions=[1.])
     else:
         msg = _('The series "%(name)s" already exists with id "%(id)s", ' +
                 'aborting...')
-        stdout.p([msg % {'name':series.name, 'id':series.id}], after='=',
+        stdout.p([msg % {'name': series.name, 'id': series.id}], after='=',
                  positions=[1.])
     return series, created
 
 
 def edit(series, field, value):
-    assert field in ['name', '+link', '-link']
+    assert field in ['name', 'link']
 
     if field == 'name':
         series.name = value
-    elif field == '+link':
+    elif field == 'link':
         link, created = Link.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(link=value)
-        ).get_or_create(defaults={'link':value})
-        series.links.add(link)
-    elif field == '-link':
-        try:
-            link = Link.objects.get(
-                Q(pk=value if value.isdigit() else None) | Q(link=value)#
-            )
+        ).get_or_create(defaults={'link': value})
+        if series.links.filter(pk=link.pk).exists():
             series.links.remove(link)
-        except Link.DoesNotExist:
-            stdout.p([_('Link "%(name)s" not found.') % {'name':value}],
-                     positions=[1.])
+        else:
+            series.links.add(link)
     series.save()
     msg = _('Successfully edited series "%(name)s" with id "%(id)s".')
-    stdout.p([msg % {'name':series.name, 'id':series.id}], positions=[1.])
+    stdout.p([msg % {'name': series.name, 'id': series.id}], positions=[1.])
 
 
 def info(series):
-    positions=[.33, 1.]
+    positions = [.33, 1.]
     stdout.p([_('Field'), _('Value')], positions=positions, after='=')
     stdout.p([_('Id'), series.id], positions=positions)
     stdout.p([_('Name'), series.name], positions=positions)

@@ -33,6 +33,7 @@ import magazines.argparse
 import papers.argparse
 import persons.argparse
 import publishers.argparse
+import series.argparse
 
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from datetime import date, datetime
@@ -61,29 +62,6 @@ def valid_date(s):
         return datetime.strptime(s, "%Y-%m-%d").date()
     except ValueError:
         raise ArgumentTypeError('Not a valid date: "{0}".'.format(s))
-
-
-def _series(args):
-    import series.functions
-    if args.series_subparser == 'add':
-        series.functions.series.create(args.name, args.link)
-    elif args.series_subparser == 'edit':
-        series_obj = series.functions.series.get.by_term(args.series)
-        if series_obj:
-            series.functions.series.edit(series_obj,
-                                         args.series_edit_subparser,
-                                         args.value)
-    elif args.series_subparser == 'info':
-        series_obj = series.functions.series.get.by_term(args.name)
-        if series_obj:
-            series.functions.series.info(series_obj)
-    elif args.series_subparser == 'list':
-        if args.search:
-            series.functions.series.list.by_term(args.search)
-        else:
-            series.functions.series.list.all()
-    else:
-        series_parser.print_help()
 
 
 def _runserver(args):
@@ -274,58 +252,7 @@ if __name__ == '__main__':
     publishers.argparse.add_subparser(subparser)
 
     # create the parser for the "series" subcommand
-    series_parser = subparsers.add_parser('series', help=_('Manage series'))
-    series_parser.set_defaults(func=_series)
-    series_subparser = series_parser.add_subparsers(dest='series_subparser')
-
-    # series add
-    series_add_parser = series_subparser.add_parser('add',
-                                                    help=_('Add a new series'))
-    series_add_parser.add_argument('name', help='name')
-    series_add_parser.add_argument('--link', nargs='*', default=[],
-                                   help=_('Links'))
-
-    # series edit
-    series_edit_parser = series_subparser.add_parser(
-        'edit',
-        help=_('Edit a book edition'),
-        prefix_chars='_'
-    )
-    series_edit_parser.add_argument('edition', help=_('Which edition to edit'))
-    series_edit_subparser = series_edit_parser.add_subparsers(
-        dest='series_edit_subparser',
-        help=_('Which field to edit')
-    )
-
-    series_edit_name_parser = series_edit_subparser.add_parser('name')
-    series_edit_name_parser.add_argument('value',
-                                         help=_('New value for field'))
-
-    series_edit_add_link_parser = series_edit_subparser.add_parser('+link')
-    series_edit_add_link_parser.add_argument('value',
-                                             help=_('New value for field'))
-
-    series_edit_remove_link_parser = series_edit_subparser.add_parser('-link')
-    series_edit_remove_link_parser.add_argument('value',
-                                                help=_('New value for field'))
-
-    series_edit_parser.add_argument('series', help=_('Which series to edit'))
-    series_edit_parser.add_argument('field', choices=['name'],
-                                    help=_('Field to edit'))
-    series_edit_parser.add_argument('value', help=_('New value for field'))
-
-    # series info
-    series_info_parser = series_subparser.add_parser(
-        'info',
-        help=_('Show information of series')
-    )
-    series_info_parser.add_argument('name', help=_('Series name'))
-
-    # series list
-    series_list_parser = series_subparser.add_parser('list',
-                                                     help=_('List series'))
-    series_list_parser.add_argument('--search', help=_('Search by term'))
-
+    series.argparse.add_subparser(subparser)
 
     # create the parser for the "runserver" subcommand
     runserver_parser = subparsers.add_parser('runserver',
