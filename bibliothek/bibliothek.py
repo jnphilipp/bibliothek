@@ -17,22 +17,23 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-import bindings.argparse
-import books.argparse
-import genres.argparse
-import journals.argparse
 import json
-import magazines.argparse
 import os
-import papers.argparse
-import persons.argparse
-import publishers.argparse
-import series.argparse
 import sys
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bibliothek.settings')
 
 import django
 django.setup()
+
+import bindings.argparse
+import books.argparse
+import genres.argparse
+import journals.argparse
+import magazines.argparse
+import papers.argparse
+import persons.argparse
+import publishers.argparse
+import series.argparse
 
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from datetime import date, datetime
