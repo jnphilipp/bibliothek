@@ -18,18 +18,18 @@
 
 from django.test import TestCase
 from links.models import Link
-from magazines import functions
+from magazines.functions import magazine as fmagazine
 
 
 class MagazineFunctionsTestCase(TestCase):
     def test_magazine_create(self):
-        magazine, created = functions.magazine.create('Weekly')
+        magazine, created = fmagazine.create('Weekly')
         self.assertTrue(created)
         self.assertIsNotNone(magazine.id)
 
-        magazine, created = functions.magazine.create('Science Weekly',
-                                                      'https://sw.com/feed/',
-                                                      ['https://sw.com'])
+        magazine, created = fmagazine.create('Science Weekly',
+                                             'https://sw.com/feed/',
+                                             ['https://sw.com'])
         self.assertTrue(created)
         self.assertIsNotNone(magazine.id)
         self.assertIsNotNone(magazine.feed)
@@ -37,48 +37,59 @@ class MagazineFunctionsTestCase(TestCase):
         self.assertIsNotNone(1, magazine.links.count())
 
     def test_magazine_edit(self):
-        magazine, created = functions.magazine.create('Monthly')
+        magazine, created = fmagazine.create('Monthly')
         self.assertTrue(created)
         self.assertIsNotNone(magazine.id)
 
-        functions.magazine.edit(magazine, 'name', 'Monthlys')
+        fmagazine.edit(magazine, 'name', 'Monthlys')
         self.assertEquals('Monthlys', magazine.name)
 
         link = Link.objects.create(link='https://monthlys.com/feed/')
         self.assertIsNotNone(link.id)
 
-        functions.magazine.edit(magazine, 'feed', str(link.id))
+        fmagazine.edit(magazine, 'feed', str(link.id))
         self.assertEquals(link, magazine.feed)
 
-        functions.magazine.edit(magazine, 'feed',
-                                'https://monthlys.com/issues/feed/')
+        fmagazine.edit(magazine, 'feed', 'https://monthlys.com/issues/feed/')
         self.assertEquals('https://monthlys.com/issues/feed/',
                           magazine.feed.link)
 
+        fmagazine.edit(magazine, 'link', 'https://test.com')
+        self.assertEquals(1, magazine.links.count())
+        self.assertEquals('https://test.com', magazine.links.first().link)
+
+        fmagazine.edit(magazine, 'link', 'https://test2.com')
+        self.assertEquals(2, magazine.links.count())
+        self.assertEquals('https://test2.com', magazine.links.last().link)
+
+        fmagazine.edit(magazine, 'link', 'https://test.com')
+        self.assertEquals(1, magazine.links.count())
+        self.assertEquals('https://test2.com', magazine.links.first().link)
+
     def test_magazine_get(self):
-        magazine, created = functions.magazine.create('Weekly')
+        magazine, created = fmagazine.create('Weekly')
         self.assertTrue(created)
         self.assertIsNotNone(magazine.id)
 
-        magazine2 = functions.magazine.get.by_term('Weekly')
+        magazine2 = fmagazine.get.by_term('Weekly')
         self.assertIsNotNone(magazine)
         self.assertEquals(magazine, magazine2)
 
-        magazine2 = functions.magazine.get.by_term(str(magazine.id))
+        magazine2 = fmagazine.get.by_term(str(magazine.id))
         self.assertIsNotNone(magazine)
         self.assertEquals(magazine, magazine2)
 
     def test_magazine_list(self):
-        magazine, created = functions.magazine.create('Weekly')
+        magazine, created = fmagazine.create('Weekly')
         self.assertTrue(created)
         self.assertIsNotNone(magazine.id)
 
-        magazine, created = functions.magazine.create('Monthly')
+        magazine, created = fmagazine.create('Monthly')
         self.assertTrue(created)
         self.assertIsNotNone(magazine.id)
 
-        magazines = functions.magazine.list.all()
+        magazines = fmagazine.list.all()
         self.assertEquals(len(magazines), 2)
 
-        magazines = functions.magazine.list.by_term('Monthly')
+        magazines = fmagazine.list.by_term('Monthly')
         self.assertEquals(len(magazines), 1)

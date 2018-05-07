@@ -17,56 +17,68 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.test import TestCase
-from journals import functions
+from journals.functions import journal as fjournal
 
 
 class JournalFunctionsTestCase(TestCase):
     def test_journal_create(self):
-        journal, created = functions.journal.create('Test Journal')
+        journal, created = fjournal.create('Test Journal')
         self.assertTrue(created)
         self.assertIsNotNone(journal.id)
 
-        journal, created = functions.journal.create('Scince Journal',
-                                                    ['https://sj.com'])
+        journal, created = fjournal.create('Scince Journal',
+                                           ['https://sj.com'])
         self.assertTrue(created)
         self.assertIsNotNone(journal.id)
 
     def test_journal_edit(self):
-        journal, created = functions.journal.create('Test2 Journal')
+        journal, created = fjournal.create('Test2 Journal')
         self.assertTrue(created)
         self.assertIsNotNone(journal.id)
 
-        functions.journal.edit(journal, 'name', 'IEEE Journal')
+        fjournal.edit(journal, 'name', 'IEEE Journal')
         self.assertEquals('IEEE Journal', journal.name)
 
+        fjournal.edit(journal, 'link', 'https://test.com')
+        self.assertEquals(1, journal.links.count())
+        self.assertEquals('https://test.com', journal.links.first().link)
+
+        fjournal.edit(journal, 'link', 'https://example.com')
+        self.assertEquals(2, journal.links.count())
+        self.assertEquals('https://example.com', journal.links.first().link)
+
+        fjournal.edit(journal, 'link', 'https://test.com')
+        self.assertEquals(1, journal.links.count())
+        self.assertEquals('https://example.com', journal.links.first().link)
+
     def test_journal_get(self):
-        journal, created = functions.journal.create('Space Journal')
+        journal, created = fjournal.create('Space Journal')
         self.assertTrue(created)
         self.assertIsNotNone(journal.id)
 
-        journal2 = functions.journal.get.by_term('Space Journal')
+        journal2 = fjournal.get.by_term('Space Journal')
         self.assertIsNotNone(journal2)
         self.assertEquals(journal, journal2)
 
-        journal2 = functions.journal.get.by_term(str(journal.id))
+        journal2 = fjournal.get.by_term(str(journal.id))
         self.assertIsNotNone(journal2)
         self.assertEquals(journal, journal2)
 
     def test_journal_list(self):
-        journal, created = functions.journal.create('Medicine Journal')
+        journal, created = fjournal.create('Medicine Journal')
         self.assertTrue(created)
         self.assertIsNotNone(journal.id)
 
-        journal, created = functions.journal.create('Math Journal')
+        journal, created = fjournal.create('Math Journal')
         self.assertTrue(created)
         self.assertIsNotNone(journal.id)
 
-        journal, created = functions.journal.create('All new stuff about Math')
+        journal, created = fjournal.create('All new stuff about Math')
         self.assertTrue(created)
         self.assertIsNotNone(journal.id)
 
-        journals = functions.journal.list.all()
+        journals = fjournal.list.all()
         self.assertEquals(3, len(journals))
 
-        journals = functions.journal.list.by_term('Journal')
+        journals = fjournal.list.by_term('Journal')
         self.assertEquals(2, len(journals))

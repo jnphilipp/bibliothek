@@ -17,60 +17,72 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.test import TestCase
-from persons import functions
+from persons.functions import person as fperson
 
 
 class PersonFunctionsTestCase(TestCase):
     def test_person_create(self):
-        person, created = functions.person.create('Hans', 'Müller')
+        person, created = fperson.create('Hans', 'Müller')
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 
-        person2, created = functions.person.create('Jan', 'Müller',
+        person2, created = fperson.create('Jan', 'Müller',
                                                    links=['https://jan.de'])
         self.assertTrue(created)
         self.assertIsNotNone(person2.id)
         self.assertEquals(1, person2.links.count())
 
     def test_person_edit(self):
-        person, created = functions.person.create('Frank', 'Schmidt')
+        person, created = fperson.create('Frank', 'Schmidt')
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 
-        functions.person.edit(person, 'last_name', 'Schmidts')
+        fperson.edit(person, 'last_name', 'Schmidts')
         self.assertEquals('Schmidts', person.last_name)
 
-        functions.person.edit(person, 'first_name', 'Franky')
+        fperson.edit(person, 'first_name', 'Franky')
         self.assertEquals('Franky', person.first_name)
 
+        fperson.edit(person, 'link', 'https://test.com')
+        self.assertEquals(1, person.links.count())
+        self.assertEquals('https://test.com', person.links.first().link)
+
+        fperson.edit(person, 'link', 'https://example.com')
+        self.assertEquals(2, person.links.count())
+        self.assertEquals('https://example.com', person.links.first().link)
+
+        fperson.edit(person, 'link', 'https://test.com')
+        self.assertEquals(1, person.links.count())
+        self.assertEquals('https://example.com', person.links.first().link)
+
     def test_person_get(self):
-        person, created = functions.person.create('Karl', 'Heinz')
+        person, created = fperson.create('Karl', 'Heinz')
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 
-        person2 = functions.person.get.by_term('rl Hei')
+        person2 = fperson.get.by_term('rl Hei')
         self.assertIsNotNone(person2)
         self.assertEquals(person, person2)
 
-        person2 = functions.person.get.by_term(str(person.id))
+        person2 = fperson.get.by_term(str(person.id))
         self.assertIsNotNone(person2)
         self.assertEquals(person, person2)
 
     def test_person_list(self):
-        person, created = functions.person.create('Anne', 'Karenina')
+        person, created = fperson.create('Anne', 'Karenina')
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 
-        person, created = functions.person.create('Sarah', 'Vogel')
+        person, created = fperson.create('Sarah', 'Vogel')
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 
-        person, created = functions.person.create('Karen', 'Stirling')
+        person, created = fperson.create('Karen', 'Stirling')
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 
-        persons = functions.person.list.all()
+        persons = fperson.list.all()
         self.assertEquals(3, len(persons))
 
-        persons = functions.person.list.by_term('Karen')
+        persons = fperson.list.by_term('Karen')
         self.assertEquals(2, len(persons))

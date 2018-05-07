@@ -17,73 +17,71 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.test import TestCase
-from publishers import functions
+from publishers.functions import publisher as fpublisher
 
 
 class PublisherFunctionsTestCase(TestCase):
     def test_publisher_create(self):
-        publisher, created = functions.publisher.create('Test Publisher')
+        publisher, created = fpublisher.create('Test Publisher')
         self.assertTrue(created)
         self.assertIsNotNone(publisher.id)
 
-        publisher, created = functions.publisher.create(
-            'Test Press', links=['https://press.com']
-        )
+        publisher, created = fpublisher.create('Test Press',
+                                               links=['https://press.com'])
         self.assertTrue(created)
         self.assertIsNotNone(publisher.id)
         self.assertEquals(1, publisher.links.count())
 
     def test_publisher_edit(self):
-        publisher, created = functions.publisher.create('Test2 Publisher')
+        publisher, created = fpublisher.create('Test2 Publisher')
         self.assertTrue(created)
         self.assertIsNotNone(publisher.id)
 
-        functions.publisher.edit(publisher, 'name', 'IEEE Test Publisher')
+        fpublisher.edit(publisher, 'name', 'IEEE Test Publisher')
         self.assertEquals('IEEE Test Publisher', publisher.name)
 
-        functions.publisher.edit(publisher, '+link', 'https://example.com')
+        fpublisher.edit(publisher, 'link', 'https://example.com')
         self.assertEquals(1, publisher.links.count())
         self.assertEquals('https://example.com', publisher.links.first().link)
 
-        functions.publisher.edit(publisher, '+link',
-                                 'https://test-publisher.com')
+        fpublisher.edit(publisher, 'link', 'https://test-publisher.com')
         self.assertEquals(2, publisher.links.count())
         self.assertEquals('https://test-publisher.com',
                           publisher.links.last().link)
 
-        functions.publisher.edit(publisher, '-link', 'https://example.com')
+        fpublisher.edit(publisher, 'link', 'https://example.com')
         self.assertEquals(1, publisher.links.count())
         self.assertEquals('https://test-publisher.com',
                           publisher.links.first().link)
 
     def test_publisher_get(self):
-        publisher, created = functions.publisher.create('Test Publisher')
+        publisher, created = fpublisher.create('Test Publisher')
         self.assertTrue(created)
         self.assertIsNotNone(publisher.id)
 
-        publisher2 = functions.publisher.get.by_term('Test Publisher')
+        publisher2 = fpublisher.get.by_term('Test Publisher')
         self.assertIsNotNone(publisher2)
         self.assertEquals(publisher, publisher2)
 
-        publisher2 = functions.publisher.get.by_term(str(publisher.id))
+        publisher2 = fpublisher.get.by_term(str(publisher.id))
         self.assertIsNotNone(publisher2)
         self.assertEquals(publisher, publisher2)
 
     def test_publisher_list(self):
-        publisher, created = functions.publisher.create('Test Publisher')
+        publisher, created = fpublisher.create('Test Publisher')
         self.assertTrue(created)
         self.assertIsNotNone(publisher.id)
 
-        publisher, created = functions.publisher.create('Test2 Publisher')
+        publisher, created = fpublisher.create('Test2 Publisher')
         self.assertTrue(created)
         self.assertIsNotNone(publisher.id)
 
-        publisher, created = functions.publisher.create('Test Prees')
+        publisher, created = fpublisher.create('Test Prees')
         self.assertTrue(created)
         self.assertIsNotNone(publisher.id)
 
-        publishers = functions.publisher.list.all()
+        publishers = fpublisher.list.all()
         self.assertEquals(3, len(publishers))
 
-        publishers = functions.publisher.list.by_term('est P')
+        publishers = fpublisher.list.by_term('est P')
         self.assertEquals(2, len(publishers))

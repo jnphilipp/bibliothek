@@ -17,51 +17,51 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.test import TestCase
-from genres import functions
+from genres.functions import genre as fgenre
 
 
 class GenreFunctionsTestCase(TestCase):
     def test_genre_create(self):
-        genre, created = functions.genre.create('Fiction')
+        genre, created = fgenre.create('Fiction')
         self.assertTrue(created)
         self.assertIsNotNone(genre.id)
 
     def test_genre_edit(self):
-        genre, created = functions.genre.create('SciFi')
+        genre, created = fgenre.create('SciFi')
         self.assertTrue(created)
         self.assertIsNotNone(genre.id)
 
-        functions.genre.edit(genre, 'name', 'Science Fiction')
+        fgenre.edit(genre, 'name', 'Science Fiction')
         self.assertEquals('Science Fiction', genre.name)
 
     def test_genre_get(self):
-        genre, created = functions.genre.create('Fiction')
+        genre, created = fgenre.create('Fiction')
         self.assertTrue(created)
         self.assertIsNotNone(genre.id)
 
-        genre2 = functions.genre.get.by_term('Fiction')
+        genre2 = fgenre.get.by_term('Fiction')
         self.assertIsNotNone(genre2)
         self.assertEquals(genre, genre2)
 
-        genre2 = functions.genre.get.by_term(str(genre.id))
+        genre2 = fgenre.get.by_term(str(genre.id))
         self.assertIsNotNone(genre2)
         self.assertEquals(genre, genre2)
 
     def test_genre_list(self):
-        genre, created = functions.genre.create('Science Fiction')
+        genre, created = fgenre.create('Science Fiction')
         self.assertTrue(created)
         self.assertIsNotNone(genre.id)
 
-        genre, created = functions.genre.create('Romance')
+        genre, created = fgenre.create('Romance')
         self.assertTrue(created)
         self.assertIsNotNone(genre.id)
 
-        genre, created = functions.genre.create('Fiction')
+        genre, created = fgenre.create('Fiction')
         self.assertTrue(created)
         self.assertIsNotNone(genre.id)
 
-        genres = functions.genre.list.all()
+        genres = fgenre.list.all()
         self.assertEquals(3, len(genres))
 
-        genres = functions.genre.list.by_term('Fiction')
+        genres = fgenre.list.by_term('Fiction')
         self.assertEquals(2, len(genres))
