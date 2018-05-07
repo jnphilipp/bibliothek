@@ -54,7 +54,8 @@ def add_subparser(parser):
     # person edit
     edit_parser = subparser.add_parser('edit', help=_('Edit a person'))
     edit_parser.add_argument('person', help=_('Person'))
-    edit_parser.add_argument('field', choices=['first-name', 'last-name'],
+    edit_parser.add_argument('field',
+                             choices=['first-name', 'last-name', 'link'],
                              help=_('Which field to edit'))
     edit_parser.add_argument('value', help=_('New value for field'))
 

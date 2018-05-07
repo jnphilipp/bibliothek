@@ -56,7 +56,7 @@ def edit(publisher, field, value):
 
     if field == 'name':
         publisher.name = value
-    elif field == '+link':
+    elif field == 'link':
         link, created = Link.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(link=value)
         ).get_or_create(defaults={'link': value})

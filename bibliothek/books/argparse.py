@@ -150,7 +150,6 @@ def edition_subparser(parser):
     edition_parser = parser.add_parser('edition', help=_('Manage editions'))
     edition_parser.add_argument('book', help=_('Book'))
     subparser = edition_parser.add_subparsers(dest='edition_subparser')
-
     acquisition_subparser(subparser, 'edition', _('Edition'))
     read_subparser(subparser, 'edition', _('Edition'))
 
@@ -179,9 +178,9 @@ def edition_subparser(parser):
     edit_edition_parser = edit_subparser.add_parser('isbn')
     edit_edition_parser.add_argument('value', help=_('New value for field'))
 
-    edit_published_parser = edit_subparser.add_parser('publishing-date')
-    edit_published_parser.add_argument('value', type=valid_date,
-                                       help=_('New value for field'))
+    edit_pubdate_parser = edit_subparser.add_parser('publishing-date')
+    edit_pubdate_parser.add_argument('value', type=valid_date,
+                                     help=_('New value for field'))
 
     edit_cover_parser = edit_subparser.add_parser('cover')
     edit_cover_parser.add_argument('value', help=_('New value for field'))
@@ -209,7 +208,7 @@ def edition_subparser(parser):
     list_parser.add_argument('--search', help=_('Filter editions by term'))
 
     # paper open
-    help_txt=_('Open a file associated with an edition')
+    help_txt = _('Open a file associated with an edition')
     open_parser = subparser.add_parser('open', help=help_txt)
     open_parser.add_argument('edition', nargs='?', help=_('Edition'))
     open_parser.add_argument('file', type=int, help=_('File to open'))

@@ -80,7 +80,6 @@ def add_subparser(parser):
     paper_parser = parser.add_parser('paper', help=_('Manage papers'))
     paper_parser.set_defaults(func=_paper)
     subparser = paper_parser.add_subparsers(dest='subparser')
-
     acquisition_subparser(subparser, 'paper', _('Paper'))
     read_subparser(subparser, 'paper', _('Paper'))
 
@@ -106,9 +105,9 @@ def add_subparser(parser):
     edit_title_parser = edit_subparser.add_parser('title')
     edit_title_parser.add_argument('value', help=_('New value for field'))
 
-    edit_published_parser = edit_subparser.add_parser('publishing-date')
-    edit_published_parser.add_argument('value', type=valid_date,
-                                       help=_('New value for field'))
+    edit_pubdate_parser = edit_subparser.add_parser('publishing-date')
+    edit_pubdate_parser.add_argument('value', type=valid_date,
+                                     help=_('New value for field'))
 
     edit_journal_parser = edit_subparser.add_parser('journal')
     edit_journal_parser.add_argument('value', help=_('New value for field'))

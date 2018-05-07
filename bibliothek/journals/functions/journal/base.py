@@ -53,10 +53,18 @@ def create(name, links=[]):
 
 
 def edit(journal, field, value):
-    assert field in ['name']
+    assert field in ['name', 'link']
 
     if field == 'name':
         journal.name = value
+    elif field == 'link':
+        link, created = Link.objects.filter(
+            Q(pk=value if value.isdigit() else None) | Q(link=value)
+        ).get_or_create(defaults={'link': value})
+        if journal.links.filter(pk=link.pk).exists():
+            journal.links.remove(link)
+        else:
+            journal.links.add(link)
     journal.save()
     msg = _('Successfully edited journal "%s" with id "%s".')
     stdout.p([msg % (journal.name, journal.id)], positions=[1.])

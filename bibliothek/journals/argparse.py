@@ -52,7 +52,7 @@ def add_subparser(parser):
     # journal edit
     edit_parser = subparser.add_parser('edit', help=_('Edit a journal'))
     edit_parser.add_argument('journal', help=_('Journal'))
-    edit_parser.add_argument('field', choices=['name'],
+    edit_parser.add_argument('field', choices=['name', 'link'],
                              help=_('Which field to edit'))
     edit_parser.add_argument('value', help=_('New value for field'))
 

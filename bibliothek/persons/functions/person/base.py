@@ -57,12 +57,21 @@ def create(first_name, last_name, links=[]):
 
 
 def edit(person, field, value):
-    assert field in ['first-name', 'first_name', 'last-name', 'last_name']
+    assert field in ['first-name', 'first_name', 'last-name', 'last_name',
+                     'link']
 
     if field == 'first_name' or field == 'first-name':
         person.first_name = value
     elif field == 'last_name' or field == 'last-name':
         person.last_name = value
+    elif field == 'link':
+        link, created = Link.objects.filter(
+            Q(pk=value if value.isdigit() else None) | Q(link=value)
+        ).get_or_create(defaults={'link': value})
+        if person.links.filter(pk=link.pk).exists():
+            person.links.remove(link)
+        else:
+            person.links.add(link)
     person.save()
     msg = _('Successfully edited person "%(first_name)s %(last_name)s" with ' +
             'id "%(id)s".')
