@@ -204,7 +204,7 @@ _bibliothek()
                     return 0
                     ;;
                 edit)
-                    opts="name -h --help"
+                    opts="name link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -239,7 +239,7 @@ _bibliothek()
                     return 0
                     ;;
                 edit)
-                    opts="name feed -h --help"
+                    opts="name feed link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -306,6 +306,11 @@ _bibliothek()
                             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                             return 0
                             ;;
+                        open)
+                            opts="-h --help"
+                            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                            return 0
+                            ;;
                         read)
                             subcommand="${COMP_WORDS[6]}"
                             case "${subcommand}" in
@@ -332,7 +337,7 @@ _bibliothek()
                             esac
                             ;;
                         *)
-                            opts="acquisition add edit info list read -h --help"
+                            opts="acquisition add edit info list open read -h --help"
                             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                             return 0
                         ;;
@@ -459,7 +464,7 @@ _bibliothek()
                     return 0
                     ;;
                 edit)
-                    opts="first-name last-name -h --help"
+                    opts="first-name last-name link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
