@@ -4,13 +4,26 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-offset-1 col-md-10">
-        <h1 class="page-header">{{ genre.name }}</h1>
+    <div class="col">
+        <h1>{{ genre.name }}</h1>
+        <hr>
     </div>
 </div>
 <div class="row">
-    <div class="col-md-offset-1 col-md-10">
-        <h2 class="page-header">{% trans "Books" %}</h2>
+    <div class="col">
+        <dl class="row">
+            <dt class="col-sm-1">{% trans "Id" %}</dt>
+            <dd class="col-sm-11">{{ genre.id }}</dd>
+        </dl>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <h2>{% trans "Books" %}</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
@@ -28,7 +41,7 @@
                     {% for book in books %}
                         <tr>
                             <th><a href="{% url "books:book_detail" book.slug %}">{{ book.title }}</a></th>
-                            <td>{% for author in book.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{% for author in book.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
                             <td>{% if book.series %}<a href="{% url "series:series_detail" book.series.slug %}">{{ book.series.name }}</a>{% endif %}</td>
                             <td>{{ book.volume|default:"" }}</td>
                             <td>{{ book.ce }}</td>

@@ -4,21 +4,26 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-offset-1 col-md-10">
-        <h1 class="page-header">{{ book.title }}</h1>
-        <dl class="dl-horizontal">
-            <dt>{% trans "Id" %}</dt>
-            <dd>{{ book.id }}</dd>
-            <dt>{% trans "Authors" %}</dt>
-            <dd>{% for author in book.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
-            <dt>{% trans "Series" %}</dt>
-            <dd>{% if book.series %}<a href="{% url "series:series_detail" book.series.slug %}">{{ book.series.name }}</a>{% endif %}</dd>
-            <dt>{% trans "Volume" %}</dt>
-            <dd>{{ book.volume|default:"" }}</dd>
-            <dt>{% trans "Genres" %}</dt>
-            <dd>{% for genre in book.genres.all %}<a href="{% url "genres:genre_detail" genre.slug %}">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
-            <dt>{% trans "Links" %}</dt>
-            <dd>
+    <div class="col">
+        <h1>{{ book.title }}</h1>
+        <hr>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <dl class="row">
+            <dt class="col-sm-1">{% trans "Id" %}</dt>
+            <dd class="col-sm-11">{{ book.id }}</dd>
+            <dt class="col-sm-1">{% trans "Authors" %}</dt>
+            <dd class="col-sm-11">{% for author in book.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dt class="col-sm-1">{% trans "Series" %}</dt>
+            <dd class="col-sm-11">{% if book.series %}<a href="{% url "series:series_detail" book.series.slug %}">{{ book.series.name }}</a>{% endif %}</dd>
+            <dt class="col-sm-1">{% trans "Volume" %}</dt>
+            <dd class="col-sm-11">{{ book.volume|default:"" }}</dd>
+            <dt class="col-sm-1">{% trans "Genres" %}</dt>
+            <dd class="col-sm-11">{% for genre in book.genres.all %}<a href="{% url "genres:genre_detail" genre.slug %}">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+            <dt class="col-sm-1">{% trans "Links" %}</dt>
+            <dd class="col-sm-11">
                 <ul>
                     {% for link in paper.links.all %}
                         <li><a href="{{ link }}">{{ link }}</a></li>
@@ -29,8 +34,13 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-offset-1 col-md-10">
-        <h2 class="page-header">{% trans "Editions" %}</h2>
+    <div class="col">
+        <h2>{% trans "Editions" %}</h2>
+        <hr>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
         {% for edition in book.editions.all %}
             <a href="{% url "books:edition_detail" book.slug edition.id %}">
                 <figure class="figure">

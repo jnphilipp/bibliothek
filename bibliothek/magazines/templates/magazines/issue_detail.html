@@ -4,51 +4,44 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-offset-1 col-md-7">
-        <h1 class="page-header">{{ issue.magazine.name }} {{ issue.issue }}</h1>
-        <dl class="dl-horizontal">
-            <dt>{% trans "Magazine" %}</dt>
-            <dt>{% trans "Id" %}</dt>
-            <dd>{{ issue.magazine.id }}</dd>
-            <dd><a href="{% url "magazines:magazine_detail" issue.magazine.slug %}">{{ issue.magazine.name }}</a></dd>
-            <dd>{% if issue.magazine.feed %}<a href="{{ issue.magazine.feed.link }}">{{ issue.magazine.feed.link }}</a>{% endif %}</dd>
-            <dt>{% trans "Links" %}</dt>
-            <dd>
-                <ul>
-                    {% for link in issue.magazine.links.all %}
-                        <li><a href="{{ link }}">{{ link }}</a></li>
-                    {% endfor %}
-                </ul>
-            </dd>
-            <hr>
-            <dt>{% trans "Id" %}</dt>
-            <dd>{{ issue.id }}</dd>
-            <dt>{% trans "Issue" %}</dt>
-            <dd>{{ issue.issue }}</dd>
-            <dt>{% trans "Publishing date" %}</dt>
-            <dd>{{ issue.publishing_date|date:"Y-m-d" }}</dd>
-            <dt>{% trans "Languages" %}</dt>
-            <dd>{% for language in issue.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
-            <dt>{% trans "Links" %}</dt>
-            <dd>
+    <div class="col">
+        <h1>{{ issue.magazine.name }} {{ issue.issue }}</h1>
+        <hr>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <dl class="row">
+            <dt class="col-sm-2">{% trans "Id" %}</dt>
+            <dd class="col-sm-10">{{ issue.id }}</dd>
+            <dt class="col-sm-2">{% trans "Magazine" %}</dt>
+            <dd class="col-sm-10"><a href="{% url "magazines:magazine_detail" issue.magazine.slug %}">{{ issue.magazine.name }}</a></dd>
+            <dt class="col-sm-2">{% trans "Issue" %}</dt>
+            <dd class="col-sm-10">{{ issue.issue }}</dd>
+            <dt class="col-sm-2">{% trans "Publishing date" %}</dt>
+            <dd class="col-sm-10">{{ issue.publishing_date|date:"Y-m-d" }}</dd>
+            <dt class="col-sm-2">{% trans "Languages" %}</dt>
+            <dd class="col-sm-10">{% for language in issue.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dt class="col-sm-2">{% trans "Links" %}</dt>
+            <dd class="col-sm-10">
                 <ul>
                     {% for link in issue.links.all %}
                         <li><a href="{{ link }}">{{ link }}</a></li>
                     {% endfor %}
                 </ul>
-                <hr>
             </dd>
-            <dt>{% trans "Files" %}</dt>
-            <dd>
+            <dt class="col-sm-12"><hr></dt>
+            <dt class="col-sm-2">{% trans "Files" %}</dt>
+            <dd class="col-sm-10">
                 <ul>
                     {% for file in issue.files.all %}
                         <li><a href="{{ file.file.url }}">{{ file }}</a></li>
                     {% endfor %}
                 </ul>
-                <hr>
             </dd>
-            <dt>{% trans "Acquisitions" %}</dt>
-            <dd>
+            <dt class="col-sm-12"><hr></dt>
+            <dt class="col-sm-2">{% trans "Acquisitions" %}</dt>
+            <dd class="col-sm-10">
                 {% for acquisition in issue.acquisitions.all %}
                     <ul>
                         <li>
@@ -57,10 +50,10 @@
                         </li>
                     </ul>
                 {% endfor %}
-                <hr>
             </dd>
-            <dt>{% trans "Reads" %}</dt>
-            <dd>
+            <dt class="col-sm-12"><hr></dt>
+            <dt class="col-sm-2">{% trans "Reads" %}</dt>
+            <dd class="col-sm-10">
                 {% for read in issue.reads.all %}
                     <ul>
                         <li>

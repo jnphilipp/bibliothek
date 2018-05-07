@@ -4,57 +4,62 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-offset-1 col-md-7">
-        <h1 class="page-header">{% trans "Edition" %} #{{ edition.id }}</h1>
-        <dl class="dl-horizontal">
-            <dt>{% trans "Id" %}</dt>
-            <dd>{{ edition.book.id }}</dd>
-            <dt>{% trans "Title" %}</dt>
-            <dd><a href="{% url "books:book_detail" edition.book.slug %}">{{ edition.book.title }}</a></dd>
-            <dt>{% trans "Authors" %}</dt>
-            <dd>{% for author in edition.book.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
-            <dt>{% trans "Series" %}</dt>
-            <dd>{% if edition.book.series %}<a href="{% url "series:series_detail" edition.book.series.slug %}">{{ edition.book.series.name }}</a>{% endif %}</dd>
-            <dt>{% trans "Volume" %}</dt>
-            <dd>{{ edition.book.volume|default:"" }}</dd>
-            <dt>{% trans "Genres" %}</dt>
-            <dd>{% for genre in edition.book.genres.all %}<a href="{% url "genres:genre_detail" genre.slug %}">{{ genre.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
-            <dt>{% trans "Links" %}</dt>
-            <dd>
+    <div class="col">
+        <h1>{% trans "Edition" %} #{{ edition.id }}</h1>
+        <hr>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <dl class="row">
+            <dt class="col-sm-1">{% trans "Id" %}</dt>
+            <dd class="col-sm-11">{{ edition.book.id }}</dd>
+            <dt class="col-sm-1">{% trans "Title" %}</dt>
+            <dd class="col-sm-11"><a href="{% url "books:book_detail" edition.book.slug %}">{{ edition.book.title }}</a></dd>
+            <dt class="col-sm-1">{% trans "Authors" %}</dt>
+            <dd class="col-sm-11">{% for author in edition.book.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+            <dt class="col-sm-1">{% trans "Series" %}</dt>
+            <dd class="col-sm-11">{% if edition.book.series %}<a href="{% url "series:series_detail" edition.book.series.slug %}">{{ edition.book.series.name }}</a>{% endif %}</dd>
+            <dt class="col-sm-1">{% trans "Volume" %}</dt>
+            <dd class="col-sm-11">{{ edition.book.volume|default:"" }}</dd>
+            <dt class="col-sm-1">{% trans "Genres" %}</dt>
+            <dd class="col-sm-11">{% for genre in edition.book.genres.all %}<a href="{% url "genres:genre_detail" genre.slug %}">{{ genre.name }}</a>{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+            <dt class="col-sm-1">{% trans "Links" %}</dt>
+            <dd class="col-sm-11">
                 <ul>
                     {% for link in paper.links.all %}
                         <li><a href="{{ link }}">{{ link }}</a></li>
                     {% endfor %}
                 </ul>
             </dd>
-            <hr>
-            <dt>{% trans "Id" %}</dt>
-            <dd>{{ edition.id }}</dd>
-            <dt>{% trans "Alternate title" %}</dt>
-            <dd>{{ edition.alternate_title|default:"" }}</dd>
-            <dt>{% trans "ISBN" %}</dt>
-            <dd>{{ edition.isbn|default:"" }}</dd>
-            <dt>{% trans "Binding" %}</dt>
-            <dd>{% if edition.binding %}{{ edition.binding.name }}{% endif %}</dd>
-            <dt>{% trans "Publisher" %}</dt>
-            <dd>{% if edition.publisher %}<a href="{% url "publishers:publisher_detail" edition.publisher.slug %}">{{ edition.publisher.name }}</a>{% endif %}</dd>
-            <dt>{% trans "Publishing date" %}</dt>
-            <dd>{{ edition.publishing_date|date:"Y-m-d" }}</dd>
-            <dt>{% trans "Languages" %}</dt>
-            <dd>{% for language in edition.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
-            <dt>{% trans "Bibtex" %}</dt>
-            <dd>{% if paper.bibtex %}<pre>{{ paper.bibtex }}</pre>{% endif %}</dd>
-            <dt>{% trans "Files" %}</dt>
-            <dd>
+            <dt class="col-sm-12"><hr></dt>
+            <dt class="col-sm-2">{% trans "Id" %}</dt>
+            <dd class="col-sm-10">{{ edition.id }}</dd>
+            <dt class="col-sm-2">{% trans "Alternate title" %}</dt>
+            <dd class="col-sm-10">{{ edition.alternate_title|default:"" }}</dd>
+            <dt class="col-sm-2">{% trans "ISBN" %}</dt>
+            <dd class="col-sm-10">{{ edition.isbn|default:"" }}</dd>
+            <dt class="col-sm-2">{% trans "Binding" %}</dt>
+            <dd class="col-sm-10">{% if edition.binding %}{{ edition.binding.name }}{% endif %}</dd>
+            <dt class="col-sm-2">{% trans "Publisher" %}</dt>
+            <dd class="col-sm-10">{% if edition.publisher %}<a href="{% url "publishers:publisher_detail" edition.publisher.slug %}">{{ edition.publisher.name }}</a>{% endif %}</dd>
+            <dt class="col-sm-2">{% trans "Publishing date" %}</dt>
+            <dd class="col-sm-10">{{ edition.publishing_date|date:"Y-m-d" }}</dd>
+            <dt class="col-sm-2">{% trans "Languages" %}</dt>
+            <dd class="col-sm-10">{% for language in edition.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dt class="col-sm-2">{% trans "Bibtex" %}</dt>
+            <dd class="col-sm-10">{% if paper.bibtex %}<pre>{{ paper.bibtex }}</pre>{% endif %}</dd>
+            <dt class="col-sm-2">{% trans "Files" %}</dt>
+            <dd class="col-sm-10">
                 <ul>
                     {% for file in edition.files.all %}
                         <li><a href="{{ file.file.url }}">{{ file }}</a></li>
                     {% endfor %}
                 </ul>
-                <hr>
             </dd>
-            <dt>{% trans "Acquisitions" %}</dt>
-            <dd>
+            <dt class="col-sm-12"><hr></dt>
+            <dt class="col-sm-1">{% trans "Acquisitions" %}</dt>
+            <dd class="col-sm-11">
                 {% for acquisition in edition.acquisitions.all %}
                     <ul>
                         <li>
@@ -63,10 +68,10 @@
                         </li>
                     </ul>
                 {% endfor %}
-                <hr>
             </dd>
-            <dt>{% trans "Reads" %}</dt>
-            <dd>
+            <dt class="col-sm-12"><hr></dt>
+            <dt class="col-sm-1">{% trans "Reads" %}</dt>
+            <dd class="col-sm-11">
                 {% for read in edition.reads.all %}
                     <ul>
                         <li>

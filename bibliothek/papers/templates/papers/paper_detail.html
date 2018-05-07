@@ -4,41 +4,46 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-m-offset-1 col-md-10">
-        <h1 class="page-header">{{ paper.title }}</h1>
-        <dl class="dl-horizontal">
-            <dt>{% trans "Authors" %}</dt>
-            <dd>{% for author in paper.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
-            <dt>{% trans "Journal" %}</dt>
-            <dd>{% if paper.journal %}<a href="{% url "journals:journal_detail" paper.journal.slug %}">{{ paper.journal.name }}</a>{% endif %}</dd>
-            <dt>{% trans "Volume" %}</dt>
-            <dd>{{ paper.volume|default:"" }}</dd>
-            <dt>{% trans "Publishing date" %}</dt>
-            <dd>{{ paper.publishing_date|date:"Y-m-d" }}</dd>
-            <dt>{% trans "Languages" %}</dt>
-            <dd>{% for language in paper.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
-            <dt>{% trans "Bibtex" %}</dt>
-            <dd><pre>{{ paper.bibtex }}</pre></dd>
-            <dt>{% trans "Links" %}</dt>
-            <dd>
+    <div class="col">
+        <h1>{{ paper.title }}</h1>
+        <hr>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <dl class="row">
+            <dt class="col-sm-2">{% trans "Authors" %}</dt>
+            <dd class="col-sm-10">{% for author in paper.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+            <dt class="col-sm-2">{% trans "Journal" %}</dt>
+            <dd class="col-sm-10">{% if paper.journal %}<a href="{% url "journals:journal_detail" paper.journal.slug %}">{{ paper.journal.name }}</a>{% endif %}</dd>
+            <dt class="col-sm-2">{% trans "Volume" %}</dt>
+            <dd class="col-sm-10">{{ paper.volume|default:"" }}</dd>
+            <dt class="col-sm-2">{% trans "Publishing date" %}</dt>
+            <dd class="col-sm-10">{{ paper.publishing_date|date:"Y-m-d" }}</dd>
+            <dt class="col-sm-2">{% trans "Languages" %}</dt>
+            <dd class="col-sm-10">{% for language in paper.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dt class="col-sm-2">{% trans "Bibtex" %}</dt>
+            <dd class="col-sm-10"><pre>{{ paper.bibtex }}</pre></dd>
+            <dt class="col-sm-2">{% trans "Links" %}</dt>
+            <dd class="col-sm-10">
                 <ul>
                     {% for link in paper.links.all %}
                         <li><a href="{{ link }}">{{ link }}</a></li>
                     {% endfor %}
                 </ul>
-                <hr>
             </dd>
-            <dt>{% trans "Files" %}</dt>
-            <dd>
+            <dt class="col-sm-12"><hr></dt>
+            <dt class="col-sm-2">{% trans "Files" %}</dt>
+            <dd class="col-sm-10">
                 <ul>
                     {% for file in paper.files.all %}
                         <li><a href="{{ file.file.url }}">{{ file }}</a></li>
                     {% endfor %}
                 </ul>
-                <hr>
             </dd>
-            <dt>{% trans "Acquisitions" %}</dt>
-            <dd>
+            <dt class="col-sm-12"><hr></dt>
+            <dt class="col-sm-2">{% trans "Acquisitions" %}</dt>
+            <dd class="col-sm-10">
                 {% for acquisition in paper.acquisitions.all %}
                     <ul>
                         <li>
@@ -47,10 +52,10 @@
                         </li>
                     </ul>
                 {% endfor %}
-                <hr>
             </dd>
-            <dt>{% trans "Reads" %}</dt>
-            <dd>
+            <dt class="col-sm-12"><hr></dt>
+            <dt class="col-sm-2">{% trans "Reads" %}</dt>
+            <dd class="col-sm-10">
                 {% for read in paper.reads.all %}
                     <ul>
                         <li>
