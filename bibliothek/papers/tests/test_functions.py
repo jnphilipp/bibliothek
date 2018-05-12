@@ -16,8 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
+from datetime import date
 from django.test import TestCase
 from papers.functions import paper as fpaper
+from papers.functions import bibtex as fbibtex
 
 
 class PaperFunctionsTestCase(TestCase):
@@ -52,6 +54,35 @@ class PaperFunctionsTestCase(TestCase):
         self.assertEquals('Science Journal', paper.journal.name)
         self.assertEquals(1, paper.languages.count())
         self.assertEquals('English', paper.languages.first().name)
+
+    def test_paper_bibtex(self):
+        bibtex = '@ARTICLE{arXiv1706.02515,author = {Klambauer, Günter and Unterthiner, Thomas and Mayr, Andreas and Hochreiter, Sepp},title = "Self-Normalizing Neural Networks",journal = {ArXiv e-prints},archivePrefix = "arXiv",eprint = {1706.02515},primaryClass = "cs.LG",keywords = {Computer Science - Learning, Statistics - Machine Learning},year = 2017,month = jun,url = {https://arxiv.org/abs/1706.02515},adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170602515K},adsnote = {Provided by the SAO/NASA Astrophysics Data System}}'
+
+        expected = [{
+            'title': 'Self-Normalizing Neural Networks',
+            'authors': [{
+                'last_name': 'Klambauer',
+                'first_name': 'Günter'
+            }, {
+                'last_name': 'Unterthiner',
+                'first_name': 'Thomas'
+            }, {
+                'last_name': 'Mayr',
+                'first_name': 'Andreas'
+            }, {
+                'last_name': 'Hochreiter',
+                'first_name': 'Sepp'
+            }],
+            'journal': 'ArXiv e-prints',
+            'volume': '1706.02515',
+            'publisher': '',
+            'publishing_date': date(year=2017, month=6, day=1),
+            'url': 'https://arxiv.org/abs/1706.02515',
+            'bibtex': bibtex
+        }]
+
+        entries = fbibtex.parse(bibtex)
+        self.assertEquals(expected, entries)
 
     def test_paper_parse(self):
         paper, created, acquisition = fpaper.parse.from_dict({
@@ -146,7 +177,6 @@ class PaperFunctionsTestCase(TestCase):
 
         fpaper.acquisition.edit(paper, acquisition.id, 'price', 5.75)
         self.assertIsNotNone(5.75, acquisition.price)
-
 
         fpaper.acquisition.delete(paper, acquisition.id)
         self.assertEquals(0, paper.acquisitions.count())
