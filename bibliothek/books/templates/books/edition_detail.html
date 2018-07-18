@@ -49,6 +49,14 @@
             <dd class="col-sm-10">{% for language in edition.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
             <dt class="col-sm-2">{% trans "Bibtex" %}</dt>
             <dd class="col-sm-10">{% if paper.bibtex %}<pre>{{ paper.bibtex }}</pre>{% endif %}</dd>
+            <dt class="col-sm-2">{% trans "Links" %}</dt>
+            <dd class="col-sm-10">
+                <ul>
+                    {% for link in edition.links.all %}
+                        <li><a href="{{ link }}">{{ link }}</a></li>
+                    {% endfor %}
+                </ul>
+            </dd>
             <dt class="col-sm-2">{% trans "Files" %}</dt>
             <dd class="col-sm-10">
                 <ul>

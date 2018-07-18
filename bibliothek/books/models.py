@@ -97,7 +97,7 @@ class Book(models.Model):
         super(Book, self).save(*args, **kwargs)
 
     def to_json(self):
-        data = {'title':self.title}
+        data = {'title': self.title}
         if self.authors.all():
             data['authors'] = [
                 author.to_json() for author in self.authors.all()
@@ -185,6 +185,12 @@ class Edition(models.Model):
         blank=True,
         related_name='editions',
         verbose_name=_('Languages')
+    )
+    links = models.ManyToManyField(
+        Link,
+        blank=True,
+        related_name='editions',
+        verbose_name=_('Links')
     )
     bibtex = models.TextField(
         blank=True,

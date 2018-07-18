@@ -49,7 +49,8 @@ def _book(args):
         elif args.edition_subparser == 'add' and book:
             fedition.create(book, args.alternate_title, args.isbn,
                             args.publishing_date, args.cover, args.binding,
-                            args.publisher, args.language, args.file)
+                            args.publisher, args.language, args.link,
+                            args.file)
         elif args.edition_subparser == 'edit' and book:
             edition = fedition.get.by_term(book, args.edition)
             if edition:
@@ -165,6 +166,8 @@ def edition_subparser(parser):
     add_parser.add_argument('--file', nargs='*', default=[], help=_('Files'))
     add_parser.add_argument('--language', nargs='*', default=[],
                             help=_('Languages'))
+    add_parser.add_argument('--link', nargs='*', default=[],
+                            help=_('Links'))
 
     # edition edit
     edit_parser = subparser.add_parser('edit', help=_('Edit a edition'))
@@ -193,6 +196,9 @@ def edition_subparser(parser):
 
     edit_language_parser = edit_subparser.add_parser('language')
     edit_language_parser.add_argument('value', help=_('New value for field'))
+
+    edit_link_parser = edit_subparser.add_parser('link')
+    edit_link_parser.add_argument('value', help=_('New value for field'))
 
     edit_file_parser = edit_subparser.add_parser('file')
     edit_file_parser.add_argument('value', help=_('New value for field'))

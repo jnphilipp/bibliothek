@@ -25,13 +25,14 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from files.models import File
 from languages.models import Language
+from links.models import Link
 from publishers.models import Publisher
 from utils import lookahead, stdout
 
 
 def create(book, alternate_title=None, isbn=None, publishing_date=None,
            cover_image=None, binding=None, publisher=None, languages=[],
-           files=[]):
+           links=[], files=[]):
     positions = [.33, 1.]
 
     edition, created = Edition.objects.get_or_create(
@@ -40,7 +41,7 @@ def create(book, alternate_title=None, isbn=None, publishing_date=None,
         publishing_date=publishing_date,
         defaults={
             'isbn': isbn,
-            'publishing_date':publishing_date
+            'publishing_date': publishing_date
         }
     )
     if created:
@@ -102,6 +103,14 @@ def create(book, alternate_title=None, isbn=None, publishing_date=None,
             stdout.p([_('Files') if i == 0 else '',
                       '%s: %s' % (file_obj.id, file_name)],
                      after=None if has_next else '_', positions=positions)
+        for (i, url), has_next in lookahead(enumerate(links)):
+            link, c = Link.objects.filter(
+                Q(pk=url if url.isdigit() else None) | Q(link=url)
+            ).get_or_create(defaults={'link': url})
+            edition.links.add(link)
+            stdout.p([_('Links') if i == 0 else '',
+                      '%s: %s' % (link.id, link.link)],
+                     after=None if has_next else '_', positions=positions)
         edition.save()
 
         msg = _('Successfully added edition "%(edition)s" with id "%(id)s".')
@@ -118,7 +127,7 @@ def create(book, alternate_title=None, isbn=None, publishing_date=None,
 def edit(edition, field, value):
     fields = ['alternate_title', 'alternate-title', 'binding', 'cover', 'isbn',
               'publishing_date', 'publishing-date', 'publisher', 'language',
-              'file']
+              'link', 'file']
     assert field in fields
 
     if field == 'alternate_title' or field == 'alternate-title':
@@ -146,6 +155,14 @@ def edit(edition, field, value):
             edition.languages.remove(language)
         else:
             edition.languages.add(language)
+    elif field == 'link':
+        link, created = Link.objects.filter(
+            Q(pk=value if value.isdigit() else None) | Q(link=value)
+        ).get_or_create(defaults={'link': value})
+        if edition.links.filter(pk=link.pk).exists():
+            edition.links.remove(link)
+        else:
+            edition.links.add(link)
     elif field == 'file':
         file_name = os.path.basename(value)
         file_obj = File()
@@ -155,11 +172,12 @@ def edit(edition, field, value):
     edition.save()
 
     msg = _('Successfully edited edition "%(edition)s" with id "%(id)s".')
-    stdout.p([msg % {'edition':str(edition), 'id':edition.id}], positions=[1.])
+    stdout.p([msg % {'edition': str(edition), 'id': edition.id}],
+             positions=[1.])
 
 
 def info(edition):
-    positions=[.33, 1.]
+    positions = [.33, 1.]
     stdout.p([_('Field'), _('Value')], positions=positions, after='=')
     stdout.p([_('Id'), edition.id], positions=positions)
     stdout.p([_('Book'), str(edition.book)], positions=positions)
@@ -179,7 +197,8 @@ def info(edition):
              positions=positions)
     stdout.p([_('Publisher'),
               '%s: %s' % (edition.publisher.id,
-                          edition.publisher.name) if edition.publisher else ''],
+                          edition.publisher.name) if edition.publisher
+                          else ''],
              positions=positions)
 
     if edition.languages.count() > 0:
@@ -190,6 +209,15 @@ def info(edition):
                      positions=positions, after='' if has_next else '_')
     else:
         stdout.p([_('Languages'), ''], positions=positions)
+
+    if edition.links.count() > 0:
+        links = edition.links.all()
+        for (i, link), has_next in lookahead(enumerate(links)):
+            stdout.p([_('Links') if i == 0 else '',
+                      '%s: %s' % (link.id, link.link)],
+                     positions=positions, after='' if has_next else '_')
+    else:
+        stdout.p([_('Links'), ''], positions=positions)
 
     if edition.files.count() > 0:
         for (i, file), has_next in lookahead(enumerate(edition.files.all())):
