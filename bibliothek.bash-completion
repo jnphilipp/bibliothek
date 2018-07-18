@@ -82,7 +82,7 @@ _bibliothek()
                             esac
                             ;;
                         add)
-                            opts="--alternate_title --isbn --publishing-date --cover --binding --publisher --file --language -h --help"
+                            opts="--alternate-title --isbn --publishing-date --cover --binding --publisher --file --language -h --help"
                             copts=$(compgen -W "${opts}" -- ${cur})
                             OLDIFS=$IFS
                             IFS=$'\n'
@@ -92,7 +92,7 @@ _bibliothek()
                             return 0
                             ;;
                         edit)
-                            opts="alternate_title isbn publishing-date cover binding publisher language file -h --help"
+                            opts="alternate-title isbn publishing-date cover binding publisher language file -h --help"
                             copts=$(compgen -W "${opts}" -- ${cur})
                             OLDIFS=$IFS
                             IFS=$'\n'

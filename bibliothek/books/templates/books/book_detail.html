@@ -25,7 +25,7 @@
             <dt class="col-sm-1">{% trans "Links" %}</dt>
             <dd class="col-sm-11">
                 <ul>
-                    {% for link in paper.links.all %}
+                    {% for link in book.links.all %}
                         <li><a href="{{ link }}">{{ link }}</a></li>
                     {% endfor %}
                 </ul>

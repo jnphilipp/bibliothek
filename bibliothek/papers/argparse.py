@@ -68,11 +68,11 @@ def _paper(args):
         fpaper.parse.from_bibtex(args.bibtex, args.file)
     elif args.subparser == 'read':
         paper = fpaper.get.by_term(args.paper)
-        if args.read_subparsers == 'add' and paper:
+        if args.read_subparser == 'add' and paper:
             fpaper.read.add(paper, args.started, args.finished)
-        elif args.read_subparsers == 'delete' and paper:
+        elif args.read_subparser == 'delete' and paper:
             fpaper.read.delete(paper, args.read)
-        elif args.read_subparsers == 'edit' and paper:
+        elif args.read_subparser == 'edit' and paper:
             fpaper.read.edit(paper, args.read, args.field, args.value)
 
 

@@ -46,7 +46,8 @@ def create(magazine, issue_name, publishing_date=None, cover_image=None,
             stdout.p([_('Publishing date'), ''], positions=positions)
 
         if cover_image:
-            issue.cover_image = cover_image
+            issue.cover_image.save(os.path.basename(cover_image),
+                                   DJFile(open(cover_image, 'rb')))
             stdout.p([_('Cover image'), cover_image], positions=positions)
         else:
             stdout.p([_('Cover image'), ''], positions=positions)

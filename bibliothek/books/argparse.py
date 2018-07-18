@@ -155,7 +155,7 @@ def edition_subparser(parser):
 
     # edition add
     add_parser = subparser.add_parser('add', help=_('Add an edition'))
-    add_parser.add_argument('--alternate_title', help=_('Alternate title'))
+    add_parser.add_argument('--alternate-title', help=_('Alternate title'))
     add_parser.add_argument('--isbn', help=_('ISBN'))
     add_parser.add_argument('--publishing-date', type=valid_date,
                             help=_('Publishing date'))
@@ -172,7 +172,7 @@ def edition_subparser(parser):
     edit_subparser = edit_parser.add_subparsers(dest='edit_subparser',
                                                 help=_('Which field to edit'))
 
-    edit_edition_parser = edit_subparser.add_parser('alternate_title')
+    edit_edition_parser = edit_subparser.add_parser('alternate-title')
     edit_edition_parser.add_argument('value', help=_('New value for field'))
 
     edit_edition_parser = edit_subparser.add_parser('isbn')
@@ -207,7 +207,7 @@ def edition_subparser(parser):
                              help=_('Filter editions by shelf'))
     list_parser.add_argument('--search', help=_('Filter editions by term'))
 
-    # paper open
+    # edition open
     help_txt = _('Open a file associated with an edition')
     open_parser = subparser.add_parser('open', help=help_txt)
     open_parser.add_argument('edition', nargs='?', help=_('Edition'))

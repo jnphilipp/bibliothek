@@ -184,7 +184,7 @@ class Edition(models.Model):
         Language,
         blank=True,
         related_name='editions',
-       verbose_name=_('Languages')
+        verbose_name=_('Languages')
     )
     bibtex = models.TextField(
         blank=True,
