@@ -45,6 +45,7 @@
                 {% for acquisition in issue.acquisitions.all %}
                     <ul>
                         <li>
+                            <b>{% trans "Id" %}</b>: {{ acquisition.id }}
                             {% if acquisition.date %}<b>{% trans "Date" %}</b>: {{ acquisition.date|date:"Y-m-d" }}{% endif%}
                             <b>{% trans "Price" %}</b>: {{ acquisition.price|currency_symbol }}
                         </li>
@@ -57,6 +58,7 @@
                 {% for read in issue.reads.all %}
                     <ul>
                         <li>
+                            <b>{% trans "Id" %}</b>: {{ read.id }}
                             {% if read.started %}<b>{% trans "Date started" %}</b>: {{ read.started|date:"Y-m-d" }}{% endif %}
                             {% if read.finished %}<b>{% trans "Date finished" %}</b>: {{ read.finished|date:"Y-m-d" }}{% endif %}
                         </li>
