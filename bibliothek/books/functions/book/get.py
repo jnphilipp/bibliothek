@@ -26,10 +26,15 @@ def by_term(term):
     books = book_list.by_term(term)
 
     if books.count() == 0:
-        stdout.p(['No book found.'], after='=', positions=[1.])
+        stdout.p(['No book found.'], after='=')
         return None
     elif books.count() > 1:
-        stdout.p(['More than one book found.'], after='=', positions=[1.])
-        return None
+        if term.isdigit():
+            books = books.filter(pk=term)
+        else:
+            books = books.filter(title=term)
+        if books.count() != 1:
+            stdout.p(['More than one book found.'], after='=')
+            return None
     print('\n')
     return books[0]

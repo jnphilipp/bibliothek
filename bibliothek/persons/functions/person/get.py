@@ -26,10 +26,17 @@ def by_term(term):
     persons = person_list.by_term(term)
 
     if persons.count() == 0:
-        stdout.p([_('No person found.')], after='=', positions=[1.])
+        stdout.p([_('No person found.')], after='=')
         return None
     elif persons.count() > 1:
-        stdout.p([_('More than one person found.')], after='=', positions=[1.])
-        return None
+        if term.isdigit():
+            persons = persons.filter(pk=term)
+        else:
+            persons = persons.annotate(
+                name=Concat('first_name', Value(' '), 'last_name')
+            ).filter(name=term)
+        if persons.count() != 1:
+            stdout.p([_('More than one person found.')], after='=')
+            return None
     print('\n')
     return persons[0]

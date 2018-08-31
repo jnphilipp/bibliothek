@@ -26,11 +26,15 @@ def by_term(term):
     journals = journal_list.by_term(term)
 
     if journals.count() == 0:
-        stdout.p([_('No journal found.')], after='=', positions=[1.])
+        stdout.p([_('No journal found.')], after='=')
         return None
     elif journals.count() > 1:
-        stdout.p([_('More than one journal found.')], after='=',
-                 positions=[1.])
-        return None
+        if term.isdigit():
+            journals = journals.filter(pk=term)
+        else:
+            journals = journals.filter(name=term)
+        if journals.count() != 1:
+            stdout.p([_('More than one journal found.')], after='=')
+            return None
     print('\n')
     return journals[0]

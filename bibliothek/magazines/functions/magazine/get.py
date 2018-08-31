@@ -26,11 +26,15 @@ def by_term(term):
     magazines = magazine_list.by_term(term)
 
     if magazines.count() == 0:
-        stdout.p([_('No magazine found.')], after='=', positions=[1.])
+        stdout.p([_('No magazine found.')], after='=')
         return None
     elif magazines.count() > 1:
-        stdout.p([_('More than one magazine found.')], after='=',
-                 positions=[1.])
-        return None
+        if term.isdigit():
+            magazines = magazines.filter(pk=term)
+        else:
+            magazines = magazines.filter(name=term)
+        if magazines.count() != 1:
+            stdout.p([_('More than one magazine found.')], after='=')
+            return None
     print('\n')
     return magazines[0]

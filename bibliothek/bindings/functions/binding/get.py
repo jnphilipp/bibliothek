@@ -26,11 +26,15 @@ def by_term(term):
     bindings = binding_list.by_term(term)
 
     if bindings.count() == 0:
-        stdout.p([_('No binding found.')], after='=', positions=[1.])
+        stdout.p([_('No binding found.')], after='=')
         return None
     elif bindings.count() > 1:
-        stdout.p([_('More than one binding found.')], after='=',
-                 positions=[1.])
-        return None
+        if term.isdigit():
+            bindings = bindings.filter(pk=term)
+        else:
+            bindings = bindings.filter(name=term)
+        if bindings.count() != 1:
+            stdout.p([_('More than one binding found.')], after='=')
+            return None
     print('\n')
     return bindings[0]

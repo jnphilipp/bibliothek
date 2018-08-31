@@ -26,10 +26,15 @@ def by_term(term):
     series = series_list.by_term(term)
 
     if series.count() == 0:
-        stdout.p([_('No series found.')], after='=', positions=[1.])
+        stdout.p([_('No series found.')], after='=')
         return None
     elif series.count() > 1:
-        stdout.p([_('More than one series found.')], after='=', positions=[1.])
-        return None
+        if term.isdigit():
+            series = series.filter(pk=term)
+        else:
+            series = series.filter(name=term)
+        if series.count() != 1:
+            stdout.p([_('More than one series found.')], after='=')
+            return None
     print('\n')
     return series[0]

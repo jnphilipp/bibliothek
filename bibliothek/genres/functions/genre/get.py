@@ -26,10 +26,15 @@ def by_term(term):
     genres = genre_list.by_term(term)
 
     if genres.count() == 0:
-        stdout.p([_('No genre found.')], after='=', positions=[1.])
+        stdout.p([_('No genre found.')], after='=')
         return None
     elif genres.count() > 1:
-        stdout.p([_('More than one genre found.')], after='=', positions=[1.])
-        return None
+        if term.isdigit():
+            genres = genres.filter(pk=term)
+        else:
+            genres = genres.filter(name=term)
+        if genres.count() != 1:
+            stdout.p([_('More than one genre found.')], after='=')
+            return None
     print('\n')
     return genres[0]
