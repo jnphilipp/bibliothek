@@ -17,6 +17,7 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db.models import Count
+from django.db.models.functions import Lower
 from django.views import generic
 from publishers.models import Publisher
 
@@ -33,7 +34,9 @@ class ListView(generic.ListView):
 
     def get_queryset(self):
         o = self.request.GET.get('o') if self.request.GET.get('o') else 'name'
-        publishers = Publisher.objects.annotate(ce=Count('editions')). \
+        o = o.replace('name', 'iname')
+        publishers = Publisher.objects.annotate(ce=Count('editions'),
+                                                iname=Lower('name')). \
             order_by(o)
         return publishers
 

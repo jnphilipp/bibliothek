@@ -136,6 +136,7 @@ class Issue(models.Model):
     )
     reads = GenericRelation(
         'shelves.Read',
+        related_query_name='issues',
         verbose_name=_('Reads')
     )
 

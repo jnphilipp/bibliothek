@@ -58,7 +58,7 @@
                         <tr>
                             <th><a href="{% url "books:edition_detail" edition.book.slug edition.id %}">#{{ edition.id }}</a></th>
                             <td><a href="{% url "books:book_detail" edition.book.slug %}">{{ edition.book.title }}</a></td>
-                            <td>{% for author in edition.book.authors.all %}{{ author }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{% for author in edition.book.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                             <td>{% if edition.book.series %}<a href="{% url "series:series_detail" edition.book.series.slug %}">{{ edition.book.series.name }}</a>{% endif %}</td>
                             <td>{{ edition.book.volume|default:"" }}</td>
                             <td>{{ edition.alternate_title|default:"" }}</td>

@@ -204,6 +204,7 @@ class Edition(models.Model):
     )
     reads = GenericRelation(
         'shelves.Read',
+        related_query_name='editions',
         verbose_name=_('Reads')
     )
 

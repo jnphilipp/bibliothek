@@ -105,6 +105,7 @@ class Paper(models.Model):
     )
     reads = GenericRelation(
         'shelves.Read',
+        related_query_name='papers',
         verbose_name=_('Reads')
     )
 

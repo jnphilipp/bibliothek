@@ -47,6 +47,9 @@ def create(book, alternate_title=None, isbn=None, publishing_date=None,
     if created:
         stdout.p([_('Id'), edition.id], positions=positions)
         stdout.p([_('Book'), edition.book], positions=positions)
+        stdout.p([_('ISBN'), edition.isbn], positions=positions)
+        stdout.p([_('Publishing date'), edition.publishing_date],
+                 positions=positions)
 
         if alternate_title:
             edition.alternate_title = alternate_title
