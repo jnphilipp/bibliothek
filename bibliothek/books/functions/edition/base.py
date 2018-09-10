@@ -33,7 +33,7 @@ from utils import lookahead, stdout
 def create(book, alternate_title=None, isbn=None, publishing_date=None,
            cover_image=None, binding=None, publisher=None, languages=[],
            links=[], files=[]):
-    positions = [.33, 1.]
+    positions = [.33]
 
     edition, created = Edition.objects.get_or_create(
         book=book,
@@ -117,13 +117,11 @@ def create(book, alternate_title=None, isbn=None, publishing_date=None,
         edition.save()
 
         msg = _('Successfully added edition "%(edition)s" with id "%(id)s".')
-        stdout.p([msg % {'edition': str(edition), 'id': edition.id}],
-                 after='=', positions=[1.])
+        stdout.p([msg % {'edition': str(edition), 'id': edition.id}], after='=')
     else:
         msg = _('The edition "%(edition)s" already exists with id "%(id)s", ' +
                 'aborting...')
-        stdout.p([msg % {'edition': str(edition), 'id': edition.id}],
-                 after='=', positions=[1.])
+        stdout.p([msg % {'edition': str(edition), 'id': edition.id}], after='=')
     return edition, created
 
 
@@ -175,12 +173,11 @@ def edit(edition, field, value):
     edition.save()
 
     msg = _('Successfully edited edition "%(edition)s" with id "%(id)s".')
-    stdout.p([msg % {'edition': str(edition), 'id': edition.id}],
-             positions=[1.])
+    stdout.p([msg % {'edition': str(edition), 'id': edition.id}])
 
 
 def info(edition):
-    positions = [.33, 1.]
+    positions = [.33]
     stdout.p([_('Field'), _('Value')], positions=positions, after='=')
     stdout.p([_('Id'), edition.id], positions=positions)
     stdout.p([_('Book'), str(edition.book)], positions=positions)

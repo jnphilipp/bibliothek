@@ -135,11 +135,15 @@ class BookFunctionsTestCase(TestCase):
                                             publishing_date='2016-06-02')
         self.assertTrue(created)
 
-        e = fedition.get.by_term(self.book, '9783365469875')
+        e = fedition.get.by_term('9783365469875', self.book)
         self.assertIsNotNone(e)
         self.assertEquals(edition, e)
 
-        e = fedition.get.by_term(self.book, '2016-06-02')
+        e = fedition.get.by_term('9783365469875')
+        self.assertIsNotNone(e)
+        self.assertEquals(edition, e)
+
+        e = fedition.get.by_term(str(edition2.pk), self.book)
         self.assertIsNotNone(e)
         self.assertEquals(edition2, e)
 
@@ -162,10 +166,7 @@ class BookFunctionsTestCase(TestCase):
         editions = fedition.list.all(self.book)
         self.assertEquals(4, len(editions))
 
-        editions = fedition.list.by_term(self.book, '978')
-        self.assertEquals(2, len(editions))
-
-        editions = fedition.list.by_term(self.book, '2016-06')
+        editions = fedition.list.by_term('978', self.book)
         self.assertEquals(2, len(editions))
 
     def test_edition_acquisition(self):

@@ -38,7 +38,7 @@ def _book(args):
     elif args.subparser == 'edition':
         book = fbook.get.by_term(args.book)
         if args.edition_subparser == 'acquisition' and book:
-            edition = fedition.get.by_term(book, args.edition)
+            edition = fedition.get.by_term(args.edition, book)
             if args.acquisition_subparser == 'add' and edition:
                 fedition.acquisition.add(edition, args.date, args.price)
             elif args.acquisition_subparser == 'delete' and edition:
@@ -52,20 +52,20 @@ def _book(args):
                             args.publisher, args.language, args.link,
                             args.file)
         elif args.edition_subparser == 'edit' and book:
-            edition = fedition.get.by_term(book, args.edition)
+            edition = fedition.get.by_term(args.edition, book)
             if edition:
                 fedition.edit(edition, args.edit_subparser, args.value)
         elif args.edition_subparser == 'info' and book:
-            edition = fedition.get.by_term(book, args.edition)
+            edition = fedition.get.by_term(args.edition, book)
             if edition:
                 fedition.info(edition)
         elif args.edition_subparser == 'list' and book:
             if args.search:
-                fedition.list.by_term(book, args.search)
+                fedition.list.by_term(args.search, book)
             else:
                 fedition.list.all(book)
         elif args.edition_subparser == 'open' and book:
-            edition = fedition.get.by_term(book, args.edition)
+            edition = fedition.get.by_term(args.edition, book)
             if edition:
                 file = edition.files.get(pk=args.file)
                 path = os.path.join(settings.MEDIA_ROOT, file.file.path)
@@ -74,7 +74,7 @@ def _book(args):
                 else:
                     os.system('open "%s"' % path)
         elif args.edition_subparser == 'read' and book:
-            edition = fedition.get.by_term(book, args.edition)
+            edition = fedition.get.by_term(args.edition, book)
             if args.read_subparser == 'add' and edition:
                 fedition.read.add(edition, args.started, args.finished)
             elif args.read_subparser == 'delete' and edition:
@@ -113,7 +113,7 @@ def add_subparser(parser):
 
     # book edit
     edit_parser = subparser.add_parser('edit', help=_('Edit a book'))
-    edit_parser.add_argument('book', help='which book to edit')
+    edit_parser.add_argument('book', help='Book')
     edit_subparser = edit_parser.add_subparsers(dest='edit_subparser',
                                                 help=_('Which field to edit'))
 

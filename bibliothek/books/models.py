@@ -208,6 +208,12 @@ class Edition(models.Model):
         verbose_name=_('Reads')
     )
 
+    def get_title(self):
+        if self.alternate_title:
+            return self.alternate_title
+        else:
+            return self.book.title
+
     def move_file(self, file):
         save_name = os.path.join('books', str(self.book.id), str(self.id),
                                  os.path.basename(file.file.name))

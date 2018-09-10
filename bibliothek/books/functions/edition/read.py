@@ -28,7 +28,7 @@ def add(edition, started=None, finished=None):
     read = Read.objects.create(started=started, finished=finished,
                                content_object=edition)
     msg = _('Successfully added read "%(id)s" to edition "%(edition)s".')
-    stdout.p([msg % {'id': read.id, 'edition': str(edition)}], positions=[1.])
+    stdout.p([msg % {'id': read.id, 'edition': str(edition)}])
     _print(read)
     return read
 
@@ -38,10 +38,10 @@ def delete(edition, read_id):
         read = edition.reads.get(pk=read_id)
         _print(read)
         read.delete()
-        stdout.p([_('Successfully deleted read.')], positions=[1.])
+        stdout.p([_('Successfully deleted read.')])
     except Read.DoesNotExist:
         msg = _('A read with id "%(id)s" for this edition does not exist.')
-        stdout.p([msg % {'id':read_id}], after='=', positions=[1.])
+        stdout.p([msg % {'id':read_id}], after='=')
 
 
 def edit(edition, read_id, field, value):
@@ -59,11 +59,11 @@ def edit(edition, read_id, field, value):
         _print(read)
     except Read.DoesNotExist:
         msg = _('A read with id "%(id)s" for this edition does not exist.')
-        stdout.p([msg % {'id':read_id}], after='=', positions=[1.])
+        stdout.p([msg % {'id':read_id}], after='=')
 
 
 def _print(read):
-    positions=[.33, 1.]
+    positions=[.33]
     stdout.p([_('Field'), _('Value')], positions=positions, after='=')
     stdout.p([_('Id'), read.id], positions=positions)
     stdout.p([_('Date started'), read.started], positions=positions)
