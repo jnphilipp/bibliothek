@@ -7,7 +7,7 @@ _bibliothek()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     subcommand="${COMP_WORDS[1]}"
 
-    opts="binding book genre journal magazine paper person publisher series runserver load reading-list statistics -h --help -v --version"
+    opts="binding book genre journal magazine paper person publisher series runserver load read reading-list statistics -h --help -v --version"
 
     case "${subcommand}" in
         binding)
@@ -554,6 +554,36 @@ _bibliothek()
             IFS=$OLDIFS
             _file="-o filenames"
             return 0
+            ;;
+        read)
+            subcommand="${COMP_WORDS[2]}"
+            case "${subcommand}" in
+                add)
+                    opts="--started --finished -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                delete)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                edit)
+                    opts="started finished -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                info)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                *)
+                    opts="add delete edit info -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+            esac
             ;;
         reading-list)
             opts="--limit -h --help"

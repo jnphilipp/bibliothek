@@ -18,7 +18,75 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from bibliothek.argparse import valid_date
+from books.functions import edition as fedition
 from django.utils.translation import ugettext_lazy as _
+from magazines.functions import issue as fissue
+from papers.functions import paper as fpaper
+from shelves.functions import read as fread
+from utils import stdout
+
+
+def _read(args):
+    if args.subparser == 'add':
+        edition = fedition.get.by_term(args.obj)
+        paper = fpaper.get.by_term(args.obj)
+        issue = fissue.get.by_term(args.obj)
+
+        if edition is None and paper is None and issue is None:
+            return
+        elif edition is not None and paper is None and issue is None:
+            stdout.p(['One edition found.'], after='=')
+            # fread.create(edition, args.started, args.finished)
+        elif edition is None and paper is not None and issue is None:
+            stdout.p(['One paper found.'], after='=')
+            # fread.create(paper, args.started, args.finished)
+        elif edition is None and paper is None and issue is not None:
+            stdout.p(['One issue found.'], after='=')
+            # fread.create(issue, args.started, args.finished)
+        else:
+            stdout.p(['More than one found.'], after='=')
+    elif args.subparser == 'edit':
+        read = fread.get.by_term(args.read)
+        if read:
+            fread.edit(read, args.field, args.value)
+    elif args.subparser == 'delete':
+        read = fread.get.by_term(args.read)
+        if read:
+            fread.delete(read)
+    elif args.subparser == 'info':
+        read = fread.get.by_term(args.read)
+        if read:
+            fread.info(read)
+
+
+def add_subparser(parser):
+    read_parser = parser.add_parser('read', help=_('Manage reads'))
+    read_parser.set_defaults(func=_read)
+    subparser = read_parser.add_subparsers(dest='subparser')
+
+    # read add
+    add_parser = subparser.add_parser('add', help=_('Add a read'))
+    add_parser.add_argument('obj', help=_('Edition, Paper or Issue'))
+    add_parser.add_argument('--started', default=None, type=valid_date,
+                            help=_('Date started'))
+    add_parser.add_argument('--finished', default=None, type=valid_date,
+                            help=_('Date finished'))
+
+    # read delete
+    delete_parser = subparser.add_parser('delete', help=_('Delete a read'))
+    delete_parser.add_argument('read', help=_('Read'))
+
+    # read edit
+    edit_parser = subparser.add_parser('edit', help=_('Edit a read'))
+    edit_parser.add_argument('read', help=_('Read'))
+    edit_parser.add_argument('field', choices=['started', 'finished'],
+                             help=_('Which field to edit'))
+    edit_parser.add_argument('value', type=valid_date,
+                             help=_('New value for field'))
+
+    # read info
+    info_parser = subparser.add_parser('info', help=_('Show read info'))
+    info_parser.add_argument('read', help=_('Read'))
 
 
 def acquisition_subparser(parser, arg_name, help_txt):

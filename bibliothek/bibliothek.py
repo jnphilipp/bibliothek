@@ -34,6 +34,7 @@ import papers.argparse
 import persons.argparse
 import publishers.argparse
 import series.argparse
+import shelves.argparse
 
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from datetime import date, datetime
@@ -229,6 +230,9 @@ if __name__ == '__main__':
 
     # create the parser for the "series" subcommand
     series.argparse.add_subparser(subparser)
+
+    # create the parser for the "read" subcommand
+    shelves.argparse.add_subparser(subparser)
 
     # create the parser for the "runserver" subcommand
     runserver_parser = subparser.add_parser('runserver',
