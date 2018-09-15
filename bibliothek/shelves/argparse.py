@@ -35,14 +35,11 @@ def _read(args):
         if edition is None and paper is None and issue is None:
             return
         elif edition is not None and paper is None and issue is None:
-            stdout.p(['One edition found.'], after='=')
-            # fread.create(edition, args.started, args.finished)
+            fread.create(edition, args.started, args.finished)
         elif edition is None and paper is not None and issue is None:
-            stdout.p(['One paper found.'], after='=')
-            # fread.create(paper, args.started, args.finished)
+            fread.create(paper, args.started, args.finished)
         elif edition is None and paper is None and issue is not None:
-            stdout.p(['One issue found.'], after='=')
-            # fread.create(issue, args.started, args.finished)
+            fread.create(issue, args.started, args.finished)
         else:
             stdout.p(['More than one found.'], after='=')
     elif args.subparser == 'edit':
