@@ -45,7 +45,7 @@ def _magazine(args):
     elif args.subparser == 'issue':
         magazine = fmagazine.get.by_term(args.magazine)
         if args.issue_subparser == 'acquisition' and magazine:
-            issue = fissue.get.by_term(magazine, args.issue)
+            issue = fissue.get.by_term(args.issue, magazine)
             if args.acquisition_subparser == 'add' and issue:
                 fissue.acquisition.add(issue, args.date, args.price)
             elif args.acquisition_subparser == 'delete' and issue:
@@ -57,22 +57,22 @@ def _magazine(args):
             fissue.create(magazine, args.issue, args.publishing_date,
                           args.cover, args.language, args.link, args.file)
         elif args.issue_subparser == 'edit' and magazine:
-            issue = fissue.get.by_term(magazine, args.issue)
+            issue = fissue.get.by_term(args.issue, magazine)
             if issue:
                 fissue.edit(issue, args.edit_subparser, args.value)
         elif args.issue_subparser == 'info' and magazine:
-            issue = fissue.get.by_term(magazine, args.issue)
+            issue = fissue.get.by_term(args.issue, magazine)
             if issue:
                 fissue.info(issue)
         elif args.issue_subparser == 'list' and magazine:
             if args.shelf:
-                fissue.list.by_shelf(magazine, args.shelf)
+                fissue.list.by_shelf(args.shelf, magazine)
             elif args.search:
-                fissue.list.by_term(magazine, args.search)
+                fissue.list.by_term(args.search, magazine)
             else:
                 fissue.list.all(magazine)
         elif args.issue_subparser == 'open' and magazine:
-            issue = fissue.get.by_term(magazine, args.issue)
+            issue = fissue.get.by_term(args.issue, magazine)
             if issue:
                 file = issue.files.get(pk=args.file)
                 path = os.path.join(settings.MEDIA_ROOT, file.file.path)
@@ -81,7 +81,7 @@ def _magazine(args):
                 else:
                     os.system('open "%s"' % path)
         elif args.issue_subparser == 'read' and magazine:
-            issue = fissue.get.by_term(magazine, args.issue)
+            issue = fissue.get.by_term(args.issue, magazine)
             if args.read_subparser == 'add' and issue:
                 fissue.read.add(issue, args.started, args.finished)
             elif args.read_subparser == 'delete' and issue:

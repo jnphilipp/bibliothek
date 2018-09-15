@@ -26,7 +26,6 @@ class IssueFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(self.magazine.id)
 
-
     def test_issue_create(self):
         issue, created = fissue.create(self.magazine, '1/2016',
                                        publishing_date='2016-01-01')
@@ -44,7 +43,6 @@ class IssueFunctionsTestCase(TestCase):
         self.assertEquals(1, issue.links.count())
         self.assertEquals('https://weekly.de/2-2016/',
                           issue.links.first().link)
-
 
     def test_issue_edit(self):
         issue, created = fissue.create(self.magazine, '3/2016',
@@ -91,11 +89,15 @@ class IssueFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(issue.id)
 
-        issue2 = fissue.get.by_term(self.magazine, '3/2016')
+        issue2 = fissue.get.by_term('3/2016', self.magazine)
         self.assertIsNotNone(issue)
         self.assertEquals(issue, issue2)
 
-        issue2 = fissue.get.by_term(self.magazine, str(issue.id))
+        issue2 = fissue.get.by_term('3/2016')
+        self.assertIsNotNone(issue)
+        self.assertEquals(issue, issue2)
+
+        issue2 = fissue.get.by_term(str(issue.id), self.magazine)
         self.assertIsNotNone(issue)
         self.assertEquals(issue, issue2)
 
@@ -113,7 +115,7 @@ class IssueFunctionsTestCase(TestCase):
         issues = fissue.list.all(self.magazine)
         self.assertEquals(2, len(issues))
 
-        issues = fissue.list.by_term(self.magazine, '5/2016')
+        issues = fissue.list.by_term('5/2016')
         self.assertEquals(1, len(issues))
 
     def test_issue_acquisition(self):

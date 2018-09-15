@@ -26,7 +26,7 @@ def all():
     magazines = Magazine.objects.all()
     _list([[magazine.id, magazine.name,
             magazine.issues.count()] for magazine in magazines],
-          [_('Id'), _('Name'), _('#Issues')], positions=[.05, .8, 1.])
+          [_('Id'), _('Name'), _('#Issues')], positions=[.05, .8])
     return magazines
 
 
@@ -36,7 +36,7 @@ def by_term(term):
     )
     _list([[magazine.id, magazine.name,
             magazine.issues.count()] for magazine in magazines],
-          [_('Id'), _('Name'), _('#Issues')], positions=[.05, .8, 1.])
+          [_('Id'), _('Name'), _('#Issues')], positions=[.05, .8])
     return magazines
 
 

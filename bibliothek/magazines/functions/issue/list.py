@@ -22,9 +22,10 @@ from magazines.models import Issue
 from utils import lookahead, stdout
 
 
-def all(magazine):
-    issues = Issue.objects.filter(magazine=magazine). \
-        order_by('publishing_date')
+def all(magazine=None):
+    issues = Issue.objects.all().order_by('publishing_date')
+    if magazine is not None:
+        issues = issues.filter(magazine=magazine)
     _list([[issue.id, issue.issue, issue.publishing_date,
             issue.files.count()] for issue in issues],
           [_('Id'), _('Issue'), _('Publishing date'), _('#Files')],
@@ -32,8 +33,10 @@ def all(magazine):
     return issues
 
 
-def by_shelf(magazine, shelf):
-    issues = Issue.objects.filter(magazine=magazine)
+def by_shelf(shelf, magazine=None):
+    issues = Issue.objects.all()
+    if magazine is not None:
+        issues = issues.filter(magazine=magazine)
     if shelf == 'read':
         issues = issues.filter(reads__isnull=False)
     elif shelf == 'unread':
@@ -45,10 +48,12 @@ def by_shelf(magazine, shelf):
     return issues
 
 
-def by_term(magazine, term):
-    issues = Issue.objects.filter(Q(magazine=magazine) &
-                                  (Q(pk=term if term.isdigit() else None) |
-                                   Q(issue__icontains=term)))
+def by_term(term, magazine=None):
+    issues = Issue.objects.all()
+    if magazine is not None:
+        issues = issues.filter(magazine=magazine)
+    issues = issues.filter(Q(pk=term if term.isdigit() else None) |
+                           Q(issue__icontains=term))
     _list([[issue.id, issue.issue, issue.publishing_date,
             issue.files.count()] for issue in issues],
           [_('Id'), _('Issue'), _('Publishing date'), _('#Files')],
