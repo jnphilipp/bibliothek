@@ -27,6 +27,7 @@ def by_term(term, book=None):
 
     if editions.count() == 0:
         stdout.p(['No edition found.'], after='=')
+        print('\n')
         return None
     elif editions.count() > 1:
         if term.isdigit():
@@ -36,6 +37,7 @@ def by_term(term, book=None):
                                        Q(book__title=term))
         if editions.count() != 1:
             stdout.p(['More than one edition found.'], after='=')
+            print('\n')
             return None
     print('\n')
     return editions[0]

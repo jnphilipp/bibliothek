@@ -31,7 +31,7 @@ def all(book=None):
         editions = editions.filter(book=book)
     _list([[edition.id, edition.get_title(), edition.binding, edition.isbn,
             edition.publishing_date] for edition in editions], fields,
-          positions=[.05, .35, .55, .75])
+          positions=[.05, .55, .7, .85])
     return editions
 
 
@@ -51,7 +51,7 @@ def by_shelf(shelf, book=None):
     editions = editions.distinct()
     _list([[edition.id, edition.get_title(), edition.binding, edition.isbn,
             edition.publishing_date] for edition in editions], fields,
-          positions=[.05, .35, .55, .75])
+          positions=[.05, .55, .7, .85])
     return editions
 
 
@@ -69,7 +69,7 @@ def by_term(term, book=None):
                                Q(book__title__icontains=term))
     _list([[edition.id, edition.get_title(), edition.binding, edition.isbn,
             edition.publishing_date] for edition in editions], fields,
-          positions=[.05, .35, .55, .75])
+          positions=[.05, .55, .7, .85])
     return editions
 
 

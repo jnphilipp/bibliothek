@@ -29,6 +29,7 @@ def by_term(term):
 
     if papers.count() == 0:
         stdout.p([_('No paper found.')], after='=')
+        print('\n')
         return None
     elif papers.count() > 1:
         papers = papers.annotate(
@@ -40,6 +41,7 @@ def by_term(term):
             papers = papers.filter(Q(title=term) | Q(jv=term))
         if papers.count() != 1:
             stdout.p(['More than one paper found.'], after='=')
+            print('\n')
             return None
     print('\n')
     return papers[0]

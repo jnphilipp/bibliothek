@@ -29,7 +29,7 @@ def all():
             paper.journal.name if paper.journal else None,
             paper.volume] for paper in papers],
           [_('Id'), _('Title'), _('Journal'), _('Volume')],
-          positions=[.05, .55, .66, 1.])
+          positions=[.05, .7, .90])
     return papers
 
 
@@ -43,7 +43,7 @@ def by_shelf(shelf):
             paper.journal.name if paper.journal else None,
             paper.volume] for paper in papers],
           [_('Id'), _('Title'), _('Journal'), _('Volume')],
-          positions=[.05, .55, .66, 1.])
+          positions=[.05, .7, .90])
     return papers
 
 
@@ -59,7 +59,7 @@ def by_term(term):
             paper.journal.name if paper.journal else None,
             paper.volume] for paper in papers],
           [_('Id'), _('Title'), _('Journal'), _('Volume')],
-          positions=[.05, .55, .66, 1.])
+          positions=[.05, .7, .90])
     return papers
 
 

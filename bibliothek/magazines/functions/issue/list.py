@@ -16,7 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models import Q
+from django.db.models import Q, TextField, Value
+from django.db.models.functions import Concat
 from django.utils.translation import ugettext_lazy as _
 from magazines.models import Issue
 from utils import lookahead, stdout
@@ -26,10 +27,10 @@ def all(magazine=None):
     issues = Issue.objects.all().order_by('publishing_date')
     if magazine is not None:
         issues = issues.filter(magazine=magazine)
-    _list([[issue.id, issue.issue, issue.publishing_date,
-            issue.files.count()] for issue in issues],
-          [_('Id'), _('Issue'), _('Publishing date'), _('#Files')],
-          positions=[.05, .45, .70, 1.])
+    _list([[issue.id, issue.magazine.name, issue.issue,
+            issue.publishing_date] for issue in issues],
+          [_('Id'), _('Magazine'), _('Issue'), _('Publishing date')],
+          positions=[.05, .40, .85])
     return issues
 
 
@@ -41,23 +42,25 @@ def by_shelf(shelf, magazine=None):
         issues = issues.filter(reads__isnull=False)
     elif shelf == 'unread':
         issues = issues.filter(reads__isnull=True)
-    _list([[issue.id, issue.issue, issue.publishing_date,
-            issue.files.count()] for issue in issues],
-          [_('Id'), _('Issue'), _('Publishing date'), _('#Files')],
-          positions=[.05, .45, .70, 1.])
+    _list([[issue.id, issue.magazine.name, issue.issue,
+            issue.publishing_date] for issue in issues],
+          [_('Id'), _('Magazine'), _('Issue'), _('Publishing date')],
+          positions=[.05, .40, .85])
     return issues
 
 
 def by_term(term, magazine=None):
-    issues = Issue.objects.all()
+    issues = Issue.objects.annotate(
+        name=Concat('magazine__name', Value(' '), 'issue',
+                    output_field=TextField())).all()
     if magazine is not None:
         issues = issues.filter(magazine=magazine)
     issues = issues.filter(Q(pk=term if term.isdigit() else None) |
-                           Q(issue__icontains=term))
-    _list([[issue.id, issue.issue, issue.publishing_date,
-            issue.files.count()] for issue in issues],
-          [_('Id'), _('Issue'), _('Publishing date'), _('#Files')],
-          positions=[.05, .45, .70, 1.])
+                           Q(name__icontains=term))
+    _list([[issue.id, issue.magazine.name, issue.issue,
+            issue.publishing_date] for issue in issues],
+          [_('Id'), _('Magazine'), _('Issue'), _('Publishing date')],
+          positions=[.05, .40, .85])
     return issues
 
 

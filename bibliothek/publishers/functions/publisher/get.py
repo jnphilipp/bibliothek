@@ -27,6 +27,7 @@ def by_term(term):
 
     if publishers.count() == 0:
         stdout.p([_('No publisher found.')], after='=')
+        print('\n')
         return None
     elif publishers.count() > 1:
         if term.isdigit():
@@ -35,6 +36,7 @@ def by_term(term):
             publishers = publishers.filter(name=term)
         if publishers.count() != 1:
             stdout.p([_('More than one publisher found.')], after='=')
+            print('\n')
             return None
     print('\n')
     return publishers[0]

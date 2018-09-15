@@ -27,6 +27,7 @@ def by_term(term):
 
     if bindings.count() == 0:
         stdout.p([_('No binding found.')], after='=')
+        print('\n')
         return None
     elif bindings.count() > 1:
         if term.isdigit():
@@ -35,6 +36,7 @@ def by_term(term):
             bindings = bindings.filter(name=term)
         if bindings.count() != 1:
             stdout.p([_('More than one binding found.')], after='=')
+            print('\n')
             return None
     print('\n')
     return bindings[0]

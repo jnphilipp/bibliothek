@@ -27,6 +27,7 @@ def by_term(term):
 
     if persons.count() == 0:
         stdout.p([_('No person found.')], after='=')
+        print('\n')
         return None
     elif persons.count() > 1:
         if term.isdigit():
@@ -37,6 +38,7 @@ def by_term(term):
             ).filter(name=term)
         if persons.count() != 1:
             stdout.p([_('More than one person found.')], after='=')
+            print('\n')
             return None
     print('\n')
     return persons[0]
