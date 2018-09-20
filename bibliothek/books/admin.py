@@ -71,9 +71,10 @@ class EditionAdmin(admin.ModelAdmin):
         (None, {'fields': ['book', 'alternate_title', 'isbn', 'binding',
                            'publishing_date', 'publisher', 'cover_image']}),
         (_('Languages'), {'fields': ['languages']}),
+        (_('Persons'), {'fields': ['persons']}),
         (_('Bibtex'), {'fields': ['bibtex']}),
     ]
-    filter_horizontal = ('languages',)
+    filter_horizontal = ('languages', 'persons')
     formfield_overrides = {
         models.TextField: {
             'widget': Textarea(attrs={

@@ -197,6 +197,12 @@ class Edition(models.Model):
         null=True,
         verbose_name=_('BibTex')
     )
+    persons = models.ManyToManyField(
+        Person,
+        blank=True,
+        related_name='editions',
+        verbose_name=_('Persons')
+    )
 
     acquisitions = GenericRelation(
         'shelves.Acquisition',
