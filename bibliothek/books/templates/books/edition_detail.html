@@ -45,6 +45,8 @@
             <dd class="col-sm-10">{% if edition.publisher %}<a href="{% url "publishers:publisher_detail" edition.publisher.slug %}">{{ edition.publisher.name }}</a>{% endif %}</dd>
             <dt class="col-sm-2">{% trans "Publishing date" %}</dt>
             <dd class="col-sm-10">{{ edition.publishing_date|date:"Y-m-d" }}</dd>
+            <dt class="col-sm-2">{% trans "Persons" %}</dt>
+            <dd class="col-sm-10">{% for person in edition.persons.all %}<a href="{% url "persons:person_detail" person.slug %}">{{ person }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
             <dt class="col-sm-2">{% trans "Languages" %}</dt>
             <dd class="col-sm-10">{% for language in edition.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
             <dt class="col-sm-2">{% trans "Bibtex" %}</dt>

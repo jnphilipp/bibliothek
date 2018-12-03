@@ -21,18 +21,20 @@ import os
 from bindings.models import Binding
 from books.models import Edition
 from django.core.files import File as DJFile
-from django.db.models import Q
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
 from django.utils.translation import ugettext_lazy as _
 from files.models import File
 from languages.models import Language
 from links.models import Link
+from persons.models import Person
 from publishers.models import Publisher
 from utils import lookahead, stdout
 
 
 def create(book, alternate_title=None, isbn=None, publishing_date=None,
-           cover_image=None, binding=None, publisher=None, languages=[],
-           links=[], files=[]):
+           cover_image=None, binding=None, publisher=None, persons=[],
+           languages=[], links=[], files=[]):
     positions = [.33]
 
     edition, created = Edition.objects.get_or_create(
@@ -88,6 +90,21 @@ def create(book, alternate_title=None, isbn=None, publishing_date=None,
         else:
             stdout.p([_('Publisher'), ''], positions=positions)
 
+        for (i, p), has_next in lookahead(enumerate(persons)):
+            person, c = Person.objects.annotate(
+                name=Concat('first_name', Value(' '), 'last_name')
+            ).filter(
+                Q(pk=p if p.isdigit() else None) | Q(name__icontains=positions)
+            ).get_or_create(
+                defaults={
+                    'first_name': p[:p.rfind(' ')],
+                    'last_name': p[p.rfind(' ') + 1:]}
+            )
+            edition.persons.add(person)
+            stdout.p([_('Persons') if i == 0 else '',
+                      '%s: %s' % (author.id, str(author))],
+                     after=None if has_next else '_', positions=positions)
+
         for (i, l), has_next in lookahead(enumerate(languages)):
             language, c = Language.objects.filter(
                 Q(pk=l if l.isdigit() else None) | Q(name=l)
@@ -117,18 +134,20 @@ def create(book, alternate_title=None, isbn=None, publishing_date=None,
         edition.save()
 
         msg = _('Successfully added edition "%(edition)s" with id "%(id)s".')
-        stdout.p([msg % {'edition': str(edition), 'id': edition.id}], after='=')
+        stdout.p([msg % {'edition': str(edition), 'id': edition.id}],
+                 after='=')
     else:
         msg = _('The edition "%(edition)s" already exists with id "%(id)s", ' +
                 'aborting...')
-        stdout.p([msg % {'edition': str(edition), 'id': edition.id}], after='=')
+        stdout.p([msg % {'edition': str(edition), 'id': edition.id}],
+                 after='=')
     return edition, created
 
 
 def edit(edition, field, value):
     fields = ['alternate_title', 'alternate-title', 'binding', 'cover', 'isbn',
-              'publishing_date', 'publishing-date', 'publisher', 'language',
-              'link', 'file']
+              'person', 'publishing_date', 'publishing-date', 'publisher',
+              'language', 'link', 'file']
     assert field in fields
 
     if field == 'alternate_title' or field == 'alternate-title':
@@ -142,6 +161,20 @@ def edit(edition, field, value):
                                  DJFile(open(value, 'rb')))
     elif field == 'isbn':
         edition.isbn = value
+    elif field == 'person':
+        person, c = Person.objects.annotate(
+            name=Concat('first_name', Value(' '), 'last_name')
+        ).filter(
+            Q(pk=value if value.isdigit() else None) | Q(name__icontains=value)
+        ).get_or_create(
+            defaults={
+                'first_name': value[:value.rfind(' ')],
+                'last_name': value[value.rfind(' ') + 1:]}
+        )
+        if edition.persons.filter(pk=person.pk).exists():
+            edition.persons.remove(person)
+        else:
+            edition.persons.add(person)
     elif field == 'publishing_date' or field == 'publishing-date':
         edition.publishing_date = value
     elif field == 'publisher':
@@ -198,8 +231,17 @@ def info(edition):
     stdout.p([_('Publisher'),
               '%s: %s' % (edition.publisher.id,
                           edition.publisher.name) if edition.publisher
-                          else ''],
+              else ''],
              positions=positions)
+
+    if edition.persons.count() > 0:
+        persons = edition.persons.all()
+        for (i, person), has_next in lookahead(enumerate(persons)):
+            stdout.p([_('Persons') if i == 0 else '',
+                      '%s: %s' % (person.id, str(person))],
+                     positions=positions, after='' if has_next else '_')
+    else:
+        stdout.p([_('Persons'), ''], positions=positions)
 
     if edition.languages.count() > 0:
         languages = edition.languages.all()

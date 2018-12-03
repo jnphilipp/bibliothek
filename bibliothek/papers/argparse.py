@@ -105,6 +105,9 @@ def add_subparser(parser):
     edit_title_parser = edit_subparser.add_parser('title')
     edit_title_parser.add_argument('value', help=_('New value for field'))
 
+    edit_author_parser = edit_subparser.add_parser('author')
+    edit_author_parser.add_argument('value', help=_('New value for field'))
+
     edit_pubdate_parser = edit_subparser.add_parser('publishing-date')
     edit_pubdate_parser.add_argument('value', type=valid_date,
                                      help=_('New value for field'))

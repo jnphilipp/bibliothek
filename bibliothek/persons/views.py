@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models import Count
+from django.db.models import Case, CharField, Count, When
 from django.views import generic
 from persons.models import Person
 
@@ -45,13 +45,26 @@ class ListView(generic.ListView):
 class DetailView(generic.DetailView):
     model = Person
 
-
     def get_context_data(self, **kwargs):
         context = super(DetailView, self).get_context_data(**kwargs)
-        context['o'] = 'title'
-        if self.request.GET.get('o'):
-            context['o'] = self.request.GET.get('o')
+        context['bo'] = 'title'
+        context['eo'] = 'title'
+        context['po'] = 'title'
+
+        if self.request.GET.get('bo'):
+            context['bo'] = self.request.GET.get('bo')
+        if self.request.GET.get('eo'):
+            context['eo'] = self.request.GET.get('eo')
+        if self.request.GET.get('po'):
+            context['po'] = self.request.GET.get('po')
+
         context['books'] = self.object.books.annotate(ce=Count('editions')). \
-            order_by(context['o'])
-        context['papers'] = self.object.papers.order_by(context['o'])
+            order_by(context['bo'])
+        context['editions'] = self.object.editions.annotate(
+            title=Case(
+                When(alternate_title__isnull=False, then='alternate_title'),
+                default='book__title',
+                output_field=CharField(),
+            )).all().order_by(context['eo'])
+        context['papers'] = self.object.papers.order_by(context['po'])
         return context

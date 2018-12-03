@@ -19,7 +19,7 @@
                 <tbody>
                     {% for read in edition_reads %}
                         <tr>
-                            <th><a href="{% url "books:edition_detail" read.content_object.book.slug read.content_object.id %}">{{ read.content_object.book.title }}</a></th>
+                            <th><a href="{% url "books:edition_detail" read.content_object.book.slug read.content_object.id %}">{{ read.title }}</a></th>
                             <td>{% for author in read.content_object.book.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                             <td>{% if read.content_object.book.series %}<a href="{% url "series:series_detail" read.content_object.book.series.slug %}">{{ read.content_object.book.series.name }}</a>{% endif %}</td>
                             <td>{{ read.content_object.book.volume|default:"" }}</td>
