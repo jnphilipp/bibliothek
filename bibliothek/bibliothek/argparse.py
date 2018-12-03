@@ -18,7 +18,34 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from argparse import ArgumentTypeError
+from books.functions import edition as fedition
 from datetime import datetime
+from django.utils.translation import ugettext_lazy as _
+from magazines.functions import issue as fissue
+from papers.functions import paper as fpaper
+
+
+def _info(args):
+    edition = fedition.get.by_term(args.obj)
+    paper = fpaper.get.by_term(args.obj)
+    issue = fissue.get.by_term(args.obj)
+
+    if edition is None and paper is None and issue is None:
+        return
+    elif edition is not None and paper is None and issue is None:
+        fedition.info(edition)
+    elif edition is None and paper is not None and issue is None:
+        fpaper.info(paper)
+    elif edition is None and paper is None and issue is not None:
+        fissue.info(issue)
+    else:
+        stdout.p(['More than one found.'], after='=')
+
+
+def add_subparser(parser):
+    info_parser = parser.add_parser('info', help=_('Show info'))
+    info_parser.set_defaults(func=_info)
+    info_parser.add_argument('obj', help=_('Edition, Paper or Issue'))
 
 
 def valid_date(s):

@@ -7,7 +7,7 @@ _bibliothek()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     subcommand="${COMP_WORDS[1]}"
 
-    opts="binding book genre journal magazine paper person publisher series runserver load read reading-list statistics -h --help -v --version"
+    opts="binding book genre info journal magazine paper person publisher series runserver load read reading-list statistics -h --help -v --version"
 
     case "${subcommand}" in
         binding)
@@ -194,6 +194,11 @@ _bibliothek()
                     return 0
                     ;;
             esac
+            ;;
+        info)
+            opts="-h --help"
+            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+            return 0
             ;;
         journal)
             subcommand="${COMP_WORDS[2]}"

@@ -25,6 +25,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bibliothek.settings')
 import django
 django.setup()
 
+import bibliothek.argparse
 import bindings.argparse
 import books.argparse
 import genres.argparse
@@ -203,6 +204,9 @@ if __name__ == '__main__':
                                             __version__, __license__,
                                             __author__, __email__))
     subparser = parser.add_subparsers(dest='subparser')
+
+    # create the parser for the "info" subcommand
+    bibliothek.argparse.add_subparser(subparser)
 
     # create the parser for the "binding" subcommand
     bindings.argparse.add_subparser(subparser)
