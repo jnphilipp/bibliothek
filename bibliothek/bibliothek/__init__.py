@@ -22,7 +22,7 @@
 default_app_config = 'bibliothek.apps.BibliothekConfig'
 
 __author__ = 'Nathanael Philipp'
-__copyright__ = 'Copyright 2017 Nathanael Philipp (jnphilipp)'
+__copyright__ = 'Copyright 2019 Nathanael Philipp (jnphilipp)'
 __license__ = 'GPLv3'
 __maintainer__ = __author__
 __email__ = 'mail@jnphilipp.org'
