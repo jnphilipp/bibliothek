@@ -102,7 +102,7 @@ def create(book, alternate_title=None, isbn=None, publishing_date=None,
             )
             edition.persons.add(person)
             stdout.p([_('Persons') if i == 0 else '',
-                      '%s: %s' % (author.id, str(author))],
+                      '%s: %s' % (persons.id, str(persons))],
                      after=None if has_next else '_', positions=positions)
 
         for (i, l), has_next in lookahead(enumerate(languages)):

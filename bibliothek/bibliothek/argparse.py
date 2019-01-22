@@ -24,6 +24,8 @@ from django.utils.translation import ugettext_lazy as _
 from magazines.functions import issue as fissue
 from papers.functions import paper as fpaper
 
+from utils import stdout
+
 
 def _info(args):
     edition = fedition.get.by_term(args.obj)
