@@ -16,13 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
+import utils
+
 from bibliothek.argparse import valid_date
 from books.functions import edition as fedition
 from django.utils.translation import ugettext_lazy as _
 from magazines.functions import issue as fissue
 from papers.functions import paper as fpaper
 from shelves.functions import read as fread
-from utils import stdout
 
 
 def _read(args):
@@ -31,28 +32,42 @@ def _read(args):
         paper = fpaper.get.by_term(args.obj)
         issue = fissue.get.by_term(args.obj)
 
+        obj = None
         if edition is None and paper is None and issue is None:
+            utils.stdout.p(['Nothing found.'], '')
             return
         elif edition is not None and paper is None and issue is None:
-            fread.create(edition, args.started, args.finished)
+            obj = edition
         elif edition is None and paper is not None and issue is None:
-            fread.create(paper, args.started, args.finished)
+            obj = paper
         elif edition is None and paper is None and issue is not None:
-            fread.create(issue, args.started, args.finished)
+            obj = issue
+
+        if obj:
+            read = fread.create(obj, args.started, args.finished)
+            fread.stdout.info(read)
         else:
-            stdout.p(['More than one found.'], after='=')
+            utils.stdout.p(['More than one found.'], '')
     elif args.subparser == 'edit':
         read = fread.get.by_term(args.read)
         if read:
             fread.edit(read, args.field, args.value)
+            utils.stdout.p([_(f'Successfully edited read "{read.id}".')], '')
+        else:
+            utils.stdout.p(['Nothing found.'], '')
     elif args.subparser == 'delete':
         read = fread.get.by_term(args.read)
         if read:
             fread.delete(read)
+            utils.stdout.p([_(f'Successfully deleted read "{read.id}".')], '')
+        else:
+            utils.stdout.p(['Nothing found.'], '')
     elif args.subparser == 'info':
         read = fread.get.by_term(args.read)
         if read:
-            fread.info(read)
+            fread.stdout.info(read)
+        else:
+            utils.stdout.p(['Nothing found.'], '')
 
 
 def add_subparser(parser):
