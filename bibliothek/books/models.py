@@ -35,57 +35,25 @@ from series.models import Series
 
 
 class Book(models.Model):
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_('Created at')
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_('Updated at')
-    )
+    created_at = models.DateTimeField(auto_now_add=True,
+                                      verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True,
+                                      verbose_name=_('Updated at'))
 
-    slug = models.SlugField(
-        max_length=2048,
-        unique=True,
-        verbose_name=_('Slug')
-    )
-    title = SingleLineTextField(
-        unique=True,
-        verbose_name=_('Title')
-    )
-    authors = models.ManyToManyField(
-        Person,
-        blank=True,
-        related_name='books',
-        verbose_name=_('Authors')
-    )
+    slug = models.SlugField(max_length=2048, unique=True,
+                            verbose_name=_('Slug'))
+    title = SingleLineTextField(unique=True, verbose_name=_('Title'))
+    authors = models.ManyToManyField(Person, blank=True, related_name='books',
+                                     verbose_name=_('Authors'))
 
-    series = models.ForeignKey(
-        Series,
-        models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name='books',
-        verbose_name=_('Series')
-    )
-    volume = models.FloatField(
-        default=0,
-        blank=True,
-        verbose_name=_('Volume')
-    )
+    series = models.ForeignKey(Series, models.SET_NULL, blank=True, null=True,
+                               related_name='books', verbose_name=_('Series'))
+    volume = models.FloatField(default=0, blank=True, verbose_name=_('Volume'))
 
-    genres = models.ManyToManyField(
-        Genre,
-        blank=True,
-        related_name='books',
-        verbose_name=_('Genres')
-    )
-    links = models.ManyToManyField(
-        Link,
-        blank=True,
-        related_name='books',
-        verbose_name=_('Links')
-    )
+    genres = models.ManyToManyField(Genre, blank=True, related_name='books',
+                                    verbose_name=_('Genres'))
+    links = models.ManyToManyField(Link, blank=True, related_name='books',
+                                   verbose_name=_('Links'))
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -97,11 +65,12 @@ class Book(models.Model):
         super(Book, self).save(*args, **kwargs)
 
     def to_json(self):
-        data = {'title': self.title}
-        if self.authors.all():
-            data['authors'] = [
-                author.to_json() for author in self.authors.all()
-            ]
+        data = {
+            'title': self.title,
+            'authors': [a.to_json() for a in self.authors.all()],
+            'genres': [g.to_json() for g in self.genres.all()],
+            'links': [l.to_json() for l in self.links.all()]
+        }
         if self.series:
             data['series'] = self.series.name
             data['volume'] = self.volume
@@ -120,97 +89,43 @@ class Book(models.Model):
 
 
 class Edition(models.Model):
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_('Created at')
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_('Updated at')
-    )
+    created_at = models.DateTimeField(auto_now_add=True,
+                                      verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True,
+                                      verbose_name=_('Updated at'))
 
-    alternate_title = SingleLineTextField(
-        blank=True,
-        null=True,
-        verbose_name=_('Alternate title')
-    )
-    book = models.ForeignKey(
-        Book,
-        models.CASCADE,
-        related_name='editions',
-        verbose_name=_('Book')
-    )
-    isbn = models.CharField(
-        max_length=13,
-        blank=True,
-        null=True,
-        verbose_name=_('ISBN')
-    )
-    publishing_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Publishing date')
-    )
-    cover_image = models.ImageField(
-        upload_to='files',
-        blank=True,
-        null=True,
-        verbose_name=_('Cover image')
-    )
-    files = GenericRelation(
-        'files.File',
-        verbose_name=_('Files')
-    )
+    alternate_title = SingleLineTextField(blank=True, null=True,
+                                          verbose_name=_('Alternate title'))
+    book = models.ForeignKey(Book, models.CASCADE, related_name='editions',
+                             verbose_name=_('Book'))
+    isbn = models.CharField(max_length=13, blank=True, null=True,
+                            verbose_name=_('ISBN'))
+    publishing_date = models.DateField(blank=True, null=True,
+                                       verbose_name=_('Publishing date'))
+    cover_image = models.ImageField(upload_to='files', blank=True, null=True,
+                                    verbose_name=_('Cover image'))
+    files = GenericRelation('files.File', verbose_name=_('Files'))
 
-    publisher = models.ForeignKey(
-        Publisher,
-        models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name='editions',
-        verbose_name=_('Publisher')
-    )
-    binding = models.ForeignKey(
-        Binding,
-        models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name='editions',
-        verbose_name=_('Binding')
-    )
-    languages = models.ManyToManyField(
-        Language,
-        blank=True,
-        related_name='editions',
-        verbose_name=_('Languages')
-    )
-    links = models.ManyToManyField(
-        Link,
-        blank=True,
-        related_name='editions',
-        verbose_name=_('Links')
-    )
-    bibtex = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name=_('BibTex')
-    )
-    persons = models.ManyToManyField(
-        Person,
-        blank=True,
-        related_name='editions',
-        verbose_name=_('Persons')
-    )
+    publisher = models.ForeignKey(Publisher, models.SET_NULL, blank=True,
+                                  null=True, related_name='editions',
+                                  verbose_name=_('Publisher'))
+    binding = models.ForeignKey(Binding, models.SET_NULL, blank=True,
+                                null=True, related_name='editions',
+                                verbose_name=_('Binding'))
+    languages = models.ManyToManyField(Language, blank=True,
+                                       related_name='editions',
+                                       verbose_name=_('Languages'))
+    links = models.ManyToManyField(Link, blank=True, related_name='editions',
+                                   verbose_name=_('Links'))
+    bibtex = models.TextField(blank=True, null=True, verbose_name=_('BibTex'))
+    persons = models.ManyToManyField(Person, blank=True,
+                                     related_name='editions',
+                                     verbose_name=_('Persons'))
 
-    acquisitions = GenericRelation(
-        'shelves.Acquisition',
-        verbose_name=_('Acquisitions')
-    )
-    reads = GenericRelation(
-        'shelves.Read',
-        related_query_name='editions',
-        verbose_name=_('Reads')
-    )
+    acquisitions = GenericRelation('shelves.Acquisition',
+                                   verbose_name=_('Acquisitions'))
+    reads = GenericRelation('shelves.Read', related_query_name='editions',
+                            verbose_name=_('Reads'))
 
     def get_title(self):
         if self.alternate_title:
@@ -258,7 +173,9 @@ class Edition(models.Model):
     def __str__(self):
         authors = ', '.join([f'{a}' for a in self.book.authors.all()])
         authors = '' if self.book.authors.count() == 0 else f' - {authors}'
-        series = f' ({self.series} #{self.volume:g})' if self.series else ''
+        series = ''
+        if self.book.series:
+            series = f' ({self.book.series} #{self.book.volume:g})'
         return f'{self.get_title()}{authors}{series} #{self.id}'
 
     class Meta:

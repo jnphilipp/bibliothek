@@ -23,34 +23,17 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Acquisition(models.Model):
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_('Created at')
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_('Updated at')
-    )
+    created_at = models.DateTimeField(auto_now_add=True,
+                                      verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True,
+                                      verbose_name=_('Updated at'))
 
-    date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Date')
-    )
-    price = models.FloatField(
-        default=0,
-        verbose_name=_('Price')
-    )
+    date = models.DateField(blank=True, null=True, verbose_name=_('Date'))
+    price = models.FloatField(default=0, verbose_name=_('Price'))
 
-    content_type = models.ForeignKey(
-        ContentType,
-        models.CASCADE
-    )
+    content_type = models.ForeignKey(ContentType, models.CASCADE)
     object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey(
-        'content_type',
-        'object_id'
-    )
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     def to_json(self):
         return {'date': str(self.date), 'price': str(self.price)}
@@ -65,35 +48,19 @@ class Acquisition(models.Model):
 
 
 class Read(models.Model):
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_('Created at')
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_('Updated at')
-    )
+    created_at = models.DateTimeField(auto_now_add=True,
+                                      verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True,
+                                      verbose_name=_('Updated at'))
 
-    started = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Date started')
-    )
-    finished = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Date finished')
-    )
+    started = models.DateField(blank=True, null=True,
+                               verbose_name=_('Date started'))
+    finished = models.DateField(blank=True, null=True,
+                                verbose_name=_('Date finished'))
 
-    content_type = models.ForeignKey(
-        ContentType,
-        models.CASCADE
-    )
+    content_type = models.ForeignKey(ContentType, models.CASCADE)
     object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey(
-        'content_type',
-        'object_id'
-    )
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     def to_json(self):
         return {'started': str(self.started), 'finished': str(self.finished)}
