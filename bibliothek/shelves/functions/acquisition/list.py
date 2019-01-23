@@ -16,23 +16,21 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from shelves.models import Read
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
+from shelves.models import Acquisition
 
 
-def create(obj, started=None, finished=None):
-    return Read.objects.create(started=started, finished=finished,
-                               content_object=obj)
+def all():
+    return Acquisition.objects.all()
 
 
-def delete(read):
-    read.delete()
-
-
-def edit(read, field, value):
-    assert field in ['started', 'finished']
-
-    if field == 'started':
-        read.started = value
-    elif field == 'finished':
-        read.finished = value
-    read.save()
+def by_term(term):
+    return Acquisition.objects.annotate(
+        jv=Concat('papers__journal__name', Value(' '), 'papers__volume'),
+        ni=Concat('issues__magazine__name', Value(' '), 'issues__issue')). \
+        filter(Q(pk=term if term.isdigit() else None) |
+               Q(editions__alternate_title__icontains=term) |
+               Q(editions__isbn__icontains=term) | Q(ni__icontains=term) |
+               Q(papers__title__icontains=term) | Q(jv__icontains=term) |
+               Q(editions__book__title__icontains=term)).distinct()

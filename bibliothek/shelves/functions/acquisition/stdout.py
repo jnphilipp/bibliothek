@@ -16,23 +16,24 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from shelves.models import Read
+import utils
+
+from django.utils.translation import ugettext_lazy as _
 
 
-def create(obj, started=None, finished=None):
-    return Read.objects.create(started=started, finished=finished,
-                               content_object=obj)
+def list(reads):
+    positions = [.05, .7, .85]
+    utils.stdout.p([_('Id'), _('Obj'), _('Date'), _('Price')],
+                   '=', positions)
+    for read, has_next in lookahead(reads):
+        stdout.p([read.id, read.content_object, read.date, read.price],
+                 '_' if has_next else '=', positions)
 
 
-def delete(read):
-    read.delete()
-
-
-def edit(read, field, value):
-    assert field in ['started', 'finished']
-
-    if field == 'started':
-        read.started = value
-    elif field == 'finished':
-        read.finished = value
-    read.save()
+def info(read):
+    positions = [.33]
+    utils.stdout.p([_('Field'), _('Value')], '=', positions)
+    utils.stdout.p([_('Id'), read.id], positions=positions)
+    utils.stdout.p([_('Obj'), read.content_object], positions=positions)
+    utils.stdout.p([_('Date'), read.date], positions=positions)
+    utils.stdout.p([_('Price'), read.price], positions=positions)

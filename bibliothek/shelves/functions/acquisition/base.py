@@ -16,23 +16,23 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from shelves.models import Read
+from shelves.models import Acquisition
 
 
-def create(obj, started=None, finished=None):
-    return Read.objects.create(started=started, finished=finished,
-                               content_object=obj)
+def create(obj, date=None, price=None):
+    return Acquisition.objects.create(date=date, price=price,
+                                      content_object=obj)
 
 
-def delete(read):
-    read.delete()
+def delete(acquisition):
+    acquisition.delete()
 
 
-def edit(read, field, value):
-    assert field in ['started', 'finished']
+def edit(acquisition, field, value):
+    assert field in ['date', 'price']
 
-    if field == 'started':
-        read.started = value
-    elif field == 'finished':
-        read.finished = value
-    read.save()
+    if field == 'date':
+        acquisition.date = value
+    elif field == 'price':
+        acquisition.price = value
+    acquisition.save()

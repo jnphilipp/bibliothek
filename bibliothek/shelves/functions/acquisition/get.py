@@ -16,35 +16,36 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from shelves.models import Read
+from shelves.models import Acquisition
 
-from . import list as read_list
+from . import list as acquisition_list
 
 
 def by_pk(pk, edition=None):
-    reads = Read.objects.all()
+    acquisitions = Acquisition.objects.all()
     if edition is not None:
-        reads = reads.filter(editions=edition)
+        acquisitions = acquisitions.filter(editions=edition)
 
     try:
-        return reads.get(pk=pk)
-    except Read.DoesNotExist:
+        return acquisitions.get(pk=pk)
+    except Acquisition.DoesNotExist:
         return None
 
 
 def by_term(term):
-    reads = read_list.by_term(term)
+    acqus = acquisition_list.by_term(term)
 
-    if reads.count() == 0:
+    if acqus.count() == 0:
         return None
-    elif reads.count() > 1:
+    elif acqus.count() > 1:
         if term.isdigit():
-            reads = reads.filter(pk=term)
+            acqus = acqus.filter(pk=term)
         else:
-            reads = reads.filter(Q(editions__alternate_title=term) |
-                                 Q(editions__isbn=term) | Q(ni=term) |
-                                 Q(editions__book__title=term) | Q(jv=term) |
-                                 Q(papers__title=term))
-        if reads.count() != 1:
+            acqus = acqus.filter(Q(ni=term) | Q(jv=term) |
+                                 Q(editions__isbn=term) |
+                                 Q(editions__book__title=term) |
+                                 Q(papers__title=term) |
+                                 Q(editions__alternate_title=term))
+        if acqus.count() != 1:
             return None
-    return reads[0]
+    return acqus[0]
