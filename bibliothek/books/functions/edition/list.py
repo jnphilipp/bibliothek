@@ -17,63 +17,44 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from books.models import Edition
-from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
-from utils import lookahead, stdout
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
+from persons.models import Person
 
 
 def all(book=None):
-    fields = [_('Id'), _('Title'), _('Binding'), _('ISBN'),
-              _('Publishing date')]
-
     editions = Edition.objects.all()
     if book is not None:
         editions = editions.filter(book=book)
-    _list([[edition.id, edition.get_title(), edition.binding, edition.isbn,
-            edition.publishing_date] for edition in editions], fields,
-          positions=[.05, .55, .7, .85])
     return editions
 
 
 def by_shelf(shelf, book=None):
-    fields = [_('Id'), _('Title'), _('Binding'), _('ISBN'),
-              _('Publishing date')]
-
     editions = Edition.objects.all()
     if book is not None:
         editions = editions.filter(book=book)
     if shelf == 'read':
         editions = editions.filter(reads__isnull=False)
     elif shelf == 'unread':
-        editions = editions.filter(
-            Q(reads__isnull=True) | Q(reads__finished__isnull=True)
-        )
-    editions = editions.distinct()
-    _list([[edition.id, edition.get_title(), edition.binding, edition.isbn,
-            edition.publishing_date] for edition in editions], fields,
-          positions=[.05, .55, .7, .85])
-    return editions
+        editions = editions.filter(Q(reads__isnull=True) |
+                                   Q(reads__finished__isnull=True))
+    return editions.distinct()
 
 
-def by_term(term, book=None):
-    fields = [_('Id'), _('Title'), _('Binding'), _('ISBN'),
-              _('Publishing date')]
+def by_term(term, book=None, has_file=None):
+    persons = Person.objects.annotate(name=Concat('first_name', Value(' '),
+                                                  'last_name')). \
+        filter(Q(pk=term if term.isdigit() else None) |
+               Q(name__icontains=term))
 
     editions = Edition.objects.all()
     if book is not None:
         editions = editions.filter(book=book)
-
-    editions = editions.filter(Q(pk=term if term.isdigit() else None) |
-                               Q(alternate_title__icontains=term) |
-                               Q(isbn__icontains=term) |
-                               Q(book__title__icontains=term))
-    _list([[edition.id, edition.get_title(), edition.binding, edition.isbn,
-            edition.publishing_date] for edition in editions], fields,
-          positions=[.05, .55, .7, .85])
-    return editions
-
-
-def _list(editions, fields, positions):
-    stdout.p(fields, positions=positions, after='=')
-    for book, has_next in lookahead(editions):
-        stdout.p(book, positions=positions, after='_' if has_next else '=')
+    if has_file is not None:
+        editions = editions.filter(files__isnull=not has_file)
+    return editions.filter(Q(pk=term if term.isdigit() else None) |
+                           Q(alternate_title__icontains=term) |
+                           Q(isbn__icontains=term) | Q(persons__in=persons) |
+                           Q(book__authors__in=persons) |
+                           Q(book__series__name__icontains=term) |
+                           Q(book__title__icontains=term)).distinct()

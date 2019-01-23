@@ -16,18 +16,27 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
+from books.models import Edition
 from django.db.models import Q
-from utils import stdout
 
 from . import list as edition_list
+
+
+def by_pk(pk, book=None):
+    editions = Edition.objects.all()
+    if book is not None:
+        editions = editions.filter(book=book)
+
+    try:
+        return editions.get(pk=pk)
+    except Edition.DoesNotExist:
+        return None
 
 
 def by_term(term, book=None):
     editions = edition_list.by_term(term, book)
 
     if editions.count() == 0:
-        stdout.p(['No edition found.'], after='=')
-        print('\n')
         return None
     elif editions.count() > 1:
         if term.isdigit():
@@ -36,8 +45,5 @@ def by_term(term, book=None):
             editions = editions.filter(Q(alternate_title=term) | Q(isbn=term) |
                                        Q(book__title=term))
         if editions.count() != 1:
-            stdout.p(['More than one edition found.'], after='=')
-            print('\n')
             return None
-    print('\n')
     return editions[0]

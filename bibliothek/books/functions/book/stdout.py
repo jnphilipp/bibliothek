@@ -18,65 +18,49 @@
 
 import utils
 
-from books.models import Book
-from django.db.models import Q, Value
-from django.db.models.functions import Concat
 from django.utils.translation import ugettext_lazy as _
-from persons.models import Person
 from utils import lookahead
 
 
 def list(books):
-    positions = [.05, .5, .75, .9, 1.]
+    positions = [.05, .5, .75, .9]
     utils.stdout.p([_('Id'), _('Title'), _('Authors'), _('Series'),
-                    _('Volume')], positions=positions, after='=')
+                    _('Volume')], '=', positions)
     for book, has_next in lookahead(books):
         authors = ' ,'.join(f'{a}' for a in book.authors.all())
         fields = [book.id, book.title, authors,
-                  book.series.name if book.series else '',
-                  book.volume if book.volume else '']
-        utils.stdout.p(fields, positions=positions,
-                       after='_' if has_next else '=')
+                  book.series.name if book.series else '', book.volume]
+        utils.stdout.p(fields, '_' if has_next else '=', positions)
 
 
 def info(book):
-    positions = [.33, 1.]
-    utils.stdout.p([_('Field'), _('Value')], positions=positions, after='=')
+    positions = [.33]
+    utils.stdout.p([_('Field'), _('Value')], '=', positions)
     utils.stdout.p([_('Id'), book.id], positions=positions)
     utils.stdout.p([_('Title'), book.title], positions=positions)
 
     if book.authors.count() > 0:
-        for (i, author), has_next in lookahead(enumerate(book.authors.all())):
-            utils.stdout.p([_('Authors') if i == 0 else '',
-                            f'{author.id}: {author}'], positions=positions,
-                           after='' if has_next else '_')
+        for (i, a), has_next in lookahead(enumerate(book.authors.all())):
+            utils.stdout.p(['' if i else _('Authors'), f'{a.id}: {a}'],
+                           '' if has_next else '_', positions)
     else:
         utils.stdout.p([_('Authors'), ''], positions=positions)
 
-    if book.series:
-        utils.stdout.p([_('Series'), f'{book.series.id}: {book.series.name}'],
-                       positions=positions)
-    else:
-        utils.stdout.p([_('Series'), ''], positions=positions)
-
-    if book.volume:
-        utils.stdout.p([_('Volume'), book.volume], positions=positions)
-    else:
-        utils.stdout.p([_('Volume'), ''], positions=positions)
+    series = f'{book.series.id}: {book.series.name}' if book.series else ''
+    utils.stdout.p([_('Series'), series], positions=positions)
+    utils.stdout.p([_('Volume'), book.volume], positions=positions)
 
     if book.genres.count() > 0:
-        for (i, genre), has_next in lookahead(enumerate(book.genres.all())):
-            utils.stdout.p([_('Genres') if i == 0 else '',
-                            f'{genre.id}: {genre.name}'], positions=positions,
-                           after='' if has_next else '_')
+        for (i, g), has_next in lookahead(enumerate(book.genres.all())):
+            utils.stdout.p(['' if i else _('Genres'), f'{g.id}: {g.name}'],
+                           '' if has_next else '_', positions)
     else:
         utils.stdout.p([_('Genres'), ''], positions=positions)
 
     if book.links.count() > 0:
-        for (i, link), has_next in lookahead(enumerate(book.links.all())):
-            utils.stdout.p([_('Links') if i == 0 else '',
-                            f'{link.id}: {link.link}'], positions=positions,
-                           after='' if has_next else '_')
+        for (i, l), has_next in lookahead(enumerate(book.links.all())):
+            utils.stdout.p(['' if i else _('Links'), f'{l.id}: {l.link}'],
+                           '' if has_next else '_', positions)
     else:
         utils.stdout.p([_('Links'), ''], positions=positions)
 
@@ -91,8 +75,7 @@ def info(book):
             if edition.binding:
                 s += edition.binding.name
 
-            utils.stdout.p([_('Editions') if i == 0 else '',
-                            f'{edition.id}: {s}'], positions=positions,
-                           after='' if has_next else '_')
+            utils.stdout.p(['' if i else _('Editions'), f'{edition.id}: {s}'],
+                           '' if has_next else '_', positions)
     else:
         utils.stdout.p([_('Editions'), ''], positions=positions)

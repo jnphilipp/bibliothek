@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from utils import stdout
-
 from . import list as book_list
 
 
@@ -25,8 +23,6 @@ def by_term(term):
     books = book_list.by_term(term)
 
     if books.count() == 0:
-        stdout.p(['No book found.'], after='=')
-        print('\n')
         return None
     elif books.count() > 1:
         if term.isdigit():
@@ -34,8 +30,5 @@ def by_term(term):
         else:
             books = books.filter(title=term)
         if books.count() != 1:
-            stdout.p(['More than one book found.'], after='=')
-            print('\n')
             return None
-    print('\n')
     return books[0]

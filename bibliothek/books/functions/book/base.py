@@ -19,7 +19,6 @@
 from books.models import Book
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
-from django.utils.translation import ugettext_lazy as _
 from links.models import Link
 from genres.models import Genre
 from persons.models import Person

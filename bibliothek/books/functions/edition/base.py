@@ -29,7 +29,7 @@ from languages.models import Language
 from links.models import Link
 from persons.models import Person
 from publishers.models import Publisher
-from utils import lookahead, stdout
+from utils import lookahead
 
 
 def create(book, alternate_title=None, isbn=None, publishing_date=None,
@@ -38,57 +38,27 @@ def create(book, alternate_title=None, isbn=None, publishing_date=None,
     positions = [.33]
 
     edition, created = Edition.objects.get_or_create(
-        book=book,
-        isbn=isbn,
-        publishing_date=publishing_date,
-        defaults={
-            'isbn': isbn,
-            'publishing_date': publishing_date
-        }
-    )
+        book=book, isbn=isbn, publishing_date=publishing_date,
+        defaults={'isbn': isbn, 'publishing_date': publishing_date})
     if created:
-        stdout.p([_('Id'), edition.id], positions=positions)
-        stdout.p([_('Book'), edition.book], positions=positions)
-        stdout.p([_('ISBN'), edition.isbn], positions=positions)
-        stdout.p([_('Publishing date'), edition.publishing_date],
-                 positions=positions)
-
         if alternate_title:
             edition.alternate_title = alternate_title
-            stdout.p([_('Alternate title'), alternate_title],
-                     positions=positions)
-        else:
-            stdout.p([_('Alternate title'), ''], positions=positions)
 
         if cover_image:
             edition.cover_image.save(os.path.basename(cover_image),
                                      DJFile(open(cover_image, 'rb')))
-            stdout.p([_('Cover image'), cover_image], positions=positions)
-        else:
-            stdout.p([_('Cover image'), ''], positions=positions)
 
         if binding:
             edition.binding, c = Binding.objects.filter(
                 Q(pk=binding if binding.isdigit() else None) |
                 Q(name__icontains=binding)
             ).get_or_create(defaults={'name': binding})
-            stdout.p([_('Binding'),
-                      '%s: %s' % (edition.binding.id, edition.binding.name)],
-                     positions=positions)
-        else:
-            stdout.p([_('Binding'), ''], positions=positions)
 
         if publisher:
             edition.publisher, c = Publisher.objects.filter(
                 Q(pk=publisher if publisher.isdigit() else None) |
                 Q(name__icontains=publisher)
             ).get_or_create(defaults={'name': publisher})
-            stdout.p([_('Publisher'),
-                      '%s: %s' % (edition.publisher.id,
-                                  edition.publisher.name)],
-                     positions=positions)
-        else:
-            stdout.p([_('Publisher'), ''], positions=positions)
 
         for (i, p), has_next in lookahead(enumerate(persons)):
             person, c = Person.objects.annotate(
@@ -101,18 +71,12 @@ def create(book, alternate_title=None, isbn=None, publishing_date=None,
                     'last_name': p[p.rfind(' ') + 1:]}
             )
             edition.persons.add(person)
-            stdout.p([_('Persons') if i == 0 else '',
-                      '%s: %s' % (persons.id, str(persons))],
-                     after=None if has_next else '_', positions=positions)
 
         for (i, l), has_next in lookahead(enumerate(languages)):
             language, c = Language.objects.filter(
                 Q(pk=l if l.isdigit() else None) | Q(name=l)
             ).get_or_create(defaults={'name': l})
             edition.languages.add(language)
-            stdout.p([_('Languages') if i == 0 else '',
-                      '%s: %s' % (language.id, language.name)],
-                     after=None if has_next else '_', positions=positions)
 
         for (i, file), has_next in lookahead(enumerate(files)):
             file_name = os.path.basename(file)
@@ -120,27 +84,13 @@ def create(book, alternate_title=None, isbn=None, publishing_date=None,
             file_obj.file.save(file_name, DJFile(open(file, 'rb')))
             file_obj.content_object = edition
             file_obj.save()
-            stdout.p([_('Files') if i == 0 else '',
-                      '%s: %s' % (file_obj.id, file_name)],
-                     after=None if has_next else '_', positions=positions)
-        for (i, url), has_next in lookahead(enumerate(links)):
-            link, c = Link.objects.filter(
-                Q(pk=url if url.isdigit() else None) | Q(link=url)
-            ).get_or_create(defaults={'link': url})
-            edition.links.add(link)
-            stdout.p([_('Links') if i == 0 else '',
-                      '%s: %s' % (link.id, link.link)],
-                     after=None if has_next else '_', positions=positions)
-        edition.save()
 
-        msg = _('Successfully added edition "%(edition)s" with id "%(id)s".')
-        stdout.p([msg % {'edition': str(edition), 'id': edition.id}],
-                 after='=')
-    else:
-        msg = _('The edition "%(edition)s" already exists with id "%(id)s", ' +
-                'aborting...')
-        stdout.p([msg % {'edition': str(edition), 'id': edition.id}],
-                 after='=')
+        for (i, l), has_next in lookahead(enumerate(links)):
+            link, c = Link.objects.filter(Q(pk=l if l.isdigit() else None) |
+                                          Q(link=l)). \
+                get_or_create(defaults={'link': l})
+            edition.links.add(link)
+        edition.save()
     return edition, created
 
 
@@ -204,92 +154,3 @@ def edit(edition, field, value):
         file_obj.content_object = edition
         file_obj.save()
     edition.save()
-
-    msg = _('Successfully edited edition "%(edition)s" with id "%(id)s".')
-    stdout.p([msg % {'edition': str(edition), 'id': edition.id}])
-
-
-def info(edition):
-    positions = [.33]
-    stdout.p([_('Field'), _('Value')], positions=positions, after='=')
-    stdout.p([_('Id'), edition.id], positions=positions)
-    stdout.p([_('Book'), str(edition.book)], positions=positions)
-    stdout.p([_('Alternate title'),
-              edition.alternate_title if edition.alternate_title else ''],
-             positions=positions)
-    stdout.p([_('ISBN'), edition.isbn if edition.isbn else ''],
-             positions=positions)
-    stdout.p([_('Publishing date'),
-              edition.publishing_date if edition.publishing_date else ''],
-             positions=positions)
-    stdout.p([_('Cover'), edition.cover_image if edition.cover_image else ''],
-             positions=positions)
-    stdout.p([_('Binding'),
-              '%s: %s' % (edition.binding.id,
-                          edition.binding.name) if edition.binding else ''],
-             positions=positions)
-    stdout.p([_('Publisher'),
-              '%s: %s' % (edition.publisher.id,
-                          edition.publisher.name) if edition.publisher
-              else ''],
-             positions=positions)
-
-    if edition.persons.count() > 0:
-        persons = edition.persons.all()
-        for (i, person), has_next in lookahead(enumerate(persons)):
-            stdout.p([_('Persons') if i == 0 else '',
-                      '%s: %s' % (person.id, str(person))],
-                     positions=positions, after='' if has_next else '_')
-    else:
-        stdout.p([_('Persons'), ''], positions=positions)
-
-    if edition.languages.count() > 0:
-        languages = edition.languages.all()
-        for (i, language), has_next in lookahead(enumerate(languages)):
-            stdout.p([_('Languages') if i == 0 else '',
-                      '%s: %s' % (language.id, language.name)],
-                     positions=positions, after='' if has_next else '_')
-    else:
-        stdout.p([_('Languages'), ''], positions=positions)
-
-    if edition.links.count() > 0:
-        links = edition.links.all()
-        for (i, link), has_next in lookahead(enumerate(links)):
-            stdout.p([_('Links') if i == 0 else '',
-                      '%s: %s' % (link.id, link.link)],
-                     positions=positions, after='' if has_next else '_')
-    else:
-        stdout.p([_('Links'), ''], positions=positions)
-
-    if edition.files.count() > 0:
-        for (i, file), has_next in lookahead(enumerate(edition.files.all())):
-            stdout.p([_('Files') if i == 0 else '',
-                      '%s: %s' % (file.id, file)],
-                     positions=positions, after='' if has_next else '_')
-    else:
-        stdout.p([_('Files'), ''], positions=positions)
-
-    if edition.acquisitions.count() > 0:
-        acquisitions = edition.acquisitions.all()
-        date_trans = _('date')
-        price_trans = _('price')
-        for (i, acquisition), has_next in lookahead(enumerate(acquisitions)):
-            stdout.p([_('Acquisitions') if i == 0 else '',
-                      '%s: %s=%s, %s=%0.2f' % (acquisition.id, date_trans,
-                                               acquisition.date, price_trans,
-                                               acquisition.price)],
-                     positions=positions, after='' if has_next else '_')
-    else:
-        stdout.p([_('Acquisitions'), ''], positions=positions)
-
-    if edition.reads.count() > 0:
-        date_started_trans = _('date started')
-        date_finished_trans = _('date finished')
-        for (i, read), has_next in lookahead(enumerate(edition.reads.all())):
-            stdout.p([_('Read') if i == 0 else '',
-                      '%s: %s=%s, %s=%s' % (read.id, date_started_trans,
-                                            read.started, date_finished_trans,
-                                            read.finished)],
-                     positions=positions, after='' if has_next else '=')
-    else:
-        stdout.p([_('Read'), ''], positions=positions)

@@ -18,7 +18,6 @@
 
 from .base import *
 
-from . import acquisition
 from . import get
 from . import list
-from . import read
+from . import stdout
