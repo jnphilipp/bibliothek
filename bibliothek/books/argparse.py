@@ -25,6 +25,7 @@ from books.functions import book as fbook, edition as fedition
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from shelves.argparse import acquisition_subparser, read_subparser
+from shelves.functions import acquisition as facquisition, read as fread
 
 
 def _book(args):
@@ -35,12 +36,12 @@ def _book(args):
         if created:
             msg = _(f'Successfully added book "{book.title}" with id ' +
                     f'"{book.id}".')
-            utils.stdout.p([msg], after='=', positions=[1.])
+            utils.stdout.p([msg], '=')
             fbook.stdout.info(book)
         else:
             msg = _(f'The book "{book.title}" already exists with id ' +
                     f'"{book.id}", aborting...')
-            utils.stdout.p([msg], after='=', positions=[1.])
+            utils.stdout.p([msg], '=')
 
     elif args.subparser == 'edit':
         book = fbook.get.by_term(args.book)
@@ -48,59 +49,114 @@ def _book(args):
             fbook.edit(book, args.edit_subparser, args.value)
             msg = _(f'Successfully edited book "{book.title}" with id ' +
                     f'"{book.id}".')
-            stdout.p([msg], positions=[1.])
+            utils.stdout.p([msg])
+        else:
+            utils.stdout.p(['No book found.'], '')
     elif args.subparser == 'edition':
         book = fbook.get.by_term(args.book)
-        if args.edition_subparser == 'acquisition' and book:
-            edition = fedition.get.by_term(args.edition, book)
-            if edition is None:
-
-            if args.acquisition_subparser == 'add' and edition:
-                fedition.acquisition.add(edition, args.date, args.price)
-            elif args.acquisition_subparser == 'delete' and edition:
-                fedition.acquisition.delete(edition, args.acquisition)
-            elif args.acquisition_subparser == 'edit' and edition:
-                fedition.acquisition.edit(edition, args.acquisition,
-                                          args.edit_subparser, args.value)
-        elif args.edition_subparser == 'add' and book:
-            fedition.create(book, args.alternate_title, args.isbn,
-                            args.publishing_date, args.cover, args.binding,
-                            args.publisher, args.person, args.language,
-                            args.link, args.file)
-        elif args.edition_subparser == 'edit' and book:
-            edition = fedition.get.by_term(args.edition, book)
-            if edition:
-                fedition.edit(edition, args.edit_subparser, args.value)
-        elif args.edition_subparser == 'info' and book:
-            edition = fedition.get.by_term(args.edition, book)
-            if edition:
-                fedition.info(edition)
-        elif args.edition_subparser == 'list' and book:
-            if args.search:
-                fedition.list.by_term(args.search, book)
-            else:
-                fedition.list.all(book)
-        elif args.edition_subparser == 'open' and book:
-            edition = fedition.get.by_term(args.edition, book)
-            if edition:
-                file = edition.files.get(pk=args.file)
-                path = os.path.join(settings.MEDIA_ROOT, file.file.path)
-                if sys.platform == 'linux':
-                    os.system('xdg-open "%s"' % path)
+        if book is None:
+            utils.stdout.p(['No book found.'], '')
+        else:
+            if args.edition_subparser == 'acquisition' and book:
+                edition = fedition.get.by_term(args.edition, book)
+                if args.acquisition_subparser == 'add' and edition:
+                    acquisition = facquisition.create(edition, args.date,
+                                                      args.price)
+                    facquisition.stdout.info(acquisition)
+                elif args.acquisition_subparser == 'delete' and edition:
+                    acquisition = facquisition.get.by_pk(args.acquisition,
+                                                         edition=edition)
+                    if acquisition:
+                        facquisition.delete(acquisition)
+                    else:
+                        utils.stdout.p(['No acquisition found.'], '')
+                elif args.acquisition_subparser == 'edit' and edition:
+                    acquisition = facquisition.get.by_pk(args.acquisition,
+                                                         edition=edition)
+                    if acquisition:
+                        facquisition.edit(acquisition, args.field, args.value)
+                        facquisition.stdout.info(acquisition)
+                    else:
+                        utils.stdout.p(['No acquisition found.'], '')
                 else:
-                    os.system('open "%s"' % path)
-        elif args.edition_subparser == 'read' and book:
-            edition = fedition.get.by_term(args.edition, book)
-            if args.read_subparser == 'add' and edition:
-                fedition.read.add(edition, args.started, args.finished)
-            elif args.read_subparser == 'delete' and edition:
-                fedition.read.delete(edition, args.read)
-            elif args.read_subparser == 'edit' and edition:
-                fedition.read.edit(edition, args.read, args.field, args.value)
+                    utils.stdout.p(['No edition found.'], '')
+            elif args.edition_subparser == 'add' and book:
+                edition, created = fedition.create(book, args.alternate_title,
+                                                   args.isbn,
+                                                   args.publishing_date,
+                                                   args.cover, args.binding,
+                                                   args.publisher, args.person,
+                                                   args.language, args.link,
+                                                   args.file)
+                if created:
+                    msg = _(f'Successfully added edition "{edition}" with id' +
+                            f' "{edition.id}".')
+                    utils.stdout.p([msg], '=')
+                    fedition.stdout.info(edition)
+                else:
+                    msg = _(f'The edition "{edition}" already exists with id' +
+                            f' "{edition.id}", aborting...')
+                    stdout.p([msg], '=')
+            elif args.edition_subparser == 'edit' and book:
+                edition = fedition.get.by_term(args.edition, book)
+                if edition:
+                    fedition.edit(edition, args.edit_subparser, args.value)
+                    msg = _(f'Successfully edited edition "{edition}" with ' +
+                            f'id "{edition.id}".')
+                    utils.stdout.p([msg], '')
+                else:
+                    utils.stdout.p(['No edition found.'], '')
+            elif args.edition_subparser == 'info' and book:
+                edition = fedition.get.by_term(args.edition, book)
+                if edition:
+                    fedition.stdout.info(edition)
+                else:
+                    utils.stdout.p(['No edition found.'], '')
+            elif args.edition_subparser == 'list' and book:
+                if args.shelf:
+                    editions = fedition.list.by_shelf(args.shelf, book)
+                elif args.search:
+                    editions = fedition.list.by_term(args.search, book)
+                else:
+                    editions = fedition.list.all(book)
+                fedition.stdout.list(editions)
+            elif args.edition_subparser == 'open' and book:
+                edition = fedition.get.by_term(args.edition, book)
+                if edition:
+                    file = edition.files.get(pk=args.file)
+                    path = os.path.join(settings.MEDIA_ROOT, file.file.path)
+                    if sys.platform == 'linux':
+                        os.system('xdg-open "%s"' % path)
+                    else:
+                        os.system('open "%s"' % path)
+                else:
+                    utils.stdout.p(['No edition found.'], '')
+            elif args.edition_subparser == 'read' and book:
+                edition = fedition.get.by_term(args.edition, book)
+                if args.read_subparser == 'add' and edition:
+                    read = fread.create(edition, args.started, args.finished)
+                    fread.stdout.info(read)
+                elif args.read_subparser == 'delete' and edition:
+                    read = fread.get.by_pk(args.read, edition=edition)
+                    if read:
+                        fread.delete(read)
+                    else:
+                        utils.stdout.p(['No read found.'], '')
+                elif args.read_subparser == 'edit' and edition:
+                    read = fread.get.by_pk(args.read, edition=edition)
+                    if read:
+                        fread.edit(read, args.field, args.value)
+                        fread.stdout.info(read)
+                    else:
+                        utils.stdout.p(['No read found.'], '')
+                else:
+                    utils.stdout.p(['No edition found.'], '')
     elif args.subparser == 'info':
         book = fbook.get.by_term(args.book)
         if book:
             fbook.stdout.info(book)
+        else:
+            utils.stdout.p(['No book found.'], '')
     elif args.subparser == 'list':
         if args.shelf:
             books = fbook.list.by_shelf(args.shelf)
