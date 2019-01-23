@@ -19,6 +19,7 @@
 
 import os
 import sys
+import utils
 
 from bibliothek.argparse import valid_date
 from books.functions import book as fbook, edition as fedition
@@ -29,16 +30,32 @@ from shelves.argparse import acquisition_subparser, read_subparser
 
 def _book(args):
     if args.subparser == 'add':
-        fbook.create(args.title, args.author, args.series, args.volume,
-                     args.genre, args.link)
+        book, created = fbook.create(args.title, args.author, args.series,
+                                     args.volume, args.genre, args.link)
+
+        if created:
+            msg = _(f'Successfully added book "{book.title}" with id ' +
+                    f'"{book.id}".')
+            utils.stdout.p([msg], after='=', positions=[1.])
+            fbook.stdout.info(book)
+        else:
+            msg = _(f'The book "{book.title}" already exists with id ' +
+                    f'"{book.id}", aborting...')
+            utils.stdout.p([msg], after='=', positions=[1.])
+
     elif args.subparser == 'edit':
         book = fbook.get.by_term(args.book)
         if book:
             fbook.edit(book, args.edit_subparser, args.value)
+            msg = _(f'Successfully edited book "{book.title}" with id ' +
+                    f'"{book.id}".')
+            stdout.p([msg], positions=[1.])
     elif args.subparser == 'edition':
         book = fbook.get.by_term(args.book)
         if args.edition_subparser == 'acquisition' and book:
             edition = fedition.get.by_term(args.edition, book)
+            if edition is None:
+
             if args.acquisition_subparser == 'add' and edition:
                 fedition.acquisition.add(edition, args.date, args.price)
             elif args.acquisition_subparser == 'delete' and edition:
@@ -84,14 +101,15 @@ def _book(args):
     elif args.subparser == 'info':
         book = fbook.get.by_term(args.book)
         if book:
-            fbook.info(book)
+            fbook.stdout.info(book)
     elif args.subparser == 'list':
         if args.shelf:
-            fbook.list.by_shelf(args.shelf)
+            books = fbook.list.by_shelf(args.shelf)
         elif args.search:
-            fbook.list.by_term(args.search)
+            books = fbook.list.by_term(args.search)
         else:
-            fbook.list.all()
+            books = fbook.list.all()
+        fbook.stdout.list(books)
 
 
 def add_subparser(parser):

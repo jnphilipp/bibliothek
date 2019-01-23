@@ -18,20 +18,14 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from books.models import Book
-from django.db.models import Q
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
 from django.utils.translation import ugettext_lazy as _
-from utils import lookahead, stdout
+from persons.models import Person
 
 
 def all():
-    books = Book.objects.all()
-    _list([[book.id, book.title,
-            ','.join(str(author) for author in book.authors.all()),
-            book.series.name if book.series else '',
-            book.volume if book.volume else ''] for book in books],
-          [_('Id'), _('Title'), _('Authors'), _('Series'), _('Volume')],
-          positions=[.05, .5, .75, .9, 1.])
-    return books
+    return Book.objects.all()
 
 
 def by_shelf(shelf):
@@ -40,30 +34,16 @@ def by_shelf(shelf):
         books = books.filter(editions__reads__isnull=False)
     elif shelf == 'unread':
         books = books.filter(editions__reads__isnull=True)
-    books = books.distinct()
-    _list([[book.id, book.title,
-            ','.join(str(author) for author in book.authors.all()),
-            book.series.name if book.series else '',
-            book.volume if book.volume else ''] for book in books],
-          [_('Id'), _('Title'), _('Authors'), _('Series'), _('Volume')],
-          positions=[.05, .5, .75, .9, 1.])
-    return books
+    return books.distinct()
 
 
 def by_term(term):
-    books = Book.objects.filter(
-        Q(pk=term if term.isdigit() else None) | Q(title__icontains=term)
-    )
-    _list([[book.id, book.title,
-            ','.join(str(author) for author in book.authors.all()),
-            book.series.name if book.series else '',
-            book.volume if book.volume else ''] for book in books],
-          [_('Id'), _('Title'), _('Authors'), _('Series'), _('Volume')],
-          positions=[.05, .5, .75, .9, 1.])
-    return books
+    persons = Person.objects.annotate(name=Concat('first_name', Value(' '),
+                                                  'last_name')). \
+        filter(Q(pk=term if term.isdigit() else None) |
+               Q(name__icontains=term))
 
-
-def _list(books, fields, positions):
-    stdout.p(fields, positions=positions, after='=')
-    for book, has_next in lookahead(books):
-        stdout.p(book, positions=positions, after='_' if has_next else '=')
+    return Book.objects.filter(Q(pk=term if term.isdigit() else None) |
+                               Q(title__icontains=term) |
+                               Q(authors__in=persons) |
+                               Q(series__name__icontains=term)).distinct()
