@@ -35,8 +35,6 @@ from utils import lookahead
 def create(book, alternate_title=None, isbn=None, publishing_date=None,
            cover_image=None, binding=None, publisher=None, persons=[],
            languages=[], links=[], files=[]):
-    positions = [.33]
-
     edition, created = Edition.objects.get_or_create(
         book=book, isbn=isbn, publishing_date=publishing_date,
         defaults={'isbn': isbn, 'publishing_date': publishing_date})

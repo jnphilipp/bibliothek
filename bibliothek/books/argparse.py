@@ -41,7 +41,7 @@ def _book(args):
         else:
             msg = _(f'The book "{book.title}" already exists with id ' +
                     f'"{book.id}", aborting...')
-            utils.stdout.p([msg], '=')
+            utils.stdout.p([msg], '')
 
     elif args.subparser == 'edit':
         book = fbook.get.by_term(args.book)
@@ -96,7 +96,7 @@ def _book(args):
                 else:
                     msg = _(f'The edition "{edition}" already exists with id' +
                             f' "{edition.id}", aborting...')
-                    stdout.p([msg], '=')
+                    stdout.p([msg], '')
             elif args.edition_subparser == 'edit' and book:
                 edition = fedition.get.by_term(args.edition, book)
                 if edition:

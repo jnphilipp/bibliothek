@@ -21,10 +21,12 @@ from shelves.models import Read
 from . import list as read_list
 
 
-def by_pk(pk, edition=None):
+def by_pk(pk, edition=None, paper=None):
     reads = Read.objects.all()
     if edition is not None:
         reads = reads.filter(editions=edition)
+    if paper is not None:
+        reads = reads.filter(papers=paper)
 
     try:
         return reads.get(pk=pk)

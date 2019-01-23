@@ -27,8 +27,6 @@ from utils import lookahead
 
 
 def create(title, authors=[], series=None, volume=0, genres=[], links=[]):
-    positions = [.33, 1.]
-
     book, created = Book.objects.get_or_create(title=title)
     if created:
         for (i, a), has_next in lookahead(enumerate(authors)):
