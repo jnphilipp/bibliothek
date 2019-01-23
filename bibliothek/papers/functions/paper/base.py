@@ -21,25 +21,19 @@ import os
 from django.core.files import File as DJFile
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
-from django.utils.translation import ugettext_lazy as _
 from files.models import File
 from journals.models import Journal
 from languages.models import Language
 from links.models import Link
 from papers.models import Paper
 from persons.models import Person
-from utils import lookahead, stdout
+from utils import lookahead
 
 
 def create(title, authors=[], publishing_date=None, journal=None, volume=None,
            languages=[], links=[]):
-    positions = [.33, 1.]
-
     paper, created = Paper.objects.get_or_create(title=title)
     if created:
-        stdout.p([_('Id'), paper.id], positions=positions)
-        stdout.p([_('Title'), paper.title], positions=positions)
-
         if len(authors) > 0:
             for (i, a), has_next in lookahead(enumerate(authors)):
                 author, c = Person.objects.annotate(
@@ -48,66 +42,34 @@ def create(title, authors=[], publishing_date=None, journal=None, volume=None,
                     Q(pk=a if a.isdigit() else None) | Q(name__icontains=a)
                 ).get_or_create(defaults={
                     'first_name': a[:a.rfind(' ')],
-                    'last_name': a[a.rfind(' ') + 1 :]
+                    'last_name': a[a.rfind(' ') + 1:]
                 })
                 paper.authors.add(author)
-                stdout.p([_('Authors') if i == 0 else '',
-                          '%s: %s' % (author.id, str(author))],
-                         after=None if has_next else '_', positions=positions)
-        else:
-            stdout.p([_('Authors'), ''], positions=positions)
 
         if publishing_date:
             paper.publishing_date = publishing_date
-            stdout.p([_('Publishing date'), paper.publishing_date],
-                     positions=positions)
-        else:
-            stdout.p([_('Publishing date'), ''], positions=positions)
 
         if journal:
             paper.journal, c = Journal.objects.filter(
                 Q(pk=journal if journal.isdigit() else None) |
                 Q(name__icontains=journal)
             ).get_or_create(defaults={'name': journal})
-            stdout.p([_('Journal'), '%s: %s' % (paper.journal.id,
-                                                paper.journal.name)],
-                     positions=positions)
-        else:
-            stdout.p([_('Journal'), ''], positions=positions)
 
         if volume:
             paper.volume = volume
-            stdout.p([_('Volume'), paper.volume], positions=positions)
-        else:
-            stdout.p([_('Volume'), ''], positions=positions)
 
         for (i, l), has_next in lookahead(enumerate(languages)):
             language, c = Language.objects.filter(
                 Q(pk=l if l.isdigit() else None) | Q(name=l)
             ).get_or_create(defaults={'name': l})
             paper.languages.add(language)
-            stdout.p([_('Languages') if i == 0 else '',
-                      '%s: %s' % (language.id, language.name)],
-                     after=None if has_next else '_', positions=positions)
 
         for (i, url), has_next in lookahead(enumerate(links)):
             link, c = Link.objects.filter(
                 Q(pk=url if url.isdigit() else None) | Q(link=url)
             ).get_or_create(defaults={'link': url})
             paper.links.add(link)
-            stdout.p([_('Links') if i == 0 else '',
-                      '%s: %s' % (link.id, link.link)],
-                     after=None if has_next else '_', positions=positions)
-
         paper.save()
-        msg = _('Successfully added paper "%(title)s" with id "%(id)s".')
-        stdout.p([msg % {'title':paper.title, 'id':paper.id}], after='=',
-                 positions=[1.])
-    else:
-        msg = _('The paper "%(title)s" already exists with id "%(id)s", ' +
-                'aborting...')
-        stdout.p([msg % {'title':paper.title, 'id':paper.id}], after='=',
-                 positions=[1.])
     return paper, created
 
 
@@ -125,7 +87,7 @@ def edit(paper, field, value):
             Q(pk=value if value.isdigit() else None) | Q(name__icontains=value)
         ).get_or_create(defaults={
             'first_name': value[:value.rfind(' ')],
-            'last_name': value[value.rfind(' ') + 1 :]
+            'last_name': value[value.rfind(' ') + 1:]
         })
         if paper.authors.filter(pk=author.pk).exists():
             paper.authors.remove(author)
@@ -162,109 +124,3 @@ def edit(paper, field, value):
         file_obj.content_object = paper
         file_obj.save()
     paper.save()
-    msg = _('Successfully edited paper "%(title)s" with id "%(id)s".')
-    stdout.p([msg % {'title':paper.title, 'id':paper.id}], positions=[1.])
-
-
-def info(paper):
-    positions=[.33, 1.]
-    stdout.p([_('Field'), _('Value')], positions=positions, after='=')
-    stdout.p([_('Id'), paper.id], positions=positions)
-    stdout.p([_('Title'), paper.title], positions=positions)
-
-    if paper.authors.count() > 0:
-        for (i, author), has_next in lookahead(enumerate(paper.authors.all())):
-            if i == 0:
-                stdout.p([_('Authors'), '%s: %s' % (author.id, str(author))],
-                         positions=positions, after='' if has_next else '_')
-            else:
-                stdout.p(['', '%s: %s' % (author.id, str(author))],
-                         positions=positions, after='' if has_next else '_')
-    else:
-        stdout.p([_('Authors'), ''], positions=positions)
-
-    stdout.p([_('Journal'),
-              '%s: %s' % (paper.journal.id,
-                          paper.journal.name) if paper.journal else ''],
-             positions=positions)
-    stdout.p([_('Volume'), paper.volume if paper.volume else ''],
-             positions=positions)
-    stdout.p([_('Publishing date'), paper.publishing_date],
-             positions=positions)
-
-    if paper.languages.count() > 0:
-        languages = paper.languages.all()
-        for (i, language), has_next in lookahead(enumerate(languages)):
-            if i == 0:
-                stdout.p([_('Languages'), language], positions=positions,
-                         after='' if has_next else '_')
-            else:
-                stdout.p(['', language], positions=positions,
-                         after='' if has_next else '_')
-    else:
-        stdout.p([_('Languages'), ''], positions=positions)
-
-    if paper.files.count() > 0:
-        for (i, file), has_next in lookahead(enumerate(paper.files.all())):
-            if i == 0:
-                stdout.p([_('Files'), '%s: %s' % (file.id, file)],
-                         positions=positions, after='' if has_next else '_')
-            else:
-                stdout.p(['', '%s: %s' % (file.id, file)],
-                         positions=positions, after='' if has_next else '_')
-    else:
-        stdout.p([_('Files'), ''], positions=positions)
-
-    if paper.links.count() > 0:
-        for (i, link), has_next in lookahead(enumerate(paper.links.all())):
-            if i == 0:
-                stdout.p([_('Links'), '%s: %s' % (link.id, link.link)],
-                         positions=positions, after='' if has_next else '_')
-            else:
-                stdout.p(['', '%s: %s' % (link.id, link.link)],
-                         positions=positions, after='' if has_next else '_')
-    else:
-        stdout.p([_('Links'), ''], positions=positions)
-
-    if paper.acquisitions.count() > 0:
-        acquisitions = paper.acquisitions.all()
-        date_trans = _('date')
-        price_trans = _('price')
-        for (i, acquisition), has_next in lookahead(enumerate(acquisitions)):
-            if i == 0:
-                stdout.p([
-                    _('Acquisitions'),
-                    '%s: %s=%s, %s=%0.2f' % (acquisition.id, date_trans,
-                                             acquisition.date, price_trans,
-                                             acquisition.price)
-                ], positions=positions, after='' if has_next else '_')
-            else:
-                stdout.p([+
-                    '',
-                    '%s: %s=%s, %s=%0.2f' % (acquisition.id, date_trans,
-                                             acquisition.date, price_trans,
-                                             acquisition.price)
-                ], positions=positions, after='' if has_next else '_')
-    else:
-        stdout.p([_('Acquisitions'), ''], positions=positions)
-
-    if paper.reads.count() > 0:
-        date_started_trans = _('date started')
-        date_finished_trans = _('date finished')
-        for (i, read), has_next in lookahead(enumerate(paper.reads.all())):
-            if i == 0:
-                stdout.p([
-                    _('Reads'),
-                    '%s: %s=%s, %s=%s' % (read.id, date_started_trans,
-                                          read.started, date_finished_trans,
-                                          read.finished)
-                ], positions=positions, after='' if has_next else '=')
-            else:
-                stdout.p([
-                    '',
-                    '%s: %s=%s, %s=%s' % (read.id, date_started_trans,
-                                          read.started, date_finished_trans,
-                                          read.finished)
-                ], positions=positions, after='' if has_next else '=')
-    else:
-        stdout.p([_('Reads'), ''], positions=positions, after='=')

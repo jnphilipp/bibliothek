@@ -16,32 +16,29 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models import Q, TextField, Value
-from django.db.models.functions import Concat
-from django.utils.translation import ugettext_lazy as _
-from utils import stdout
+from django.db.models import Q
+from papers.models import Paper
 
 from . import list as paper_list
+
+
+def by_pk(pk):
+    try:
+        return Paper.objects.get(pk=pk)
+    except Paper.DoesNotExist:
+        return None
 
 
 def by_term(term):
     papers = paper_list.by_term(term)
 
     if papers.count() == 0:
-        stdout.p([_('No paper found.')], after='=')
-        print('\n')
         return None
     elif papers.count() > 1:
-        papers = papers.annotate(
-            jv=Concat('journal__name', Value(' '), 'volume',
-                      output_field=TextField()))
         if term.isdigit():
             papers = papers.filter(pk=term)
         else:
             papers = papers.filter(Q(title=term) | Q(jv=term))
         if papers.count() != 1:
-            stdout.p(['More than one paper found.'], after='=')
-            print('\n')
             return None
-    print('\n')
     return papers[0]
