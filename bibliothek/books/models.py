@@ -108,12 +108,10 @@ class Book(models.Model):
         return data
 
     def __str__(self):
-        authors = ', '.join([str(a) for a in self.authors.all()])
-        return '%s%s%s' % (
-            self.title,
-            '' if self.authors.count() == 0 else ' - %s' % authors,
-            ' (%s #%g)' % (self.series, self.volume) if self.series else ''
-        )
+        authors = ', '.join([f'{a}' for a in self.authors.all()])
+        authors = '' if self.authors.count() == 0 else f' - {authors}'
+        series = f' ({self.series} #{self.volume:g})' if self.series else ''
+        return f'{self.title}{authors}{series}'
 
     class Meta:
         ordering = ('series', 'volume', 'title')
@@ -235,12 +233,9 @@ class Edition(models.Model):
             file.save()
 
     def move_cover_image(self):
-        save_name = os.path.join(
-            'books',
-            str(self.book.id),
-            str(self.id),
-            'cover%s' % os.path.splitext(self.cover_image.name)[1]
-        )
+        ending = os.path.splitext(self.cover_image.name)[1]
+        save_name = os.path.join('books', str(self.book.id), str(self.id),
+                                 f'cover{ending}')
 
         current_path = os.path.join(settings.MEDIA_ROOT, self.cover_image.name)
         new_path = os.path.join(settings.MEDIA_ROOT, save_name)
@@ -261,11 +256,10 @@ class Edition(models.Model):
                 self.move_file(file)
 
     def __str__(self):
-        return '%s #%s%s' % (
-            self.book,
-            self.id,
-            ' (%s)' % self.alternate_title if self.alternate_title else ''
-        )
+        authors = ', '.join([f'{a}' for a in self.book.authors.all()])
+        authors = '' if self.book.authors.count() == 0 else f' - {authors}'
+        series = f' ({self.series} #{self.volume:g})' if self.series else ''
+        return f'{self.get_title()}{authors}{series} #{self.id}'
 
     class Meta:
         ordering = ('book', 'publishing_date')
