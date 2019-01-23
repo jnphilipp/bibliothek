@@ -16,14 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
+import utils
+
 from argparse import ArgumentTypeError
 from books.functions import edition as fedition
 from datetime import datetime
 from django.utils.translation import ugettext_lazy as _
 from magazines.functions import issue as fissue
 from papers.functions import paper as fpaper
-
-from utils import stdout
 
 
 def _info(args):
@@ -34,13 +34,13 @@ def _info(args):
     if edition is None and paper is None and issue is None:
         return
     elif edition is not None and paper is None and issue is None:
-        fedition.info(edition)
+        fedition.stdout.info(edition)
     elif edition is None and paper is not None and issue is None:
-        fpaper.info(paper)
+        fpaper.stdout.info(paper)
     elif edition is None and paper is None and issue is not None:
-        fissue.info(issue)
+        fissue.stdout.info(issue)
     else:
-        stdout.p(['More than one found.'], after='=')
+        utils.stdout.p(['More than one found.'], after='=')
 
 
 def add_subparser(parser):
@@ -53,7 +53,6 @@ def valid_date(s):
     try:
         if s.lower() in ['', 'n', 'none', 'null']:
             return None
-        return datetime.strptime(s, "%Y-%m-%d").date()
+        return datetime.strptime(s, '%Y-%m-%d').date()
     except ValueError:
-        msg = 'Not a valid date: "{0}". Format is yyyy-mm-dd.'.format(s)
-        raise ArgumentTypeError(msg)
+        raise ArgumentTypeError(f'Not a valid date: "{s}".')

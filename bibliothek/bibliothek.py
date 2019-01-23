@@ -57,15 +57,6 @@ def init():
         execute_from_command_line(['', 'migrate'])
 
 
-def valid_date(s):
-    try:
-        if s.lower() in ['', 'n', 'none', 'null']:
-            return None
-        return datetime.strptime(s, "%Y-%m-%d").date()
-    except ValueError:
-        raise ArgumentTypeError('Not a valid date: "{0}".'.format(s))
-
-
 def _runserver(args):
     from django.core.management import execute_from_command_line
     execute_from_command_line(['', 'runserver'])
