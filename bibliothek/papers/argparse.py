@@ -18,42 +18,73 @@
 
 import os
 import sys
+import utils
 
 from bibliothek.argparse import valid_date
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from papers.functions import paper as fpaper
 from shelves.argparse import acquisition_subparser, read_subparser
+from shelves.functions import acquisition as facquisition, read as fread
 
 
 def _paper(args):
     if args.subparser == 'acquisition':
         paper = fpaper.get.by_term(args.paper)
         if args.acquisition_subparser == 'add' and paper:
-            fpaper.acquisition.add(paper, args.date, args.price)
+            acquisition = facquisition.create(paper, args.date, args.price)
+            facquisition.stdout.info(acquisition)
         elif args.acquisition_subparser == 'delete' and paper:
-            fpaper.acquisition.delete(paper, args.acquisition)
+            acquisition = facquisition.get.by_pk(args.acquisition, paper=paper)
+            if acquisition:
+                facquisition.delete(acquisition)
+            else:
+                utils.stdout.p(['No acquisition found.'], '')
         elif args.acquisition_subparser == 'edit' and paper:
-            fpaper.acquisition.edit(paper, args.acquisition,
-                                    args.edit_subparser, args.value)
+            acquisition = facquisition.get.by_pk(args.acquisition, paper=paper)
+            if acquisition:
+                facquisition.edit(acquisition, args.field, args.value)
+                facquisition.stdout.info(acquisition)
+            else:
+                utils.stdout.p(['No acquisition found.'], '')
+        else:
+            utils.stdout.p(['No paper found.'], '')
     elif args.subparser == 'add':
-        fpaper.create(args.title, args.author, args.publishing_date,
-                      args.journal, args.volume, args.language, args.link)
+        paper, created = fpaper.create(args.title, args.author,
+                                       args.publishing_date, args.journal,
+                                       args.volume, args.language, args.link)
+        if created:
+            msg = _(f'Successfully added paper "{paper.title}" with id ' +
+                    f'"{paper.id}".')
+            utils.stdout.p([msg], '=')
+            fpaper.stdout.info(paper)
+        else:
+            msg = _(f'The paper "{paper.title}" already exists with id ' +
+                    f'"{paper.id}", aborting...')
+            utils.stdout.p([msg], '')
     elif args.subparser == 'edit':
         paper = fpaper.get.by_term(args.paper)
         if paper:
             fpaper.edit(paper, args.edit_subparser, args.value)
+            msg = _(f'Successfully edited paper "{paper.title}" with id ' +
+                    f'"{paper.id}".')
+            utils.stdout.p([msg])
+        else:
+            utils.stdout.p(['No paper found.'], '')
     elif args.subparser == 'list':
         if args.shelf:
-            fpaper.list.by_shelf(args.shelf)
+            papers = fpaper.list.by_shelf(args.shelf)
         elif args.search:
-            fpaper.list.by_term(args.search)
+            papers = fpaper.list.by_term(args.search)
         else:
-            fpaper.list.all()
+            papers = fpaper.list.all()
+            fpaper.stdout.list(papers)
     elif args.subparser == 'info':
         paper = fpaper.get.by_term(args.paper)
         if paper:
-            fpaper.info(paper)
+            fpaper.stdout.info(paper)
+        else:
+            utils.stdout.p(['No paper found.'], '')
     elif args.subparser == 'open':
         paper = fpaper.get.by_term(args.paper)
         if paper:
@@ -63,16 +94,43 @@ def _paper(args):
                 os.system('xdg-open "%s"' % path)
             else:
                 os.system('open "%s"' % path)
+        else:
+            utils.stdout.p(['No paper found.'], '')
     elif args.subparser == 'parse':
-        fpaper.parse.from_bibtex(args.bibtex, args.file)
+        papers = fpaper.parse.from_bibtex(args.bibtex, args.file)
+        for paper, created, acquisition in papers:
+            if created:
+                msg = _(f'Successfully added paper "{paper.title}" with id ' +
+                        f'"{paper.id}".')
+                utils.stdout.p([msg])
+                msg = _(f'Successfully added acquisition on '
+                        f'"{acquisition.date}" with id "{acquisition.id}".')
+                utils.stdout.p([msg], '=')
+                fpaper.stdout.info(paper)
+            else:
+                msg = _(f'The paper "{paper.title}" already exists with id' +
+                        f' "{paper.id}", aborting...')
+                utils.stdout.p([msg], '=')
     elif args.subparser == 'read':
         paper = fpaper.get.by_term(args.paper)
         if args.read_subparser == 'add' and paper:
-            fpaper.read.add(paper, args.started, args.finished)
+            read = fread.create(paper, args.started, args.finished)
+            fread.stdout.info(read)
         elif args.read_subparser == 'delete' and paper:
-            fpaper.read.delete(paper, args.read)
+            read = fread.get.by_pk(args.read, paper=paper)
+            if read:
+                fread.delete(read)
+            else:
+                utils.stdout.p(['No read found.'], '')
         elif args.read_subparser == 'edit' and paper:
-            fpaper.read.edit(paper, args.read, args.field, args.value)
+            read = fread.get.by_pk(args.read, paper=paper)
+            if read:
+                fread.edit(read, args.field, args.value)
+                fread.stdout.info(read)
+            else:
+                utils.stdout.p(['No read found.'], '')
+        else:
+            utils.stdout.p(['No paper found.'], '')
 
 
 def add_subparser(parser):
