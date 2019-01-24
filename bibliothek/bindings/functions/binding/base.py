@@ -17,27 +17,14 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from bindings.models import Binding
-from django.utils.translation import ugettext_lazy as _
-from utils import lookahead, stdout
 
 
 def create(name):
-    positions = [.33, 1.]
+    return Binding.objects.get_or_create(name=name)
 
-    binding, created = Binding.objects.get_or_create(name=name)
-    if created:
-        stdout.p([_('Id'), binding.id], positions=positions)
-        stdout.p([_('Name'), binding.name], positions=positions)
-        binding.save()
-        msg = _('Successfully added binding "%(name)s" with id "%(id)s".')
-        stdout.p([msg % {'name': binding.name, 'id': binding.id}], after='=',
-                 positions=[1.])
-    else:
-        msg = _('The binding "%(name)s" already exists with id "%(id)s", ' +
-                'aborting...')
-        stdout.p([msg % {'name': binding.name, 'id': binding.id}], after='=',
-                 positions=[1.])
-    return binding, created
+
+def delete(binding):
+    binding.delete()
 
 
 def edit(binding, field, value):
@@ -46,12 +33,3 @@ def edit(binding, field, value):
     if field == 'name':
         binding.name = value
     binding.save()
-    msg = _('Successfully edited binding "%(name)s" with id "%(id)s".')
-    stdout.p([msg % {'name':binding.name, 'id':binding.id}], positions=[1.])
-
-
-def info(binding):
-    positions=[.33, 1.]
-    stdout.p([_('Field'), _('Value')], positions=positions, after='=')
-    stdout.p([_('Id'), binding.id], positions=positions)
-    stdout.p([_('Name'), binding.name], positions=positions)

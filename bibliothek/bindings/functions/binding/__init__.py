@@ -20,3 +20,4 @@ from .base import *
 
 from . import get
 from . import list
+from . import stdout

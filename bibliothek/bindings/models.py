@@ -23,24 +23,14 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Binding(models.Model):
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_('Created at')
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_('Updated at')
-    )
+    created_at = models.DateTimeField(auto_now_add=True,
+                                      verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True,
+                                      verbose_name=_('Updated at'))
 
-    slug = models.SlugField(
-        max_length=2048,
-        unique=True,
-        verbose_name=_('Slug')
-    )
-    name = SingleLineTextField(
-        unique=True,
-        verbose_name=_('Name')
-    )
+    slug = models.SlugField(max_length=2048, unique=True,
+                            verbose_name=_('Slug'))
+    name = SingleLineTextField(unique=True, verbose_name=_('Name'))
 
     def save(self, *args, **kwargs):
         if not self.slug:

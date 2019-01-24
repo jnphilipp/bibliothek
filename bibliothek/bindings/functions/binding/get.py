@@ -16,9 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext_lazy as _
-from utils import stdout
-
 from . import list as binding_list
 
 
@@ -26,8 +23,6 @@ def by_term(term):
     bindings = binding_list.by_term(term)
 
     if bindings.count() == 0:
-        stdout.p([_('No binding found.')], after='=')
-        print('\n')
         return None
     elif bindings.count() > 1:
         if term.isdigit():
@@ -35,8 +30,5 @@ def by_term(term):
         else:
             bindings = bindings.filter(name=term)
         if bindings.count() != 1:
-            stdout.p([_('More than one binding found.')], after='=')
-            print('\n')
             return None
-    print('\n')
     return bindings[0]

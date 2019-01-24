@@ -16,14 +16,20 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from bindings.models import Binding
-from django.db.models import Q
+from django.utils.translation import ugettext_lazy as _
+from utils import lookahead, stdout
 
 
-def all():
-    return Binding.objects.all()
+def list(bindings):
+    positions = [.05]
+    stdout.p([_('Id'), _('Name')], '=', positions)
+    for binding, has_next in lookahead(bindings):
+        stdout.p([binding.id, binding.name], '_' if has_next else '=',
+                 positions)
 
 
-def by_term(term):
-    return Binding.objects.filter(Q(pk=term if term.isdigit() else None) |
-                                  Q(name__icontains=term))
+def info(binding):
+    positions = [.33]
+    stdout.p([_('Field'), _('Value')], '=', positions)
+    stdout.p([_('Id'), binding.id], positions=positions)
+    stdout.p([_('Name'), binding.name], positions=positions)

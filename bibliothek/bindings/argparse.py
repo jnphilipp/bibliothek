@@ -16,26 +16,55 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
+import utils
+
 from django.utils.translation import ugettext_lazy as _
 from bindings.functions import binding as fbinding
 
 
 def _binding(args):
     if args.subparser == 'add':
-        fbinding.create(args.name)
+        binding, created = fbinding.create(args.name)
+        if created:
+            msg = _(f'Successfully added binding "{binding.name}" with id ' +
+                    f'"{binding.id}".')
+            utils.stdout.p([msg], '=')
+            fbinding.stdout.info(binding)
+        else:
+            msg = _(f'The binding "{binding.name}" already exists with id ' +
+                    f'"{binding.id}", aborting...')
+            utils.stdout.p([msg], '')
+
+    elif args.subparser == 'delete':
+        binding = fbinding.get.by_term(args.binding)
+        if binding:
+            fbinding.delete(binding)
+            msg = _(f'Successfully deleted binding with id "{binding.id}".')
+            utils.stdout.p([msg], '')
+        else:
+            utils.stdout.p([_('No binding found.')], '')
     elif args.subparser == 'edit':
         binding = fbinding.get.by_term(args.binding)
         if binding:
             fbinding.edit(binding, args.field, args.value)
+            msg = _(f'Successfully edited binding "{binding.name}" with id ' +
+                    f'"{binding.id}".')
+            utils.stdout.p([msg], '')
+            fbinding.stdout.info(binding)
+        else:
+            utils.stdout.p([_('No binding found.')], '')
     elif args.subparser == 'info':
         binding = fbinding.get.by_term(args.binding)
         if binding:
-            fbinding.info(binding)
+            fbinding.stdout.info(binding)
+        else:
+            utils.stdout.p([_('No binding found.')], '')
     elif args.subparser == 'list':
         if args.search:
-            fbinding.list.by_term(args.search)
+            bindings = fbinding.list.by_term(args.search)
         else:
-            fbinding.list.all()
+            bindings = fbinding.list.all()
+        fbinding.stdout.list(bindings)
 
 
 def add_subparser(parser):
@@ -46,6 +75,10 @@ def add_subparser(parser):
     # binding add
     add_parser = subparser.add_parser('add', help=_('Add a new binding'))
     add_parser.add_argument('name', help=_('Name'))
+
+    # binding delete
+    delete_parser = subparser.add_parser('delete', help=_('Delete a binding'))
+    delete_parser.add_argument('binding', help=_('Binding'))
 
     # binding edit
     edit_parser = subparser.add_parser('edit', help=_('Edit a binding'))
