@@ -20,6 +20,7 @@ from bindings.functions import binding as fbinding
 from books.functions import book as fbook, edition as fedition
 from django.test import TestCase
 from publishers.functions import publisher as fpublisher
+from shelves.functions import acquisition as facquisition, read as fread
 
 
 class BookFunctionsTestCase(TestCase):
@@ -173,32 +174,31 @@ class BookFunctionsTestCase(TestCase):
         edition, created = fedition.create(self.book)
         self.assertTrue(created)
 
-        acquisition = fedition.acquisition.add(edition, date='2016-06-02',
-                                               price=2.5)
+        acquisition = facquisition.create(edition, date='2016-06-02', price=2.5)
         self.assertIsNotNone(acquisition)
         self.assertIsNotNone(acquisition.id)
         self.assertEquals(1, edition.acquisitions.count())
 
-        fedition.acquisition.edit(edition, acquisition.id, 'price', 5.75)
+        facquisition.edit(acquisition, 'price', 5.75)
         self.assertIsNotNone(5.75, acquisition.price)
 
-        fedition.acquisition.delete(edition, acquisition.id)
+        facquisition.delete(acquisition)
         self.assertEquals(0, edition.acquisitions.count())
 
     def test_edition_read(self):
         edition, created = fedition.create(self.book)
         self.assertTrue(created)
 
-        read = fedition.read.add(edition, started='2016-07-03')
+        read = fread.create(edition, started='2016-07-03')
         self.assertIsNotNone(read)
         self.assertIsNotNone(read.id)
         self.assertEquals(1, edition.reads.count())
 
-        fedition.read.edit(edition, read.id, 'started', '2016-07-05')
+        fread.edit(read, 'started', '2016-07-05')
         self.assertIsNotNone('2016-07-05', str(read.started))
 
-        fedition.read.edit(edition, read.id, 'finished', '2016-07-15')
+        fread.edit(read, 'finished', '2016-07-15')
         self.assertIsNotNone('2016-07-15', str(read.finished))
 
-        fedition.read.delete(edition, read.id)
+        fread.delete(read)
         self.assertEquals(edition.reads.count(), 0)

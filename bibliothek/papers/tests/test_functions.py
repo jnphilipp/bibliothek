@@ -18,8 +18,8 @@
 
 from datetime import date
 from django.test import TestCase
-from papers.functions import paper as fpaper
-from papers.functions import bibtex as fbibtex
+from papers.functions import bibtex as fbibtex, paper as fpaper
+from shelves.functions import acquisition as facquisition, read as fread
 
 
 class PaperFunctionsTestCase(TestCase):
@@ -56,7 +56,15 @@ class PaperFunctionsTestCase(TestCase):
         self.assertEquals('English', paper.languages.first().name)
 
     def test_paper_bibtex(self):
-        bibtex = '@ARTICLE{arXiv1706.02515,author = {Klambauer, Günter and Unterthiner, Thomas and Mayr, Andreas and Hochreiter, Sepp},title = "Self-Normalizing Neural Networks",journal = {ArXiv e-prints},archivePrefix = "arXiv",eprint = {1706.02515},primaryClass = "cs.LG",keywords = {Computer Science - Learning, Statistics - Machine Learning},year = 2017,month = jun,url = {https://arxiv.org/abs/1706.02515},adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170602515K},adsnote = {Provided by the SAO/NASA Astrophysics Data System}}'
+        bibtex = '@ARTICLE{arXiv1706.02515,author = {Klambauer, Günter and' + \
+            ' Unterthiner, Thomas and Mayr, Andreas and Hochreiter, Sepp},' + \
+            'title = "Self-Normalizing Neural Networks",journal = {ArXiv ' + \
+            'e-prints},archivePrefix = "arXiv",eprint = {1706.02515},' + \
+            'primaryClass = "cs.LG",keywords = {Computer Science - ' + \
+            'Learning, Statistics - Machine Learning},year = 2017,month = ' + \
+            'jun,url = {https://arxiv.org/abs/1706.02515},adsurl = ' + \
+            '{http://adsabs.harvard.edu/abs/2017arXiv170602515K},adsnote =' + \
+            ' {Provided by the SAO/NASA Astrophysics Data System}}'
 
         expected = [{
             'title': 'Self-Normalizing Neural Networks',
@@ -170,15 +178,14 @@ class PaperFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
 
-        acquisition = fpaper.acquisition.add(paper, date='2016-06-02',
-                                             price=2.5)
+        acquisition = facquisition.create(paper, date='2016-06-02', price=2.5)
         self.assertIsNotNone(acquisition)
         self.assertEquals(1, paper.acquisitions.count())
 
-        fpaper.acquisition.edit(paper, acquisition.id, 'price', 5.75)
+        facquisition.edit(acquisition, 'price', 5.75)
         self.assertIsNotNone(5.75, acquisition.price)
 
-        fpaper.acquisition.delete(paper, acquisition.id)
+        facquisition.delete(acquisition)
         self.assertEquals(0, paper.acquisitions.count())
 
     def test_paper_read(self):
@@ -187,12 +194,15 @@ class PaperFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
 
-        read = fpaper.read.add(paper, started='2016-07-03')
+        read = fread.create(paper, started='2016-07-03')
         self.assertIsNotNone(read)
         self.assertEquals(1, paper.reads.count())
 
-        fpaper.read.edit(paper, read.id, 'finished', '2016-07-15')
+        fread.edit(read, 'started', '2016-07-05')
+        self.assertIsNotNone('2016-07-05', str(read.started))
+
+        fread.edit(read, 'finished', '2016-07-15')
         self.assertIsNotNone('2016-07-15', str(read.finished))
 
-        fpaper.read.delete(paper, read.id)
+        fread.delete(read)
         self.assertEquals(0, paper.reads.count())
