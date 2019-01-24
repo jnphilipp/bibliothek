@@ -33,17 +33,26 @@ def _paper(args):
         paper = fpaper.get.by_term(args.paper)
         if args.acquisition_subparser == 'add' and paper:
             acquisition = facquisition.create(paper, args.date, args.price)
+            msg = _('Successfully added acquisition with id ' +
+                    f'"{acquisition.id}".')
+            utils.stdout.p([msg], '=')
             facquisition.stdout.info(acquisition)
         elif args.acquisition_subparser == 'delete' and paper:
             acquisition = facquisition.get.by_pk(args.acquisition, paper=paper)
             if acquisition:
                 facquisition.delete(acquisition)
+                msg = _('Successfully deleted acquisition with id ' +
+                        f'"{acquisition.id}".')
+                utils.stdout.p([msg], '')
             else:
                 utils.stdout.p(['No acquisition found.'], '')
         elif args.acquisition_subparser == 'edit' and paper:
             acquisition = facquisition.get.by_pk(args.acquisition, paper=paper)
             if acquisition:
                 facquisition.edit(acquisition, args.field, args.value)
+                msg = _('Successfully edited acquisition with id ' +
+                        f'"{acquisition.id}".')
+                utils.stdout.p([msg], '=')
                 facquisition.stdout.info(acquisition)
             else:
                 utils.stdout.p(['No acquisition found.'], '')
@@ -68,7 +77,8 @@ def _paper(args):
             fpaper.edit(paper, args.edit_subparser, args.value)
             msg = _(f'Successfully edited paper "{paper.title}" with id ' +
                     f'"{paper.id}".')
-            utils.stdout.p([msg])
+            utils.stdout.p([msg], '=')
+            fpaper.stdout.info(paper)
         else:
             utils.stdout.p(['No paper found.'], '')
     elif args.subparser == 'list':
@@ -78,7 +88,7 @@ def _paper(args):
             papers = fpaper.list.by_term(args.search)
         else:
             papers = fpaper.list.all()
-            fpaper.stdout.list(papers)
+        fpaper.stdout.list(papers)
     elif args.subparser == 'info':
         paper = fpaper.get.by_term(args.paper)
         if paper:
@@ -103,8 +113,8 @@ def _paper(args):
                 msg = _(f'Successfully added paper "{paper.title}" with id ' +
                         f'"{paper.id}".')
                 utils.stdout.p([msg])
-                msg = _(f'Successfully added acquisition on '
-                        f'"{acquisition.date}" with id "{acquisition.id}".')
+                msg = _(f'Successfully added acquisition with id ' +
+                        f'"{acquisition.id}".')
                 utils.stdout.p([msg], '=')
                 fpaper.stdout.info(paper)
             else:
@@ -115,17 +125,23 @@ def _paper(args):
         paper = fpaper.get.by_term(args.paper)
         if args.read_subparser == 'add' and paper:
             read = fread.create(paper, args.started, args.finished)
+            msg = _(f'Successfully added read with id "{read.id}".')
+            utils.stdout.p([msg], '=')
             fread.stdout.info(read)
         elif args.read_subparser == 'delete' and paper:
             read = fread.get.by_pk(args.read, paper=paper)
             if read:
                 fread.delete(read)
+                msg = _(f'Successfully deleted read with id "{read.id}".')
+                utils.stdout.p([msg], '')
             else:
                 utils.stdout.p(['No read found.'], '')
         elif args.read_subparser == 'edit' and paper:
             read = fread.get.by_pk(args.read, paper=paper)
             if read:
                 fread.edit(read, args.field, args.value)
+                msg = _(f'Successfully edited read with id "{read.id}".')
+                utils.stdout.p([msg], '=')
                 fread.stdout.info(read)
             else:
                 utils.stdout.p(['No read found.'], '')

@@ -49,7 +49,8 @@ def _book(args):
             fbook.edit(book, args.edit_subparser, args.value)
             msg = _(f'Successfully edited book "{book.title}" with id ' +
                     f'"{book.id}".')
-            utils.stdout.p([msg])
+            utils.stdout.p([msg], '=')
+            fbook.stdout.info(book)
         else:
             utils.stdout.p(['No book found.'], '')
     elif args.subparser == 'edition':
@@ -62,12 +63,18 @@ def _book(args):
                 if args.acquisition_subparser == 'add' and edition:
                     acquisition = facquisition.create(edition, args.date,
                                                       args.price)
+                    msg = _('Successfully added acquisition with id ' +
+                            f'"{acquisition.id}".')
+                    utils.stdout.p([msg], '=')
                     facquisition.stdout.info(acquisition)
                 elif args.acquisition_subparser == 'delete' and edition:
                     acquisition = facquisition.get.by_pk(args.acquisition,
                                                          edition=edition)
                     if acquisition:
                         facquisition.delete(acquisition)
+                        msg = _('Successfully deleted acquisition with id ' +
+                                f'"{acquisition.id}".')
+                        utils.stdout.p([msg], '')
                     else:
                         utils.stdout.p(['No acquisition found.'], '')
                 elif args.acquisition_subparser == 'edit' and edition:
@@ -75,6 +82,9 @@ def _book(args):
                                                          edition=edition)
                     if acquisition:
                         facquisition.edit(acquisition, args.field, args.value)
+                        msg = _('Successfully edited acquisition with id ' +
+                                f'"{acquisition.id}".')
+                        utils.stdout.p([msg], '=')
                         facquisition.stdout.info(acquisition)
                     else:
                         utils.stdout.p(['No acquisition found.'], '')
@@ -103,7 +113,8 @@ def _book(args):
                     fedition.edit(edition, args.edit_subparser, args.value)
                     msg = _(f'Successfully edited edition "{edition}" with ' +
                             f'id "{edition.id}".')
-                    utils.stdout.p([msg], '')
+                    utils.stdout.p([msg], '=')
+                    fedition.stdout.info(edition)
                 else:
                     utils.stdout.p(['No edition found.'], '')
             elif args.edition_subparser == 'info' and book:
@@ -135,17 +146,25 @@ def _book(args):
                 edition = fedition.get.by_term(args.edition, book)
                 if args.read_subparser == 'add' and edition:
                     read = fread.create(edition, args.started, args.finished)
+                    msg = _(f'Successfully added read with id "{read.id}".')
+                    utils.stdout.p([msg], '=')
                     fread.stdout.info(read)
                 elif args.read_subparser == 'delete' and edition:
                     read = fread.get.by_pk(args.read, edition=edition)
                     if read:
                         fread.delete(read)
+                        msg = _('Successfully deleted read with id ' +
+                                f'"{read.id}".')
+                        utils.stdout.p([msg], '')
                     else:
                         utils.stdout.p(['No read found.'], '')
                 elif args.read_subparser == 'edit' and edition:
                     read = fread.get.by_pk(args.read, edition=edition)
                     if read:
                         fread.edit(read, args.field, args.value)
+                        msg = _('Successfully edited read with id ' +
+                                f'"{read.id}".')
+                        utils.stdout.p([msg], '=')
                         fread.stdout.info(read)
                     else:
                         utils.stdout.p(['No read found.'], '')
