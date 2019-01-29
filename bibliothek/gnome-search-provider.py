@@ -42,6 +42,8 @@ sbn = dict(dbus_interface=search_bus_name)
 class BibliothekSearchService(dbus.service.Object):
     bus_name = 'org.gnome.bibliothek.SearchProvider'
     _object_path = '/' + bus_name.replace('.', '/')
+    default_cover = os.path.abspath('./bibliothek/static/images/' +
+                                    'default_cover.jpg')
 
     def __init__(self):
         self.session_bus = dbus.SessionBus()
@@ -81,13 +83,15 @@ class BibliothekSearchService(dbus.service.Object):
                 continue
             elif id.startswith('edition'):
                 name = f'{obj.book}'
-                gicon = obj.cover_image.path if obj.cover_image else None
+                gicon = obj.cover_image.path if obj.cover_image \
+                    else self.default_cover
             elif id.startswith('paper'):
                 name = f'{obj}'
-                gicon = None
+                gicon = self.default_cover
             elif id.startswith('issue'):
                 name = f'{obj}'
-                gicon = obj.cover_image.path if obj.cover_image else None
+                gicon = obj.cover_image.path if obj.cover_image \
+                    else self.default_cover
 
             metas.append({
                 'id': id,
