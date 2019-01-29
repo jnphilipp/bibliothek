@@ -21,10 +21,14 @@ from shelves.models import Acquisition
 from . import list as acquisition_list
 
 
-def by_pk(pk, edition=None):
+def by_pk(pk, edition=None, issue=None, paper=None):
     acquisitions = Acquisition.objects.all()
     if edition is not None:
         acquisitions = acquisitions.filter(editions=edition)
+    if issue is not None:
+        acquisitions = acquisitions.filter(issues=issue)
+    if paper is not None:
+        acquisitions = acquisitions.filter(papers=paper)
 
     try:
         return acquisitions.get(pk=pk)

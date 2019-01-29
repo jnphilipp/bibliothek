@@ -16,32 +16,33 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models import Q, TextField, Value
-from django.db.models.functions import Concat
-from django.utils.translation import ugettext_lazy as _
-from utils import stdout
+from django.db.models import Q
+from magazines.models import Issue
 
 from . import list as issue_list
+
+
+def by_pk(pk, magazine=None):
+    issues = Issue.objects.all()
+    if magazine is not None:
+        issues = issues.filter(magazine=magazine)
+
+    try:
+        return issues.get(pk=pk)
+    except Issue.DoesNotExist:
+        return None
 
 
 def by_term(term, magazine=None):
     issues = issue_list.by_term(term, magazine)
 
     if issues.count() == 0:
-        stdout.p([_('No issue found.')], after='=')
-        print('\n')
         return None
     elif issues.count() > 1:
         if term.isdigit():
             issues = issues.filter(pk=term)
         else:
-            issues = issues.annotate(
-                name=Concat('magazine__name', Value(' '), 'issue',
-                    output_field=TextField())
-            ).filter(Q(issue=term) | Q(name=term))
+            issues = issues.filter(Q(issue=term) | Q(name=term))
         if issues.count() != 1:
-            stdout.p([_('More than one issue found.')], after='=')
-            print('\n')
             return None
-    print('\n')
     return issues[0]

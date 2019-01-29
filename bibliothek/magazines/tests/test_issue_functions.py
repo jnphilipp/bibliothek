@@ -18,6 +18,7 @@
 
 from django.test import TestCase
 from magazines.functions import magazine as fmagazine, issue as fissue
+from shelves.functions import acquisition as facquisition, read as fread
 
 
 class IssueFunctionsTestCase(TestCase):
@@ -124,15 +125,14 @@ class IssueFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(issue.id)
 
-        acquisition = fissue.acquisition.add(issue, date='2016-06-02',
-                                             price=2.5)
+        acquisition = facquisition.create(issue, date='2016-06-02', price=2.5)
         self.assertIsNotNone(acquisition)
         self.assertEquals(1, issue.acquisitions.count())
 
-        fissue.acquisition.edit(issue, acquisition.id, 'price', 5.75)
+        facquisition.edit(acquisition, 'price', 5.75)
         self.assertIsNotNone(5.75, acquisition.price)
 
-        fissue.acquisition.delete(issue, acquisition.id)
+        facquisition.delete(acquisition)
         self.assertEquals(0, issue.acquisitions.count())
 
     def test_issue_read(self):
@@ -141,15 +141,15 @@ class IssueFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(issue.id)
 
-        read = fissue.read.add(issue, started='2016-07-03')
+        read = fread.create(issue, started='2016-07-03')
         self.assertIsNotNone(read)
         self.assertEquals(1, issue.reads.count())
 
-        fissue.read.edit(issue, read.id, 'started', '2016-07-06')
+        fread.edit(read, 'started', '2016-07-06')
         self.assertIsNotNone('2016-07-06', str(read.started))
 
-        fissue.read.edit(issue, read.id, 'finished', '2016-07-15')
+        fread.edit(read, 'finished', '2016-07-15')
         self.assertIsNotNone('2016-07-15', str(read.finished))
 
-        fissue.read.delete(issue, read.id)
+        fread.delete(read)
         self.assertEquals(0, issue.reads.count())

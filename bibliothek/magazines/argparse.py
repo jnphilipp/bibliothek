@@ -18,80 +18,170 @@
 
 import os
 import sys
+import utils
 
 from bibliothek.argparse import valid_date
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from magazines.functions import magazine as fmagazine, issue as fissue
 from shelves.argparse import acquisition_subparser, read_subparser
+from shelves.functions import acquisition as facquisition, read as fread
 
 
 def _magazine(args):
     if args.subparser == 'add':
-        fmagazine.create(args.name, args.feed, args.link)
+        magazine, created = fmagazine.create(args.name, args.feed, args.link)
+        if created:
+            msg = _(f'Successfully added magazine "{magazine.name}" with id ' +
+                    f'"{magazine.id}".')
+            utils.stdout.p([msg], '=')
+            fmagazine.utils.info(magazine)
+        else:
+            msg = _(f'The magazine "{magazine.name}" already exists with id ' +
+                    f'"{magazine.id}", aborting...')
+            utils.stdout.p([msg], '')
     elif args.subparser == 'delete':
         magazine = fmagazine.get.by_term(args.magazine)
         if magazine:
             fmagazine.delete(magazine)
+            msg = _(f'Successfully deleted magazine "{magazine.name}" with ' +
+                    f'id "{magazine.id}".')
+            utils.stdout.p([msg], '')
+        else:
+            utils.stdout.p([_('No magazine found.')], '')
     elif args.subparser == 'edit':
         magazine = fmagazine.get.by_term(args.magazine)
         if magazine:
             fmagazine.edit(magazine, args.field, args.value)
+            msg = _(f'Successfully edited magazine "{magazine.name}" with id' +
+                    f' "{magazine.id}".')
+            utils.stdout.p([msg], '')
+        else:
+            utils.stdout.p([_('No magazine found.')], '')
     elif args.subparser == 'info':
         magazine = fmagazine.get.by_term(args.magazine)
         if magazine:
-            fmagazine.info(magazine)
+            fmagazine.stdout.info(magazine)
+        else:
+            utils.stdout.p([_('No magazine found.')], '')
     elif args.subparser == 'issue':
         magazine = fmagazine.get.by_term(args.magazine)
-        if args.issue_subparser == 'acquisition' and magazine:
-            issue = fissue.get.by_term(args.issue, magazine)
-            if args.acquisition_subparser == 'add' and issue:
-                fissue.acquisition.add(issue, args.date, args.price)
-            elif args.acquisition_subparser == 'delete' and issue:
-                fissue.acquisition.delete(issue, args.acquisition)
-            elif args.acquisition_subparser == 'edit' and issue:
-                fissue.acquisition.edit(issue, args.acquisition,
-                                        args.edit_subparser, args.value)
-        elif args.issue_subparser == 'add' and magazine:
-            fissue.create(magazine, args.issue, args.publishing_date,
-                          args.cover, args.language, args.link, args.file)
-        elif args.issue_subparser == 'edit' and magazine:
-            issue = fissue.get.by_term(args.issue, magazine)
-            if issue:
-                fissue.edit(issue, args.edit_subparser, args.value)
-        elif args.issue_subparser == 'info' and magazine:
-            issue = fissue.get.by_term(args.issue, magazine)
-            if issue:
-                fissue.info(issue)
-        elif args.issue_subparser == 'list' and magazine:
-            if args.shelf:
-                fissue.list.by_shelf(args.shelf, magazine)
-            elif args.search:
-                fissue.list.by_term(args.search, magazine)
-            else:
-                fissue.list.all(magazine)
-        elif args.issue_subparser == 'open' and magazine:
-            issue = fissue.get.by_term(args.issue, magazine)
-            if issue:
-                file = issue.files.get(pk=args.file)
-                path = os.path.join(settings.MEDIA_ROOT, file.file.path)
-                if sys.platform == 'linux':
-                    os.system('xdg-open "%s"' % path)
+        if magazine:
+            if args.issue_subparser == 'acquisition' and magazine:
+                issue = fissue.get.by_term(args.issue, magazine)
+                if args.acquisition_subparser == 'add' and issue:
+                    acquisition = facquisition.create(issue, args.date,
+                                                      args.price)
+                    msg = _('Successfully added acquisition with id ' +
+                            f'"{acquisition.id}".')
+                    utils.stdout.p([msg], '=')
+                    facquisition.stdout.info(acquisition)
+                elif args.acquisition_subparser == 'delete' and issue:
+                    acquisition = facquisition.get.by_pk(args.acquisition,
+                                                         issue=issue)
+                    if acquisition:
+                        facquisition.delete(acquisition)
+                        msg = _('Successfully deleted acquisition with id ' +
+                                f'"{acquisition.id}".')
+                        utils.stdout.p([msg], '')
+                    else:
+                        utils.stdout.p(['No acquisition found.'], '')
+                elif args.acquisition_subparser == 'edit' and issue:
+                    acquisition = facquisition.get.by_pk(args.acquisition,
+                                                         issue=issue)
+                    if acquisition:
+                        facquisition.edit(acquisition, args.field, args.value)
+                        msg = _('Successfully edited acquisition with id ' +
+                                f'"{acquisition.id}".')
+                        utils.stdout.p([msg], '=')
+                        facquisition.stdout.info(acquisition)
+                    else:
+                        utils.stdout.p(['No acquisition found.'], '')
+            elif args.issue_subparser == 'add' and magazine:
+                issue, created = fissue.create(magazine, args.issue,
+                                               args.publishing_date,
+                                               args.cover, args.language,
+                                               args.link, args.file)
+                if issue:
+                    msg = _(f'Successfully added issue "{magazine.name} ' +
+                            f'{issue.issue}" with id "{issue.id}".')
+                    utils.stdout.p([msg], '=')
                 else:
-                    os.system('open "%s"' % path)
-        elif args.issue_subparser == 'read' and magazine:
-            issue = fissue.get.by_term(args.issue, magazine)
-            if args.read_subparser == 'add' and issue:
-                fissue.read.add(issue, args.started, args.finished)
-            elif args.read_subparser == 'delete' and issue:
-                fissue.read.delete(issue, args.read)
-            elif args.read_subparser == 'edit' and issue:
-                fissue.read.edit(issue, args.read, args.field, args.value)
+                    msg = _(f'The issue "{magazine.name} {issue.issue}' +
+                            f'" already exists with id "{issue.id}", ' +
+                            'aborting...')
+                    utils.stdout.p([msg], '')
+            elif args.issue_subparser == 'edit' and magazine:
+                issue = fissue.get.by_term(args.issue, magazine)
+                if issue:
+                    fissue.edit(issue, args.edit_subparser, args.value)
+                    msg = _(f'Successfully edited issue "{magazine.name} ' +
+                            f'{issue.issue}" with id "{issue.id}".')
+                    utils.stdout.p([msg], '=')
+                    fissue.stdout.info(issue)
+                else:
+                    utils.stdout.p(['No issue found.'], '')
+            elif args.issue_subparser == 'info' and magazine:
+                issue = fissue.get.by_term(args.issue, magazine)
+                if issue:
+                    fissue.stdout.info(issue)
+                else:
+                    utils.stdout.p(['No issue found.'], '')
+            elif args.issue_subparser == 'list' and magazine:
+                if args.shelf:
+                    issues = fissue.list.by_shelf(args.shelf, magazine)
+                elif args.search:
+                    issues = fissue.list.by_term(args.search, magazine)
+                else:
+                    issues = fissue.list.all(magazine)
+                fissue.stdout.list(issues)
+            elif args.issue_subparser == 'open' and magazine:
+                issue = fissue.get.by_term(args.issue, magazine)
+                if issue:
+                    file = issue.files.get(pk=args.file)
+                    path = os.path.join(settings.MEDIA_ROOT, file.file.path)
+                    if sys.platform == 'linux':
+                        os.system(f'xdg-open "{path}"')
+                    else:
+                        os.system(f'open "{path}"')
+                else:
+                    utils.stdout.p(['No issue found.'], '')
+            elif args.edition_subparser == 'read' and magazine:
+                issue = fissue.get.by_term(args.issue, magazine)
+                if args.read_subparser == 'add' and issue:
+                    read = fread.create(issue, args.started, args.finished)
+                    msg = _(f'Successfully added read with id "{read.id}".')
+                    utils.stdout.p([msg], '=')
+                    fread.stdout.info(read)
+                elif args.read_subparser == 'delete' and issue:
+                    read = fread.get.by_pk(args.read, issue=issue)
+                    if read:
+                        fread.delete(read)
+                        msg = _('Successfully deleted read with id ' +
+                                f'"{read.id}".')
+                        utils.stdout.p([msg], '')
+                    else:
+                        utils.stdout.p(['No read found.'], '')
+                elif args.read_subparser == 'edit' and issue:
+                    read = fread.get.by_pk(args.read, issue=issue)
+                    if read:
+                        fread.edit(read, args.field, args.value)
+                        msg = _('Successfully edited read with id ' +
+                                f'"{read.id}".')
+                        utils.stdout.p([msg], '=')
+                        fread.stdout.info(read)
+                    else:
+                        utils.stdout.p(['No read found.'], '')
+                else:
+                    utils.stdout.p(['No issue found.'], '')
+        else:
+            utils.stdout.p([_('No magazine found.')], '')
     elif args.subparser == 'list':
         if args.search:
-            fmagazine.list.by_term(args.search)
+            magazines = fmagazine.list.by_term(args.search)
         else:
-            fmagazine.list.all()
+            magazines = fmagazine.list.all()
+        fmagazine.stdout.list(magazines)
 
 
 def add_subparser(parser):
