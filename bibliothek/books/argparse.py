@@ -55,9 +55,7 @@ def _book(args):
             utils.stdout.p(['No book found.'], '')
     elif args.subparser == 'edition':
         book = fbook.get.by_term(args.book)
-        if book is None:
-            utils.stdout.p(['No book found.'], '')
-        else:
+        if book:
             if args.edition_subparser == 'acquisition' and book:
                 edition = fedition.get.by_term(args.edition, book)
                 if args.acquisition_subparser == 'add' and edition:
@@ -137,9 +135,9 @@ def _book(args):
                     file = edition.files.get(pk=args.file)
                     path = os.path.join(settings.MEDIA_ROOT, file.file.path)
                     if sys.platform == 'linux':
-                        os.system('xdg-open "%s"' % path)
+                        os.system(f'xdg-open "{path}"')
                     else:
-                        os.system('open "%s"' % path)
+                        os.system(f'open "{path}"')
                 else:
                     utils.stdout.p(['No edition found.'], '')
             elif args.edition_subparser == 'read' and book:
@@ -170,6 +168,8 @@ def _book(args):
                         utils.stdout.p(['No read found.'], '')
                 else:
                     utils.stdout.p(['No edition found.'], '')
+        else:
+            utils.stdout.p(['No book found.'], '')
     elif args.subparser == 'info':
         book = fbook.get.by_term(args.book)
         if book:

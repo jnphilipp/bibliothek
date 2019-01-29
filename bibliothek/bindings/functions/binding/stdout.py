@@ -16,20 +16,22 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
+import utils
+
 from django.utils.translation import ugettext_lazy as _
-from utils import lookahead, stdout
+from utils import lookahead
 
 
 def list(bindings):
     positions = [.05]
-    stdout.p([_('Id'), _('Name')], '=', positions)
+    utils.stdout.p([_('Id'), _('Name')], '=', positions)
     for binding, has_next in lookahead(bindings):
-        stdout.p([binding.id, binding.name], '_' if has_next else '=',
+        utils.stdout.p([binding.id, binding.name], '_' if has_next else '=',
                  positions)
 
 
 def info(binding):
     positions = [.33]
-    stdout.p([_('Field'), _('Value')], '=', positions)
-    stdout.p([_('Id'), binding.id], positions=positions)
-    stdout.p([_('Name'), binding.name], positions=positions)
+    utils.stdout.p([_('Field'), _('Value')], '=', positions)
+    utils.stdout.p([_('Id'), binding.id], positions=positions)
+    utils.stdout.p([_('Name'), binding.name], positions=positions)

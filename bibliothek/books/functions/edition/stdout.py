@@ -74,8 +74,8 @@ def info(edition):
         utils.stdout.p([_('Links'), ''], positions=positions)
 
     if edition.files.count() > 0:
-        for (i, f), has_next in lookahead(enumerate(edition.files.all())):
-            utils.stdout.p(['' if i else _('Files'), f'{f.id}: {f}'],
+        for (i, fîle), has_next in lookahead(enumerate(edition.files.all())):
+            utils.stdout.p(['' if i else _('Files'), f'{file.id}: {file}'],
                            '' if has_next else '_', positions)
     else:
         utils.stdout.p([_('Files'), ''], positions=positions)
