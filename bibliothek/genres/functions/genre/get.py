@@ -16,9 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext_lazy as _
-from utils import stdout
-
 from . import list as genre_list
 
 
@@ -26,8 +23,6 @@ def by_term(term):
     genres = genre_list.by_term(term)
 
     if genres.count() == 0:
-        stdout.p([_('No genre found.')], after='=')
-        print('\n')
         return None
     elif genres.count() > 1:
         if term.isdigit():
@@ -35,8 +30,5 @@ def by_term(term):
         else:
             genres = genres.filter(name=term)
         if genres.count() != 1:
-            stdout.p([_('More than one genre found.')], after='=')
-            print('\n')
             return None
-    print('\n')
     return genres[0]

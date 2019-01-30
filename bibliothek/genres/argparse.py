@@ -22,20 +22,46 @@ from django.utils.translation import ugettext_lazy as _
 
 def _genre(args):
     if args.subparser == 'add':
-        fgenre.create(args.name)
+        genre, created = fgenre.create(args.name)
+        if created:
+            msg = _(f'Successfully added genre "{genre.name}" with id ' +
+                    f'"{genre.id}".')
+            utils.stdout.p([msg], '=')
+            fgenre.stdout.info(genre)
+        else:
+            msg = _(f'The genre "{genre.name}" already exists with id ' +
+                    f'"{genre.id}", aborting...')
+            utils.stdout.p([msg], '')
+    elif args.subparser == 'delete':
+        genre = fgenre.get.by_term(args.genre)
+        if genre:
+            fgenre.delete(genre)
+            msg = _(f'Successfully deleted genre with id "{genre.id}".')
+            utils.stdout.p([msg], '')
+        else:
+            utils.stdout.p([_('No genre found.')], '')
     elif args.subparser == 'edit':
         genre = fgenre.get.by_term(args.genre)
         if genre:
             fgenre.edit(genre, args.field, args.value)
+            msg = _(f'Successfully edited genre "{genre.name}" with id ' +
+                    f'"{genre.id}".')
+            utils.stdout.p([msg], '')
+            fgenre.stdout.info(genre)
+        else:
+            utils.stdout.p([_('No genre found.')], '')
     elif args.subparser == 'info':
         genre = fgenre.get.by_term(args.genre)
         if genre:
-            fgenre.info(genre)
+            fgenre.stdout.info(genre)
+        else:
+            utils.stdout.p([_('No genre found.')], '')
     elif args.subparser == 'list':
         if args.search:
-            fgenre.list.by_term(args.search)
+            genres = fgenre.list.by_term(args.search)
         else:
-            fgenre.list.all()
+            genres = fgenre.list.all()
+        fgenre.stdout.list(genres)
 
 
 def add_subparser(parser):
@@ -46,6 +72,10 @@ def add_subparser(parser):
     # genre add
     add_parser = subparser.add_parser('add', help=_('Add a genre'))
     add_parser.add_argument('name', help=_('Name'))
+
+    # genre delete
+    delete_parser = subparser.add_parser('delete', help=_('Delete a genre'))
+    delete_parser.add_argument('genre', help=_('Genre'))
 
     # genre edit
     edit_parser = subparser.add_parser('edit', help=_('Edit a genre'))

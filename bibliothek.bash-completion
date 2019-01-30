@@ -178,6 +178,11 @@ _bibliothek()
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
+                delete)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
                 edit)
                     opts="name -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
@@ -194,7 +199,7 @@ _bibliothek()
                     return 0
                     ;;
                 *)
-                    opts="add edit info list -h --help"
+                    opts="add delete edit info list -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
