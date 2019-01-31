@@ -34,7 +34,6 @@ def _binding(args):
             msg = _(f'The binding "{binding.name}" already exists with id ' +
                     f'"{binding.id}", aborting...')
             utils.stdout.p([msg], '')
-
     elif args.subparser == 'delete':
         binding = fbinding.get.by_term(args.binding)
         if binding:

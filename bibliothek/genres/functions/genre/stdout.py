@@ -25,20 +25,20 @@ from utils import lookahead
 def list(genres):
     positions = [.05]
     utils.stdout.p([_('Id'), _('Name')], '=', positions)
-    for genres, has_next in lookahead(genres):
+    for genre, has_next in lookahead(genres):
         utils.stdout.p([genre.id, genre.name], '_' if has_next else '=',
                        positions)
 
 
 def info(genre):
     positions = [.33]
-    stdout.p([_('Field'), _('Value')], '=', positions)
-    stdout.p([_('Id'), genre.id], positions=positions)
-    stdout.p([_('Name'), genre.name], positions=positions)
+    utils.stdout.p([_('Field'), _('Value')], '=', positions)
+    utils.stdout.p([_('Id'), genre.id], positions=positions)
+    utils.stdout.p([_('Name'), genre.name], positions=positions)
 
     if genre.books.count() > 0:
         for (i, book), has_next in lookahead(enumerate(genre.books.all())):
-            stdout.p(['' if i else _('Books'), f'{book.id}: {book}'],
-                     '' if has_next else '_', positions)
+            utils.stdout.p(['' if i else _('Books'), f'{book.id}: {book}'],
+                           '' if has_next else '_', positions)
     else:
-        stdout.p([_('Books'), ''], positions=positions)
+        utils.stdout.p([_('Books'), ''], positions=positions)
