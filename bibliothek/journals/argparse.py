@@ -16,26 +16,54 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
+import utils
+
 from journals.functions import journal as fjournal
 from django.utils.translation import ugettext_lazy as _
 
 
 def _journal(args):
     if args.subparser == 'add':
-        fjournal.create(args.name, args.link)
+        journal, created = fjournal.create(args.name)
+        if created:
+            msg = _(f'Successfully added journal "{journal.name}" with id ' +
+                    f'"{journal.id}".')
+            utils.stdout.p([msg], '=')
+            fjournal.stdout.info(journal)
+        else:
+            msg = _(f'The journal "{journal.name}" already exists with id ' +
+                    f'"{journal.id}", aborting...')
+            utils.stdout.p([msg], '')
+    elif args.subparser == 'delete':
+        journal = fjournal.get.by_term(args.journal)
+        if journal:
+            fjournal.delete(journal)
+            msg = _(f'Successfully deleted journal with id "{journal.id}".')
+            utils.stdout.p([msg], '')
+        else:
+            utils.stdout.p([_('No journal found.')], '')
     elif args.subparser == 'edit':
         journal = fjournal.get.by_term(args.journal)
         if journal:
             fjournal.edit(journal, args.field, args.value)
+            msg = _(f'Successfully edited journal "{journal.name}" with id ' +
+                    f'"{journal.id}".')
+            utils.stdout.p([msg], '')
+            fjournal.stdout.info(journal)
+        else:
+            utils.stdout.p([_('No journal found.')], '')
     elif args.subparser == 'info':
         journal = fjournal.get.by_term(args.journal)
         if journal:
-            fjournal.info(journal)
+            fjournal.stdout.info(journal)
+        else:
+            utils.stdout.p([_('No journal found.')], '')
     elif args.subparser == 'list':
         if args.search:
-            fjournal.list.by_term(args.search)
+            journals = fjournal.list.by_term(args.search)
         else:
-            fjournal.list.all()
+            journals = fjournal.list.all()
+        fjournal.stdout.list(journals)
 
 
 def add_subparser(parser):
@@ -47,6 +75,10 @@ def add_subparser(parser):
     add_parser = subparser.add_parser('add', help=_('Add a journal'))
     add_parser.add_argument('name', help='name')
     add_parser.add_argument('--link', nargs='*', default=[], help=_('Links'))
+
+    # journal delete
+    delete_parser = subparser.add_parser('delete', help=_('Delete a journal'))
+    delete_parser.add_argument('journal', help=_('Journal'))
 
     # journal edit
     edit_parser = subparser.add_parser('edit', help=_('Edit a journal'))
