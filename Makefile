@@ -5,6 +5,7 @@ BIN_DIR?=/usr/bin/
 DATA_DIR?=/usr/share/
 LIB_DIR?=/usr/lib/
 SHARE_DIR?=/usr/share/
+ICON_DIR?=/usr/share/icons/
 
 FILES := $(shell find bibliothek/* -type f ! -path "**/__pycache__/*" ! -path "**/.git" ! -path "**/.gitignore")
 
@@ -23,11 +24,12 @@ install: bibliothek.bash-completion build/bin/bibliothek build/bin/gnome-search-
 	$(Q)for f in ${FILES}; do \
 		install -Dm 0644 $$f ${SHARE_DIR}$$f ; \
 	done
-	@xdg-icon-resource install --theme hicolor --novendor --size 1024 --context apps bibliothek/bibliothek/static/images/icon.png bibliothek
-	@install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.ini ${SHARE_DIR}gnome-shell/search-providers/
-	@install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.desktop ${SHARE_DIR}applications/
-	@install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.service.dbus ${SHARE_DIR}dbus-1/services/org.gnome.bibliothek.SearchProvider.service
-	@install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.service.systemd ${LIB_DIR}systemd/user/org.gnome.bibliothek.SearchProvider.service
+	$(Q)install -Dm 0644 bibliothek/bibliothek/static/images/bibliothek.svg ${ICON_DIR}hicolor/scalable/apps/
+	$(Q)install -Dm 0644 bibliothek/bibliothek/static/images/bibliothek-symbolic.svg ${ICON_DIR}hicolor/symbolic/apps/
+	$(Q)install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.ini ${SHARE_DIR}gnome-shell/search-providers/
+	$(Q)install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.desktop ${SHARE_DIR}applications/
+	$(Q)install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.service.dbus ${SHARE_DIR}dbus-1/services/org.gnome.bibliothek.SearchProvider.service
+	$(Q)install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.service.systemd ${LIB_DIR}systemd/user/org.gnome.bibliothek.SearchProvider.service
 	@echo "bibliothek install completed."
 
 
@@ -40,6 +42,8 @@ uninstall:
 	$(Q)rm ${SHARE_DIR}applications/org.gnome.bibliothek.SearchProvider.desktop
 	$(Q)rm ${SHARE_DIR}dbus-1/services/org.gnome.bibliothek.SearchProvider.service.dbus
 	$(Q)rm ${LIB_DIR}systemd/user/org.gnome.bibliothek.SearchProvider.service.systemd
+	$(Q)rm ${ICON_DIR}hicolor/scalable/apps/bibliothek.svg
+	$(Q)rm ${ICON_DIR}hicolor/symbolic/apps/bibliothek-symbolic.svg
 	@echo "bibliothek uninstall completed."
 
 
