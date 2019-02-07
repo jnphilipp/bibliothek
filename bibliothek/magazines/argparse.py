@@ -106,6 +106,7 @@ def _magazine(args):
                     msg = _(f'Successfully added issue "{magazine.name} ' +
                             f'{issue.issue}" with id "{issue.id}".')
                     utils.stdout.p([msg], '=')
+                    fissue.stdout.info(issue)
                 else:
                     msg = _(f'The issue "{magazine.name} {issue.issue}' +
                             f'" already exists with id "{issue.id}", ' +
