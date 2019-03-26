@@ -55,9 +55,9 @@ class BibliothekSearchService(dbus.service.Object):
         obj = self.get_obj(id)
         if obj is not None:
             if obj.files.count() > 1:
-                files = obj.files.filter(Q(name__iendswith='.epub') |
-                                         Q(name__iendswith='.pdf') |
-                                         Q(name__iendswith='.mobi'))
+                files = obj.files.filter(Q(file__iendswith='.epub') |
+                                         Q(file__iendswith='.pdf') |
+                                         Q(file__iendswith='.mobi'))
                 if files.count() == 0:
                     path = obj.files.first().file.path
                 else:
@@ -124,10 +124,10 @@ class BibliothekSearchService(dbus.service.Object):
         results = [f'edition-{e.pk}' for e in editions]
 
         papers = fpaper.list.by_term(term, has_file=True)
-        results += [f'paper-{e.pk}' for e in papers]
+        results += [f'paper-{p.pk}' for p in papers]
 
         issues = fissue.list.by_term(term, has_file=True)
-        results += [f'issue-{e.pk}' for e in issues]
+        results += [f'issue-{i.pk}' for i in issues]
         return results
 
     def notify(self, message, body='', error=False):
