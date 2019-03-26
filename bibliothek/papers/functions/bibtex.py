@@ -71,7 +71,7 @@ def parse(bibtex):
         year = int(entry['year'].strip()) if 'year' in entry else None
         month = entry['month'].strip() if 'month' in entry else None
         if year and month:
-            date = datetime.strptime('%s %s' % (month, year), '%B %Y')
+            date = datetime.strptime(f'{month} {year}', '%b %Y')
         elif year:
             date = datetime(year, 1, 1)
 

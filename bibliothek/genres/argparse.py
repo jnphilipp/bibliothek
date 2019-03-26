@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
+import utils
+
 from genres.functions import genre as fgenre
 from django.utils.translation import ugettext_lazy as _
 

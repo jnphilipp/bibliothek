@@ -52,7 +52,8 @@ def _read(args):
         read = fread.get.by_term(args.read)
         if read:
             fread.edit(read, args.field, args.value)
-            utils.stdout.p([_(f'Successfully edited read "{read.id}".')], '')
+            utils.stdout.p([_(f'Successfully edited read "{read.id}".')], '=')
+            fread.stdout.info(read)
         else:
             utils.stdout.p(['Nothing found.'], '')
     elif args.subparser == 'delete':
