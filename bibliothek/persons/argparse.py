@@ -16,22 +16,41 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from bibliothek.argparse import valid_date
+import utils
+
 from django.utils.translation import ugettext_lazy as _
 from persons.functions import person as fperson
 
 
 def _person(args):
     if args.subparser == 'add':
-        fperson.create(args.first_name, args.last_name, args.link)
+        person, created = fperson.create(args.first_name, args.last_name,
+                                         args.link)
+        if created:
+            msg = _(f'Successfully added person "{person.first_name} ' +
+                    f'{person.last_name}" with id "{person.id}".')
+            utils.stdout.p([msg], '=')
+            fperson.stdout.info(person)
+        else:
+            msg = _(f'The person "{person.first_name} {person.last_name}" ' +
+                    f'already exists with id "{person.id}", aborting...')
+            utils.stdout.p([msg], '')
     elif args.subparser == 'edit':
         person = fperson.get.by_term(args.person)
         if person:
             fperson.edit(person, args.field, args.value)
+            msg = _(f'Successfully edited person "{person.first_name} ' +
+                    f'{person.last_name}" with id "{person.id}".')
+            utils.stdout.p([msg], '')
+            fperson.stdout.info(person)
+        else:
+            utils.stdout.p([_('No person found.')], '')
     elif args.subparser == 'info':
         person = fperson.get.by_term(args.person)
         if person:
-            fperson.info(person)
+            fperson.stdout.info(person)
+        else:
+            utils.stdout.p([_('No person found.')], '')
     elif args.subparser == 'list':
         if args.search:
             fperson.list.by_term(args.search)

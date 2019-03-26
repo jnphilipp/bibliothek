@@ -16,9 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext_lazy as _
-from utils import stdout
-
 from . import list as person_list
 
 
@@ -26,8 +23,6 @@ def by_term(term):
     persons = person_list.by_term(term)
 
     if persons.count() == 0:
-        stdout.p([_('No person found.')], after='=')
-        print('\n')
         return None
     elif persons.count() > 1:
         if term.isdigit():
@@ -37,8 +32,5 @@ def by_term(term):
                 name=Concat('first_name', Value(' '), 'last_name')
             ).filter(name=term)
         if persons.count() != 1:
-            stdout.p([_('More than one person found.')], after='=')
-            print('\n')
             return None
-    print('\n')
     return persons[0]
