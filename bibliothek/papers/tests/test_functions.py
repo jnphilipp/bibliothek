@@ -62,7 +62,7 @@ class PaperFunctionsTestCase(TestCase):
             'e-prints},archivePrefix = "arXiv",eprint = {1706.02515},' + \
             'primaryClass = "cs.LG",keywords = {Computer Science - ' + \
             'Learning, Statistics - Machine Learning},year = 2017,month = ' + \
-            'jun,url = {https://arxiv.org/abs/1706.02515},adsurl = ' + \
+            '"Jun",url = {https://arxiv.org/abs/1706.02515},adsurl = ' + \
             '{http://adsabs.harvard.edu/abs/2017arXiv170602515K},adsnote =' + \
             ' {Provided by the SAO/NASA Astrophysics Data System}}'
 

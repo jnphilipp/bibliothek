@@ -62,7 +62,7 @@ def parse(bibtex):
         volume = entry['volume'].strip() if 'volume' in entry else ''
 
         if 'number' in entry:
-            volume = '%s.%s' % (volume, entry['number'])
+            volume = f'{volume}.{entry["number"]}'
 
         if 'eprint' in entry and not volume:
             volume = entry['eprint'].strip()
