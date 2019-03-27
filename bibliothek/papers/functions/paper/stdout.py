@@ -80,7 +80,7 @@ def info(paper):
         price_trans = _('price')
         for (i, a), has_next in lookahead(enumerate(paper.acquisitions.all())):
             s = f'{a.id}: {date_trans}={a.date}, {price_trans}={a.price:0.2f}'
-            utils.stdout.p(['' if i else _('Acquisitions'), a],
+            utils.stdout.p(['' if i else _('Acquisitions'), s],
                            '' if has_next else '_', positions)
     else:
         utils.stdout.p([_('Acquisitions'), ''], positions=positions)
