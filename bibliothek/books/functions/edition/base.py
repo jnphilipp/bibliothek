@@ -62,7 +62,7 @@ def create(book, alternate_title=None, isbn=None, publishing_date=None,
             person, c = Person.objects.annotate(
                 name=Concat('first_name', Value(' '), 'last_name')
             ).filter(
-                Q(pk=p if p.isdigit() else None) | Q(name__icontains=positions)
+                Q(pk=p if p.isdigit() else None) | Q(name__icontains=p)
             ).get_or_create(
                 defaults={
                     'first_name': p[:p.rfind(' ')],

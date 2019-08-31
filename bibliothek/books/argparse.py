@@ -104,7 +104,7 @@ def _book(args):
                 else:
                     msg = _(f'The edition "{edition}" already exists with id' +
                             f' "{edition.id}", aborting...')
-                    stdout.p([msg], '')
+                    utils.stdout.p([msg], '')
             elif args.edition_subparser == 'edit' and book:
                 edition = fedition.get.by_term(args.edition, book)
                 if edition:
