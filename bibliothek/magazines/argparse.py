@@ -35,7 +35,7 @@ def _magazine(args):
             msg = _(f'Successfully added magazine "{magazine.name}" with id ' +
                     f'"{magazine.id}".')
             utils.stdout.p([msg], '=')
-            fmagazine.utils.info(magazine)
+            fmagazine.stdout.info(magazine)
         else:
             msg = _(f'The magazine "{magazine.name}" already exists with id ' +
                     f'"{magazine.id}", aborting...')
@@ -147,7 +147,7 @@ def _magazine(args):
                         os.system(f'open "{path}"')
                 else:
                     utils.stdout.p(['No issue found.'], '')
-            elif args.edition_subparser == 'read' and magazine:
+            elif args.issue_subparser == 'read' and magazine:
                 issue = fissue.get.by_term(args.issue, magazine)
                 if args.read_subparser == 'add' and issue:
                     read = fread.create(issue, args.started, args.finished)
