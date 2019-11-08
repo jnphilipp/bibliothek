@@ -45,8 +45,8 @@ class ReadInline(GenericStackedInline):
 @admin.register(Paper)
 class PaperAdmin(admin.ModelAdmin):
     def list_authors(self, obj):
-        return format_html_join(', ', '{} {}',
-            ((p.first_name, p.last_name) for p in obj.authors.all()))
+        return format_html_join(', ', '{}',
+                                ((p.name,) for p in obj.authors.all()))
 
     fieldsets = [
         (None, {'fields': ['slug', 'title', 'authors', 'languages']}),

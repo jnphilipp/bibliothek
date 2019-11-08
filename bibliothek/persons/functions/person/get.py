@@ -28,9 +28,7 @@ def by_term(term):
         if term.isdigit():
             persons = persons.filter(pk=term)
         else:
-            persons = persons.annotate(
-                name=Concat('first_name', Value(' '), 'last_name')
-            ).filter(name=term)
+            persons = persons.filter(name=term)
         if persons.count() != 1:
             return None
     return persons[0]

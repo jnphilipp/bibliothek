@@ -36,7 +36,7 @@ class ListView(generic.ListView):
         persons = Person.objects.annotate(cb=Count('books'),
                                           cp=Count('papers'))
         if o.endswith('name'):
-            persons = persons.order_by('last_name', 'first_name')
+            persons = persons.order_by('name')
         else:
             persons = persons.order_by(o)
         return persons

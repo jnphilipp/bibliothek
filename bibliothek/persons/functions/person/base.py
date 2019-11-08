@@ -22,9 +22,8 @@ from persons.models import Person
 from utils import lookahead
 
 
-def create(first_name, last_name, links=[]):
-    person, created = Person.objects.get_or_create(first_name=first_name,
-                                                   last_name=last_name)
+def create(name, links=[]):
+    person, created = Person.objects.get_or_create(name=name)
     if created:
         for (i, url), has_next in lookahead(enumerate(links)):
             link, c = Link.objects.filter(
@@ -36,13 +35,10 @@ def create(first_name, last_name, links=[]):
 
 
 def edit(person, field, value):
-    assert field in ['first-name', 'first_name', 'last-name', 'last_name',
-                     'link']
+    assert field in ['name', 'link']
 
-    if field == 'first_name' or field == 'first-name':
-        person.first_name = value
-    elif field == 'last_name' or field == 'last-name':
-        person.last_name = value
+    if field == 'name':
+        person.name = value
     elif field == 'link':
         link, created = Link.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(link=value)

@@ -36,14 +36,9 @@ def create(title, authors=[], publishing_date=None, journal=None, volume=None,
     if created:
         if len(authors) > 0:
             for (i, a), has_next in lookahead(enumerate(authors)):
-                author, c = Person.objects.annotate(
-                    name=Concat('first_name', Value(' '), 'last_name')
-                ).filter(
+                author, c = Person.objects.filter(
                     Q(pk=a if a.isdigit() else None) | Q(name__icontains=a)
-                ).get_or_create(defaults={
-                    'first_name': a[:a.rfind(' ')],
-                    'last_name': a[a.rfind(' ') + 1:]
-                })
+                ).get_or_create(defaults={'name': a})
                 paper.authors.add(author)
 
         if publishing_date:
@@ -81,14 +76,9 @@ def edit(paper, field, value):
     if field == 'title':
         paper.title = value
     elif field == 'author':
-        author, created = Person.objects.annotate(
-            name=Concat('first_name', Value(' '), 'last_name')
-        ).filter(
+        author, created = Person.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(name__icontains=value)
-        ).get_or_create(defaults={
-            'first_name': value[:value.rfind(' ')],
-            'last_name': value[value.rfind(' ') + 1:]
-        })
+        ).get_or_create(defaults={'name': value})
         if paper.authors.filter(pk=author.pk).exists():
             paper.authors.remove(author)
         else:

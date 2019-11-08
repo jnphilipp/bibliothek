@@ -77,8 +77,11 @@ def _import(args):
         for b in data['books']:
             authors = []
             for a in b['authors']:
-                person, c = fperson.create(a['first_name'], a['last_name'],
-                                           a['links'])
+                if 'first_name' in a:
+                    name = f'{a["first_name"]} {a["last_name"]}'.strip()
+                else:
+                    name = a['name']
+                person, c = fperson.create(name, a['links'])
                 authors.append(str(person.id))
 
             genres = []

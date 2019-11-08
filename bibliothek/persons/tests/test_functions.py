@@ -22,26 +22,23 @@ from persons.functions import person as fperson
 
 class PersonFunctionsTestCase(TestCase):
     def test_person_create(self):
-        person, created = fperson.create('Hans', 'Müller')
+        person, created = fperson.create('Hans Müller')
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 
-        person2, created = fperson.create('Jan', 'Müller',
-                                                   links=['https://jan.de'])
+        person2, created = fperson.create('Jan Müller',
+                                          links=['https://jan.de'])
         self.assertTrue(created)
         self.assertIsNotNone(person2.id)
         self.assertEquals(1, person2.links.count())
 
     def test_person_edit(self):
-        person, created = fperson.create('Frank', 'Schmidt')
+        person, created = fperson.create('Frank Schmidt')
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 
-        fperson.edit(person, 'last_name', 'Schmidts')
-        self.assertEquals('Schmidts', person.last_name)
-
-        fperson.edit(person, 'first_name', 'Franky')
-        self.assertEquals('Franky', person.first_name)
+        fperson.edit(person, 'name', 'Franky Schmidts')
+        self.assertEquals('Franky Schmidts', person.name)
 
         fperson.edit(person, 'link', 'https://test.com')
         self.assertEquals(1, person.links.count())
@@ -56,7 +53,7 @@ class PersonFunctionsTestCase(TestCase):
         self.assertEquals('https://example.com', person.links.first().link)
 
     def test_person_get(self):
-        person, created = fperson.create('Karl', 'Heinz')
+        person, created = fperson.create('Karl Heinz')
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 
@@ -69,15 +66,15 @@ class PersonFunctionsTestCase(TestCase):
         self.assertEquals(person, person2)
 
     def test_person_list(self):
-        person, created = fperson.create('Anne', 'Karenina')
+        person, created = fperson.create('Anne Karenina')
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 
-        person, created = fperson.create('Sarah', 'Vogel')
+        person, created = fperson.create('Sarah Vogel')
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 
-        person, created = fperson.create('Karen', 'Stirling')
+        person, created = fperson.create('Karen Stirling')
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 

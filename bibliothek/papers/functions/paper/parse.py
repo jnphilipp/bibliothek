@@ -57,8 +57,7 @@ def from_dict(paper_dict, files=[]):
 
     if 'authors' in paper_dict and paper_dict['authors']:
         for (i, a), has_next in lookahead(enumerate(paper_dict['authors'])):
-            p, c = Person.objects.get_or_create(first_name=a['first_name'],
-                                                last_name=a['last_name'])
+            p, c = Person.objects.get_or_create(name=a)
             paper.authors.add(p)
 
     if 'journal' in paper_dict and paper_dict['journal']:

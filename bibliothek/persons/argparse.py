@@ -24,23 +24,22 @@ from persons.functions import person as fperson
 
 def _person(args):
     if args.subparser == 'add':
-        person, created = fperson.create(args.first_name, args.last_name,
-                                         args.link)
+        person, created = fperson.create(args.name, args.link)
         if created:
-            msg = _(f'Successfully added person "{person.first_name} ' +
-                    f'{person.last_name}" with id "{person.id}".')
+            msg = _(f'Successfully added person "{person.name}" with id ' +
+                    f'"{person.id}".')
             utils.stdout.p([msg], '=')
             fperson.stdout.info(person)
         else:
-            msg = _(f'The person "{person.first_name} {person.last_name}" ' +
-                    f'already exists with id "{person.id}", aborting...')
+            msg = _(f'The person "{person.name}" already exists with id ' +
+                    f'"{person.id}", aborting...')
             utils.stdout.p([msg], '')
     elif args.subparser == 'edit':
         person = fperson.get.by_term(args.person)
         if person:
             fperson.edit(person, args.field, args.value)
-            msg = _(f'Successfully edited person "{person.first_name} ' +
-                    f'{person.last_name}" with id "{person.id}".')
+            msg = _(f'Successfully edited person "{person.name}" with id ' +
+                    f'"{person.id}".')
             utils.stdout.p([msg], '')
             fperson.stdout.info(person)
         else:
@@ -53,9 +52,10 @@ def _person(args):
             utils.stdout.p([_('No person found.')], '')
     elif args.subparser == 'list':
         if args.search:
-            fperson.list.by_term(args.search)
+            persons = fperson.list.by_term(args.search)
         else:
-            fperson.list.all()
+            persons = fperson.list.all()
+        fperson.stdout.list(persons)
 
 
 def add_subparser(parser):
@@ -65,15 +65,13 @@ def add_subparser(parser):
 
     # person add
     add_parser = subparser.add_parser('add', help=_('Add a person'))
-    add_parser.add_argument('first_name', help=_('First name'))
-    add_parser.add_argument('last_name', help=_('Last name'))
+    add_parser.add_argument('name', help=_('Name'))
     add_parser.add_argument('--link', nargs='*', default=[], help=_('Links'))
 
     # person edit
     edit_parser = subparser.add_parser('edit', help=_('Edit a person'))
     edit_parser.add_argument('person', help=_('Person'))
-    edit_parser.add_argument('field',
-                             choices=['first-name', 'last-name', 'link'],
+    edit_parser.add_argument('field', choices=['name', 'link'],
                              help=_('Which field to edit'))
     edit_parser.add_argument('value', help=_('New value for field'))
 

@@ -30,15 +30,9 @@ def create(title, authors=[], series=None, volume=0, genres=[], links=[]):
     book, created = Book.objects.get_or_create(title=title)
     if created:
         for (i, a), has_next in lookahead(enumerate(authors)):
-            author, c = Person.objects.annotate(
-                name=Concat('first_name', Value(' '), 'last_name')
-            ).filter(
+            author, c = Person.objects.filter(
                 Q(pk=a if a.isdigit() else None) | Q(name__icontains=a)
-            ).get_or_create(
-                defaults={
-                    'first_name': a[:a.rfind(' ')],
-                    'last_name': a[a.rfind(' ') + 1:]}
-            )
+            ).get_or_create(defaults={'name': a})
             book.authors.add(author)
 
         if series:
@@ -70,15 +64,9 @@ def edit(book, field, value):
     if field == 'title':
         book.title = value
     elif field == 'author':
-        author, created = Person.objects.annotate(
-            name=Concat('first_name', Value(' '), 'last_name')
-        ).filter(
+        author, created = Person.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(name__icontains=value)
-        ).get_or_create(
-            defaults={
-                'first_name': value[:value.rfind(' ')],
-                'last_name': value[value.rfind(' ') + 1:]}
-        )
+        ).get_or_create(defaults={'name': value})
         if book.authors.filter(pk=author.pk).exists():
             book.authors.remove(author)
         else:

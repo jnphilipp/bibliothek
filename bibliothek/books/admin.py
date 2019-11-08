@@ -45,9 +45,8 @@ class ReadInline(GenericStackedInline):
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     def list_authors(self, obj):
-        return format_html_join(', ', '{} {}',
-                                ((p.first_name,
-                                  p.last_name) for p in obj.authors.all()))
+        return format_html_join(', ', '{}',
+                                ((p.name,) for p in obj.authors.all()))
 
     fieldsets = [
         (None, {'fields': ['slug', 'title', 'authors']}),
@@ -61,8 +60,7 @@ class BookAdmin(admin.ModelAdmin):
     list_display = ('title', 'list_authors', 'series', 'volume')
     list_filter = ('authors', 'series')
     readonly_fields = ('slug',)
-    search_fields = ('title', 'authors__first_name', 'authors__last_name',
-                     'series__name', 'volume')
+    search_fields = ('title', 'authors__name', 'series__name', 'volume')
 
 
 @admin.register(Edition)
@@ -87,7 +85,6 @@ class EditionAdmin(admin.ModelAdmin):
     inlines = [FileInline, AcquisitionInline, ReadInline]
     list_display = ('book', 'isbn', 'binding', 'publisher', 'publishing_date')
     list_filter = ('book', 'binding', 'publisher', 'languages')
-    search_fields = ('book__title', 'book__authors__first_name',
-                     'book__authors__last_name', 'book__series__name',
-                     'book__volume', 'isbn', 'binding__name',
-                     'publisher__name')
+    search_fields = ('book__title', 'book__authors__name',
+                     'book__series__name', 'book__volume', 'isbn',
+                     'binding__name', 'publisher__name')

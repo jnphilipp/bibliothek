@@ -26,7 +26,5 @@ def all():
 
 
 def by_term(term):
-    return Person.objects.annotate(name=Concat('first_name', Value(' '),
-                                   'last_name')). \
-        filter(Q(pk=term if term.isdigit() else None) |
-               Q(name__icontains=term)).distinct()
+    return Person.objects.filter(Q(pk=term if term.isdigit() else None) |
+                                 Q(name__icontains=term)).distinct()

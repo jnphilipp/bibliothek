@@ -22,18 +22,13 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
                 ('slug', models.SlugField(max_length=2048, unique=True, verbose_name='Slug')),
-                ('first_name', bibliothek.fields.SingleLineTextField(verbose_name='First name')),
-                ('last_name', bibliothek.fields.SingleLineTextField(blank=True, null=True, verbose_name='Last name')),
+                ('name', bibliothek.fields.SingleLineTextField(unique=True, verbose_name='Name')),
                 ('links', models.ManyToManyField(blank=True, related_name='persons', to='links.Link', verbose_name='Links')),
             ],
             options={
                 'verbose_name_plural': 'Persons',
                 'verbose_name': 'Person',
-                'ordering': ('last_name', 'first_name'),
+                'ordering': ('name',),
             },
-        ),
-        migrations.AlterUniqueTogether(
-            name='person',
-            unique_together=set([('last_name', 'first_name')]),
         ),
     ]

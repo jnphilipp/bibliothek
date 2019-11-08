@@ -26,19 +26,24 @@ from persons.models import Person
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
-        return Person.objects.annotate(paper_count=Count('papers'))
+        return Person.objects.annotate(book_count=Count('books'),
+                                       paper_count=Count('papers'))
+
+    def show_book_count(self, inst):
+        return inst.book_count
 
     def show_paper_count(self, inst):
         return inst.paper_count
 
     fieldsets = [
-        (None, {'fields': ['slug', 'first_name', 'last_name']}),
+        (None, {'fields': ['slug', 'name']}),
         (_('Links'), {'fields': ['links']}),
     ]
     filter_horizontal = ('links',)
-    list_display = ('last_name', 'first_name', 'show_paper_count',
-                    'updated_at')
+    list_display = ('name', 'show_paper_count', 'show_book_count')
     readonly_fields = ('slug',)
-    search_fields = ('last_name', 'first_name')
+    search_fields = ('name',)
+    show_book_count.admin_order_field = 'book_count'
+    show_book_count.short_description = _('Number of Books')
     show_paper_count.admin_order_field = 'paper_count'
     show_paper_count.short_description = _('Number of Papers')

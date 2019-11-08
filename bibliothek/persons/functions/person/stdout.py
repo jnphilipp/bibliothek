@@ -23,21 +23,20 @@ from utils import lookahead
 
 
 def list(persons):
-    positions = [.05, .425, .8, .9]
-    utils.stdout.p([_('Id'), _('First name'), _('Last name'), _('#Books'),
-                    _('#Papers')], '=', positions)
+    positions = [.05, .8, .9]
+    utils.stdout.p([_('Id'), _('Name'), _('#Books'), _('#Papers')], '=',
+                   positions)
     for person, has_next in lookahead(persons):
-        utils.stdout.p([person.id, person.first_name, person.last_name,
-                        person.books.count(), person.papers.count()],
-                       '_' if has_next else '=', positions)
+        utils.stdout.p([person.id, person.name, person.books.count(),
+                       person.papers.count()], '_' if has_next else '=',
+                       positions)
 
 
 def info(person):
     positions = [.33]
     utils.stdout.p([_('Field'), _('Value')], '=', positions)
     utils.stdout.p([_('Id'), person.id], positions=positions)
-    utils.stdout.p([_('First name'), person.first_name], positions=positions)
-    utils.stdout.p([_('Last name'), person.last_name], positions=positions)
+    utils.stdout.p([_('Name'), person.name], positions=positions)
 
     if person.links.count() > 0:
         for (i, link), has_next in lookahead(enumerate(person.links.all())):

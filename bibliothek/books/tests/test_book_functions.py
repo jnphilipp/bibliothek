@@ -28,7 +28,7 @@ class BookFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(book.id)
 
-        person, created = fperson.create('Firstname', 'Lastname')
+        person, created = fperson.create('Name')
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 
@@ -47,7 +47,7 @@ class BookFunctionsTestCase(TestCase):
         self.assertEquals('Romance', book.genres.first().name)
         self.assertEquals('SciFi', book.genres.last().name)
 
-        author = ['%s %s' % (person.first_name, person.last_name)]
+        author = [f'{person}']
         book, created = fbook.create('Some Test Book 2', author, series.name,
                                      1.0, ['SciFi', 'Romance'])
         self.assertTrue(created)
@@ -63,7 +63,7 @@ class BookFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(series.id)
 
-        person, created = fperson.create('John', 'Do')
+        person, created = fperson.create('John Do')
         self.assertTrue(created)
         self.assertIsNotNone(person.id)
 

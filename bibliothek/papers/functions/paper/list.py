@@ -36,10 +36,8 @@ def by_shelf(shelf):
 
 
 def by_term(term, has_file=None):
-    persons = Person.objects.annotate(name=Concat('first_name', Value(' '),
-                                                  'last_name')). \
-        filter(Q(pk=term if term.isdigit() else None) |
-               Q(name__icontains=term))
+    persons = Person.objects.filter(Q(pk=term if term.isdigit() else None) |
+                                    Q(name__icontains=term))
 
     papers = Paper.objects.annotate(jv=Concat('journal__name', Value(' '),
                                               'volume')).all()

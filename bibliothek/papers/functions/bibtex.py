@@ -41,22 +41,9 @@ def parse(bibtex):
         for author in re.compile(r'\s+and\s+').split(entry['author']):
             if ',' in author:
                 s = author.split(',')
-                authors.append({
-                    'first_name': s[1].strip(),
-                    'last_name': s[0].strip()
-                })
+                authors.append(f'{s[1].strip()} {s[0].strip()}')
             else:
-                s = author.rsplit(' ', 1)
-                if len(s) == 1:
-                    authors.append({
-                        'first_name': s[0].strip(),
-                        'last_name': None
-                    })
-                else:
-                    authors.append({
-                        'first_name': s[0].strip(),
-                        'last_name': s[1].strip()
-                    })
+                authors.append(author.strip())
 
         journal = entry['journal'].strip() if 'journal' in entry else ''
         volume = entry['volume'].strip() if 'volume' in entry else ''
@@ -70,7 +57,10 @@ def parse(bibtex):
 
         year = int(entry['year'].strip()) if 'year' in entry else None
         month = entry['month'].strip() if 'month' in entry else None
-        if year and month:
+        day = entry['day'].strip() if 'day' in entry else None
+        if year and month and day:
+            date = datetime.strptime(f'{day} {month} {year}', '%d %b %Y')
+        elif year and month:
             date = datetime.strptime(f'{month} {year}', '%b %Y')
         elif year:
             date = datetime(year, 1, 1)

@@ -59,15 +59,9 @@ def create(book, alternate_title=None, isbn=None, publishing_date=None,
             ).get_or_create(defaults={'name': publisher})
 
         for (i, p), has_next in lookahead(enumerate(persons)):
-            person, c = Person.objects.annotate(
-                name=Concat('first_name', Value(' '), 'last_name')
-            ).filter(
+            person, c = Person.objects.filter(
                 Q(pk=p if p.isdigit() else None) | Q(name__icontains=p)
-            ).get_or_create(
-                defaults={
-                    'first_name': p[:p.rfind(' ')],
-                    'last_name': p[p.rfind(' ') + 1:]}
-            )
+            ).get_or_create(defaults={'name': p})
             edition.persons.add(person)
 
         for (i, l), has_next in lookahead(enumerate(languages)):
@@ -110,15 +104,9 @@ def edit(edition, field, value):
     elif field == 'isbn':
         edition.isbn = value
     elif field == 'person':
-        person, c = Person.objects.annotate(
-            name=Concat('first_name', Value(' '), 'last_name')
-        ).filter(
+        person, c = Person.objects.filter(
             Q(pk=value if value.isdigit() else None) | Q(name__icontains=value)
-        ).get_or_create(
-            defaults={
-                'first_name': value[:value.rfind(' ')],
-                'last_name': value[value.rfind(' ') + 1:]}
-        )
+        ).get_or_create(defaults={'name': value})
         if edition.persons.filter(pk=person.pk).exists():
             edition.persons.remove(person)
         else:

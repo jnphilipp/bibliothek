@@ -34,8 +34,7 @@ class PaperFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
         self.assertEquals(1, paper.authors.count())
-        self.assertEquals('Mark', paper.authors.first().first_name)
-        self.assertEquals('Tauser', paper.authors.first().last_name)
+        self.assertEquals('Mark Tauser', paper.authors.first().name)
         self.assertEquals('2016-05-03', paper.publishing_date)
         self.assertEquals('20160501', paper.volume)
         self.assertIsNotNone(paper.journal.id)
@@ -46,8 +45,7 @@ class PaperFunctionsTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
         self.assertEquals(1, paper.authors.count())
-        self.assertEquals('Mark', paper.authors.first().first_name)
-        self.assertEquals('Tauser', paper.authors.first().last_name)
+        self.assertEquals('Mark Tauser', paper.authors.first().name)
         self.assertEquals('2016-06-03', paper.publishing_date)
         self.assertEquals('20160603', paper.volume)
         self.assertIsNotNone(paper.journal.id)
@@ -68,19 +66,8 @@ class PaperFunctionsTestCase(TestCase):
 
         expected = [{
             'title': 'Self-Normalizing Neural Networks',
-            'authors': [{
-                'last_name': 'Klambauer',
-                'first_name': 'Günter'
-            }, {
-                'last_name': 'Unterthiner',
-                'first_name': 'Thomas'
-            }, {
-                'last_name': 'Mayr',
-                'first_name': 'Andreas'
-            }, {
-                'last_name': 'Hochreiter',
-                'first_name': 'Sepp'
-            }],
+            'authors': ['Günter Klambauer', 'Thomas Unterthiner',
+                        'Andreas Mayr', 'Sepp Hochreiter'],
             'journal': 'ArXiv e-prints',
             'volume': '1706.02515',
             'publisher': '',
@@ -102,7 +89,7 @@ class PaperFunctionsTestCase(TestCase):
 
         paper, created, acquisition = fpaper.parse.from_dict({
             'title': 'Parsed Paper Next Gen',
-            'authors': [{'first_name': 'Jen', 'last_name': 'Yen'}],
+            'authors': ['Jen Yen'],
             'journal': 'Science Journal',
             'volume': '20160603',
             'publishing_date': '2016-06-03',
@@ -112,8 +99,7 @@ class PaperFunctionsTestCase(TestCase):
         self.assertIsNotNone(paper.id)
         self.assertIsNotNone(acquisition.id)
         self.assertEquals(1, paper.authors.count())
-        self.assertEquals('Jen', paper.authors.first().first_name)
-        self.assertEquals('Yen', paper.authors.first().last_name)
+        self.assertEquals('Jen Yen', paper.authors.first().name)
         self.assertIsNotNone(paper.journal.id)
         self.assertEquals('2016-06-03', paper.publishing_date)
         self.assertEquals('20160603', paper.volume)
