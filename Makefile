@@ -111,7 +111,6 @@ build/conf/org.gnome.bibliothek.SearchProvider.desktop: build/conf
 	@echo "Terminal=true" >> build/conf/org.gnome.bibliothek.SearchProvider.desktop
 	@echo "Type=Application" >> build/conf/org.gnome.bibliothek.SearchProvider.desktop
 	@echo "OnlyShowIn=GNOME;" >> build/conf/org.gnome.bibliothek.SearchProvider.desktop
-	@echo "NoDisplay=true;" >> build/conf/org.gnome.bibliothek.SearchProvider.desktop
 
 
 build/conf/org.gnome.bibliothek.SearchProvider.service.systemd: build/conf
