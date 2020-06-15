@@ -48,6 +48,8 @@ class Person(models.Model):
                     self.slug = slugify(f'{self.id}_{self.name}')
                 else:
                     self.slug = slugify(self.name)
+        if self.slug is None or self.slug == '':
+            self.slug = hashlib.md5(self.name.encode('utf8')).hexdigest()
         super(Person, self).save(*args, **kwargs)
 
     def to_json(self):
