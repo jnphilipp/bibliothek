@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C)
+#     2016-2020 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -20,6 +21,8 @@
 import json
 import os
 import sys
+import time
+import threading
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bibliothek.settings')
 
 import django
@@ -41,9 +44,9 @@ from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from datetime import date, datetime
 from django.utils.translation import ugettext_lazy as _
 
-from bibliothek import (__app_name__, __description__, __version__,
-                        __license__, __author__, __email__, settings)
-from utils import app_version, lookahead, stdout
+from bibliothek import (__app_name__, __author__, __email__, __github__,
+                        __version__, settings)
+from utils import lookahead, stdout
 
 
 def init():
@@ -59,7 +62,10 @@ def init():
 
 def _runserver(args):
     from django.core.management import execute_from_command_line
-    execute_from_command_line(['', 'runserver'])
+    runserver_args = ['', 'runserver', args.addrport]
+    if args.ipv6:
+        runserver_args += ['-6']
+    execute_from_command_line(runserver_args)
 
 
 def _import(args):
@@ -193,11 +199,16 @@ if __name__ == '__main__':
 
     parser = ArgumentParser(prog=__app_name__,
                             formatter_class=RawTextHelpFormatter)
-    parser.add_argument('-v', '--version', action='version',
-                        version=app_version(__app_name__, __description__,
-                                            __version__, __license__,
-                                            __author__, __email__))
-    subparser = parser.add_subparsers(dest='subparser')
+    parser.add_argument('-V', '--version', action='version',
+                        version=_('%%(prog)s v%(version)s\nLizenz GPLv3+: ' +
+                                  'GNU GPL Version 3 or later ' +
+                                  '<https://gnu.org/licenses/gpl.html>.\n' +
+                                  'Report bugs to %(github)s/issues.\n\n' +
+                                  'Written by %(author)s <%(email)s>') % {
+                            'version': __version__, 'github': __github__,
+                            'author': __author__, 'email': __email__},)
+
+    subparser = parser.add_subparsers(dest='subparser', metavar='COMMAND')
 
     # create the parser for the "info" subcommand
     bibliothek.argparse.add_subparser(subparser)
@@ -236,6 +247,16 @@ if __name__ == '__main__':
     runserver_parser = subparser.add_parser('runserver',
                                             help=_('Start local http server'))
     runserver_parser.set_defaults(func=_runserver)
+    runserver_parser.add_argument('addrport', nargs='?',
+                                  default='127.0.0.1:8000',
+                                  help=_('Optional port number, or ' +
+                                         'ipaddr:port'))
+    runserver_parser.add_argument('-6', '--ipv6', action='store_true',
+                                  help=_('Tells Django to use an IPv6 ' +
+                                         'address.'))
+    runserver_parser.add_argument('-b', '--background', action='store_true',
+                                  help=_('Runs the Django server in the ' +
+                                         'background.'))
 
     # create the parser for the "import" subcommand
     import_parser = subparser.add_parser('import',
