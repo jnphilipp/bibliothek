@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
+import hashlib
 import os
 import shutil
 
@@ -62,6 +63,8 @@ class Book(models.Model):
             orig = Book.objects.get(pk=self.id)
             if orig.title != self.title:
                 self.slug = slugify(self.title)
+        if self.slug is None or self.slug == '':
+            self.slug = hashlib.md5(self.title.encode('utf8')).hexdigest()
         super(Book, self).save(*args, **kwargs)
 
     def to_json(self):
