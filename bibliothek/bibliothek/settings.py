@@ -205,8 +205,8 @@ CURRENCY_SYMBOL = None
 
 # Load local settings
 
-paths = [os.path.join(BASE_DIR, 'trader', 'local.py'),
-         os.path.join(APP_DATA_DIR, 'settings.py')]
+paths = [os.path.join(BASE_DIR, 'bibliothek', 'local.py'),
+         os.path.join(APP_CONFIG_DIR, 'settings.py')]
 
 for path in paths:
     if not os.path.exists(path):
