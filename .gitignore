@@ -1,6 +1,13 @@
+# Python
 __pycache__
 .venv
+.mypy_cache
+
+# Other
 db.sqlite3
 build
-bibliothek.sublime-project
-bibliothek.sublime-workspace
+.sync-exclude.lst
+
+# SublimeText
+*.sublime-project
+*.sublime-workspace
