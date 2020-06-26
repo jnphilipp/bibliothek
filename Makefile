@@ -112,7 +112,7 @@ build/bin/bibliothek: build/bin
 
 build/bin/gnome-search-provider: build/bin
 	@echo "#!/usr/bin/env bash" > build/bin/gnome-search-provider
-	@echo "${SHARE_DIR}/bibliothek/.venv/bin/python3 ${SHARE_DIR}/bibliothek/gnome-search-provider.py \"$$""@\"" >> build/bin/gnome-search-provider
+	@echo "${SHARE_DIR}/bibliothek/gnome-search-provider.py \"$$""@\"" >> build/bin/gnome-search-provider
 
 
 build/copyright: build
