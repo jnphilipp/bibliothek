@@ -61,7 +61,7 @@ deb-sign: deb
 install: bibliothek.bash-completion build/bin/bibliothek build/bin/gnome-search-provider build/conf/org.gnome.bibliothek.SearchProvider.desktop build/conf/org.gnome.bibliothek.SearchProvider.service.systemd build/conf/org.gnome.bibliothek.SearchProvider.service.dbus build/conf/org.gnome.bibliothek.SearchProvider.ini
 	$(Q)install -Dm 0644 bibliothek.bash-completion "${BASH_COMPLETION_DIR}"/bibliothek.bash-completion
 	$(Q)install -Dm 0755 build/bin/bibliothek "${BIN_DIR}"/bibliothek
-	$(Q)install -Dm 0755 build/bin/gnome-search-provider "${SHARE_DIR}"/bibliothek/
+	$(Q)install -Dm 0755 build/bin/gnome-search-provider "${SHARE_DIR}"/bibliothek/gnome-search-provider
 	$(Q)for f in ${FILES}; do \
 		install -Dm 0644 $$f "${SHARE_DIR}"/$$f ; \
 	done
