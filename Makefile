@@ -9,6 +9,7 @@ ICON_DIR?=/usr/share/icons
 LIB_DIR?=/usr/lib
 MAN_DIR?=/usr/share/man
 SHARE_DIR?=/usr/share
+DEST_DIR?=
 
 FILES := $(shell find bibliothek/* -type f ! -path "**/__pycache__/*" ! -path "**/.git" ! -path "**/.gitignore" ! -path "**/LICENSE" ! -path "**/README.md")
 
@@ -59,18 +60,18 @@ deb-sign: deb
 
 
 install: bibliothek.bash-completion build/bin/bibliothek build/bin/gnome-search-provider build/conf/org.gnome.bibliothek.SearchProvider.desktop build/conf/org.gnome.bibliothek.SearchProvider.service.systemd build/conf/org.gnome.bibliothek.SearchProvider.service.dbus build/conf/org.gnome.bibliothek.SearchProvider.ini
-	$(Q)install -Dm 0644 bibliothek.bash-completion "${BASH_COMPLETION_DIR}"/bibliothek.bash-completion
-	$(Q)install -Dm 0755 build/bin/bibliothek "${BIN_DIR}"/bibliothek
-	$(Q)install -Dm 0755 build/bin/gnome-search-provider "${SHARE_DIR}"/bibliothek/gnome-search-provider
+	$(Q)install -Dm 0644 bibliothek.bash-completion "${DEST_DIR}/${BASH_COMPLETION_DIR}"/bibliothek.bash-completion
+	$(Q)install -Dm 0755 build/bin/bibliothek "${DEST_DIR}/${BIN_DIR}"/bibliothek
+	$(Q)install -Dm 0755 build/bin/gnome-search-provider "${DEST_DIR}/${SHARE_DIR}"/bibliothek/gnome-search-provider
 	$(Q)for f in ${FILES}; do \
-		install -Dm 0644 $$f "${SHARE_DIR}"/$$f ; \
+		install -Dm 0644 $$f "${DEST_DIR}/${SHARE_DIR}"/$$f ; \
 	done
-	$(Q)install -Dm 0644 bibliothek/bibliothek/static/images/bibliothek.svg "${ICON_DIR}"/hicolor/scalable/apps/bibliothek.svg
-	$(Q)install -Dm 0644 bibliothek/bibliothek/static/images/bibliothek-symbolic.svg "${ICON_DIR}"/hicolor/symbolic/apps/bibliothek-symbolic.svg
-	$(Q)install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.ini "${SHARE_DIR}"/gnome-shell/search-providers/org.gnome.bibliothek.SearchProvider.ini
-	$(Q)install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.desktop "${SHARE_DIR}"/applications/org.gnome.bibliothek.SearchProvider.desktop
-	$(Q)install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.service.dbus "${SHARE_DIR}"/dbus-1/services/org.gnome.bibliothek.SearchProvider.service
-	$(Q)install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.service.systemd "${LIB_DIR}"/systemd/user/org.gnome.bibliothek.SearchProvider.service
+	$(Q)install -Dm 0644 bibliothek/bibliothek/static/images/bibliothek.svg "${DEST_DIR}/${ICON_DIR}"/hicolor/scalable/apps/bibliothek.svg
+	$(Q)install -Dm 0644 bibliothek/bibliothek/static/images/bibliothek-symbolic.svg "${DEST_DIR}/${ICON_DIR}"/hicolor/symbolic/apps/bibliothek-symbolic.svg
+	$(Q)install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.ini "${DEST_DIR}/${SHARE_DIR}"/gnome-shell/search-providers/org.gnome.bibliothek.SearchProvider.ini
+	$(Q)install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.desktop "${DEST_DIR}/${SHARE_DIR}"/applications/org.gnome.bibliothek.SearchProvider.desktop
+	$(Q)install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.service.dbus "${DEST_DIR}/${SHARE_DIR}"/dbus-1/services/org.gnome.bibliothek.SearchProvider.service
+	$(Q)install -Dm 0644 build/conf/org.gnome.bibliothek.SearchProvider.service.systemd "${DEST_DIR}/${LIB_DIR}"/systemd/user/org.gnome.bibliothek.SearchProvider.service
 	@echo "bibliothek install completed."
 
 
