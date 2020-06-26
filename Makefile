@@ -35,10 +35,10 @@ venv:
 		source .venv/bin/activate; \
 		pip install -r requirements.txt; \
 	)
-	$(Q)ln -s ${PYTHON_LIB_DIR}/gi .venv/lib/python3*/site-packages/
-	$(Q)ln -s ${PYTHON_LIB_DIR}/dbus .venv/lib/python3*/site-packages/
+	$(Q)ln -fs ${PYTHON_LIB_DIR}/gi .venv/lib/python3*/site-packages/
+	$(Q)ln -fs ${PYTHON_LIB_DIR}/dbus .venv/lib/python3*/site-packages/
 	$(Q)for f in ${PYTHON_LIB_DIR}/_dbus*; do \
-		ln -s $$f .venv/lib/python3*/site-packages/; \
+		ln -fs $$f .venv/lib/python3*/site-packages/; \
 	done
 
 
@@ -58,7 +58,7 @@ deb-sign: deb
 	$(Q)dpkg-sig -s build/bibliothek.deb
 
 
-install: bibliothek.bash-completion build/bin/bibliothek build/bin/gnome-search-provider build/conf/org.gnome.bibliothek.SearchProvider.desktop build/conf/org.gnome.bibliothek.SearchProvider.service.systemd build/conf/org.gnome.bibliothek.SearchProvider.service.dbus build/conf/org.gnome.bibliothek.SearchProvider.ini ${SHARE_DIR}bibliothek/.venv
+install: bibliothek.bash-completion build/bin/bibliothek build/bin/gnome-search-provider build/conf/org.gnome.bibliothek.SearchProvider.desktop build/conf/org.gnome.bibliothek.SearchProvider.service.systemd build/conf/org.gnome.bibliothek.SearchProvider.service.dbus build/conf/org.gnome.bibliothek.SearchProvider.ini
 	$(Q)install bibliothek.bash-completion ${BASH_COMPLETION_DIR}
 	$(Q)install -Dm 0755 build/bin/bibliothek ${BIN_DIR}
 	$(Q)install -Dm 0755 build/bin/gnome-search-provider ${SHARE_DIR}bibliothek/
@@ -106,7 +106,7 @@ build/package/DEBIAN: build
 
 build/bin/bibliothek: build/bin
 	@echo "#!/usr/bin/env bash" > build/bin/bibliothek
-	@echo "${SHARE_DIR}/bibliothek/.venv/bin/python3 ${SHARE_DIR}/bibliothek/bibliothek.py \"$$""@\"" >> build/bin/bibliothek
+	@echo "${SHARE_DIR}/bibliothek/bibliothek.py \"$$""@\"" >> build/bin/bibliothek
 
 
 build/bin/gnome-search-provider: build/bin
@@ -233,7 +233,7 @@ build/package/DEBIAN/control: build/package/DEBIAN/md5sums
 	$(Q)echo "Installed-Size: `du -sk build/package/usr | grep -oE "[0-9]+"`" >> build/package/DEBIAN/control
 	$(Q)echo "Maintainer: J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>" >> build/package/DEBIAN/control
 	$(Q)echo "Homepage: https://github.com/jnphilipp/bibliothek" >> build/package/DEBIAN/control
-	$(Q)echo "Description: Library managing tool" >> build/package/DEBIAN/control
+	$(Q)echo "Description: Library managing tool for the command line" >> build/package/DEBIAN/control
 	$(Q)echo " This tool provides a command line interfaces to manage books with different" >> build/package/DEBIAN/control
 	$(Q)echo " editions, magazines or scientific papers." >> build/package/DEBIAN/control
 	$(Q)echo " It includes a search provider for the GNOME desktop." >> build/package/DEBIAN/control
