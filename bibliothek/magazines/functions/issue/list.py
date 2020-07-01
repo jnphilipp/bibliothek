@@ -49,5 +49,5 @@ def by_term(term, magazine=None, has_file=None):
     if has_file is not None:
         issues = issues.filter(files__isnull=not has_file)
     issues = issues.filter(Q(pk=term if term.isdigit() else None) |
-                           Q(name__icontains=term))
+                           Q(name__iregex=term.replace(' ', '.+?')))
     return issues

@@ -31,6 +31,7 @@ def by_term(term):
         ni=Concat('issues__magazine__name', Value(' '), 'issues__issue')). \
         filter(Q(pk=term if term.isdigit() else None) |
                Q(editions__alternate_title__icontains=term) |
-               Q(editions__isbn__icontains=term) | Q(ni__icontains=term) |
-               Q(papers__title__icontains=term) | Q(jv__icontains=term) |
+               Q(editions__isbn__icontains=term) | Q(jv__icontains=term) |
+               Q(ni__iregex=term.replace(' ', '.*?')) |
+               Q(papers__title__icontains=term) |
                Q(editions__book__title__icontains=term)).distinct()
