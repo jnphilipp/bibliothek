@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 PYTHON_LIB_DIR?=/usr/lib/python3/dist-packages
-BASH_COMPLETION_DIR?=/etc/bash_completion.d
+BASH_COMPLETION_DIR?=/usr/share/bash-completion.d
 BIN_DIR?=/usr/bin
 DATA_DIR?=/usr/share
 DOC_DIR?=/usr/share/doc
@@ -181,13 +181,13 @@ build/conf/org.gnome.bibliothek.SearchProvider.service.systemd: build/conf
 	@echo "[Service]" >> build/conf/org.gnome.bibliothek.SearchProvider.service.systemd
 	@echo "Type=dbus" >> build/conf/org.gnome.bibliothek.SearchProvider.service.systemd
 	@echo "BusName=org.gnome.bibliothek.SearchProvider" >> build/conf/org.gnome.bibliothek.SearchProvider.service.systemd
-	@echo "ExecStart=${SHARE_DIR}bibliothek/gnome-search-provider" >> build/conf/org.gnome.bibliothek.SearchProvider.service.systemd
+	@echo "ExecStart=${SHARE_DIR}/bibliothek/gnome-search-provider" >> build/conf/org.gnome.bibliothek.SearchProvider.service.systemd
 
 
 build/conf/org.gnome.bibliothek.SearchProvider.service.dbus: build/conf
 	@echo "[D-BUS Service]" > build/conf/org.gnome.bibliothek.SearchProvider.service.dbus
 	@echo "Name=org.gnome.bibliothek.SearchProvider" >> build/conf/org.gnome.bibliothek.SearchProvider.service.dbus
-	@echo "Exec=${SHARE_DIR}bibliothek/gnome-search-provider" >> build/conf/org.gnome.bibliothek.SearchProvider.service.dbus
+	@echo "Exec=${SHARE_DIR}/bibliothek/gnome-search-provider" >> build/conf/org.gnome.bibliothek.SearchProvider.service.dbus
 	@echo "SystemdService=org.gnome.bibliothek.SearchProvider.service" >> build/conf/org.gnome.bibliothek.SearchProvider.service.dbus
 
 
