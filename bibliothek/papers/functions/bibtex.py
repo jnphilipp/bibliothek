@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -16,76 +16,93 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-import bibtexparser
 import re
 
 from bibtexparser.bparser import BibTexParser
 from datetime import datetime
 
 
-def from_file(path):
-    with open(path, 'r', encoding='utf-8') as f:
+def from_file(path: str):
+    """Parse bibtex file.
+
+    Args:
+        * path: bibtex file
+    Returns:
+        * dict
+    """
+    with open(path, "r", encoding="utf-8") as f:
         return parse(f.read())
 
 
-def parse(bibtex):
-    bib_database = BibTexParser(common_strings=True,
-                                homogenize_fields=True).parse(bibtex)
+def parse(bibtex: str):
+    """Parse bibtext from str.
+
+    Args:
+        * bibtex: bib config as str
+    Returns:
+        * dict
+    """
+    bib_database = BibTexParser(common_strings=True, homogenize_fields=True).parse(
+        bibtex
+    )
 
     entries = []
     for entry in bib_database.entries:
-        title = entry['title'].strip() if 'title' in entry else ''
+        title = entry["title"].strip() if "title" in entry else ""
 
         authors = []
-        entry['author'] = re.sub(r'\s*\n\s*', ' ', entry['author'], flags=re.S)
-        for author in re.compile(r'\s+and\s+').split(entry['author']):
-            if ',' in author:
-                s = author.split(',')
-                authors.append(f'{s[1].strip()} {s[0].strip()}')
+        entry["author"] = re.sub(r"\s*\n\s*", " ", entry["author"], flags=re.S)
+        for author in re.compile(r"\s+and\s+").split(entry["author"]):
+            if "," in author:
+                s = author.split(",")
+                authors.append(f"{s[1].strip()} {s[0].strip()}")
             else:
                 authors.append(author.strip())
 
-        journal = entry['journal'].strip() if 'journal' in entry else ''
-        volume = entry['volume'].strip() if 'volume' in entry else ''
+        journal = entry["journal"].strip() if "journal" in entry else ""
+        volume = entry["volume"].strip() if "volume" in entry else ""
 
-        if 'number' in entry:
+        if "number" in entry:
             volume = f'{volume}.{entry["number"]}'
 
-        if 'eprint' in entry and not volume:
-            volume = entry['eprint'].strip()
-        publisher = entry['publisher'].strip() if 'publisher' in entry else ''
+        if "eprint" in entry and not volume:
+            volume = entry["eprint"].strip()
+        publisher = entry["publisher"].strip() if "publisher" in entry else ""
 
-        year = int(entry['year'].strip()) if 'year' in entry else None
-        month = entry['month'].strip() if 'month' in entry else None
-        day = entry['day'].strip() if 'day' in entry else None
+        year = int(entry["year"].strip()) if "year" in entry else None
+        month = entry["month"].strip() if "month" in entry else None
+        day = entry["day"].strip() if "day" in entry else None
         if year and month and day:
-            date = datetime.strptime(f'{day} {month} {year}', '%d %b %Y')
+            date = datetime.strptime(f"{day} {month} {year}", "%d %B %Y")
         elif year and month:
-            date = datetime.strptime(f'{month} {year}', '%b %Y')
+            date = datetime.strptime(f"{month} {year}", "%B %Y")
         elif year:
             date = datetime(year, 1, 1)
 
-        if 'timestamp' in entry:
-            pub_date = datetime.strptime(entry['timestamp'].strip(),
-                                         '%a, %d %b %Y %H:%M:%S %z').date()
+        if "timestamp" in entry:
+            pub_date = datetime.strptime(
+                entry["timestamp"].strip(), "%a, %d %b %Y %H:%M:%S %z"
+            ).date()
         else:
             pub_date = date.date()
 
-        if 'link' in entry:
-            url = entry['link'].strip()
-        elif 'url' in entry:
-            url = entry['url'].strip()
+        if "link" in entry:
+            url = entry["link"].strip()
+        elif "url" in entry:
+            url = entry["url"].strip()
         else:
             url = None
 
-        entries.append({
-            'title': title,
-            'authors': authors,
-            'journal': journal,
-            'volume': volume,
-            'publisher': publisher,
-            'publishing_date': pub_date,
-            'url': url,
-            'bibtex': bibtex
-        })
+        entries.append(
+            {
+                "title": title,
+                "authors": authors,
+                "journal": journal,
+                "volume": volume,
+                "publisher": publisher,
+                "publishing_date": pub_date,
+                "url": url,
+                "bibtex": bibtex,
+            }
+        )
     return entries
