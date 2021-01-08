@@ -36,25 +36,31 @@ from series.models import Series
 
 
 class Book(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True,
-                                      verbose_name=_('Created at'))
-    updated_at = models.DateTimeField(auto_now=True,
-                                      verbose_name=_('Updated at'))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
-    slug = models.SlugField(max_length=2048, unique=True,
-                            verbose_name=_('Slug'))
-    title = SingleLineTextField(unique=True, verbose_name=_('Title'))
-    authors = models.ManyToManyField(Person, blank=True, related_name='books',
-                                     verbose_name=_('Authors'))
+    slug = models.SlugField(max_length=2048, unique=True, verbose_name=_("Slug"))
+    title = SingleLineTextField(unique=True, verbose_name=_("Title"))
+    authors = models.ManyToManyField(
+        Person, blank=True, related_name="books", verbose_name=_("Authors")
+    )
 
-    series = models.ForeignKey(Series, models.SET_NULL, blank=True, null=True,
-                               related_name='books', verbose_name=_('Series'))
-    volume = models.FloatField(default=0, blank=True, verbose_name=_('Volume'))
+    series = models.ForeignKey(
+        Series,
+        models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="books",
+        verbose_name=_("Series"),
+    )
+    volume = models.FloatField(default=0, blank=True, verbose_name=_("Volume"))
 
-    genres = models.ManyToManyField(Genre, blank=True, related_name='books',
-                                    verbose_name=_('Genres'))
-    links = models.ManyToManyField(Link, blank=True, related_name='books',
-                                   verbose_name=_('Links'))
+    genres = models.ManyToManyField(
+        Genre, blank=True, related_name="books", verbose_name=_("Genres")
+    )
+    links = models.ManyToManyField(
+        Link, blank=True, related_name="books", verbose_name=_("Links")
+    )
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -63,72 +69,90 @@ class Book(models.Model):
             orig = Book.objects.get(pk=self.id)
             if orig.title != self.title:
                 self.slug = slugify(self.title)
-        if self.slug is None or self.slug == '':
-            self.slug = hashlib.md5(self.title.encode('utf8')).hexdigest()
+        if self.slug is None or self.slug == "":
+            self.slug = hashlib.md5(self.title.encode("utf8")).hexdigest()
         super(Book, self).save(*args, **kwargs)
 
     def to_json(self):
         data = {
-            'title': self.title,
-            'authors': [a.to_json() for a in self.authors.all()],
-            'genres': [g.to_json() for g in self.genres.all()],
-            'links': [l.to_json() for l in self.links.all()]
+            "title": self.title,
+            "authors": [a.to_json() for a in self.authors.all()],
+            "genres": [g.to_json() for g in self.genres.all()],
+            "links": [l.to_json() for l in self.links.all()],
         }
         if self.series:
-            data['series'] = self.series.name
-            data['volume'] = self.volume
+            data["series"] = self.series.name
+            data["volume"] = self.volume
         return data
 
     def __str__(self):
-        authors = ', '.join([f'{a}' for a in self.authors.all()])
-        authors = '' if self.authors.count() == 0 else f' - {authors}'
-        series = f' ({self.series} #{self.volume:g})' if self.series else ''
-        return f'{self.title}{authors}{series}'
+        authors = ", ".join([f"{a}" for a in self.authors.all()])
+        authors = "" if self.authors.count() == 0 else f" - {authors}"
+        series = f" ({self.series} #{self.volume:g})" if self.series else ""
+        return f"{self.title}{authors}{series}"
 
     class Meta:
-        ordering = ('series', 'volume', 'title')
-        verbose_name = _('Book')
-        verbose_name_plural = _('Books')
+        ordering = ("series", "volume", "title")
+        verbose_name = _("Book")
+        verbose_name_plural = _("Books")
 
 
 class Edition(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True,
-                                      verbose_name=_('Created at'))
-    updated_at = models.DateTimeField(auto_now=True,
-                                      verbose_name=_('Updated at'))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
-    alternate_title = SingleLineTextField(blank=True, null=True,
-                                          verbose_name=_('Alternate title'))
-    book = models.ForeignKey(Book, models.CASCADE, related_name='editions',
-                             verbose_name=_('Book'))
-    isbn = models.CharField(max_length=13, blank=True, null=True,
-                            verbose_name=_('ISBN'))
-    publishing_date = models.DateField(blank=True, null=True,
-                                       verbose_name=_('Publishing date'))
-    cover_image = models.ImageField(upload_to='files', blank=True, null=True,
-                                    verbose_name=_('Cover image'))
-    files = GenericRelation('files.File', verbose_name=_('Files'))
+    alternate_title = SingleLineTextField(
+        blank=True, null=True, verbose_name=_("Alternate title")
+    )
+    book = models.ForeignKey(
+        Book, models.CASCADE, related_name="editions", verbose_name=_("Book")
+    )
+    isbn = models.CharField(
+        max_length=13, blank=True, null=True, verbose_name=_("ISBN")
+    )
+    publishing_date = models.DateField(
+        blank=True, null=True, verbose_name=_("Publishing date")
+    )
+    cover_image = models.ImageField(
+        upload_to="files", blank=True, null=True, verbose_name=_("Cover image")
+    )
+    files = GenericRelation("files.File", verbose_name=_("Files"))
 
-    publisher = models.ForeignKey(Publisher, models.SET_NULL, blank=True,
-                                  null=True, related_name='editions',
-                                  verbose_name=_('Publisher'))
-    binding = models.ForeignKey(Binding, models.SET_NULL, blank=True,
-                                null=True, related_name='editions',
-                                verbose_name=_('Binding'))
-    languages = models.ManyToManyField(Language, blank=True,
-                                       related_name='editions',
-                                       verbose_name=_('Languages'))
-    links = models.ManyToManyField(Link, blank=True, related_name='editions',
-                                   verbose_name=_('Links'))
-    bibtex = models.TextField(blank=True, null=True, verbose_name=_('BibTex'))
-    persons = models.ManyToManyField(Person, blank=True,
-                                     related_name='editions',
-                                     verbose_name=_('Persons'))
+    publisher = models.ForeignKey(
+        Publisher,
+        models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="editions",
+        verbose_name=_("Publisher"),
+    )
+    binding = models.ForeignKey(
+        Binding,
+        models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="editions",
+        verbose_name=_("Binding"),
+    )
+    languages = models.ManyToManyField(
+        Language, blank=True, related_name="editions", verbose_name=_("Languages")
+    )
+    links = models.ManyToManyField(
+        Link, blank=True, related_name="editions", verbose_name=_("Links")
+    )
+    bibtex = models.TextField(blank=True, null=True, verbose_name=_("BibTex"))
+    persons = models.ManyToManyField(
+        Person, blank=True, related_name="editions", verbose_name=_("Persons")
+    )
 
-    acquisitions = GenericRelation('shelves.Acquisition',
-                                   verbose_name=_('Acquisitions'))
-    reads = GenericRelation('shelves.Read', related_query_name='editions',
-                            verbose_name=_('Reads'))
+    acquisitions = GenericRelation(
+        "shelves.Acquisition",
+        related_query_name="editions",
+        verbose_name=_("Acquisitions"),
+    )
+    reads = GenericRelation(
+        "shelves.Read", related_query_name="editions", verbose_name=_("Reads")
+    )
 
     def get_title(self):
         if self.alternate_title:
@@ -137,8 +161,9 @@ class Edition(models.Model):
             return self.book.title
 
     def move_file(self, file):
-        save_name = os.path.join('books', str(self.book.id), str(self.id),
-                                 os.path.basename(file.file.name))
+        save_name = os.path.join(
+            "books", str(self.book.id), str(self.id), os.path.basename(file.file.name)
+        )
 
         current_path = os.path.join(settings.MEDIA_ROOT, file.file.name)
         new_path = os.path.join(settings.MEDIA_ROOT, save_name)
@@ -152,8 +177,9 @@ class Edition(models.Model):
 
     def move_cover_image(self):
         ending = os.path.splitext(self.cover_image.name)[1]
-        save_name = os.path.join('books', str(self.book.id), str(self.id),
-                                 f'cover{ending}')
+        save_name = os.path.join(
+            "books", str(self.book.id), str(self.id), f"cover{ending}"
+        )
 
         current_path = os.path.join(settings.MEDIA_ROOT, self.cover_image.name)
         new_path = os.path.join(settings.MEDIA_ROOT, save_name)
@@ -165,7 +191,7 @@ class Edition(models.Model):
             self.cover_image.name = save_name
 
     def save(self, *args, **kwargs):
-        path = os.path.join('books', str(self.book.id), str(self.id))
+        path = os.path.join("books", str(self.book.id), str(self.id))
         if self.cover_image and not self.cover_image.name.startswith(path):
             self.move_cover_image()
         super(Edition, self).save(*args, **kwargs)
@@ -174,14 +200,14 @@ class Edition(models.Model):
                 self.move_file(file)
 
     def __str__(self):
-        authors = ', '.join([f'{a}' for a in self.book.authors.all()])
-        authors = '' if self.book.authors.count() == 0 else f' - {authors}'
-        series = ''
+        authors = ", ".join([f"{a}" for a in self.book.authors.all()])
+        authors = "" if self.book.authors.count() == 0 else f" - {authors}"
+        series = ""
         if self.book.series:
-            series = f' ({self.book.series} #{self.book.volume:g})'
-        return f'{self.get_title()}{authors}{series} #{self.id}'
+            series = f" ({self.book.series} #{self.book.volume:g})"
+        return f"{self.get_title()}{authors}{series} #{self.id}"
 
     class Meta:
-        ordering = ('book', 'publishing_date')
-        verbose_name = _('Edition')
-        verbose_name_plural = _('Editions')
+        ordering = ("book", "publishing_date")
+        verbose_name = _("Edition")
+        verbose_name_plural = _("Editions")
