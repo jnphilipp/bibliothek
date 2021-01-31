@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -16,11 +16,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Django's command-line utility for administrative tasks."""
 
 import os
 import sys
 
-if __name__ == "__main__":
+
+def main():
+    """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bibliothek.settings")
     try:
         from django.core.management import execute_from_command_line
@@ -31,3 +34,7 @@ if __name__ == "__main__":
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
+
+
+if __name__ == "__main__":
+    main()

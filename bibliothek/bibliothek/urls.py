@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -15,11 +15,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-
 """bibliothek URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/2.0/topics/http/urls/
+    https://docs.djangoproject.com/en/3.1/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -39,26 +38,25 @@ from django.urls import include, path
 from django.views.generic.base import RedirectView
 from . import views
 
-admin.site.site_header = 'Bibliothek administration'
+admin.site.site_header = "Bibliothek administration"
 
 
 urlpatterns = [
-    path('', views.dashboard, name='dashboard'),
-
-    path('books/', include('books.urls')),
-    path('journals/', include('journals.urls')),
-    path('genres/', include('genres.urls')),
-    path('magazines/', include('magazines.urls')),
-    path('papers/', include('papers.urls')),
-    path('persons/', include('persons.urls')),
-    path('publishers/', include('publishers.urls')),
-    path('series/', include('series.urls')),
-
-    path('admin/', admin.site.urls),
-    path('favicon.ico',
-         RedirectView.as_view(url='/static/images/bibliothek-symbolic.png')),
+    path("", views.dashboard, name="dashboard"),
+    path("books/", include("books.urls")),
+    path("journals/", include("journals.urls")),
+    path("genres/", include("genres.urls")),
+    path("magazines/", include("magazines.urls")),
+    path("papers/", include("papers.urls")),
+    path("persons/", include("persons.urls")),
+    path("publishers/", include("publishers.urls")),
+    path("series/", include("series.urls")),
+    path("admin/", admin.site.urls),
+    path(
+        "favicon.ico",
+        RedirectView.as_view(url="/static/images/bibliothek-symbolic.png"),
+    ),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

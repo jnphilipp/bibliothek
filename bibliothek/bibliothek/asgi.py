@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
+# Copyright (C) 2017-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -16,18 +16,18 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 """
-WSGI config for bibliothek project.
+ASGI config for bibliothek project.
 
-It exposes the WSGI callable as a module-level variable named ``application``.
+It exposes the ASGI callable as a module-level variable named ``application``.
 
 For more information on this file, see
-https://docs.djangoproject.com/en/3.1/howto/deployment/wsgi/
+https://docs.djangoproject.com/en/3.1/howto/deployment/asgi/
 """
 
 import os
 
-from django.core.wsgi import get_wsgi_application
+from django.core.asgi import get_asgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bibliothek.settings")
 
-application = get_wsgi_application()
+application = get_asgi_application()
