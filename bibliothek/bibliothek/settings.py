@@ -45,17 +45,17 @@ APP_IDENTIFIER = "bibliothek"
 
 
 # XDG config
-XDG_CONFIG_DIR = GLib.get_user_config_dir()
+XDG_CONFIG_DIR = Path(GLib.get_user_config_dir())
 APP_CONFIG_DIR = XDG_CONFIG_DIR / APP_IDENTIFIER
 
 
 # XDG cache
-XDG_CACHE_DIR = GLib.get_user_cache_dir()
+XDG_CACHE_DIR = Path(GLib.get_user_cache_dir())
 APP_CACHE_DIR = XDG_CACHE_DIR / APP_IDENTIFIER
 
 
 # XDG data
-XDG_DATA_DIR = GLib.get_user_data_dir()
+XDG_DATA_DIR = Path(GLib.get_user_data_dir())
 APP_DATA_DIR = XDG_DATA_DIR / APP_IDENTIFIER
 
 
