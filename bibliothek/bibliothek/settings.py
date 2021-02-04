@@ -28,7 +28,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
-import importlib
+import importlib.util
 import os
 import sys
 
@@ -140,7 +140,7 @@ WSGI_APPLICATION = "bibliothek.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": APP_DATA_DIR / "db.sqlite3",
     }
 }
 

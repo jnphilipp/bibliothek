@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -26,24 +26,35 @@ from shelves.models import Read
 
 
 def dashboard(request):
-    edition_reads = Read.objects.filter(
-        content_type=ContentType.objects.get_for_model(Edition)
-    ).filter(started__isnull=False).filter(finished__isnull=True).annotate(
-        title=Case(
-            When(editions__alternate_title__isnull=False,
-                 then='editions__alternate_title'),
-            default='editions__book__title',
-            output_field=CharField(),
-        )).order_by('started')
+    edition_reads = (
+        Read.objects.filter(content_type=ContentType.objects.get_for_model(Edition))
+        .filter(started__isnull=False)
+        .filter(finished__isnull=True)
+        .annotate(
+            title=Case(
+                When(
+                    editions__alternate_title__isnull=False,
+                    then="editions__alternate_title",
+                ),
+                default="editions__book__title",
+                output_field=CharField(),
+            )
+        )
+        .order_by("started")
+    )
 
-    issue_reads = Read.objects.filter(
-        content_type=ContentType.objects.get_for_model(Issue)
-    ).filter(started__isnull=False).filter(finished__isnull=True). \
-        order_by('started')
+    issue_reads = (
+        Read.objects.filter(content_type=ContentType.objects.get_for_model(Issue))
+        .filter(started__isnull=False)
+        .filter(finished__isnull=True)
+        .order_by("started")
+    )
 
-    paper_reads = Read.objects.filter(
-        content_type=ContentType.objects.get_for_model(Paper)
-    ).filter(started__isnull=False).filter(finished__isnull=True). \
-        order_by('started')
+    paper_reads = (
+        Read.objects.filter(content_type=ContentType.objects.get_for_model(Paper))
+        .filter(started__isnull=False)
+        .filter(finished__isnull=True)
+        .order_by("started")
+    )
 
-    return render(request, 'bibliothek/dashboard.html', locals())
+    return render(request, "bibliothek/dashboard.html", locals())

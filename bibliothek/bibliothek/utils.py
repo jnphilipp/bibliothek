@@ -16,16 +16,16 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.template import Library
-
-register = Library()
+from typing import Any, Iterable, Tuple
 
 
-@register.filter
-def startswith(value, start):
-    return value.startswith(start)
-
-
-@register.filter
-def endswith(value, end):
-    return value.endswith(end)
+def lookahead(iterable: Iterable) -> Tuple[Any, bool]:
+    try:
+        it = iter(iterable)
+        last = next(it)
+        for val in it:
+            yield last, True
+            last = val
+        yield last, False
+    except StopIteration:
+        return

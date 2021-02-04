@@ -16,16 +16,16 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.template import Library
-
-register = Library()
-
-
-@register.filter
-def startswith(value, start):
-    return value.startswith(start)
+from bibliothek.utils import lookahead
+from django.test import TestCase
 
 
-@register.filter
-def endswith(value, end):
-    return value.endswith(end)
+class UtilsTestCase(TestCase):
+    def test_lookahead(self):
+        self.assertEquals(
+            [(1, True), (2, True), (3, False)], list(lookahead([1, 2, 3]))
+        )
+
+        self.assertEquals(
+            [("1", True), ("2", True), ("3", False)], list(lookahead(["1", "2", "3"]))
+        )

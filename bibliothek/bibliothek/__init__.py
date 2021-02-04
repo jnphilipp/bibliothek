@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C)
-#     2016-2020 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -20,14 +19,14 @@
 """Personal library tool."""
 
 
-default_app_config = 'bibliothek.apps.BibliothekConfig'
+default_app_config = "bibliothek.apps.BibliothekConfig"
 
-__author__ = 'J. Nathanael Philipp'
-__copyright__ = 'Copyright 2016-2020 J. Nathanael Philipp (jnphilipp)'
-__license__ = 'GPLv3+'
+__author__ = "J. Nathanael Philipp"
+__copyright__ = "Copyright 2016-2021 J. Nathanael Philipp (jnphilipp)"
+__license__ = "GPLv3+"
 __maintainer__ = __author__
-__email__ = 'nathanael@philipp.land'
-__app_name__ = 'bibliothek'
+__email__ = "nathanael@philipp.land"
+__app_name__ = "bibliothek"
 __version_info__ = (0, 1, 10)
-__version__ = '.'.join(str(e) for e in __version_info__)
-__github__ = 'https://github.com/jnphilipp/bibliothek'
+__version__ = ".".join(str(e) for e in __version_info__)
+__github__ = "https://github.com/jnphilipp/bibliothek"

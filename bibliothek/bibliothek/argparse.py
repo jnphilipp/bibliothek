@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -16,14 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-import utils
 
 from argparse import ArgumentTypeError
+from bibliothek import stdout
 from books.functions import edition as fedition
-from datetime import datetime
+from datetime import datetime, date
 from django.utils.translation import ugettext_lazy as _
 from magazines.functions import issue as fissue
 from papers.functions import paper as fpaper
+from typing import Optional
 
 
 def _info(args):
@@ -40,19 +41,19 @@ def _info(args):
     elif edition is None and paper is None and issue is not None:
         fissue.stdout.info(issue)
     else:
-        utils.stdout.p(['More than one found.'], after='=')
+        stdout.write(["More than one found."], after="=")
 
 
 def add_subparser(parser):
-    info_parser = parser.add_parser('info', help=_('Show info'))
+    info_parser = parser.add_parser("info", help=_("Show info"))
     info_parser.set_defaults(func=_info)
-    info_parser.add_argument('obj', help=_('Edition, Paper or Issue'))
+    info_parser.add_argument("obj", help=_("Edition, Paper or Issue"))
 
 
-def valid_date(s):
+def valid_date(s: str) -> Optional[date]:
     try:
-        if s.lower() in ['', 'n', 'none', 'null']:
+        if s.lower() in ["", "n", "none", "null"]:
             return None
-        return datetime.strptime(s, '%Y-%m-%d').date()
+        return datetime.strptime(s, "%Y-%m-%d").date()
     except ValueError:
         raise ArgumentTypeError(f'Not a valid date: "{s}".')
