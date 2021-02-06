@@ -28,4 +28,5 @@ class LinkAdmin(admin.ModelAdmin):
         (None, {"fields": ["created_at", "updated_at", "link"]}),
     ]
     list_display = ("link", "updated_at")
+    readonly_fields = ("created_at", "updated_at")
     search_fields = ("link",)

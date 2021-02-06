@@ -42,8 +42,9 @@ class LanguageModelTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(language.id)
 
-        language.delete()
+        deleted = language.delete()
         self.assertIsNone(language.id)
+        self.assertEquals((1, {"languages.Language": 1}), deleted)
 
     def test_get(self):
         language, created = Language.from_dict({"name": "English"})

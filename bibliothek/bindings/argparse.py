@@ -77,7 +77,7 @@ def _binding(args, file: TextIO = sys.stdout):
     elif args.subparser == "info":
         binding = Binding.get(args.binding)
         if binding:
-            binding.print(binding)
+            binding.print(file)
         else:
             stdout.write(_("No binding found."), "", file=file)
     elif args.subparser == "list":

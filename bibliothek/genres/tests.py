@@ -42,8 +42,9 @@ class GenreModelTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(genre.id)
 
-        genre.delete()
+        deleted = genre.delete()
         self.assertIsNone(genre.id)
+        self.assertEquals((1, {"genres.Genre": 1}), deleted)
 
     def test_get(self):
         genre, created = Genre.from_dict({"name": "Science Fiction"})
@@ -75,14 +76,9 @@ class GenreModelTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(genre.id)
 
-        genres = Genre.objects.all()
-        self.assertEquals(3, len(genres))
-
-        genres = Genre.search("fiction")
-        self.assertEquals(2, len(genres))
-
-        genres = Genre.search("ce")
-        self.assertEquals(2, len(genres))
+        self.assertEquals(3, Genre.objects.all().count())
+        self.assertEquals(2, Genre.search("fiction").count())
+        self.assertEquals(2, Genre.search("ce").count())
 
     def test_print(self):
         genre, created = Genre.from_dict({"name": "Science Fiction"})

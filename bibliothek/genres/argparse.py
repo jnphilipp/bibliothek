@@ -33,7 +33,7 @@ def _genre(args, file: TextIO = sys.stdout):
             stdout.write(
                 _(f'Successfully added genre "{genre.name}" with id "{genre.id}".'), "="
             )
-            genre.print()
+            genre.print(file)
         else:
             stdout.write(
                 _(
@@ -56,13 +56,13 @@ def _genre(args, file: TextIO = sys.stdout):
             stdout.write(
                 _(f'Successfully edited genre "{genre.name}" with id "{genre.id}".'), ""
             )
-            genre.print()
+            genre.print(file)
         else:
             stdout.write(_("No genre found."), "")
     elif args.subparser == "info":
         genre = Genre.get(args.genre)
         if genre:
-            genre.print()
+            genre.print(file)
         else:
             stdout.write(_("No genre found."), "")
     elif args.subparser == "list":

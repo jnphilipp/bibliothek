@@ -45,8 +45,9 @@ class LinkModelTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(link.id)
 
-        link.delete()
+        deleted = link.delete()
         self.assertIsNone(link.id)
+        self.assertEquals((1, {"links.Link": 1}), deleted)
 
     def test_get(self):
         link, created = Link.from_dict({"url": "https://example.com"})

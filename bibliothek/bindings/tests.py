@@ -42,8 +42,9 @@ class BindingModelTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(binding.id)
 
-        binding.delete()
+        deleted = binding.delete()
         self.assertIsNone(binding.id)
+        self.assertEquals((1, {"bindings.Binding": 1}), deleted)
 
     def test_get(self):
         binding, created = Binding.from_dict({"name": "Gebundene Ausgabe"})

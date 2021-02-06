@@ -28,5 +28,5 @@ class LanguageAdmin(admin.ModelAdmin):
         (None, {"fields": ["created_at", "updated_at", "slug", "name"]}),
     ]
     list_display = ("name", "updated_at")
-    readonly_fields = ("slug",)
+    readonly_fields = ("created_at", "updated_at", "slug")
     search_fields = ("name",)
