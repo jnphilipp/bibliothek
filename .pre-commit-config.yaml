@@ -4,15 +4,17 @@ repos:
     rev: 'v0.800'
     hooks:
     -   id: mypy
+        exclude: migrations/
 -   repo: https://github.com/psf/black
     rev: stable
     hooks:
     - id: black
       language_version: python3
+      exclude: migrations/
 -   repo: https://gitlab.com/pycqa/flake8
     rev: 3.8.4
     hooks:
     -   id: flake8
-        exclude: ^(tests|examples|docsi|mypy_cache)/*
+        exclude: (migrations/|tests)
         additional_dependencies: [pep8-naming, flake8-docstrings]
         args: [--max-line-length=88, "--extend-ignore=D100,E203"]

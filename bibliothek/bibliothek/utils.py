@@ -16,10 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Any, Iterable, Tuple
+from typing import Any, Generator, Iterable, Tuple
 
 
-def lookahead(iterable: Iterable) -> Tuple[Any, bool]:
+def lookahead(iterable: Iterable) -> Generator[Tuple[Any, bool], None, None]:
+    """Append to each element wheteher it is the last in the iterable."""
     try:
         it = iter(iterable)
         last = next(it)
@@ -28,4 +29,4 @@ def lookahead(iterable: Iterable) -> Tuple[Any, bool]:
             last = val
         yield last, False
     except StopIteration:
-        return
+        return None

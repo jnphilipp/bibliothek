@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -16,80 +16,110 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-import utils
+import sys
 
+from bibliothek import stdout
+from bibliothek.utils import lookahead
 from django.utils.translation import ugettext_lazy as _
-from bindings.functions import binding as fbinding
+from bindings.models import Binding
+from typing import Optional, TextIO
 
 
-def _binding(args):
-    if args.subparser == 'add':
-        binding, created = fbinding.create(args.name)
+def _binding(args, file: TextIO = sys.stdout):
+    binding: Optional[Binding] = None
+    if args.subparser == "add":
+        binding, created = Binding.from_dict({"name": args.name})
         if created:
-            msg = _(f'Successfully added binding "{binding.name}" with id ' +
-                    f'"{binding.id}".')
-            utils.stdout.p([msg], '=')
-            fbinding.stdout.info(binding)
+            stdout.write(
+                [
+                    _(
+                        f'Successfully added binding "{binding.name}" with id '
+                        + f'"{binding.id}".'
+                    )
+                ],
+                "=",
+                file=file,
+            )
+            binding.print(file)
         else:
-            msg = _(f'The binding "{binding.name}" already exists with id ' +
-                    f'"{binding.id}", aborting...')
-            utils.stdout.p([msg], '')
-    elif args.subparser == 'delete':
-        binding = fbinding.get.by_term(args.binding)
+            stdout.write(
+                [
+                    _(
+                        f'The binding "{binding.name}" already exists with id '
+                        + f'"{binding.id}", aborting...'
+                    )
+                ],
+                "",
+                file=file,
+            )
+    elif args.subparser == "delete":
+        binding = Binding.get(args.binding)
         if binding:
-            fbinding.delete(binding)
-            msg = _(f'Successfully deleted binding with id "{binding.id}".')
-            utils.stdout.p([msg], '')
+            binding.delete()
+            stdout.write(
+                [_(f'Successfully deleted binding with id "{binding.id}".')],
+                "",
+                file=file,
+            )
         else:
-            utils.stdout.p([_('No binding found.')], '')
-    elif args.subparser == 'edit':
-        binding = fbinding.get.by_term(args.binding)
+            stdout.write([_("No binding found.")], "", file=file)
+    elif args.subparser == "edit":
+        binding = Binding.get(args.binding)
         if binding:
-            fbinding.edit(binding, args.field, args.value)
-            msg = _(f'Successfully edited binding "{binding.name}" with id ' +
-                    f'"{binding.id}".')
-            utils.stdout.p([msg], '')
-            fbinding.stdout.info(binding)
+            binding.edit(args.field, args.value)
+            stdout.write(
+                [
+                    _(
+                        f'Successfully edited binding "{binding.name}" with id '
+                        + f'"{binding.id}".'
+                    )
+                ],
+                "",
+                file=file,
+            )
+            binding.print(file)
         else:
-            utils.stdout.p([_('No binding found.')], '')
-    elif args.subparser == 'info':
-        binding = fbinding.get.by_term(args.binding)
+            stdout.write([_("No binding found.")], "", file=file)
+    elif args.subparser == "info":
+        binding = Binding.get(args.binding)
         if binding:
-            fbinding.stdout.info(binding)
+            binding.print(binding)
         else:
-            utils.stdout.p([_('No binding found.')], '')
-    elif args.subparser == 'list':
+            stdout.write([_("No binding found.")], "", file=file)
+    elif args.subparser == "list":
         if args.search:
-            bindings = fbinding.list.by_term(args.search)
+            bindings = Binding.search(args.search)
         else:
-            bindings = fbinding.list.all()
-        fbinding.stdout.list(bindings)
+            bindings = Binding.objects.all()
+        stdout.write([_("Id"), _("Name")], "=", [0.05], file=file)
+        for i, has_next in lookahead(bindings):
+            stdout.write([i.id, i.name], "_" if has_next else "=", [0.05], file=file)
 
 
 def add_subparser(parser):
-    binding_parser = parser.add_parser('binding', help=_('Manage bindings'))
+    """Add subparser for the binding module."""
+    binding_parser = parser.add_parser("binding", help=_("Manage bindings"))
     binding_parser.set_defaults(func=_binding)
-    subparser = binding_parser.add_subparsers(dest='subparser')
+    subparser = binding_parser.add_subparsers(dest="subparser")
 
     # binding add
-    add_parser = subparser.add_parser('add', help=_('Add a new binding'))
-    add_parser.add_argument('name', help=_('Name'))
+    add_parser = subparser.add_parser("add", help=_("Add a new binding"))
+    add_parser.add_argument("name", help=_("Name"))
 
     # binding delete
-    delete_parser = subparser.add_parser('delete', help=_('Delete a binding'))
-    delete_parser.add_argument('binding', help=_('Binding'))
+    delete_parser = subparser.add_parser("delete", help=_("Delete a binding"))
+    delete_parser.add_argument("binding", help=_("Binding"))
 
     # binding edit
-    edit_parser = subparser.add_parser('edit', help=_('Edit a binding'))
-    edit_parser.add_argument('binding', help=_('Binding'))
-    edit_parser.add_argument('field', choices=['name'],
-                             help=_('Which field to edit'))
-    edit_parser.add_argument('value', help=_('New value for field'))
+    edit_parser = subparser.add_parser("edit", help=_("Edit a binding"))
+    edit_parser.add_argument("binding", help=_("Binding"))
+    edit_parser.add_argument("field", choices=["name"], help=_("Which field to edit"))
+    edit_parser.add_argument("value", help=_("New value for field"))
 
     # binding info
-    info_parser = subparser.add_parser('info', help=_('Show binding info'))
-    info_parser.add_argument('binding', help=_('Binding'))
+    info_parser = subparser.add_parser("info", help=_("Show binding info"))
+    info_parser.add_argument("binding", help=_("Binding"))
 
     # binding list
-    list_parser = subparser.add_parser('list', help=_('List bindings'))
-    list_parser.add_argument('--search', help=_('Filter by name'))
+    list_parser = subparser.add_parser("list", help=_("List bindings"))
+    list_parser.add_argument("--search", help=_("Filter by name"))

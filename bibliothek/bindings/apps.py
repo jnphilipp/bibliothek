@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -21,6 +21,8 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class BindingsConfig(AppConfig):
-    name = 'bindings'
-    verbose_name = _('Binding')
-    verbose_name_plural = _('Bindings')
+    """Binding app config."""
+
+    name = "bindings"
+    verbose_name = _("Binding")
+    verbose_name_plural = _("Bindings")
