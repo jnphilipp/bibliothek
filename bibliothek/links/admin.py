@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -22,10 +22,10 @@ from links.models import Link
 
 @admin.register(Link)
 class LinkAdmin(admin.ModelAdmin):
-    list_display = ('link', 'updated_at')
-    search_fields = ('link',)
-
+    """Link Django admin."""
 
     fieldsets = [
-        (None, {'fields': ['link']}),
+        (None, {"fields": ["created_at", "updated_at", "link"]}),
     ]
+    list_display = ("link", "updated_at")
+    search_fields = ("link",)

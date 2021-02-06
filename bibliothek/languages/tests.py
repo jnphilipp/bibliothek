@@ -85,12 +85,12 @@ class LanguageModelTestCase(TestCase):
         self.assertEquals(2, len(languages))
 
     def test_print(self):
-        english, created = Language.from_dict({"name": "English"})
+        language, created = Language.from_dict({"name": "English"})
         self.assertTrue(created)
-        self.assertIsNotNone(english.id)
+        self.assertIsNotNone(language.id)
 
         with StringIO() as cout:
-            english.print(cout)
+            language.print(cout)
             self.assertEquals(
                 "Field                            Value                              "
                 + "                                \n=================================="
@@ -105,12 +105,12 @@ class LanguageModelTestCase(TestCase):
             )
 
     def test_save(self):
-        english = Language(name="Science Fiction")
-        english.save()
-        self.assertIsNotNone(english.id)
-        self.assertEquals("science-fiction", english.slug)
+        language = Language(name="German")
+        language.save()
+        self.assertIsNotNone(language.id)
+        self.assertEquals("german", language.slug)
 
-        english = Language(name="Fiction")
-        english.save()
-        self.assertIsNotNone(english.id)
-        self.assertEquals("fiction", english.slug)
+        language = Language(name="English")
+        language.save()
+        self.assertIsNotNone(language.id)
+        self.assertEquals("english", language.slug)

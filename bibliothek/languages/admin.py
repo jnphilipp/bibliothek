@@ -25,7 +25,7 @@ class LanguageAdmin(admin.ModelAdmin):
     """Language Django admin."""
 
     fieldsets = [
-        (None, {"fields": ["slug", "name"]}),
+        (None, {"fields": ["created_at", "updated_at", "slug", "name"]}),
     ]
     list_display = ("name", "updated_at")
     readonly_fields = ("slug",)
