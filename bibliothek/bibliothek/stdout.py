@@ -18,12 +18,12 @@
 
 import sys
 
-from typing import List, Sequence, TextIO, Union
+from typing import List, Optional, Sequence, TextIO, Union
 
 
 def write(
     fields: Union[Sequence, str],
-    after: str = "_",
+    after: Optional[str] = "_",
     positions: List[float] = [],
     line_length: int = 100,
     file: TextIO = sys.stdout,
@@ -37,7 +37,7 @@ def write(
         * line_length: line length
         * file: file to write to, default sys.stdout
     """
-    assert len(after) == 0 or len(after) == 1
+    assert after is None or len(after) == 0 or len(after) == 1
     assert len(positions) == 0 or [pos > 1.0 for pos in positions]
     assert line_length > 0
 

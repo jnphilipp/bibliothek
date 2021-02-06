@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -16,33 +16,73 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-from bibliothek.fields import SingleLineTextField
+import sys
+
+from bibliothek import stdout
 from django.db import models
+from django.db.models import Q
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
+from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar
 
 
 class Language(models.Model):
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_('Created at')
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_('Updated at')
-    )
+    """Language ORM Model."""
 
-    slug = models.SlugField(
-        max_length=2048,
-        unique=True,
-        verbose_name=_('Slug')
-    )
-    name = SingleLineTextField(
-        unique=True,
-        verbose_name=_('Name')
-    )
+    T = TypeVar("T", bound="Language", covariant=True)
 
-    def save(self, *args, **kwargs):
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+
+    slug = models.SlugField(max_length=2048, unique=True, verbose_name=_("Slug"))
+    name = models.TextField(unique=True, verbose_name=_("Name"))
+
+    @classmethod
+    def from_dict(cls: Type[T], data: Dict) -> Tuple[T, bool]:
+        """Create a object from dict.
+
+        Returns True if was crated, i. e. was not found in the DB.
+        """
+        return cls.objects.get_or_create(name=data["name"])
+
+    @classmethod
+    def get(cls: Type[T], term: str) -> Optional[T]:
+        """Search DB for given term, return single object."""
+        query_set = cls.search(term)
+        if query_set.count() == 0:
+            return None
+        elif query_set.count() > 1:
+            if term.isdigit():
+                query_set = query_set.filter(pk=term)
+            else:
+                query_set = query_set.filter(name=term)
+            if query_set.count() != 1:
+                return None
+        return query_set[0]
+
+    @classmethod
+    def search(cls: Type[T], term: str) -> models.query.QuerySet[T]:
+        """Search DB for given term."""
+        return cls.objects.filter(
+            Q(pk=term if term.isdigit() else None) | Q(name__icontains=term)
+        )
+
+    def edit(self: T, field: str, value: str):
+        """Change field by given value."""
+        assert field in ["name"]
+
+        if field == "name":
+            self.name = value
+        self.save()
+
+    def print(self: T, file: TextIO = sys.stdout):
+        """Print instance info."""
+        stdout.write([_("Field"), _("Value")], "=", [0.33], file=file)
+        stdout.write([_("Id"), self.id], positions=[0.33], file=file)
+        stdout.write([_("Name"), self.name], positions=[0.33], file=file)
+
+    def save(self: T, *args, **kwargs):
+        """Save in DB."""
         if not self.slug:
             self.slug = slugify(self.name)
         else:
@@ -51,10 +91,17 @@ class Language(models.Model):
                 self.slug = slugify(self.name)
         super(Language, self).save(*args, **kwargs)
 
+    def to_dict(self: T) -> Dict:
+        """Convert to dict."""
+        return {"name": self.name}
+
     def __str__(self):
+        """Name."""
         return self.name
 
     class Meta:
-        ordering = ('name',)
-        verbose_name = _('Language')
-        verbose_name_plural = _('Languages')
+        """Meta."""
+
+        ordering = ("name",)
+        verbose_name = _("Language")
+        verbose_name_plural = _("Languages")

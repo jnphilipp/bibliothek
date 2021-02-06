@@ -21,7 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class BindingsConfig(AppConfig):
-    """Binding app config."""
+    """Bindings app config."""
 
     name = "bindings"
     verbose_name = _("Binding")

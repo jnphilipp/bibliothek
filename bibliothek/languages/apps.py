@@ -21,6 +21,8 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class LanguagesConfig(AppConfig):
-    name = 'languages'
-    verbose_name = _('Language')
-    verbose_name_plural = _('Languages')
+    """Languages app config."""
+
+    name = "languages"
+    verbose_name = _("Language")
+    verbose_name_plural = _("Languages")

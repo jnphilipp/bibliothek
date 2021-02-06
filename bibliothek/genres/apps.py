@@ -21,7 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class GenresConfig(AppConfig):
-    """Genre app config."""
+    """Genres app config."""
 
     name = "genres"
     verbose_name = _("Genre")

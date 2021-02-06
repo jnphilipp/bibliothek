@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -17,5 +17,100 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.test import TestCase
+from io import StringIO
+from languages.models import Language
 
-# Create your tests here.
+
+class LanguageModelTestCase(TestCase):
+    def test_from_to_dict(self):
+        language, created = Language.objects.get_or_create(name="English")
+        self.assertTrue(created)
+        self.assertIsNotNone(language.id)
+        self.assertEquals({"name": "English"}, language.to_dict())
+        self.assertEquals((language, False), Language.from_dict({"name": "English"}))
+
+    def test_edit(self):
+        language, created = Language.objects.get_or_create(name="Englisch")
+        self.assertTrue(created)
+        self.assertIsNotNone(language.id)
+
+        language.edit("name", "English")
+        self.assertEquals("English", language.name)
+
+    def test_delete(self):
+        language, created = Language.from_dict({"name": "English"})
+        self.assertTrue(created)
+        self.assertIsNotNone(language.id)
+
+        language.delete()
+        self.assertIsNone(language.id)
+
+    def test_get(self):
+        language, created = Language.from_dict({"name": "English"})
+        self.assertTrue(created)
+        self.assertIsNotNone(language.id)
+
+        language2 = Language.get("English")
+        self.assertIsNotNone(language2)
+        self.assertEquals(language, language2)
+
+        language2 = Language.get("en")
+        self.assertIsNotNone(language2)
+        self.assertEquals(language, language2)
+
+        language2 = Language.get(str(language.id))
+        self.assertIsNotNone(language2)
+        self.assertEquals(language, language2)
+
+    def test_search(self):
+        language, created = Language.from_dict({"name": "English"})
+        self.assertTrue(created)
+        self.assertIsNotNone(language.id)
+
+        language, created = Language.from_dict({"name": "German"})
+        self.assertTrue(created)
+        self.assertIsNotNone(language.id)
+
+        language, created = Language.from_dict({"name": "Spanish"})
+        self.assertTrue(created)
+        self.assertIsNotNone(language.id)
+
+        languages = Language.objects.all()
+        self.assertEquals(3, len(languages))
+
+        languages = Language.search("ish")
+        self.assertEquals(2, len(languages))
+
+        languages = Language.search("an")
+        self.assertEquals(2, len(languages))
+
+    def test_print(self):
+        english, created = Language.from_dict({"name": "English"})
+        self.assertTrue(created)
+        self.assertIsNotNone(english.id)
+
+        with StringIO() as cout:
+            english.print(cout)
+            self.assertEquals(
+                "Field                            Value                              "
+                + "                                \n=================================="
+                + "==================================================================\n"
+                + "Id                               1                                  "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n"
+                + "Name                             English                            "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n",
+                cout.getvalue(),
+            )
+
+    def test_save(self):
+        english = Language(name="Science Fiction")
+        english.save()
+        self.assertIsNotNone(english.id)
+        self.assertEquals("science-fiction", english.slug)
+
+        english = Language(name="Fiction")
+        english.save()
+        self.assertIsNotNone(english.id)
+        self.assertEquals("fiction", english.slug)
