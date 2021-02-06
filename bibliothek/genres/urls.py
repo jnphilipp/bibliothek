@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -20,8 +20,8 @@ from django.urls import path
 from .views import DetailView, ListView
 
 
-app_name = 'genres'
+app_name = "genres"
 urlpatterns = [
-    path('genre/', ListView.as_view(), name='genre_list'),
-    path('genre/<slug:slug>/', DetailView.as_view(), name='genre_detail'),
+    path("genre/", ListView.as_view(), name="genre_list"),
+    path("genre/<slug:slug>/", DetailView.as_view(), name="genre_detail"),
 ]

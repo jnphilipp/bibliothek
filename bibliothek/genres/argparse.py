@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -16,80 +16,89 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-import utils
+import sys
 
-from genres.functions import genre as fgenre
+from bibliothek import stdout
+from bibliothek.utils import lookahead
 from django.utils.translation import ugettext_lazy as _
+from genres.models import Genre
+from typing import Optional, TextIO
 
 
-def _genre(args):
-    if args.subparser == 'add':
-        genre, created = fgenre.create(args.name)
+def _genre(args, file: TextIO = sys.stdout):
+    genre: Optional[Genre] = None
+    if args.subparser == "add":
+        genre, created = Genre.from_dict({"name": args.name})
         if created:
-            msg = _(f'Successfully added genre "{genre.name}" with id ' +
-                    f'"{genre.id}".')
-            utils.stdout.p([msg], '=')
-            fgenre.stdout.info(genre)
+            stdout.write(
+                _(f'Successfully added genre "{genre.name}" with id "{genre.id}".'), "="
+            )
+            genre.print()
         else:
-            msg = _(f'The genre "{genre.name}" already exists with id ' +
-                    f'"{genre.id}", aborting...')
-            utils.stdout.p([msg], '')
-    elif args.subparser == 'delete':
-        genre = fgenre.get.by_term(args.genre)
+            stdout.write(
+                _(
+                    f'The genre "{genre.name}" already exists with id "{genre.id}", '
+                    + "aborting..."
+                ),
+                "",
+            )
+    elif args.subparser == "delete":
+        genre = Genre.get(args.genre)
         if genre:
-            fgenre.delete(genre)
-            msg = _(f'Successfully deleted genre with id "{genre.id}".')
-            utils.stdout.p([msg], '')
+            genre.delete()
+            stdout.write(_(f'Successfully deleted genre with id "{genre.id}".'), "")
         else:
-            utils.stdout.p([_('No genre found.')], '')
-    elif args.subparser == 'edit':
-        genre = fgenre.get.by_term(args.genre)
+            stdout.write(_("No genre found."), "")
+    elif args.subparser == "edit":
+        genre = Genre.get(args.genre)
         if genre:
-            fgenre.edit(genre, args.field, args.value)
-            msg = _(f'Successfully edited genre "{genre.name}" with id ' +
-                    f'"{genre.id}".')
-            utils.stdout.p([msg], '')
-            fgenre.stdout.info(genre)
+            genre.edit(args.field, args.value)
+            stdout.write(
+                _(f'Successfully edited genre "{genre.name}" with id "{genre.id}".'), ""
+            )
+            genre.print()
         else:
-            utils.stdout.p([_('No genre found.')], '')
-    elif args.subparser == 'info':
-        genre = fgenre.get.by_term(args.genre)
+            stdout.write(_("No genre found."), "")
+    elif args.subparser == "info":
+        genre = Genre.get(args.genre)
         if genre:
-            fgenre.stdout.info(genre)
+            genre.print()
         else:
-            utils.stdout.p([_('No genre found.')], '')
-    elif args.subparser == 'list':
+            stdout.write(_("No genre found."), "")
+    elif args.subparser == "list":
         if args.search:
-            genres = fgenre.list.by_term(args.search)
+            genres = Genre.search(args.search)
         else:
-            genres = fgenre.list.all()
-        fgenre.stdout.list(genres)
+            genres = Genre.objects.all()
+        stdout.write([_("Id"), _("Name")], "=", [0.05], file=file)
+    for i, has_next in lookahead(genres):
+        stdout.write([i.id, i.name], "_" if has_next else "=", [0.05], file=file)
 
 
 def add_subparser(parser):
-    genre_parser = parser.add_parser('genre', help=_('Manage genres'))
+    """Add subparser for the genre module."""
+    genre_parser = parser.add_parser("genre", help=_("Manage genres"))
     genre_parser.set_defaults(func=_genre)
-    subparser = genre_parser.add_subparsers(dest='subparser')
+    subparser = genre_parser.add_subparsers(dest="subparser")
 
     # genre add
-    add_parser = subparser.add_parser('add', help=_('Add a genre'))
-    add_parser.add_argument('name', help=_('Name'))
+    add_parser = subparser.add_parser("add", help=_("Add a genre"))
+    add_parser.add_argument("name", help=_("Name"))
 
     # genre delete
-    delete_parser = subparser.add_parser('delete', help=_('Delete a genre'))
-    delete_parser.add_argument('genre', help=_('Genre'))
+    delete_parser = subparser.add_parser("delete", help=_("Delete a genre"))
+    delete_parser.add_argument("genre", help=_("Genre"))
 
     # genre edit
-    edit_parser = subparser.add_parser('edit', help=_('Edit a genre'))
-    edit_parser.add_argument('genre', help=_('Genre'))
-    edit_parser.add_argument('field', choices=['name'],
-                             help=_('Which field to edit'))
-    edit_parser.add_argument('value', help=_('New value for field'))
+    edit_parser = subparser.add_parser("edit", help=_("Edit a genre"))
+    edit_parser.add_argument("genre", help=_("Genre"))
+    edit_parser.add_argument("field", choices=["name"], help=_("Which field to edit"))
+    edit_parser.add_argument("value", help=_("New value for field"))
 
     # genre info
-    info_parser = subparser.add_parser('info', help=_('Show genre info'))
-    info_parser.add_argument('genre', help=_('Genre'))
+    info_parser = subparser.add_parser("info", help=_("Show genre info"))
+    info_parser.add_argument("genre", help=_("Genre"))
 
     # genre list
-    list_parser = subparser.add_parser('list', help=_('List genres'))
-    list_parser.add_argument('--search', help=_('Filter genres by term'))
+    list_parser = subparser.add_parser("list", help=_("List genres"))
+    list_parser.add_argument("--search", help=_("Filter genres by term"))

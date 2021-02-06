@@ -31,24 +31,20 @@ def _binding(args, file: TextIO = sys.stdout):
         binding, created = Binding.from_dict({"name": args.name})
         if created:
             stdout.write(
-                [
-                    _(
-                        f'Successfully added binding "{binding.name}" with id '
-                        + f'"{binding.id}".'
-                    )
-                ],
+                _(
+                    f'Successfully added binding "{binding.name}" with id '
+                    + f'"{binding.id}".'
+                ),
                 "=",
                 file=file,
             )
             binding.print(file)
         else:
             stdout.write(
-                [
-                    _(
-                        f'The binding "{binding.name}" already exists with id '
-                        + f'"{binding.id}", aborting...'
-                    )
-                ],
+                _(
+                    f'The binding "{binding.name}" already exists with id '
+                    + f'"{binding.id}", aborting...'
+                ),
                 "",
                 file=file,
             )
@@ -57,35 +53,33 @@ def _binding(args, file: TextIO = sys.stdout):
         if binding:
             binding.delete()
             stdout.write(
-                [_(f'Successfully deleted binding with id "{binding.id}".')],
+                _(f'Successfully deleted binding with id "{binding.id}".'),
                 "",
                 file=file,
             )
         else:
-            stdout.write([_("No binding found.")], "", file=file)
+            stdout.write(_("No binding found."), "", file=file)
     elif args.subparser == "edit":
         binding = Binding.get(args.binding)
         if binding:
             binding.edit(args.field, args.value)
             stdout.write(
-                [
-                    _(
-                        f'Successfully edited binding "{binding.name}" with id '
-                        + f'"{binding.id}".'
-                    )
-                ],
+                _(
+                    f'Successfully edited binding "{binding.name}" with id '
+                    + f'"{binding.id}".'
+                ),
                 "",
                 file=file,
             )
             binding.print(file)
         else:
-            stdout.write([_("No binding found.")], "", file=file)
+            stdout.write(_("No binding found."), "", file=file)
     elif args.subparser == "info":
         binding = Binding.get(args.binding)
         if binding:
             binding.print(binding)
         else:
-            stdout.write([_("No binding found.")], "", file=file)
+            stdout.write(_("No binding found."), "", file=file)
     elif args.subparser == "list":
         if args.search:
             bindings = Binding.search(args.search)

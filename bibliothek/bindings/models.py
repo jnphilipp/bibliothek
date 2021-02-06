@@ -77,10 +77,9 @@ class Binding(models.Model):
 
     def print(self: T, file: TextIO = sys.stdout):
         """Print instance info."""
-        positions = [0.33]
-        stdout.write([_("Field"), _("Value")], "=", positions, file=file)
-        stdout.write([_("Id"), self.id], positions=positions, file=file)
-        stdout.write([_("Name"), self.name], positions=positions, file=file)
+        stdout.write([_("Field"), _("Value")], "=", [0.33], file=file)
+        stdout.write([_("Id"), self.id], positions=[0.33], file=file)
+        stdout.write([_("Name"), self.name], positions=[0.33], file=file)
 
     def save(self: T, *args, **kwargs):
         """Save in DB."""

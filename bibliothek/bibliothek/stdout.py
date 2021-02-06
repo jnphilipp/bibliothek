@@ -18,23 +18,36 @@
 
 import sys
 
-from typing import List, Sequence, TextIO
+from typing import List, Sequence, TextIO, Union
 
 
 def write(
-    fields: Sequence,
+    fields: Union[Sequence, str],
     after: str = "_",
     positions: List[float] = [],
     line_length: int = 100,
     file: TextIO = sys.stdout,
 ):
+    """Write fields formatted as table to file.
+
+    Args:
+        * fields: fields to print
+        * after: if not empty symbol to write after as last line
+        * positions: list of column positions
+        * line_length: line length
+        * file: file to write to, default sys.stdout
+    """
+    assert len(after) == 0 or len(after) == 1
     assert len(positions) == 0 or [pos > 1.0 for pos in positions]
     assert line_length > 0
 
     if len(positions) == 0 or positions[-1] <= 1.0:
         positions += [1.0]
 
-    def print_row(fields: Sequence, positions: List[int]):
+    if isinstance(fields, str):
+        fields = [fields]
+
+    def _write(fields: Sequence, positions: List[int]):
         line = ""
         rfields = []
         for i in range(len(fields)):
@@ -53,8 +66,8 @@ def write(
             line += " " * (positions[i] - len(line))
         file.write(f"{line}\n")
         if max([f != "" for f in rfields]):
-            print_row(rfields, positions)
+            _write(rfields, positions)
 
-    print_row(fields, [int(line_length * pos) for pos in positions])
+    _write(fields, [int(line_length * pos) for pos in positions])
     if after:
         file.write(f"{after * line_length}\n")

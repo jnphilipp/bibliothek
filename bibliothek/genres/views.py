@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -22,28 +22,36 @@ from genres.models import Genre
 
 
 class ListView(generic.ListView):
+    """Genre list view."""
+
     model = Genre
 
     def get_context_data(self, **kwargs):
+        """Get context data."""
         context = super(ListView, self).get_context_data(**kwargs)
-        context['o'] = 'name'
-        if self.request.GET.get('o'):
-            context['o'] = self.request.GET.get('o')
+        context["o"] = "name"
+        if self.request.GET.get("o"):
+            context["o"] = self.request.GET.get("o")
         return context
 
     def get_queryset(self):
-        o = self.request.GET.get('o') if self.request.GET.get('o') else 'name'
-        return Genre.objects.annotate(cb=Count('books')).order_by(o)
+        """Get Django query set."""
+        o = self.request.GET.get("o") if self.request.GET.get("o") else "name"
+        return Genre.objects.annotate(cb=Count("books")).order_by(o)
 
 
 class DetailView(generic.DetailView):
+    """Genre detail view."""
+
     model = Genre
 
     def get_context_data(self, **kwargs):
+        """Get context data."""
         context = super(DetailView, self).get_context_data(**kwargs)
-        context['o'] = 'title'
-        if self.request.GET.get('o'):
-            context['o'] = self.request.GET.get('o')
-        context['books'] = self.object.books.annotate(ce=Count('editions')). \
-            order_by(context['o'])
+        context["o"] = "title"
+        if self.request.GET.get("o"):
+            context["o"] = self.request.GET.get("o")
+        context["books"] = self.object.books.annotate(ce=Count("editions")).order_by(
+            context["o"]
+        )
         return context
