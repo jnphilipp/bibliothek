@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -17,27 +17,19 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
-from django.db.models import Count
-from django.forms import TextInput
 from django.utils.translation import ugettext_lazy as _
 from journals.models import Journal
 
 
 @admin.register(Journal)
 class JournalAdmin(admin.ModelAdmin):
-    def get_queryset(self, request):
-        return Journal.objects.annotate(paper_count=Count('papers'))
-
-    def show_paper_count(self, inst):
-        return inst.paper_count
+    """Journal Django admin."""
 
     fieldsets = [
-        (None, {'fields': ['slug', 'name']}),
-        ('Links', {'fields': ['links']}),
+        (None, {"fields": ["created_at", "updated_at", "slug", "name"]}),
+        (_("Links"), {"fields": ["links"]}),
     ]
-    filter_horizontal = ('links',)
-    list_display = ('name', 'show_paper_count', 'updated_at')
-    readonly_fields = ('slug',)
-    search_fields = ('name',)
-    show_paper_count.admin_order_field = 'paper_count'
-    show_paper_count.short_description = _('Number of Papers')
+    filter_horizontal = ("links",)
+    list_display = ("name", "show_paper_count", "updated_at")
+    readonly_fields = ("slug",)
+    search_fields = ("name",)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -16,81 +16,117 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
-import utils
+import sys
 
-from journals.functions import journal as fjournal
+from argparse import _SubParsersAction, Namespace
+from bibliothek import stdout
+from bibliothek.utils import lookahead
 from django.utils.translation import ugettext_lazy as _
+from journals.model import Journal
+from typing import Optional, TextIO
 
 
-def _journal(args):
-    if args.subparser == 'add':
-        journal, created = fjournal.create(args.name)
+def _journal(args: Namespace, file: TextIO = sys.stdout):
+    journal: Optional[Journal] = None
+    if args.subparser == "add":
+        journal, created = Journal.from_dict(
+            {"name": args.name, "links": [{"name": link} for link in args.link]}
+        )
         if created:
-            msg = _(f'Successfully added journal "{journal.name}" with id ' +
-                    f'"{journal.id}".')
-            utils.stdout.p([msg], '=')
-            fjournal.stdout.info(journal)
+            stdout.write(
+                _(
+                    f'Successfully added journal "{journal.name}" with id '
+                    + f'"{journal.id}".'
+                ),
+                "=",
+                file=file,
+            )
+            journal.print(file)
         else:
-            msg = _(f'The journal "{journal.name}" already exists with id ' +
-                    f'"{journal.id}", aborting...')
-            utils.stdout.p([msg], '')
-    elif args.subparser == 'delete':
-        journal = fjournal.get.by_term(args.journal)
+            stdout.write(
+                _(
+                    f'The journal "{journal.name}" already exists with id '
+                    + f'"{journal.id}", aborting...'
+                ),
+                "",
+                file=file,
+            )
+    elif args.subparser == "delete":
+        journal = Journal.get(args.journal)
         if journal:
-            fjournal.delete(journal)
-            msg = _(f'Successfully deleted journal with id "{journal.id}".')
-            utils.stdout.p([msg], '')
+            journal.delete()
+            stdout.write(
+                _(f'Successfully deleted journal with id "{journal.id}".'),
+                "",
+                file=file,
+            )
         else:
-            utils.stdout.p([_('No journal found.')], '')
-    elif args.subparser == 'edit':
-        journal = fjournal.get.by_term(args.journal)
+            stdout.write(_("No journal found."), "", file=file)
+    elif args.subparser == "edit":
+        journal = Journal.get(args.journal)
         if journal:
-            fjournal.edit(journal, args.field, args.value)
-            msg = _(f'Successfully edited journal "{journal.name}" with id ' +
-                    f'"{journal.id}".')
-            utils.stdout.p([msg], '')
-            fjournal.stdout.info(journal)
+            journal.edit(args.field, args.value)
+            stdout.write(
+                _(
+                    f'Successfully edited journal "{journal.name}" with id '
+                    + f'"{journal.id}".'
+                ),
+                "",
+                file=file,
+            )
+            journal.print(file)
         else:
-            utils.stdout.p([_('No journal found.')], '')
-    elif args.subparser == 'info':
-        journal = fjournal.get.by_term(args.journal)
+            stdout.write(_("No journal found."), "", file=file)
+    elif args.subparser == "info":
+        journal = Journal.get(args.journal)
         if journal:
-            fjournal.stdout.info(journal)
+            journal.info(file)
         else:
-            utils.stdout.p([_('No journal found.')], '')
-    elif args.subparser == 'list':
+            stdout.write([_("No journal found.")], "")
+    elif args.subparser == "list":
         if args.search:
-            journals = fjournal.list.by_term(args.search)
+            journals = Journal.search(args.search)
         else:
-            journals = fjournal.list.all()
-        fjournal.stdout.list(journals)
+            journals = Journal.objects.all()
+        stdout.write(
+            [_("Id"), _("Name"), _("Number of papers")], "=", [0.05, 0.8], file=file
+        )
+        for i, has_next in lookahead(journals):
+            stdout.write(
+                [i.id, i.name, i.papers.count()],
+                "_" if has_next else "=",
+                [0.05, 0.8],
+                file=file,
+            )
 
 
-def add_subparser(parser):
-    journal_parser = parser.add_parser('journal', help=_('Manage journals'))
+def add_subparser(parser: _SubParsersAction):
+    """Add subparser for the journals module."""
+    journal_parser = parser.add_parser("journal", help=_("Manage journals"))
     journal_parser.set_defaults(func=_journal)
-    subparser = journal_parser.add_subparsers(dest='subparser')
+    subparser = journal_parser.add_subparsers(dest="subparser")
 
     # journal add
-    add_parser = subparser.add_parser('add', help=_('Add a journal'))
-    add_parser.add_argument('name', help='name')
-    add_parser.add_argument('--link', nargs='*', default=[], help=_('Links'))
+    add_parser = subparser.add_parser("add", help=_("Add a journal"))
+    add_parser.add_argument("name", help="name")
+    add_parser.add_argument("--link", nargs="*", default=[], help=_("Links"))
 
     # journal delete
-    delete_parser = subparser.add_parser('delete', help=_('Delete a journal'))
-    delete_parser.add_argument('journal', help=_('Journal'))
+    delete_parser = subparser.add_parser("delete", help=_("Delete a journal"))
+    delete_parser.add_argument("journal", help=_("Journal"))
 
     # journal edit
-    edit_parser = subparser.add_parser('edit', help=_('Edit a journal'))
-    edit_parser.add_argument('journal', help=_('Journal'))
-    edit_parser.add_argument('field', choices=['name', 'link'],
-                             help=_('Which field to edit'))
-    edit_parser.add_argument('value', help=_('New value for field'))
+    edit_parser = subparser.add_parser("edit", help=_("Edit a journal"))
+    edit_parser.add_argument("journal", help=_("Journal"))
+    edit_parser.add_argument(
+        "field", choices=["name", "link"], help=_("Which field to edit")
+    )
+    edit_parser.add_argument("value", help=_("New value for field"))
 
     # journal info
-    info_parser = subparser.add_parser('info', help=_('Show journal info'))
-    info_parser.add_argument('journal', help=_('Journal'))
+    info_parser = subparser.add_parser("info", help=_("Show journal info"))
+    info_parser.add_argument("journal", help=_("Journal"))
 
     # journal list
-    list_parser = subparser.add_parser('list', help=_('List journals'))
-    list_parser.add_argument('--search', help=_('Filter journals by term'))
+    list_parser = subparser.add_parser("list", help=_("List journals"))
+    list_parser.add_argument("--search", help=_("Filter journals by term"))
