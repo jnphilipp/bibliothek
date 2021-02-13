@@ -138,7 +138,6 @@ class PublisherModelTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(publisher.id)
 
-        self.maxDiff = None
         with StringIO() as cout:
             publisher.print(cout)
             self.assertEquals(

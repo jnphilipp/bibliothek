@@ -44,7 +44,7 @@ class Publisher(models.Model):
 
     @classmethod
     def from_dict(cls: Type[T], data: Dict) -> Tuple[T, bool]:
-        """Create a object from dict.
+        """Create from dict.
 
         Returns True if was crated, i. e. was not found in the DB.
         """
@@ -57,7 +57,7 @@ class Publisher(models.Model):
 
     @classmethod
     def get(cls: Type[T], term: str) -> Optional[T]:
-        """Search DB for given term, return single object."""
+        """Search for given term, return single object."""
         query_set = cls.search(term)
         if query_set.count() == 0:
             return None
@@ -72,13 +72,13 @@ class Publisher(models.Model):
 
     @classmethod
     def search(cls: Type[T], term: str) -> models.query.QuerySet[T]:
-        """Search DB for given term."""
+        """Search for given term."""
         return cls.objects.filter(
             Q(pk=term if term.isdigit() else None) | Q(name__icontains=term)
         )
 
     def delete(self: T) -> Tuple[int, Dict]:
-        """Delete from DB."""
+        """Delete."""
         nb_deleted = 0
         deleted = {}
         for link in self.links.all():
@@ -121,7 +121,7 @@ class Publisher(models.Model):
         self.save(*args, **kwargs)
 
     def print(self: T, file: TextIO = sys.stdout):
-        """Print instance info."""
+        """Print info."""
         stdout.write([_("Field"), _("Value")], "=", [0.33], file=file)
         stdout.write([_("Id"), self.id], positions=[0.33], file=file)
         stdout.write([_("Name"), self.name], positions=[0.33], file=file)
@@ -150,7 +150,7 @@ class Publisher(models.Model):
             stdout.write(f"{_('Editions')}", file=file)
 
     def save(self: T, *args, **kwargs):
-        """Save in DB."""
+        """Save."""
         if not self.slug:
             self.slug = slugify(self.name)
         else:
