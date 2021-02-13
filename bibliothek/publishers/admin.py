@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -17,18 +17,20 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
-from django.forms import TextInput
+from django.utils.translation import ugettext_lazy as _
 from publishers.models import Publisher
 
 
 @admin.register(Publisher)
 class PublisherAdmin(admin.ModelAdmin):
+    """Publisher Django admin."""
+
     fieldsets = [
-        (None, {'fields': ['slug', 'name']}),
-        ('links', {'fields': ['links']}),
+        (None, {"fields": ["created_at", "updated_at", "slug", "name"]}),
+        (_("Links"), {"fields": ["links"]}),
     ]
-    filter_horizontal = ('links',)
-    list_display = ('name', 'updated_at')
-    list_filter = ('links', )
-    readonly_fields = ('slug',)
-    search_fields = ('name',)
+    filter_horizontal = ("links",)
+    list_display = ("name", "updated_at")
+    list_filter = ("links",)
+    readonly_fields = ("created_at", "updated_at", "slug")
+    search_fields = ("name",)
