@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -17,54 +17,68 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db.models import Case, CharField, Count, When
+from django.db.models.query import QuerySet
 from django.views import generic
 from persons.models import Person
+from typing import Dict
 
 
 class ListView(generic.ListView):
+    """Person list view."""
+
     model = Person
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> Dict:
+        """Get context data."""
         context = super(ListView, self).get_context_data(**kwargs)
-        context['o'] = 'name'
-        if self.request.GET.get('o'):
-            context['o'] = self.request.GET.get('o')
+        context["o"] = "name"
+        if self.request.GET.get("o"):
+            context["o"] = self.request.GET.get("o")
         return context
 
-    def get_queryset(self):
-        o = self.request.GET.get('o') if self.request.GET.get('o') else 'name'
-        persons = Person.objects.annotate(cb=Count('books'),
-                                          cp=Count('papers'))
-        if o.endswith('name'):
-            persons = persons.order_by('name')
+    def get_queryset(self) -> QuerySet[Person]:
+        """Get django query set."""
+        o = self.request.GET.get("o") if self.request.GET.get("o") else "name"
+        persons = Person.objects.annotate(cb=Count("books"), cp=Count("papers"))
+        if o.endswith("name"):
+            persons = persons.order_by("name")
         else:
             persons = persons.order_by(o)
         return persons
 
 
 class DetailView(generic.DetailView):
+    """Person detail view."""
+
     model = Person
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> Dict:
+        """Get context data."""
         context = super(DetailView, self).get_context_data(**kwargs)
-        context['bo'] = 'title'
-        context['eo'] = 'title'
-        context['po'] = 'title'
+        context["bo"] = "title"
+        context["eo"] = "title"
+        context["po"] = "title"
 
-        if self.request.GET.get('bo'):
-            context['bo'] = self.request.GET.get('bo')
-        if self.request.GET.get('eo'):
-            context['eo'] = self.request.GET.get('eo')
-        if self.request.GET.get('po'):
-            context['po'] = self.request.GET.get('po')
+        if self.request.GET.get("bo"):
+            context["bo"] = self.request.GET.get("bo")
+        if self.request.GET.get("eo"):
+            context["eo"] = self.request.GET.get("eo")
+        if self.request.GET.get("po"):
+            context["po"] = self.request.GET.get("po")
 
-        context['books'] = self.object.books.annotate(ce=Count('editions')). \
-            order_by(context['bo'])
-        context['editions'] = self.object.editions.annotate(
-            title=Case(
-                When(alternate_title__isnull=False, then='alternate_title'),
-                default='book__title',
-                output_field=CharField(),
-            )).all().order_by(context['eo'])
-        context['papers'] = self.object.papers.order_by(context['po'])
+        context["books"] = self.object.books.annotate(ce=Count("editions")).order_by(
+            context["bo"]
+        )
+        context["editions"] = (
+            self.object.editions.annotate(
+                title=Case(
+                    When(alternate_title__isnull=False, then="alternate_title"),
+                    default="book__title",
+                    output_field=CharField(),
+                )
+            )
+            .all()
+            .order_by(context["eo"])
+        )
+        context["papers"] = self.object.papers.order_by(context["po"])
         return context
