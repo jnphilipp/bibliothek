@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Admin for files Django app."""
 
 from django.contrib import admin
 from files.models import File
@@ -22,8 +23,22 @@ from files.models import File
 
 @admin.register(File)
 class FileAdmin(admin.ModelAdmin):
+    """File Django admin."""
+
     fieldsets = [
-        (None, {'fields': ['file', 'content_type', 'object_id']}),
+        (
+            None,
+            {
+                "fields": [
+                    "created_at",
+                    "updated_at",
+                    "file",
+                    "content_type",
+                    "object_id",
+                ]
+            },
+        ),
     ]
-    list_display = ('id', 'file', 'updated_at')
-    search_fields = ('file',)
+    list_display = ("id", "file", "updated_at")
+    readonly_fields = ("created_at", "updated_at")
+    search_fields = ("file",)

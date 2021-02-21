@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -15,15 +15,18 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Files app config."""
 
 from django.apps import AppConfig
 from django.utils.translation import ugettext_lazy as _
 
 
 class FilesConfig(AppConfig):
-    name = 'files'
-    verbose_name = _('File')
-    verbose_name_plural = _('Files')
+    """Files app config."""
+
+    name = "files"
+    verbose_name = _("File")
+    verbose_name_plural = _("Files")
 
     def ready(self):
         from . import signals
