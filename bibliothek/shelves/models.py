@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -15,60 +15,240 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Shelves Django models."""
 
+import datetime
+import sys
+
+from bibliothek import stdout
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
 from django.utils.translation import ugettext_lazy as _
+from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar, Union
 
 
 class Acquisition(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True,
-                                      verbose_name=_('Created at'))
-    updated_at = models.DateTimeField(auto_now=True,
-                                      verbose_name=_('Updated at'))
+    """Acquisition ORM Model."""
 
-    date = models.DateField(blank=True, null=True, verbose_name=_('Date'))
-    price = models.FloatField(default=0, verbose_name=_('Price'))
+    T = TypeVar("T", bound="Acquisition", covariant=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+
+    date = models.DateField(blank=True, null=True, verbose_name=_("Date"))
+    price = models.FloatField(default=0, verbose_name=_("Price"))
 
     content_type = models.ForeignKey(ContentType, models.CASCADE)
     object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey("content_type", "object_id")
 
-    def to_json(self):
-        return {'date': str(self.date), 'price': str(self.price)}
+    @classmethod
+    def from_dict(
+        cls: Type[T], data: Dict, content_object: models.Model
+    ) -> Tuple[T, bool]:
+        """Create from dict.
+
+        Returns True if was crated, i. e. was not found in the DB.
+        """
+        return cls.objects.get_or_create(
+            date=datetime.datetime.strptime(data["date"], "%Y-%m-%d").date()
+            if "date" in data and data["date"]
+            else None,
+            price=data["price"] if "price" in data else 0,
+            content_type=ContentType.objects.get_for_model(content_object),
+            object_id=content_object.pk,
+        )
+
+    @classmethod
+    def get(cls: Type[T], term: str) -> Optional[T]:
+        """Search for given term, return single object."""
+        query_set = cls.search(term)
+        if query_set.count() == 0:
+            return None
+        elif query_set.count() > 1:
+            if term.isdigit():
+                query_set = query_set.filter(pk=term)
+            else:
+                query_set = query_set.filter(
+                    Q(ni=term)
+                    | Q(jv=term)
+                    | Q(editions__isbn=term)
+                    | Q(editions__book__title=term)
+                    | Q(papers__title=term)
+                    | Q(editions__alternate_title=term)
+                )
+            if query_set.count() != 1:
+                return None
+        return query_set[0]
+
+    @classmethod
+    def search(cls: Type[T], term: str) -> models.query.QuerySet[T]:
+        """Search for given term."""
+        return (
+            cls.objects.annotate(
+                jv=Concat("papers__journal__name", Value(" "), "papers__volume"),
+                ni=Concat("issues__magazine__name", Value(" "), "issues__issue"),
+            )
+            .filter(
+                Q(pk=term if term.isdigit() else None)
+                | Q(editions__alternate_title__icontains=term)
+                | Q(editions__isbn__icontains=term)
+                | Q(jv__icontains=term)
+                | Q(ni__iregex=term.replace(" ", ".*?"))
+                | Q(papers__title__icontains=term)
+                | Q(editions__book__title__icontains=term)
+            )
+            .distinct()
+        )
+
+    def edit(self: T, field: str, value: Union[float, datetime.date], *args, **kwargs):
+        """Change field by given value."""
+        assert field in ["date", "price"]
+
+        if field == "date":
+            self.date = value
+        elif field == "price":
+            self.price = value
+        self.save(*args, **kwargs)
+
+    def print(self: T, file: TextIO = sys.stdout):
+        """Print instance info."""
+        stdout.write([_("Field"), _("Value")], "=", [0.33], file=file)
+        stdout.write([_("Id"), self.id], positions=[0.33], file=file)
+        stdout.write([_("Obj"), self.content_object], positions=[0.33], file=file)
+        stdout.write([_("Date"), self.date], positions=[0.33], file=file)
+        stdout.write([_("Price"), self.price], positions=[0.33], file=file)
+
+    def to_dict(self: T) -> Dict:
+        """Convert to dict."""
+        return {
+            "date": self.date.strftime("%Y-%m-%d") if self.date else None,
+            "price": self.price,
+        }
 
     def __str__(self):
-        return 'Acquisition "%s"' % self.content_object
+        """Name."""
+        return f'Acquisition "{self.content_object}" [{self.date} - {self.price}]'
 
     class Meta:
-        ordering = ('date',)
-        verbose_name = _('Acquisition')
-        verbose_name_plural = _('Acquisitions')
+        """Meta."""
+
+        ordering = ("date",)
+        verbose_name = _("Acquisition")
+        verbose_name_plural = _("Acquisitions")
 
 
 class Read(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True,
-                                      verbose_name=_('Created at'))
-    updated_at = models.DateTimeField(auto_now=True,
-                                      verbose_name=_('Updated at'))
+    """Read ORM Model."""
 
-    started = models.DateField(blank=True, null=True,
-                               verbose_name=_('Date started'))
-    finished = models.DateField(blank=True, null=True,
-                                verbose_name=_('Date finished'))
+    T = TypeVar("T", bound="Read", covariant=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+
+    started = models.DateField(blank=True, null=True, verbose_name=_("Started"))
+    finished = models.DateField(blank=True, null=True, verbose_name=_("Finished"))
 
     content_type = models.ForeignKey(ContentType, models.CASCADE)
     object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey("content_type", "object_id")
 
-    def to_json(self):
-        return {'started': str(self.started), 'finished': str(self.finished)}
+    @classmethod
+    def from_dict(
+        cls: Type[T], data: Dict, content_object: models.Model
+    ) -> Tuple[T, bool]:
+        """Create from dict.
+
+        Returns True if was crated, i. e. was not found in the DB.
+        """
+        return cls.objects.get_or_create(
+            started=datetime.datetime.strptime(data["started"], "%Y-%m-%d").date()
+            if "started" in data and data["started"]
+            else None,
+            finished=datetime.datetime.strptime(data["finished"], "%Y-%m-%d").date()
+            if "finished" in data and data["finished"]
+            else None,
+            content_type=ContentType.objects.get_for_model(content_object),
+            object_id=content_object.pk,
+        )
+
+    @classmethod
+    def get(cls: Type[T], term: str) -> Optional[T]:
+        """Search for given term, return single object."""
+        query_set = cls.search(term)
+        if query_set.count() == 0:
+            return None
+        elif query_set.count() > 1:
+            if term.isdigit():
+                query_set = query_set.filter(pk=term)
+            else:
+                query_set = query_set.filter(
+                    Q(editions__alternate_title=term)
+                    | Q(editions__isbn=term)
+                    | Q(ni=term)
+                    | Q(editions__book__title=term)
+                    | Q(jv=term)
+                    | Q(papers__title=term)
+                )
+            if query_set.count() != 1:
+                return None
+        return query_set[0]
+
+    @classmethod
+    def search(cls: Type[T], term: str) -> models.query.QuerySet[T]:
+        """Search for given term."""
+        return (
+            cls.objects.annotate(
+                jv=Concat("papers__journal__name", Value(" "), "papers__volume"),
+                ni=Concat("issues__magazine__name", Value(" "), "issues__issue"),
+            )
+            .filter(
+                Q(pk=term if term.isdigit() else None)
+                | Q(editions__alternate_title__icontains=term)
+                | Q(editions__isbn__icontains=term)
+                | Q(jv__icontains=term)
+                | Q(ni__iregex=term.replace(" ", ".*?"))
+                | Q(papers__title__icontains=term)
+                | Q(editions__book__title__icontains=term)
+            )
+            .distinct()
+        )
+
+    def edit(self: T, field: str, value: datetime.date, *args, **kwargs):
+        """Change field by given value."""
+        assert field in ["started", "finished"]
+
+        if field == "started":
+            self.started = value
+        elif field == "finished":
+            self.finished = value
+        self.save(*args, **kwargs)
+
+    def print(self: T, file: TextIO = sys.stdout):
+        """Print instance info."""
+        stdout.write([_("Field"), _("Value")], "=", [0.33], file=file)
+        stdout.write([_("Id"), self.id], positions=[0.33], file=file)
+        stdout.write([_("Obj"), self.content_object], positions=[0.33], file=file)
+        stdout.write([_("Started"), self.started], positions=[0.33], file=file)
+        stdout.write([_("Finished"), self.finished], positions=[0.33], file=file)
+
+    def to_dict(self: T) -> Dict:
+        """Convert to dict."""
+        return {
+            "started": self.started.strftime("%Y-%m-%d") if self.started else None,
+            "finished": self.finished.strftime("%Y-%m-%d") if self.finished else None,
+        }
 
     def __str__(self):
-        return 'Read "%s"' % self.content_object
+        """Name."""
+        return f'Read "{self.content_object}" [{self.started} - {self.finished}]'
 
     class Meta:
-        ordering = ('started', 'finished')
-        verbose_name = _('Read')
-        verbose_name_plural = _('Reads')
+        """Meta."""
+
+        ordering = ("started", "finished")
+        verbose_name = _("Read")
+        verbose_name_plural = _("Reads")

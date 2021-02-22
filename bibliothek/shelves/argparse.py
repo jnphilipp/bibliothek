@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -15,26 +15,31 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Shelves Django argparse."""
 
-import utils
+import sys
 
+from argparse import _SubParsersAction, Namespace
+from bibliothek import stdout
 from bibliothek.argparse import valid_date
 from books.functions import edition as fedition
 from django.utils.translation import ugettext_lazy as _
 from magazines.functions import issue as fissue
 from papers.functions import paper as fpaper
-from shelves.functions import read as fread
+from shelves.models import Acquisition, Read
+from typing import Optional, TextIO
 
 
-def _read(args):
-    if args.subparser == 'add':
+def _acquisition(args: Namespace, file: TextIO = sys.stdout):
+    acquisition: Optional[Acquisition] = None
+    if args.subparser == "add":
         edition = fedition.get.by_term(args.obj)
         paper = fpaper.get.by_term(args.obj)
         issue = fissue.get.by_term(args.obj)
 
         obj = None
         if edition is None and paper is None and issue is None:
-            utils.stdout.p(['Nothing found.'], '')
+            stdout.write(_("No edition, issue or paper found."), "", file=file)
             return
         elif edition is not None and paper is None and issue is None:
             obj = edition
@@ -44,109 +49,245 @@ def _read(args):
             obj = issue
 
         if obj:
-            read = fread.create(obj, args.started, args.finished)
-            fread.stdout.info(read)
+            acquisition, created = Acquisition.from_dict(
+                {"date": args.date, "price": args.price}, obj
+            )
+            if created:
+                stdout.write(
+                    _(
+                        f'Successfully added acquisition with id "{acquisition.id}" to '
+                        + f'"{obj}".'
+                    ),
+                    "=",
+                    file=file,
+                )
+                acquisition.print(file)
+            else:
+                stdout.write(
+                    _(
+                        f'The acquisition already exists with id "{acquisition.id}", '
+                        + "aborting..."
+                    ),
+                    "",
+                    file=file,
+                )
         else:
-            utils.stdout.p(['More than one found.'], '')
-    elif args.subparser == 'edit':
-        read = fread.get.by_term(args.read)
-        if read:
-            fread.edit(read, args.field, args.value)
-            utils.stdout.p([_(f'Successfully edited read "{read.id}".')], '=')
-            fread.stdout.info(read)
+            stdout.write(_("More than one paper, issue or paper found."), "", file=file)
+    elif args.subparser == "delete":
+        acquisition = Acquisition.get(args.acquisition)
+        if acquisition:
+            acquisition.delete()
+            stdout.write(
+                _(f'Successfully deleted acquisition with id "{acquisition.id}".'),
+                "",
+                file=file,
+            )
         else:
-            utils.stdout.p(['Nothing found.'], '')
-    elif args.subparser == 'delete':
-        read = fread.get.by_term(args.read)
-        if read:
-            fread.delete(read)
-            utils.stdout.p([_(f'Successfully deleted read "{read.id}".')], '')
+            stdout.write(_("No acquisition found."), "", file=file)
+    elif args.subparser == "edit":
+        acquisition = Acquisition.get(args.acquisition)
+        if acquisition:
+            acquisition.edit(args.edit_subparser, args.value)
+            stdout.write(
+                _(f'Successfully edited acquisition with id "{acquisition.id}".'),
+                "",
+                file=file,
+            )
+            acquisition.print(file)
         else:
-            utils.stdout.p(['Nothing found.'], '')
-    elif args.subparser == 'info':
-        read = fread.get.by_term(args.read)
-        if read:
-            fread.stdout.info(read)
+            stdout.write(_("No acquisition found."), "", file=file)
+    elif args.subparser == "info":
+        acquisition = Acquisition.get(args.acquisition)
+        if acquisition:
+            acquisition.print(file)
         else:
-            utils.stdout.p(['Nothing found.'], '')
+            stdout.write(_("No acquisition found."), "", file=file)
 
 
-def add_subparser(parser):
-    read_parser = parser.add_parser('read', help=_('Manage reads'))
+def _read(args: Namespace, file: TextIO = sys.stdout):
+    read: Optional[Acquisition] = None
+    if args.subparser == "add":
+        edition = fedition.get.by_term(args.obj)
+        paper = fpaper.get.by_term(args.obj)
+        issue = fissue.get.by_term(args.obj)
+
+        obj = None
+        if edition is None and paper is None and issue is None:
+            stdout.write(_("No edition, issue or paper found."), "", file=file)
+            return
+        elif edition is not None and paper is None and issue is None:
+            obj = edition
+        elif edition is None and paper is not None and issue is None:
+            obj = paper
+        elif edition is None and paper is None and issue is not None:
+            obj = issue
+
+        if obj:
+            read, created = Read.from_dict(
+                {"started": args.started, "finished": args.finished}, obj
+            )
+            if created:
+                stdout.write(
+                    _(f'Successfully added read with id "{read.id}" to "{obj}".'),
+                    "=",
+                    file=file,
+                )
+                read.print(file)
+            else:
+                stdout.write(
+                    _(f'The read already exists with id "{read.id}", aborting...'),
+                    "",
+                    file=file,
+                )
+        else:
+            stdout.write(_("More than one paper, issue or paper found."), "", file=file)
+    elif args.subparser == "delete":
+        read = Read.get(args.read)
+        if read:
+            read.delete()
+            stdout.write(
+                _(f'Successfully deleted read with id "{read.id}".'),
+                "",
+                file=file,
+            )
+        else:
+            stdout.write(_("No read found."), "", file=file)
+    elif args.subparser == "edit":
+        read = Read.get(args.read)
+        if read:
+            read.edit(args.field, args.value)
+            stdout.write(
+                _(f'Successfully edited read with id "{read.id}".'),
+                "",
+                file=file,
+            )
+            read.print(file)
+        else:
+            stdout.write(_("No read found."), "", file=file)
+    elif args.subparser == "info":
+        read = Read.get(args.read)
+        if read:
+            read.print(file)
+        else:
+            stdout.write(_("No read found."), "", file=file)
+
+
+def add_subparser(parser: _SubParsersAction):
+    """Add subparser for the shelves module."""
+    # acquisition subparser
+    acquisition_parser = parser.add_parser("acquisition", help=_("Manage acquisitions"))
+    acquisition_parser.set_defaults(func=_acquisition)
+    subparser = acquisition_parser.add_subparsers(dest="subparser")
+
+    # acquisition add
+    add_parser = subparser.add_parser("add", help=_("Add an acquisition"))
+    add_parser.add_argument("obj", help=_("Edition, Paper or Issue"))
+    add_parser.add_argument("--date", default=None, type=valid_date, help=_("Date"))
+    add_parser.add_argument("--price", default=0, type=float, help=_("Price"))
+
+    # acquisition delete
+    delete_parser = subparser.add_parser("delete", help=_("Delete an acquisition"))
+    delete_parser.add_argument("acquisition", help=_("Acquisition"))
+
+    # acquisition edit
+    edit_parser = subparser.add_parser("edit", help=_("Edit an acquisition"))
+    edit_parser.add_argument("acquisition", type=int, help=_("Acquisition"))
+
+    edit_subparser = edit_parser.add_subparsers(
+        dest="edit_subparser", help=_("Which field to edit")
+    )
+    edit_date_parser = edit_subparser.add_parser("date")
+    edit_date_parser.add_argument(
+        "value", type=valid_date, help=_("New value for field")
+    )
+
+    edit_price_parser = edit_subparser.add_parser("price")
+    edit_price_parser.add_argument("value", type=float, help=_("New value for field"))
+
+    # acquisition info
+    info_parser = subparser.add_parser("info", help=_("Show acquisition info"))
+    info_parser.add_argument("acquisition", help=_("Acquisition"))
+
+    # read subparser
+    read_parser = parser.add_parser("read", help=_("Manage reads"))
     read_parser.set_defaults(func=_read)
-    subparser = read_parser.add_subparsers(dest='subparser')
+    subparser = read_parser.add_subparsers(dest="subparser")
 
     # read add
-    add_parser = subparser.add_parser('add', help=_('Add a read'))
-    add_parser.add_argument('obj', help=_('Edition, Paper or Issue'))
-    add_parser.add_argument('--started', default=None, type=valid_date,
-                            help=_('Date started'))
-    add_parser.add_argument('--finished', default=None, type=valid_date,
-                            help=_('Date finished'))
+    add_parser = subparser.add_parser("add", help=_("Add a read"))
+    add_parser.add_argument("obj", help=_("Edition, Paper or Issue"))
+    add_parser.add_argument(
+        "--started", default=None, type=valid_date, help=_("Date started")
+    )
+    add_parser.add_argument(
+        "--finished", default=None, type=valid_date, help=_("Date finished")
+    )
 
     # read delete
-    delete_parser = subparser.add_parser('delete', help=_('Delete a read'))
-    delete_parser.add_argument('read', help=_('Read'))
+    delete_parser = subparser.add_parser("delete", help=_("Delete a read"))
+    delete_parser.add_argument("read", help=_("Read"))
 
     # read edit
-    edit_parser = subparser.add_parser('edit', help=_('Edit a read'))
-    edit_parser.add_argument('read', help=_('Read'))
-    edit_parser.add_argument('field', choices=['started', 'finished'],
-                             help=_('Which field to edit'))
-    edit_parser.add_argument('value', type=valid_date,
-                             help=_('New value for field'))
+    edit_parser = subparser.add_parser("edit", help=_("Edit a read"))
+    edit_parser.add_argument("read", help=_("Read"))
+    edit_parser.add_argument(
+        "field", choices=["started", "finished"], help=_("Which field to edit")
+    )
+    edit_parser.add_argument("value", type=valid_date, help=_("New value for field"))
 
     # read info
-    info_parser = subparser.add_parser('info', help=_('Show read info'))
-    info_parser.add_argument('read', help=_('Read'))
+    info_parser = subparser.add_parser("info", help=_("Show read info"))
+    info_parser.add_argument("read", help=_("Read"))
 
 
-def acquisition_subparser(parser, arg_name, help_txt):
-    acquisition_parser = parser.add_parser('acquisition',
-                                           help=_('Manage acquisition'))
+def acquisition_subparser(parser: _SubParsersAction, arg_name: str, help_txt: str):
+    """Add subparser for the acquisition model."""
+    acquisition_parser = parser.add_parser("acquisition", help=_("Manage acquisition"))
     acquisition_parser.add_argument(arg_name, help=help_txt)
-    subparser = acquisition_parser.add_subparsers(dest='acquisition_subparser')
+    subparser = acquisition_parser.add_subparsers(dest="acquisition_subparser")
 
-    add_parser = subparser.add_parser('add', help=_('Add an acquisition'))
-    add_parser.add_argument('--date', default=None, type=valid_date,
-                            help=_('Date'))
-    add_parser.add_argument('--price', default=0, type=float, help=_('Price'))
+    add_parser = subparser.add_parser("add", help=_("Add an acquisition"))
+    add_parser.add_argument("--date", default=None, type=valid_date, help=_("Date"))
+    add_parser.add_argument("--price", default=0, type=float, help=_("Price"))
 
-    delete_parser = subparser.add_parser('delete',
-                                         help=_('Delete an acquisition'))
-    delete_parser.add_argument('acquisition',  type=int, help=_('Acquisition'))
+    delete_parser = subparser.add_parser("delete", help=_("Delete an acquisition"))
+    delete_parser.add_argument("acquisition", type=int, help=_("Acquisition"))
 
-    edit_parser = subparser.add_parser('edit', help=_('Edit an acquisition'))
-    edit_parser.add_argument('acquisition', type=int, help=_('Acquisition'))
+    edit_parser = subparser.add_parser("edit", help=_("Edit an acquisition"))
+    edit_parser.add_argument("acquisition", type=int, help=_("Acquisition"))
 
-    edit_subparser = edit_parser.add_subparsers(dest='edit_subparser',
-                                                help=_('Which field to edit'))
-    edit_date_parser = edit_subparser.add_parser('date')
-    edit_date_parser.add_argument('value', type=valid_date,
-                                  help=_('New value for field'))
+    edit_subparser = edit_parser.add_subparsers(
+        dest="edit_subparser", help=_("Which field to edit")
+    )
+    edit_date_parser = edit_subparser.add_parser("date")
+    edit_date_parser.add_argument(
+        "value", type=valid_date, help=_("New value for field")
+    )
 
-    edit_price_parser = edit_subparser.add_parser('price')
-    edit_price_parser.add_argument('value', type=float,
-                                   help=_('New value for field'))
+    edit_price_parser = edit_subparser.add_parser("price")
+    edit_price_parser.add_argument("value", type=float, help=_("New value for field"))
 
 
-def read_subparser(parser, arg_name, help_txt):
-    read_parser = parser.add_parser('read', help=_('Manage read'))
+def read_subparser(parser: _SubParsersAction, arg_name: str, help_txt: str):
+    """Add subparser for the acquisition model."""
+    read_parser = parser.add_parser("read", help=_("Manage read"))
     read_parser.add_argument(arg_name, help=help_txt)
-    subparser = read_parser.add_subparsers(dest='read_subparser')
+    subparser = read_parser.add_subparsers(dest="read_subparser")
 
-    add_parser = subparser.add_parser('add', help=_('Add a read'))
-    add_parser.add_argument('--started', default=None, type=valid_date,
-                            help=_('Date started'))
-    add_parser.add_argument('--finished', default=None, type=valid_date,
-                            help=_('Date finished'))
+    add_parser = subparser.add_parser("add", help=_("Add a read"))
+    add_parser.add_argument(
+        "--started", default=None, type=valid_date, help=_("Date started")
+    )
+    add_parser.add_argument(
+        "--finished", default=None, type=valid_date, help=_("Date finished")
+    )
 
-    delete_parser = subparser.add_parser('delete', help=_('Delete a read'))
-    delete_parser.add_argument('read', type=int, help=_('Read'))
+    delete_parser = subparser.add_parser("delete", help=_("Delete a read"))
+    delete_parser.add_argument("read", type=int, help=_("Read"))
 
-    edit_parser = subparser.add_parser('edit', help=_('Edit a read'))
-    edit_parser.add_argument('read', type=int, help=_('Read'))
-    edit_parser.add_argument('field', choices=['started', 'finished'],
-                             help=_('Which field to edit'))
-    edit_parser.add_argument('value', type=valid_date,
-                             help=_('New value for field'))
+    edit_parser = subparser.add_parser("edit", help=_("Edit a read"))
+    edit_parser.add_argument("read", type=int, help=_("Read"))
+    edit_parser.add_argument(
+        "field", choices=["started", "finished"], help=_("Which field to edit")
+    )
+    edit_parser.add_argument("value", type=valid_date, help=_("New value for field"))
