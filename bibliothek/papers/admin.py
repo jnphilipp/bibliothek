@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -15,11 +15,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Papers Django admin."""
 
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
 from django.db import models
-from django.forms import Textarea, TextInput
+from django.forms import Textarea
 from django.utils.html import format_html_join
 from django.utils.translation import ugettext_lazy as _
 from files.models import File
@@ -28,44 +29,66 @@ from shelves.models import Acquisition, Read
 
 
 class AcquisitionInline(GenericStackedInline):
+    """Acquisition inline Django admin."""
+
     extra = 1
     model = Acquisition
 
 
 class FileInline(GenericStackedInline):
+    """File inline Django admin."""
+
     extra = 1
     model = File
 
 
 class ReadInline(GenericStackedInline):
+    """Read inline Django admin."""
+
     extra = 1
     model = Read
 
 
 @admin.register(Paper)
 class PaperAdmin(admin.ModelAdmin):
+    """Paper Django admin."""
+
     def list_authors(self, obj):
-        return format_html_join(', ', '{}',
-                                ((p.name,) for p in obj.authors.all()))
+        """Format authors."""
+        return format_html_join(", ", "{}", ((p.name,) for p in obj.authors.all()))
 
     fieldsets = [
-        (None, {'fields': ['slug', 'title', 'authors', 'languages']}),
-        (_('Journal'), {'fields': ['journal', 'volume', 'publishing_date']}),
-        (_('Bibtex'), {'fields': ['bibtex']}),
-        (_('Links'), {'fields': ['links']}),
+        (
+            None,
+            {
+                "fields": [
+                    "created_at",
+                    "updated_at",
+                    "slug",
+                    "title",
+                    "authors",
+                    "languages",
+                ]
+            },
+        ),
+        (_("Journal"), {"fields": ["journal", "volume", "publishing_date"]}),
+        (_("Bibtex"), {"fields": ["bibtex"]}),
+        (_("Links"), {"fields": ["links"]}),
     ]
-    filter_horizontal = ('authors', 'languages', 'links')
+    filter_horizontal = ("authors", "languages", "links")
     formfield_overrides = {
         models.TextField: {
-            'widget': Textarea(attrs={
-                'autocomplete': 'off',
-                'rows': 20,
-                'style': 'width: 100%; resize: none;'
-            })
+            "widget": Textarea(
+                attrs={
+                    "autocomplete": "off",
+                    "rows": 20,
+                    "style": "width: 100%; resize: none;",
+                }
+            )
         },
     }
     inlines = [FileInline, AcquisitionInline, ReadInline]
-    list_display = ('title', 'list_authors', 'journal', 'volume', 'updated_at')
-    list_filter = ('authors', 'journal')
-    readonly_fields = ('slug',)
-    search_fields = ('title', 'journal__name', 'volume')
+    list_display = ("title", "list_authors", "journal", "volume", "updated_at")
+    list_filter = ("authors", "journal")
+    readonly_fields = ("created_at", "updated_at", "slug")
+    search_fields = ("title", "journal__name", "volume")

@@ -114,6 +114,20 @@ class AcquisitionModelTestCase(TestCase):
         self.assertIsNotNone(acquisition2)
         self.assertEquals(acquisition, acquisition2)
 
+        paper, created = Paper.from_dict({"title": "Old stuff"})
+        self.assertTrue(created)
+        self.assertIsNotNone(paper.id)
+
+        acquisition, created = Acquisition.from_dict(
+            {"started": "2021-01-10", "finished": "2021-01-31"}, paper
+        )
+        self.assertTrue(created)
+        self.assertIsNotNone(acquisition.id)
+
+        acquisition2 = Acquisition.get(str(acquisition.pk), papers=paper)
+        self.assertIsNotNone(acquisition2)
+        self.assertEquals(acquisition, acquisition2)
+
     def test_search(self):
         acquisition, created = Acquisition.from_dict({"date": "2021-01-01"}, self.paper)
         self.assertTrue(created)
@@ -129,8 +143,19 @@ class AcquisitionModelTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(acquisition.id)
 
-        self.assertEquals(3, Acquisition.objects.all().count())
+        paper, created = Paper.from_dict({"title": "Old stuff"})
+        self.assertTrue(created)
+        self.assertIsNotNone(paper.id)
+
+        acquisition, created = Acquisition.from_dict(
+            {"started": "2021-01-10", "finished": "2021-01-31"}, paper
+        )
+        self.assertTrue(created)
+        self.assertIsNotNone(acquisition.id)
+
+        self.assertEquals(4, Acquisition.objects.all().count())
         self.assertEquals(3, Acquisition.search("cool").count())
+        self.assertEquals(1, Acquisition.search("4", papers=paper).count())
 
     def test_print(self):
         acquisition, created = Acquisition.from_dict(
@@ -272,13 +297,37 @@ class ReadModelTestCase(TestCase):
         self.assertIsNotNone(read2)
         self.assertEquals(read, read2)
 
+        paper, created = Paper.from_dict({"title": "Old stuff"})
+        self.assertTrue(created)
+        self.assertIsNotNone(paper.id)
+
+        read, created = Read.from_dict(
+            {"started": "2021-01-10", "finished": "2021-01-31"}, paper
+        )
+        self.assertTrue(created)
+        self.assertIsNotNone(read.id)
+
+        read2 = Read.get(str(read.pk), papers=paper)
+        self.assertIsNotNone(read2)
+        self.assertEquals(read, read2)
+
     def test_search(self):
         read, created = Read.from_dict({"started": "2021-01-01"}, self.paper)
         self.assertTrue(created)
         self.assertIsNotNone(read.id)
 
+        paper, created = Paper.from_dict({"title": "Old stuff"})
+        self.assertTrue(created)
+        self.assertIsNotNone(paper.id)
+
         read, created = Read.from_dict(
             {"started": "2021-01-10", "finished": "2021-01-31"}, self.paper
+        )
+        self.assertTrue(created)
+        self.assertIsNotNone(read.id)
+
+        read, created = Read.from_dict(
+            {"started": "2021-01-10", "finished": "2021-01-31"}, paper
         )
         self.assertTrue(created)
         self.assertIsNotNone(read.id)
@@ -287,8 +336,9 @@ class ReadModelTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(read.id)
 
-        self.assertEquals(3, Read.objects.all().count())
+        self.assertEquals(4, Read.objects.all().count())
         self.assertEquals(3, Read.search("cool").count())
+        self.assertEquals(1, Read.search("3", papers=paper).count())
 
     def test_print(self):
         read, created = Read.from_dict(

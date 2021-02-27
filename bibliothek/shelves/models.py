@@ -63,9 +63,13 @@ class Acquisition(models.Model):
         )
 
     @classmethod
-    def get(cls: Type[T], term: str) -> Optional[T]:
+    def get(
+        cls: Type[T],
+        term: str,
+        **kwargs,
+    ) -> Optional[T]:
         """Search for given term, return single object."""
-        query_set = cls.search(term)
+        query_set = cls.search(term, **kwargs)
         if query_set.count() == 0:
             return None
         elif query_set.count() > 1:
@@ -85,8 +89,16 @@ class Acquisition(models.Model):
         return query_set[0]
 
     @classmethod
-    def search(cls: Type[T], term: str) -> models.query.QuerySet[T]:
+    def search(
+        cls: Type[T],
+        term: str,
+        **kwargs,
+    ) -> models.query.QuerySet[T]:
         """Search for given term."""
+        if kwargs:
+            return cls.objects.filter(**kwargs).filter(
+                pk=term if term.isdigit() else None
+            )
         return (
             cls.objects.annotate(
                 jv=Concat("papers__journal__name", Value(" "), "papers__volume"),
@@ -176,9 +188,9 @@ class Read(models.Model):
         )
 
     @classmethod
-    def get(cls: Type[T], term: str) -> Optional[T]:
+    def get(cls: Type[T], term: str, **kwargs) -> Optional[T]:
         """Search for given term, return single object."""
-        query_set = cls.search(term)
+        query_set = cls.search(term, **kwargs)
         if query_set.count() == 0:
             return None
         elif query_set.count() > 1:
@@ -198,8 +210,12 @@ class Read(models.Model):
         return query_set[0]
 
     @classmethod
-    def search(cls: Type[T], term: str) -> models.query.QuerySet[T]:
+    def search(cls: Type[T], term: str, **kwargs) -> models.query.QuerySet[T]:
         """Search for given term."""
+        if kwargs:
+            return cls.objects.filter(**kwargs).filter(
+                pk=term if term.isdigit() else None
+            )
         return (
             cls.objects.annotate(
                 jv=Concat("papers__journal__name", Value(" "), "papers__volume"),
