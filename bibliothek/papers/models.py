@@ -87,10 +87,14 @@ class Paper(models.Model):
     @classmethod
     def by_shelf(cls: Type[T], shelf: str) -> models.query.QuerySet[T]:
         """Filter by shelf."""
-        assert shelf in ["read", "unread"]
+        assert shelf in ["acquired", "unacquired", "read", "unread"]
 
         papers = Paper.objects.all()
-        if shelf == "read":
+        if shelf == "acquired":
+            papers = papers.filter(acquisitions__isnull=False)
+        elif shelf == "unacquired":
+            papers = papers.filter(acquisitions__isnull=True)
+        elif shelf == "read":
             papers = papers.filter(reads__isnull=False)
         elif shelf == "unread":
             papers = papers.filter(reads__isnull=True)
@@ -279,6 +283,14 @@ class Paper(models.Model):
 
     def delete(self: T) -> Tuple[int, Dict]:
         """Delete."""
+        def append(d: Tuple[int, Dict]) -> int:
+            for k, v in d[1].items():
+                if k in deleted:
+                    deleted[k] += v
+                else:
+                    deleted[k] = v
+            return d[0]
+
         nb_deleted = 0
         deleted = {}
         for link in self.links.all():
@@ -294,24 +306,19 @@ class Paper(models.Model):
                 and link.papers.count() == 1
                 and link.persons.count() == 0
             ):
-                r = link.delete()
-                nb_deleted += r[0]
-                for k, v in r[1].items():
-                    deleted[k] = v
+                nb_deleted += append(link.delete())
         for file in self.files.all():
             if (
                 file.editions.count() == 0
                 and file.issues.count() == 0
                 and file.papers.count() == 1
             ):
-                r = file.delete()
-                nb_deleted += r[0]
-                for k, v in r[1].items():
-                    deleted[k] = v
-        r = super(Paper, self).delete()
-        nb_deleted += r[0]
-        for k, v in r[1].items():
-            deleted[k] = v
+                nb_deleted += append(file.delete())
+        for acquisition in self.acquisitions.all():
+            nb_deleted += append(acquisition.delete())
+        for read in self.reads.all():
+            nb_deleted += append(read.delete())
+        nb_deleted += append(super(Paper, self).delete())
         return nb_deleted, deleted
 
     def edit(self: T, field: str, value: Union[str, datetime.date], *args, **kwargs):
@@ -443,12 +450,12 @@ class Paper(models.Model):
             stdout.write([_("Acquisitions"), ""], positions=[0.33], file=file)
 
         if self.reads.count() > 0:
-            ds_trans = _("date started")
-            df_trans = _("date finished")
             for (i, r), has_next in lookahead(enumerate(self.reads.all())):
-                s = f"{r.pk}: {ds_trans}={r.started}, {df_trans}={r.finished}"
                 stdout.write(
-                    ["" if i else _("Reads"), s],
+                    [
+                        "" if i else _("Reads"),
+                        f"{r.pk}: {_('date started')}={r.started}, {_('date finished')}={r.finished}"
+                    ],
                     "" if has_next else "_",
                     positions=[0.33],
                     file=file,
@@ -505,13 +512,11 @@ class Paper(models.Model):
             "papers", str(self.pk), os.path.basename(file.file.name)
         )
 
-        current_path = os.path.join(settings.MEDIA_ROOT, file.file.name)
         new_path = os.path.join(settings.MEDIA_ROOT, save_name)
-
-        if os.path.exists(current_path) and current_path != new_path:
+        if os.path.exists(file.file.path) and file.file.path != new_path:
             if not os.path.exists(os.path.dirname(new_path)):
                 os.makedirs(os.path.dirname(new_path))
-            shutil.move(current_path, new_path)
+            shutil.move(file.file.path, new_path)
             file.file.name = save_name
             file.save()
 

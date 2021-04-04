@@ -184,6 +184,47 @@ class PaperModelTestCase(TestCase):
             (papers[1][0].to_dict(), papers[1][1]),
         )
 
+    def test_by_shelf(self):
+        paper, created = Paper.from_dict({
+            "title": "Random Science",
+        })
+        self.assertTrue(created)
+        self.assertIsNotNone(paper.id)
+
+        paper, created = Paper.from_dict({
+            "title": "Random Science stuff",
+            "acquisitions": [{"date": "2021-01-02", "price": 10.0}],
+        })
+        self.assertTrue(created)
+        self.assertIsNotNone(paper.id)
+
+        paper, created = Paper.from_dict({
+            "title": "Random new stuff",
+            "reads": [{"started": "2021-01-02", "finished": "2021-01-03"}],
+        })
+        self.assertTrue(created)
+        self.assertIsNotNone(paper.id)
+
+        paper, created = Paper.from_dict({
+            "title": "Stuff from Science",
+            "reads": [{"started": "2021-01-02", "finished": "2021-01-03"}],
+        })
+        self.assertTrue(created)
+        self.assertIsNotNone(paper.id)
+
+        paper, created = Paper.from_dict({
+            "title": "Science stuff",
+            "acquisitions": [{"date": "2021-01-02", "price": 10.0}],
+            "reads": [{"started": "2021-01-02", "finished": "2021-01-03"}],
+        })
+        self.assertTrue(created)
+        self.assertIsNotNone(paper.id)
+
+        self.assertEquals(2, Paper.by_shelf("acquired").count())
+        self.assertEquals(3, Paper.by_shelf("unacquired").count())
+        self.assertEquals(3, Paper.by_shelf("read").count())
+        self.assertEquals(2, Paper.by_shelf("unread").count())
+
     @override_settings(MEDIA_ROOT=mkdtemp())
     def test_from_to_dict(self):
         author1, created = Person.from_dict({"name": "John Doe"})
@@ -407,58 +448,6 @@ class PaperModelTestCase(TestCase):
             )
 
     @override_settings(MEDIA_ROOT=mkdtemp())
-    def test_edit(self):
-        paper, created = Paper.from_dict({"title": "Paper 2"})
-        self.assertTrue(created)
-        self.assertIsNotNone(paper.id)
-
-        paper.edit("title", "Paper Two")
-        self.assertEquals("Paper Two", paper.title)
-
-        self.assertIsNone(paper.journal)
-        paper.edit("journal", "Science Journal")
-        self.assertIsNotNone(paper.journal.id)
-        self.assertEquals("Science Journal", paper.journal.name)
-
-        self.assertEquals(0, paper.languages.count())
-        paper.edit("language", "Deutsch")
-        self.assertEquals(1, paper.languages.count())
-        self.assertEquals("Deutsch", paper.languages.first().name)
-
-        paper.edit("language", "English")
-        self.assertEquals(2, paper.languages.count())
-        self.assertEquals("English", paper.languages.last().name)
-
-        paper.edit("language", "Deutsch")
-        self.assertEquals(1, paper.languages.count())
-        self.assertEquals("English", paper.languages.first().name)
-
-        self.assertIsNone(paper.publishing_date)
-        paper.edit(
-            "publishing_date", datetime.strptime("2021-02-01", "%Y-%m-%d").date()
-        )
-        self.assertEquals(
-            datetime.strptime("2021-02-01", "%Y-%m-%d").date(), paper.publishing_date
-        )
-
-        with NamedTemporaryFile() as f:
-            f.write(b"Lorem ipsum dolorem")
-
-            paper.edit("file", f.name)
-            self.assertEquals(1, paper.files.count())
-            self.assertEquals(
-                {
-                    "path": os.path.join(
-                        settings.MEDIA_ROOT,
-                        "papers",
-                        str(paper.pk),
-                        os.path.basename(f.name),
-                    )
-                },
-                paper.files.first().to_dict(),
-            )
-
-    @override_settings(MEDIA_ROOT=mkdtemp())
     def test_delete(self):
         paper, created = Paper.from_dict({"title": "Paper"})
         self.assertTrue(created)
@@ -513,17 +502,69 @@ class PaperModelTestCase(TestCase):
             )
             self.assertFalse(os.path.exists(path))
 
+    @override_settings(MEDIA_ROOT=mkdtemp())
+    def test_edit(self):
+        paper, created = Paper.from_dict({"title": "Paper 2"})
+        self.assertTrue(created)
+        self.assertIsNotNone(paper.id)
+
+        paper.edit("title", "Paper Two")
+        self.assertEquals("Paper Two", paper.title)
+
+        self.assertIsNone(paper.journal)
+        paper.edit("journal", "Science Journal")
+        self.assertIsNotNone(paper.journal.id)
+        self.assertEquals("Science Journal", paper.journal.name)
+
+        self.assertEquals(0, paper.languages.count())
+        paper.edit("language", "Deutsch")
+        self.assertEquals(1, paper.languages.count())
+        self.assertEquals("Deutsch", paper.languages.first().name)
+
+        paper.edit("language", "English")
+        self.assertEquals(2, paper.languages.count())
+        self.assertEquals("English", paper.languages.last().name)
+
+        paper.edit("language", "Deutsch")
+        self.assertEquals(1, paper.languages.count())
+        self.assertEquals("English", paper.languages.first().name)
+
+        self.assertIsNone(paper.publishing_date)
+        paper.edit(
+            "publishing_date", datetime.strptime("2021-02-01", "%Y-%m-%d").date()
+        )
+        self.assertEquals(
+            datetime.strptime("2021-02-01", "%Y-%m-%d").date(), paper.publishing_date
+        )
+
+        with NamedTemporaryFile() as f:
+            f.write(b"Lorem ipsum dolorem")
+
+            paper.edit("file", f.name)
+            self.assertEquals(1, paper.files.count())
+            self.assertEquals(
+                {
+                    "path": os.path.join(
+                        settings.MEDIA_ROOT,
+                        "papers",
+                        str(paper.pk),
+                        os.path.basename(f.name),
+                    )
+                },
+                paper.files.first().to_dict(),
+            )
+
     def test_get(self):
         paper, created = Paper.from_dict({"title": "Boring Science stuff"})
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
 
         paper2 = Paper.get("boring science")
-        self.assertIsNotNone(paper)
+        self.assertIsNotNone(paper2)
         self.assertEquals(paper, paper2)
 
         paper2 = Paper.get(str(paper.id))
-        self.assertIsNotNone(paper)
+        self.assertIsNotNone(paper2)
         self.assertEquals(paper, paper2)
 
     def test_search(self):
