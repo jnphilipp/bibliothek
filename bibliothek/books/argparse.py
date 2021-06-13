@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -15,204 +15,331 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Books Django app argparse."""
 
 import os
 import sys
-import utils
 
+from argparse import _SubParsersAction, Namespace
+from bibliothek import stdout
+from bibliothek.utils import lookahead
 from bibliothek.argparse import valid_date
-from books.functions import book as fbook, edition as fedition
+from bindings.models import Binding
+from books.models import Book, Edition
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
+from genres.models import Genre
+from languages.models import Language
+from links.models import Link
+from persons.models import Person
+from publishers.models import Publisher
+from series.models import Series
+from shelves.models import Acquisition, Read
 from shelves.argparse import acquisition_subparser, read_subparser
-from shelves.functions import acquisition as facquisition, read as fread
+from typing import Optional, TextIO
 
 
-def _book(args):
+def _book(args: Namespace, file: TextIO = sys.stdout):
+    book: Optional[Book] = None
     if args.subparser == "add":
-        book, created = fbook.create(
-            args.title, args.author, args.series, args.volume, args.genre, args.link
+        book, created = Book.from_dict(
+            {
+                "title": args.title,
+                "authors": [
+                    Person.get_or_create(author).to_dict() for author in args.author
+                ],
+                "series": Series.get_or_create(args.series).to_dict()
+                if args.series
+                else None,
+                "volume": args.volume,
+                "genres": [
+                    Genre.get_or_create(genre).to_dict() for genre in args.genre
+                ],
+                "links": [Link.get_or_create(link).to_dict() for link in args.link],
+            }
         )
 
         if created:
-            msg = _(
-                f'Successfully added book "{book.title}" with id ' + f'"{book.id}".'
+            stdout.write(
+                _('Successfully added book "%(title)s" with id "%(pk)d".')
+                % {"title": book.title, "pk": book.pk},
+                "=",
+                file=file,
             )
-            utils.stdout.p([msg], "=")
-            fbook.stdout.info(book)
+            book.print(file)
         else:
-            msg = _(
-                f'The book "{book.title}" already exists with id "{book.id}", '
-                + "aborting..."
+            stdout.write(
+                _('The book "%(title)s" already exists with id "%(pk)d", aborting...')
+                % {"title": book.title, "pk": book.pk},
+                "",
+                file=file,
             )
-            utils.stdout.p([msg], "")
-
-    elif args.subparser == "edit":
-        book = fbook.get.by_term(args.book)
+    elif args.subparser == "delete":
+        book = Book.get(args.book)
         if book:
-            fbook.edit(book, args.edit_subparser, args.value)
-            msg = _(
-                f'Successfully edited book "{book.title}" with id ' + f'"{book.id}".'
+            book.delete()
+            stdout.write(
+                _('Successfully deleted book "%(title)s" with id "%(pk)d".')
+                % {"title": book.title, "pk": book.pk},
+                "",
+                file=file,
             )
-            utils.stdout.p([msg], "=")
-            fbook.stdout.info(book)
         else:
-            utils.stdout.p(["No book found."], "")
+            stdout.write(_("No book found."), "", file=file)
+    elif args.subparser == "edit":
+        book = Book.get(args.book)
+        if book:
+            book.edit(args.edit_subparser, args.value)
+            stdout.write(
+                _('Successfully edited book "%(title)s" with id "%(pk)d".')
+                % {"title": book.title, "pk": book.pk},
+                "=",
+                file=file,
+            )
+            book.print(file)
+        else:
+            stdout.write(_("No book found."), "", file=file)
     elif args.subparser == "edition":
-        book = fbook.get.by_term(args.book)
+        book = Book.get(args.book)
         if book:
             if args.edition_subparser == "acquisition" and book:
-                edition = fedition.get.by_term(args.edition, book)
+                edition = Edition.get(args.edition, book)
+                acquisition: Optional[Acquisition] = None
                 if args.acquisition_subparser == "add" and edition:
-                    acquisition = facquisition.create(edition, args.date, args.price)
-                    msg = _(
-                        f'Successfully added acquisition with id "{acquisition.id}".'
+                    acquisition, created = Acquisition.from_dict(
+                        {"date": args.date, "price": args.price}, edition
                     )
-                    utils.stdout.p([msg], "=")
-                    facquisition.stdout.info(acquisition)
+                    if created:
+                        stdout.write(
+                            _('Successfully added acquisition with id "%(pk)d".')
+                            % {"pk": acquisition.pk},
+                            "=",
+                            file=file,
+                        )
+                    else:
+                        stdout.write(
+                            _('The acquisition already exists with id "%(pk)d".')
+                            % {"pk": acquisition.pk},
+                            "",
+                            file=file,
+                        )
+                    acquisition.print(file)
                 elif args.acquisition_subparser == "delete" and edition:
-                    acquisition = facquisition.get.by_pk(
-                        args.acquisition, edition=edition
-                    )
+                    acquisition = Acquisition.get(args.acquisition, editions=edition)
                     if acquisition:
-                        facquisition.delete(acquisition)
-                        msg = _(
-                            "Successfully deleted acquisition with id "
-                            + f'"{acquisition.id}".'
+                        acquisition.delete(acquisition)
+                        stdout.write(
+                            _('Successfully deleted acquisition with id "%(pk)d".')
+                            % {"pk": acquisition.pk},
+                            "",
+                            file=file,
                         )
-                        utils.stdout.p([msg], "")
                     else:
-                        utils.stdout.p(["No acquisition found."], "")
+                        stdout.write(_("No acquisition found."), "", file=file)
                 elif args.acquisition_subparser == "edit" and edition:
-                    acquisition = facquisition.get.by_pk(
-                        args.acquisition, edition=edition
-                    )
+                    acquisition = Acquisition.get(args.acquisition, editions=edition)
                     if acquisition:
-                        facquisition.edit(acquisition, args.edit_subparser, args.value)
-                        msg = _(
-                            "Successfully edited acquisition with id "
-                            + f'"{acquisition.id}".'
+                        acquisition.edit(args.field, args.value)
+                        stdout.write(
+                            _('Successfully edited acquisition with id "%(pk)d".')
+                            % {"pk": acquisition.pk},
+                            "=",
+                            file=file,
                         )
-                        utils.stdout.p([msg], "=")
-                        facquisition.stdout.info(acquisition)
+                        acquisition.print(file)
                     else:
-                        utils.stdout.p(["No acquisition found."], "")
+                        stdout.write(_("No acquisition found."), "", file=file)
                 else:
-                    utils.stdout.p(["No edition found."], "")
+                    stdout.write([_("No edition found.")], "", file=file)
             elif args.edition_subparser == "add" and book:
-                edition, created = fedition.create(
+                edition, created = Edition.from_dict(
+                    {
+                        "alternate_title": args.alternate_title,
+                        "isbn": args.isbn,
+                        "publishing_date": args.publishing_date,
+                        "cover": args.cover,
+                        "binding": Binding.get_or_create(args.binding).to_dict()
+                        if args.binding
+                        else None,
+                        "publisher": Publisher.get_or_create(args.publisher).to_dict()
+                        if args.publisher
+                        else None,
+                        "persons": [
+                            Person.get_or_create(person).to_dict()
+                            for person in args.person
+                        ],
+                        "languages": [
+                            Language.get_or_create(language).to_dict()
+                            for language in args.language
+                        ],
+                        "links": [
+                            Link.get_or_create(link).to_dict() for link in args.link
+                        ],
+                        "files": [{"path": file} for file in args.file],
+                    },
                     book,
-                    args.alternate_title,
-                    args.isbn,
-                    args.publishing_date,
-                    args.cover,
-                    args.binding,
-                    args.publisher,
-                    args.person,
-                    args.language,
-                    args.link,
-                    args.file,
                 )
                 if created:
-                    msg = _(
-                        f'Successfully added edition "{edition}" with id '
-                        + f'"{edition.id}".'
+                    stdout.write(
+                        _('Successfully added edition "%(edition)s" with id "%(pk)d".')
+                        % {"edition": edition, "pk": edition.pk},
+                        "=",
+                        file=file,
                     )
-                    utils.stdout.p([msg], "=")
-                    fedition.stdout.info(edition)
+                    edition.print(file)
                 else:
-                    msg = _(
-                        f'The edition "{edition}" already exists with id '
-                        + f'"{edition.id}", aborting...'
+                    stdout.write(
+                        _(
+                            'The edition "%(edition)s" already exists with id "%(pk)d",'
+                            + " aborting..."
+                        )
+                        % {"edition": edition, "pk": edition.pk},
+                        "",
+                        file=file,
                     )
-                    utils.stdout.p([msg], "")
             elif args.edition_subparser == "edit" and book:
-                edition = fedition.get.by_term(args.edition, book)
+                edition = Edition.get(args.edition, book)
                 if edition:
-                    fedition.edit(edition, args.edit_subparser, args.value)
-                    msg = _(
-                        f'Successfully edited edition "{edition}" with id '
-                        + f'"{edition.id}".'
+                    edition.edit(args.edit_subparser, args.value)
+                    stdout.write(
+                        _('Successfully edited edition "%(edition)s" with id "%(pk)d".')
+                        % {"edition": edition, "pk": edition.pk},
+                        "=",
+                        file=file,
                     )
-                    utils.stdout.p([msg], "=")
-                    fedition.stdout.info(edition)
+                    edition.print(file)
                 else:
-                    utils.stdout.p(["No edition found."], "")
+                    stdout.write(_("No edition found."), "", file=file)
             elif args.edition_subparser == "info" and book:
-                edition = fedition.get.by_term(args.edition, book)
+                edition = Edition.get(args.edition, book)
                 if edition:
-                    fedition.stdout.info(edition)
+                    edition.print(file)
                 else:
-                    utils.stdout.p(["No edition found."], "")
+                    stdout.write(_("No edition found."), "", file=file)
             elif args.edition_subparser == "list" and book:
                 if args.shelf:
-                    editions = fedition.list.by_shelf(args.shelf, book)
+                    editions = Edition.list.by_shelf(args.shelf, book)
                 elif args.search:
-                    editions = fedition.list.by_term(args.search, book)
+                    editions = Edition.list.by_term(args.search, book)
                 else:
-                    editions = fedition.list.all(book)
-                fedition.stdout.list(editions)
+                    editions = Edition.objects.filter(book=book)
+                stdout.write(
+                    [
+                        _("Id"),
+                        _("Title"),
+                        _("Binding"),
+                        _("ISBN"),
+                        _("Publishing date"),
+                    ],
+                    "=",
+                    [0.05, 0.55, 0.7, 0.85],
+                    file=file,
+                )
+                for i, has_next in lookahead(editions):
+                    stdout.write(
+                        [i.pk, i.get_title(), i.binding, i.isbn, i.publishing_date],
+                        "_" if has_next else "=",
+                        [0.05, 0.55, 0.7, 0.85],
+                        file=file,
+                    )
             elif args.edition_subparser == "open" and book:
-                edition = fedition.get.by_term(args.edition, book)
+                edition = Edition.get(args.edition, book)
                 if edition:
-                    file = edition.files.get(pk=args.file)
-                    path = os.path.join(settings.MEDIA_ROOT, file.file.path)
+                    edition_file = edition.files.get(pk=args.file)
+                    path = settings.MEDIA_ROOT / edition_file.file.path
                     if sys.platform == "linux":
                         os.system(f'xdg-open "{path}"')
                     else:
                         os.system(f'open "{path}"')
                 else:
-                    utils.stdout.p(["No edition found."], "")
+                    stdout.write(_("No edition found."), "", file=file)
             elif args.edition_subparser == "read" and book:
-                edition = fedition.get.by_term(args.edition, book)
+                edition = Edition.get(args.edition, book)
+                read: Optional[Read] = None
                 if args.read_subparser == "add" and edition:
-                    read = fread.create(edition, args.started, args.finished)
-                    msg = _(f'Successfully added read with id "{read.id}".')
-                    utils.stdout.p([msg], "=")
-                    fread.stdout.info(read)
+                    read, created = Read.from_dict(
+                        {"started": args.started, "finished": args.finished}, edition
+                    )
+                    if created:
+                        stdout.write(
+                            _('Successfully added read with id "%(pk)d".')
+                            % {"pk": read.pk},
+                            "=",
+                            file=file,
+                        )
+                    else:
+                        stdout.write(
+                            _('The read already exists with id "%(pk)d".')
+                            % {"pk": read.pk},
+                            "",
+                            file=file,
+                        )
+                    read.print(file)
                 elif args.read_subparser == "delete" and edition:
-                    read = fread.get.by_pk(args.read, edition=edition)
+                    read = Read.get(args.read, editions=edition)
                     if read:
-                        fread.delete(read)
-                        msg = _("Successfully deleted read with id " + f'"{read.id}".')
-                        utils.stdout.p([msg], "")
+                        read.delete()
+                        stdout.write(
+                            _('Successfully deleted read with id "%(pk)d".')
+                            % {"pk": read.pk},
+                            "",
+                            file=file,
+                        )
                     else:
-                        utils.stdout.p(["No read found."], "")
+                        stdout.write(_("No read found."), "", file=file)
                 elif args.read_subparser == "edit" and edition:
-                    read = fread.get.by_pk(args.read, edition=edition)
+                    read = Read.get(args.read, editions=edition)
                     if read:
-                        fread.edit(read, args.field, args.value)
-                        msg = _("Successfully edited read with id " + f'"{read.id}".')
-                        utils.stdout.p([msg], "=")
-                        fread.stdout.info(read)
+                        read.edit(args.field, args.value)
+                        stdout.write(
+                            _('Successfully edited read with id "%(pk)d".')
+                            % {"pk": read.pk},
+                            "=",
+                            file=file,
+                        )
+                        read.info(file)
                     else:
-                        utils.stdout.p(["No read found."], "")
+                        stdout.write(_("No read found."), "", file=file)
                 else:
-                    utils.stdout.p(["No edition found."], "")
+                    stdout.write(_("No edition found."), "", file=file)
         else:
-            utils.stdout.p(["No book found."], "")
+            stdout.write(_("No book found."), "", file=file)
     elif args.subparser == "info":
-        book = fbook.get.by_term(args.book)
+        book = Book.get(args.book)
         if book:
-            fbook.stdout.info(book)
+            book.print(file)
         else:
-            utils.stdout.p(["No book found."], "")
+            stdout.write(_("No book found."), "", file=file)
     elif args.subparser == "list":
-        if args.shelf:
-            books = fbook.list.by_shelf(args.shelf)
-        elif args.search:
-            books = fbook.list.by_term(args.search)
+        if args.search:
+            books = Book.search(args.search)
+        elif args.shelf:
+            books = Book.by_shelf(args.shelf)
         else:
-            books = fbook.list.all()
-        fbook.stdout.list(books)
+            books = Book.objects.all()
+        stdout.write(
+            [_("Id"), ("Title"), _("Authors"), _("Series"), _("Volume")],
+            "=",
+            [0.05, 0.5, 0.75, 0.9],
+            file=file,
+        )
+        for i, has_next in lookahead(books):
+            stdout.write(
+                [
+                    i.pk,
+                    i.title,
+                    " ,".join(f"{a}" for a in i.authors.all()),
+                    i.series.name if i.series else "",
+                    i.volume,
+                ],
+                "_" if has_next else "=",
+                [0.05, 0.5, 0.75, 0.9],
+                file=file,
+            )
 
 
-def add_subparser(parser):
-    """Create book argparse subparser.
-
-    Args:
-        * parser: argparse parser
-    """
+def add_subparser(parser: _SubParsersAction):
+    """Add subparser for the Book model."""
     book_parser = parser.add_parser("book", help=_("Manage books"))
     book_parser.set_defaults(func=_book)
     subparser = book_parser.add_subparsers(dest="subparser")
@@ -266,12 +393,8 @@ def add_subparser(parser):
     list_parser.add_argument("--search", help=_("Filter books by term"))
 
 
-def edition_subparser(parser):
-    """Create edition argparse subparser.
-
-    Args:
-        * parser: argparse parser
-    """
+def edition_subparser(parser: _SubParsersAction):
+    """Add subparser for the Book model."""
     edition_parser = parser.add_parser("edition", help=_("Manage editions"))
     edition_parser.add_argument("book", help=_("Book"))
     subparser = edition_parser.add_subparsers(dest="edition_subparser")
