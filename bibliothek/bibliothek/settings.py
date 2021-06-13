@@ -205,16 +205,15 @@ CURRENCY_SYMBOL = None
 
 paths = [BASE_DIR / "bibliothek" / "local.py", APP_CONFIG_DIR / "settings.py"]
 
-for path in paths:
-    if not os.path.exists(path):
-        continue
-
-    try:
-        spec = importlib.util.spec_from_file_location("local_settings", path)
+try:
+    if (BASE_DIR / "local.py").exists():
+        spec = importlib.util.spec_from_file_location(
+            "local_settings", BASE_DIR / "local.py"
+        )
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         sys.modules["local_settings"] = module
         from local_settings import *
-    except ImportError as e:
-        sys.stderr.write(str(e))
-        pass
+except ImportError as e:
+    sys.stderr.write(str(e))
+    pass
