@@ -63,6 +63,27 @@ class LanguageModelTestCase(TestCase):
         self.assertIsNotNone(language2)
         self.assertEquals(language, language2)
 
+    def test_get_or_create(self):
+        language, created = Language.from_dict({"name": "English"})
+        self.assertTrue(created)
+        self.assertIsNotNone(language.id)
+        self.assertEquals(1, Language.objects.count())
+
+        language2 = Language.get_or_create("English")
+        self.assertIsNotNone(language2)
+        self.assertEquals(language, language2)
+        self.assertEquals(1, Language.objects.count())
+
+        language2 = Language.get_or_create(str(language.id))
+        self.assertIsNotNone(language2)
+        self.assertEquals(language, language2)
+        self.assertEquals(1, Language.objects.count())
+
+        language2 = Language.get_or_create("German")
+        self.assertIsNotNone(language2)
+        self.assertNotEquals(language, language2)
+        self.assertEquals(2, Language.objects.count())
+
     def test_search(self):
         language, created = Language.from_dict({"name": "English"})
         self.assertTrue(created)
