@@ -2,6 +2,12 @@
 __pycache__
 .venv
 .mypy_cache
+*.pyc
+
+# Django
+bibliothek/local.py
+bibliothek/static/*
+bibliothek/media/*
 
 # Other
 db.sqlite3
