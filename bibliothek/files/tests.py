@@ -21,12 +21,12 @@ import os
 from files.models import File
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
-from pathlib import Path
-from tempfile import NamedTemporaryFile
+from django.test import override_settings, TestCase
+from tempfile import mkdtemp, NamedTemporaryFile
 
 
 class FileModelTestCase(TestCase):
+    @override_settings(MEDIA_ROOT=mkdtemp())
     def test_from_to_dict(self):
         file, created = File.objects.get_or_create(
             file=SimpleUploadedFile("test.txt", b"Lorem ipsum dolorem")
@@ -34,9 +34,9 @@ class FileModelTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(file.id)
         self.assertEquals(
-            {"path": str(settings.MEDIA_ROOT / "files/test.txt")}, file.to_dict()
+            {"path": os.path.join(settings.MEDIA_ROOT, "files/test.txt")},
+            file.to_dict(),
         )
-        Path(file.file.path).unlink()
 
         with NamedTemporaryFile() as f:
             f.write(b"Lorem ipsum dolorem")
@@ -48,14 +48,18 @@ class FileModelTestCase(TestCase):
             )
             self.assertEquals(f"files/{os.path.basename(f.name)}", file.file.name)
             self.assertEquals(
-                {"path": str(settings.MEDIA_ROOT / "files" / os.path.basename(f.name))},
+                {
+                    "path": os.path.join(
+                        settings.MEDIA_ROOT, "files", os.path.basename(f.name)
+                    )
+                },
                 file.to_dict(),
             )
             self.assertEquals((file, False), File.from_dict(file.to_dict()))
-            Path(file.file.path).unlink()
 
+    @override_settings(MEDIA_ROOT=mkdtemp())
     def test_save(self):
         file = File(file=SimpleUploadedFile("test.txt", b"Lorem ipsum dolorem"))
         file.save()
         self.assertIsNotNone(file.id)
-        Path(file.file.path).unlink()
+        self.assertEquals("files/test.txt", file.file.name)

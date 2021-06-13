@@ -15,18 +15,20 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Files app config."""
+"""Files Django app config."""
 
 from django.apps import AppConfig
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class FilesConfig(AppConfig):
     """Files app config."""
 
+    default_auto_field = "django.db.models.BigAutoField"
     name = "files"
     verbose_name = _("File")
     verbose_name_plural = _("Files")
 
     def ready(self):
+        """Ready."""
         from . import signals
