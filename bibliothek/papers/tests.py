@@ -28,6 +28,7 @@ from journals.models import Journal
 from languages.models import Language
 from links.models import Link
 from papers.models import Paper
+from pathlib import Path
 from persons.models import Person
 from shelves.models import Acquisition, Read
 from tempfile import mkdtemp, NamedTemporaryFile
@@ -53,7 +54,7 @@ BIBTEX = (
 
 
 class PaperModelTestCase(TestCase):
-    @override_settings(MEDIA_ROOT=mkdtemp())
+    @override_settings(MEDIA_ROOT=Path(mkdtemp()))
     def test_from_bibfile(self):
         papers = None
         with NamedTemporaryFile() as f:
@@ -130,7 +131,7 @@ class PaperModelTestCase(TestCase):
             (papers[1][0].to_dict(), papers[1][1]),
         )
 
-    @override_settings(MEDIA_ROOT=mkdtemp())
+    @override_settings(MEDIA_ROOT=Path(mkdtemp()))
     def test_from_bibtex(self):
         papers = Paper.from_bibtex(BIBTEX)
         self.assertEquals(2, len(papers))
@@ -185,38 +186,48 @@ class PaperModelTestCase(TestCase):
         )
 
     def test_by_shelf(self):
-        paper, created = Paper.from_dict({
-            "title": "Random Science",
-        })
+        paper, created = Paper.from_dict(
+            {
+                "title": "Random Science",
+            }
+        )
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
 
-        paper, created = Paper.from_dict({
-            "title": "Random Science stuff",
-            "acquisitions": [{"date": "2021-01-02", "price": 10.0}],
-        })
+        paper, created = Paper.from_dict(
+            {
+                "title": "Random Science stuff",
+                "acquisitions": [{"date": "2021-01-02", "price": 10.0}],
+            }
+        )
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
 
-        paper, created = Paper.from_dict({
-            "title": "Random new stuff",
-            "reads": [{"started": "2021-01-02", "finished": "2021-01-03"}],
-        })
+        paper, created = Paper.from_dict(
+            {
+                "title": "Random new stuff",
+                "reads": [{"started": "2021-01-02", "finished": "2021-01-03"}],
+            }
+        )
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
 
-        paper, created = Paper.from_dict({
-            "title": "Stuff from Science",
-            "reads": [{"started": "2021-01-02", "finished": "2021-01-03"}],
-        })
+        paper, created = Paper.from_dict(
+            {
+                "title": "Stuff from Science",
+                "reads": [{"started": "2021-01-02", "finished": "2021-01-03"}],
+            }
+        )
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
 
-        paper, created = Paper.from_dict({
-            "title": "Science stuff",
-            "acquisitions": [{"date": "2021-01-02", "price": 10.0}],
-            "reads": [{"started": "2021-01-02", "finished": "2021-01-03"}],
-        })
+        paper, created = Paper.from_dict(
+            {
+                "title": "Science stuff",
+                "acquisitions": [{"date": "2021-01-02", "price": 10.0}],
+                "reads": [{"started": "2021-01-02", "finished": "2021-01-03"}],
+            }
+        )
         self.assertTrue(created)
         self.assertIsNotNone(paper.id)
 
@@ -225,7 +236,7 @@ class PaperModelTestCase(TestCase):
         self.assertEquals(3, Paper.by_shelf("read").count())
         self.assertEquals(2, Paper.by_shelf("unread").count())
 
-    @override_settings(MEDIA_ROOT=mkdtemp())
+    @override_settings(MEDIA_ROOT=Path(mkdtemp()))
     def test_from_to_dict(self):
         author1, created = Person.from_dict({"name": "John Doe"})
         self.assertTrue(created)
@@ -447,7 +458,7 @@ class PaperModelTestCase(TestCase):
                 paper.to_dict(),
             )
 
-    @override_settings(MEDIA_ROOT=mkdtemp())
+    @override_settings(MEDIA_ROOT=Path(mkdtemp()))
     def test_delete(self):
         paper, created = Paper.from_dict({"title": "Paper"})
         self.assertTrue(created)
@@ -502,7 +513,7 @@ class PaperModelTestCase(TestCase):
             )
             self.assertFalse(os.path.exists(path))
 
-    @override_settings(MEDIA_ROOT=mkdtemp())
+    @override_settings(MEDIA_ROOT=Path(mkdtemp()))
     def test_edit(self):
         paper, created = Paper.from_dict({"title": "Paper 2"})
         self.assertTrue(created)
@@ -682,7 +693,7 @@ class PaperModelTestCase(TestCase):
                 cout.getvalue(),
             )
 
-    @override_settings(MEDIA_ROOT=mkdtemp())
+    @override_settings(MEDIA_ROOT=Path(mkdtemp()))
     def test_save(self):
         paper = Paper(title="Why stuff happens or not?")
         paper.save()

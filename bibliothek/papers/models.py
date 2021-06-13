@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Papers Django models."""
+"""Papers Django app models."""
 
 import datetime
 import os
@@ -32,7 +32,7 @@ from django.db import models
 from django.db.models import F, Func, Q, Value
 from django.db.models.functions import Concat
 from django.template.defaultfilters import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from files.models import File
 from journals.models import Journal
 from languages.models import Language
@@ -89,16 +89,16 @@ class Paper(models.Model):
         """Filter by shelf."""
         assert shelf in ["acquired", "unacquired", "read", "unread"]
 
-        papers = Paper.objects.all()
+        query_set = cls.objects.all()
         if shelf == "acquired":
-            papers = papers.filter(acquisitions__isnull=False)
+            query_set = query_set.filter(acquisitions__isnull=False)
         elif shelf == "unacquired":
-            papers = papers.filter(acquisitions__isnull=True)
+            query_set = query_set.filter(acquisitions__isnull=True)
         elif shelf == "read":
-            papers = papers.filter(reads__isnull=False)
+            query_set = query_set.filter(reads__isnull=False)
         elif shelf == "unread":
-            papers = papers.filter(reads__isnull=True)
-        return papers.distinct()
+            query_set = query_set.filter(reads__isnull=True)
+        return query_set.distinct()
 
     @classmethod
     def from_bibfile(
@@ -269,21 +269,24 @@ class Paper(models.Model):
             Q(pk=term if term.isdigit() else None) | Q(name__icontains=term)
         )
 
-        papers = cls.objects.annotate(
-            jv=Concat("journal__name", Value(" "), "volume")
+        query_set = cls.objects.annotate(
+            jv=Concat(
+                "journal__name", Value(" "), "volume", output_field=models.TextField()
+            )
         ).all()
         if has_file is not None:
-            papers = papers.filter(files__isnull=not has_file)
-        return papers.filter(
+            query_set = query_set.filter(files__isnull=not has_file)
+        return query_set.filter(
             Q(pk=term if term.isdigit() else None)
             | Q(title__icontains=term)
             | Q(authors__in=persons)
             | Q(jv__icontains=term)
         ).distinct()
 
-    def delete(self: T) -> Tuple[int, Dict]:
+    def delete(self: T) -> Tuple[int, Dict[str, int]]:
         """Delete."""
-        def append(d: Tuple[int, Dict]) -> int:
+
+        def append(d: Tuple[int, Dict[str, int]]) -> int:
             for k, v in d[1].items():
                 if k in deleted:
                     deleted[k] += v
@@ -292,7 +295,7 @@ class Paper(models.Model):
             return d[0]
 
         nb_deleted = 0
-        deleted = {}
+        deleted: Dict[str, int] = {}
         for link in self.links.all():
             if (
                 link.editions.count() == 0
@@ -339,28 +342,28 @@ class Paper(models.Model):
 
         if field == "title":
             self.title = value
-        elif field == "author":
-            author, created = Person.from_dict({"name": value})
+        elif field == "author" and isinstance(value, str):
+            author = Person.get_or_create(value)
             if self.authors.filter(pk=author.pk).exists():
                 self.authors.remove(author)
             else:
                 self.authors.add(author)
         elif field == "publishing_date" or field == "publishing-date":
             self.publishing_date = value
-        elif field == "journal":
-            self.journal, created = Journal.from_dict({"name": value})
+        elif field == "journal" and isinstance(value, str):
+            self.journal = Journal.get_or_create(value)
         elif field == "volume":
             self.volume = value
         elif field == "bibtex":
             self.bibtex = value
-        elif field == "language":
-            language, created = Language.from_dict({"name": value})
+        elif field == "language" and isinstance(value, str):
+            language = Language.get_or_create(value)
             if self.languages.filter(pk=language.pk).exists():
                 self.languages.remove(language)
             else:
                 self.languages.add(language)
-        elif field == "link":
-            link, created = Link.from_dict({"url": value})
+        elif field == "link" and isinstance(value, str):
+            link = Link.get_or_create(value)
             if self.links.filter(pk=link.pk).exists():
                 self.links.remove(link)
             else:
@@ -391,8 +394,14 @@ class Paper(models.Model):
         else:
             stdout.write([_("Authors"), ""], positions=[0.33], file=file)
 
-        journal = (f"{self.journal.pk}: {self.journal.name}") if self.journal else ""
-        stdout.write([_("Journal"), journal], positions=[0.33], file=file)
+        stdout.write(
+            [
+                _("Journal"),
+                f"{self.journal.pk}: {self.journal.name}" if self.journal else "",
+            ],
+            positions=[0.33],
+            file=file,
+        )
         stdout.write(
             [_("Volume"), self.volume if self.volume else ""],
             positions=[0.33],
@@ -454,7 +463,8 @@ class Paper(models.Model):
                 stdout.write(
                     [
                         "" if i else _("Reads"),
-                        f"{r.pk}: {_('date started')}={r.started}, {_('date finished')}={r.finished}"
+                        f"{r.pk}: {_('date started')}={r.started}, "
+                        + f"{_('date finished')}={r.finished}",
                     ],
                     "" if has_next else "_",
                     positions=[0.33],
@@ -512,10 +522,10 @@ class Paper(models.Model):
             "papers", str(self.pk), os.path.basename(file.file.name)
         )
 
-        new_path = os.path.join(settings.MEDIA_ROOT, save_name)
+        new_path = settings.MEDIA_ROOT / save_name
         if os.path.exists(file.file.path) and file.file.path != new_path:
-            if not os.path.exists(os.path.dirname(new_path)):
-                os.makedirs(os.path.dirname(new_path))
+            if not new_path.parent.exists():
+                new_path.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(file.file.path, new_path)
             file.file.name = save_name
             file.save()

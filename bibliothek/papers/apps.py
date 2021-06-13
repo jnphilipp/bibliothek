@@ -18,12 +18,13 @@
 """Papers Django app config."""
 
 from django.apps import AppConfig
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class PapersConfig(AppConfig):
     """Papers app config."""
 
+    default_auto_field = "django.db.models.AutoField"
     name = "papers"
     verbose_name = _("Paper")
     verbose_name_plural = _("Papers")

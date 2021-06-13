@@ -20,15 +20,18 @@
 import datetime
 import os
 import sys
-import utils
 
+from argparse import _SubParsersAction, Namespace
 from bibliothek import stdout
 from bibliothek.utils import lookahead
-from argparse import _SubParsersAction, Namespace
 from bibliothek.argparse import valid_date
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
+from journals.models import Journal
+from languages.models import Language
+from links.models import Link
 from papers.models import Paper
+from persons.models import Person
 from shelves.models import Acquisition, Read
 from shelves.argparse import acquisition_subparser, read_subparser
 from typing import Optional, TextIO
@@ -45,13 +48,15 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
             )
             if created:
                 stdout.write(
-                    _(f'Successfully added acquisition with id "{acquisition.pk}".'),
+                    _('Successfully added acquisition with id "%(pk)d".')
+                    % {"pk": acquisition.pk},
                     "=",
                     file=file,
                 )
             else:
                 stdout.write(
-                    _(f'The acquisition already exists with id "{acquisition.pk}".'),
+                    _('The acquisition already exists with id "%(pk)d".')
+                    % {"pk": acquisition.pk},
                     "",
                     file=file,
                 )
@@ -61,7 +66,8 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
             if acquisition:
                 acquisition.delete(acquisition)
                 stdout.write(
-                    _(f'Successfully deleted acquisition with id "{acquisition.pk}".'),
+                    _('Successfully deleted acquisition with id "%(pk)d".')
+                    % {"pk": acquisition.pk},
                     "",
                     file=file,
                 )
@@ -72,37 +78,47 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
             if acquisition:
                 acquisition.edit(args.field, args.value)
                 stdout.write(
-                    _(f'Successfully edited acquisition with id "{acquisition.pk}".'),
+                    _('Successfully edited acquisition with id "%(pk)d".')
+                    % {"pk": acquisition.pk},
                     "=",
                     file=file,
                 )
                 acquisition.print(file)
             else:
-                utils.stdout.p(["No acquisition found."], "")
+                stdout.write(["No acquisition found."], "", file=file)
         else:
             stdout.write(_("No paper found."), "", file=file)
     elif args.subparser == "add":
         paper, created = Paper.from_dict(
             {
                 "title": args.title,
-                "authors": [{"name": author} for author in args.author],
+                "authors": [
+                    Person.get_or_create(author).to_dict() for author in args.author
+                ],
                 "publishing_date": args.publishing_date,
-                "journal": {"name": args.journal},
+                "journal": Journal.get_or_create(args.journal).to_dict()
+                if args.journal
+                else None,
                 "volume": args.volume,
-                "languages": [{"name": language} for language in args.language],
-                "links": [{"name": link} for link in args.link],
+                "languages": [
+                    Language.get_or_create(language).to_dict()
+                    for language in args.language
+                ],
+                "links": [Link.get_or_create(link).to_dict() for link in args.link],
                 "files": [{"path": file} for file in args.file],
             }
         )
         if created:
             stdout.write(
-                _(f'Successfully added paper "{paper.name}" with id "{paper.pk}".'),
+                _('Successfully added paper "%(title)s" with id "%(pk)d".')
+                % {"title": paper.title, "pk": paper.pk},
                 "=",
                 file=file,
             )
         else:
             stdout.write(
-                _(f'The paper "{paper.name}" already exists with id "{paper.pk}".'),
+                _('The paper "%(title)s" already exists with id "%(pk)d".')
+                % {"title": paper.title, "pk": paper.pk},
                 "",
                 file=file,
             )
@@ -112,7 +128,8 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
         if paper:
             paper.delete()
             stdout.write(
-                _(f'Successfully deleted paper with id "{paper.pk}".'),
+                _('Successfully deleted paper with id "%(title)s".')
+                % {"title": paper.title},
                 "",
                 file=file,
             )
@@ -123,16 +140,14 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
         if paper:
             paper.edit(args.edit_subparser, args.value)
             stdout.write(
-                _(
-                    f'Successfully edited paper "{paper.title}" with id '
-                    + f'"{paper.pk}".'
-                ),
+                _('Successfully edited paper "%(title)s" with id "%(pk)d".')
+                % {"title": paper.title, "pk": paper.pk},
                 "",
                 file=file,
             )
             paper.print(file)
         else:
-            stdout.write(_("No series found."), "", file=file)
+            stdout.write(_("No paper found."), "", file=file)
     elif args.subparser == "info":
         paper = Paper.get(args.paper)
         if paper:
@@ -154,7 +169,7 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
         )
         for i, has_next in lookahead(papers):
             stdout.write(
-                [i.id, i.name, i.journal.name, i.volume],
+                [i.pk, i.name, i.journal.name, i.volume],
                 "_" if has_next else "=",
                 [0.05, 0.7, 0.85],
                 file=file,
@@ -163,7 +178,7 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
         paper = Paper.get(args.paper)
         if paper:
             paper_file = paper.files.get(pk=args.file)
-            path = os.path.join(settings.MEDIA_ROOT, paper_file.file.path)
+            path = settings.MEDIA_ROOT / paper_file.file.path
             if sys.platform == "linux":
                 os.system(f'xdg-open "{path}"')
             else:
@@ -174,10 +189,8 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
         for paper, created in Paper.from_bibfile(args.bibfile, args.file):
             if created:
                 stdout.write(
-                    _(
-                        f'Successfully added paper "{paper.title}" with id '
-                        + f'"{paper.pk}".'
-                    ),
+                    _('Successfully added paper "%(title)s" with id "%(pk)d".')
+                    % {"title": paper.title, "pk": paper.pk},
                     file=file,
                 )
                 if args.acquisition:
@@ -186,28 +199,22 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
                     )
                     if created:
                         stdout.write(
-                            _(
-                                "Successfully added acquisition with id "
-                                + f'"{acquisition.pk}".'
-                            ),
+                            _('Successfully added acquisition with id "%(pk)d".')
+                            % {"pk": acquisition.pk},
                             "=",
                             file=file,
                         )
                     else:
                         stdout.write(
-                            _(
-                                "The acquisition already exists with id "
-                                + f'"{acquisition.pk}".'
-                            ),
+                            _('The acquisition already exists with id "%(pk)d".')
+                            % {"pk": acquisition.pk},
                             "=",
                             file=file,
                         )
             else:
                 stdout.write(
-                    _(
-                        f'The paper "{paper.title}" already exists with id '
-                        + f'"{paper.pk}".'
-                    ),
+                    _('The paper "%(title)s" already exists with id "%(pk)d".')
+                    % {"title": paper.title, "pk": paper.pk},
                     "=",
                     file=file,
                 )
@@ -221,11 +228,13 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
             )
             if created:
                 stdout.write(
-                    _(f'Successfully added read with id "{read.pk}".'), "=", file=file
+                    _('Successfully added read with id "%(pk)d".') % {"pk": read.pk},
+                    "=",
+                    file=file,
                 )
             else:
                 stdout.write(
-                    _(f'The read already exists with id "{paper.pk}".'),
+                    _('The read already exists with id "%(pk)d".') % {"pk": read.pk},
                     "",
                     file=file,
                 )
@@ -235,7 +244,9 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
             if read:
                 read.delete()
                 stdout.write(
-                    _(f'Successfully deleted read with id "{read.pk}".'), "", file=file
+                    _('Successfully deleted read with id "%(pk)d".') % {"pk": read.pk},
+                    "",
+                    file=file,
                 )
             else:
                 stdout.write(_("No read found."), "", file=file)
@@ -244,7 +255,9 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
             if read:
                 read.edit(args.field, args.value)
                 stdout.write(
-                    _(f'Successfully edited read with id "{read.pk}".'), "=", file=file
+                    _('Successfully edited read with id "%(pk)d".') % {"pk": read.pk},
+                    "=",
+                    file=file,
                 )
                 read.info(file)
             else:

@@ -22,7 +22,7 @@ from django.contrib.contenttypes.admin import GenericStackedInline
 from django.db import models
 from django.forms import Textarea
 from django.utils.html import format_html_join
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from files.models import File
 from papers.models import Paper
 from shelves.models import Acquisition, Read
