@@ -15,17 +15,17 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Shelves Django argparse."""
+"""Shelves argparse."""
 
 import sys
 
 from argparse import _SubParsersAction, Namespace
 from bibliothek import stdout
 from bibliothek.argparse import valid_date
-from books.functions import edition as fedition
-from django.utils.translation import ugettext_lazy as _
-from magazines.functions import issue as fissue
-from papers.functions import paper as fpaper
+from books.models import Edition
+from django.utils.translation import gettext_lazy as _
+from magazines.models import Issue
+from papers.models import Paper
 from shelves.models import Acquisition, Read
 from typing import Optional, TextIO
 
@@ -33,9 +33,9 @@ from typing import Optional, TextIO
 def _acquisition(args: Namespace, file: TextIO = sys.stdout):
     acquisition: Optional[Acquisition] = None
     if args.subparser == "add":
-        edition = fedition.get.by_term(args.obj)
-        paper = fpaper.get.by_term(args.obj)
-        issue = fissue.get.by_term(args.obj)
+        edition = Edition.get(args.obj)
+        paper = Paper.get(args.obj)
+        issue = Issue.get(args.obj)
 
         obj = None
         if edition is None and paper is None and issue is None:
@@ -54,20 +54,16 @@ def _acquisition(args: Namespace, file: TextIO = sys.stdout):
             )
             if created:
                 stdout.write(
-                    _(
-                        f'Successfully added acquisition with id "{acquisition.id}" to '
-                        + f'"{obj}".'
-                    ),
+                    _('Successfully added acquisition with id "%(pk)d" to "%(obj)s".')
+                    % {"pk": acquisition.pk, "obj": obj},
                     "=",
                     file=file,
                 )
                 acquisition.print(file)
             else:
                 stdout.write(
-                    _(
-                        f'The acquisition already exists with id "{acquisition.id}", '
-                        + "aborting..."
-                    ),
+                    _('The acquisition already exists with id "%(pk)d", aborting...')
+                    % {"pk": acquisition.pk},
                     "",
                     file=file,
                 )
@@ -78,7 +74,8 @@ def _acquisition(args: Namespace, file: TextIO = sys.stdout):
         if acquisition:
             acquisition.delete()
             stdout.write(
-                _(f'Successfully deleted acquisition with id "{acquisition.id}".'),
+                _('Successfully deleted acquisition with id "%(pk)d".')
+                % {"pk": acquisition.pk},
                 "",
                 file=file,
             )
@@ -89,7 +86,8 @@ def _acquisition(args: Namespace, file: TextIO = sys.stdout):
         if acquisition:
             acquisition.edit(args.edit_subparser, args.value)
             stdout.write(
-                _(f'Successfully edited acquisition with id "{acquisition.id}".'),
+                _('Successfully edited acquisition with id "%(pk)d".')
+                % {"pk": acquisition.pk},
                 "",
                 file=file,
             )
@@ -107,9 +105,9 @@ def _acquisition(args: Namespace, file: TextIO = sys.stdout):
 def _read(args: Namespace, file: TextIO = sys.stdout):
     read: Optional[Acquisition] = None
     if args.subparser == "add":
-        edition = fedition.get.by_term(args.obj)
-        paper = fpaper.get.by_term(args.obj)
-        issue = fissue.get.by_term(args.obj)
+        edition = Edition.get(args.obj)
+        paper = Paper.get(args.obj)
+        issue = Issue.get(args.obj)
 
         obj = None
         if edition is None and paper is None and issue is None:
@@ -128,14 +126,16 @@ def _read(args: Namespace, file: TextIO = sys.stdout):
             )
             if created:
                 stdout.write(
-                    _(f'Successfully added read with id "{read.id}" to "{obj}".'),
+                    _('Successfully added read with id "%(pk)d" to "{obj}".')
+                    % {"pk": read.pk, "obj": obj},
                     "=",
                     file=file,
                 )
                 read.print(file)
             else:
                 stdout.write(
-                    _(f'The read already exists with id "{read.id}", aborting...'),
+                    _('The read already exists with id "%(pk)d", aborting...')
+                    % {"pk": read.pk},
                     "",
                     file=file,
                 )
@@ -146,7 +146,7 @@ def _read(args: Namespace, file: TextIO = sys.stdout):
         if read:
             read.delete()
             stdout.write(
-                _(f'Successfully deleted read with id "{read.id}".'),
+                _('Successfully deleted read with id "%(pk)d".') % {"pk": read.pk},
                 "",
                 file=file,
             )
@@ -157,7 +157,7 @@ def _read(args: Namespace, file: TextIO = sys.stdout):
         if read:
             read.edit(args.field, args.value)
             stdout.write(
-                _(f'Successfully edited read with id "{read.id}".'),
+                _('Successfully edited read with id "%(pk)d".') % {"pk": read.pk},
                 "",
                 file=file,
             )

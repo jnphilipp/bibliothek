@@ -26,7 +26,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar, Union
 
 
@@ -53,10 +53,14 @@ class Acquisition(models.Model):
 
         Returns True if was crated, i. e. was not found in the DB.
         """
+        date = None
+        if "date" in data and data["date"]:
+            if type(data["date"]) == str:
+                date = datetime.datetime.strptime(data["date"], "%Y-%m-%d").date()
+            elif type(data["date"]) == datetime.date:
+                date = data["date"]
         return cls.objects.get_or_create(
-            date=datetime.datetime.strptime(data["date"], "%Y-%m-%d").date()
-            if "date" in data and data["date"]
-            else None,
+            date=date,
             price=data["price"] if "price" in data else 0,
             content_type=ContentType.objects.get_for_model(content_object),
             object_id=content_object.pk,
@@ -101,8 +105,18 @@ class Acquisition(models.Model):
             )
         return (
             cls.objects.annotate(
-                jv=Concat("papers__journal__name", Value(" "), "papers__volume"),
-                ni=Concat("issues__magazine__name", Value(" "), "issues__issue"),
+                jv=Concat(
+                    "papers__journal__name",
+                    Value(" "),
+                    "papers__volume",
+                    output_field=models.TextField(),
+                ),
+                ni=Concat(
+                    "issues__magazine__name",
+                    Value(" "),
+                    "issues__issue",
+                    output_field=models.TextField(),
+                ),
             )
             .filter(
                 Q(pk=term if term.isdigit() else None)
@@ -130,7 +144,11 @@ class Acquisition(models.Model):
         """Print instance info."""
         stdout.write([_("Field"), _("Value")], "=", [0.33], file=file)
         stdout.write([_("Id"), self.id], positions=[0.33], file=file)
-        stdout.write([_("Obj"), self.content_object], positions=[0.33], file=file)
+        stdout.write(
+            [_("Obj"), f"{self.content_object.pk}: {self.content_object}"],
+            positions=[0.33],
+            file=file,
+        )
         stdout.write([_("Date"), self.date], positions=[0.33], file=file)
         stdout.write([_("Price"), self.price], positions=[0.33], file=file)
 
@@ -176,13 +194,24 @@ class Read(models.Model):
 
         Returns True if was crated, i. e. was not found in the DB.
         """
+        started = None
+        if "started" in data and data["started"]:
+            if type(data["started"]) == str:
+                started = datetime.datetime.strptime(data["started"], "%Y-%m-%d").date()
+            elif type(data["started"]) == datetime.date:
+                started = data["started"]
+        finished = None
+        if "finished" in data and data["finished"]:
+            if type(data["finished"]) == str:
+                finished = datetime.datetime.strptime(
+                    data["finished"], "%Y-%m-%d"
+                ).date()
+            elif type(data["finished"]) == datetime.date:
+                finished = data["finished"]
+
         return cls.objects.get_or_create(
-            started=datetime.datetime.strptime(data["started"], "%Y-%m-%d").date()
-            if "started" in data and data["started"]
-            else None,
-            finished=datetime.datetime.strptime(data["finished"], "%Y-%m-%d").date()
-            if "finished" in data and data["finished"]
-            else None,
+            started=started,
+            finished=finished,
             content_type=ContentType.objects.get_for_model(content_object),
             object_id=content_object.pk,
         )
@@ -218,8 +247,18 @@ class Read(models.Model):
             )
         return (
             cls.objects.annotate(
-                jv=Concat("papers__journal__name", Value(" "), "papers__volume"),
-                ni=Concat("issues__magazine__name", Value(" "), "issues__issue"),
+                jv=Concat(
+                    "papers__journal__name",
+                    Value(" "),
+                    "papers__volume",
+                    output_field=models.TextField(),
+                ),
+                ni=Concat(
+                    "issues__magazine__name",
+                    Value(" "),
+                    "issues__issue",
+                    output_field=models.TextField(),
+                ),
             )
             .filter(
                 Q(pk=term if term.isdigit() else None)
@@ -247,7 +286,11 @@ class Read(models.Model):
         """Print instance info."""
         stdout.write([_("Field"), _("Value")], "=", [0.33], file=file)
         stdout.write([_("Id"), self.id], positions=[0.33], file=file)
-        stdout.write([_("Obj"), self.content_object], positions=[0.33], file=file)
+        stdout.write(
+            [_("Obj"), f"{self.content_object.pk}: {self.content_object}"],
+            positions=[0.33],
+            file=file,
+        )
         stdout.write([_("Started"), self.started], positions=[0.33], file=file)
         stdout.write([_("Finished"), self.finished], positions=[0.33], file=file)
 
