@@ -63,6 +63,27 @@ class GenreModelTestCase(TestCase):
         self.assertIsNotNone(genre2)
         self.assertEquals(genre, genre2)
 
+    def test_get_or_create(self):
+        genre, created = Genre.from_dict({"name": "Science Fiction"})
+        self.assertTrue(created)
+        self.assertIsNotNone(genre.id)
+        self.assertEquals(1, Genre.objects.count())
+
+        genre2 = Genre.get_or_create("Science Fiction")
+        self.assertIsNotNone(genre2)
+        self.assertEquals(genre, genre2)
+        self.assertEquals(1, Genre.objects.count())
+
+        genre2 = Genre.get_or_create(str(genre.id))
+        self.assertIsNotNone(genre2)
+        self.assertEquals(genre, genre2)
+        self.assertEquals(1, Genre.objects.count())
+
+        genre2 = Genre.get_or_create("SciFi")
+        self.assertIsNotNone(genre2)
+        self.assertNotEquals(genre, genre2)
+        self.assertEquals(2, Genre.objects.count())
+
     def test_search(self):
         genre, created = Genre.from_dict({"name": "Science Fiction"})
         self.assertTrue(created)

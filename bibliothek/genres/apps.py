@@ -15,14 +15,16 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Genres Django app config."""
 
 from django.apps import AppConfig
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class GenresConfig(AppConfig):
     """Genres app config."""
 
+    default_auto_field = "django.db.models.AutoField"
     name = "genres"
     verbose_name = _("Genre")
     verbose_name_plural = _("Genres")

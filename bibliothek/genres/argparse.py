@@ -15,12 +15,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Genres Django app argparse."""
 
 import sys
 
 from bibliothek import stdout
 from bibliothek.utils import lookahead
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from genres.models import Genre
 from typing import Optional, TextIO
 
@@ -31,22 +32,24 @@ def _genre(args, file: TextIO = sys.stdout):
         genre, created = Genre.from_dict({"name": args.name})
         if created:
             stdout.write(
-                _(f'Successfully added genre "{genre.name}" with id "{genre.id}".'), "="
+                _('Successfully added genre "%(name)s" with id "%(pk)d".')
+                % {"name": genre.name, "pk": genre.pk},
+                "=",
             )
             genre.print(file)
         else:
             stdout.write(
-                _(
-                    f'The genre "{genre.name}" already exists with id "{genre.id}", '
-                    + "aborting..."
-                ),
+                _('The genre "%(name)s" already exists with id "%(pk)d", aborting...')
+                % {"name": genre.name, "pk": genre.pk},
                 "",
             )
     elif args.subparser == "delete":
         genre = Genre.get(args.genre)
         if genre:
             genre.delete()
-            stdout.write(_(f'Successfully deleted genre with id "{genre.id}".'), "")
+            stdout.write(
+                _('Successfully deleted genre with id "%(pk)d".') % {"pk": genre.pk}, ""
+            )
         else:
             stdout.write(_("No genre found."), "")
     elif args.subparser == "edit":
@@ -54,7 +57,9 @@ def _genre(args, file: TextIO = sys.stdout):
         if genre:
             genre.edit(args.field, args.value)
             stdout.write(
-                _(f'Successfully edited genre "{genre.name}" with id "{genre.id}".'), ""
+                _('Successfully edited genre "%(name)s" with id "%(pk)d".')
+                % {"name": genre.name, "pk": genre.pk},
+                "",
             )
             genre.print(file)
         else:
@@ -76,7 +81,7 @@ def _genre(args, file: TextIO = sys.stdout):
 
 
 def add_subparser(parser):
-    """Add subparser for the genre module."""
+    """Add subparser for the genres module."""
     genre_parser = parser.add_parser("genre", help=_("Manage genres"))
     genre_parser.set_defaults(func=_genre)
     subparser = genre_parser.add_subparsers(dest="subparser")
