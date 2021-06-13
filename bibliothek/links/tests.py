@@ -66,6 +66,27 @@ class LinkModelTestCase(TestCase):
         self.assertIsNotNone(link2)
         self.assertEquals(link, link2)
 
+    def test_get_or_create(self):
+        link, created = Link.from_dict({"url": "https://example.com"})
+        self.assertTrue(created)
+        self.assertIsNotNone(link.id)
+        self.assertEquals(1, Link.objects.count())
+
+        link2 = Link.get_or_create("https://example.com")
+        self.assertIsNotNone(link2)
+        self.assertEquals(link, link2)
+        self.assertEquals(1, Link.objects.count())
+
+        link2 = Link.get_or_create(str(link.id))
+        self.assertIsNotNone(link2)
+        self.assertEquals(link, link2)
+        self.assertEquals(1, Link.objects.count())
+
+        link2 = Link.get_or_create("https://example.org")
+        self.assertIsNotNone(link2)
+        self.assertNotEquals(link, link2)
+        self.assertEquals(2, Link.objects.count())
+
     def test_search(self):
         link, created = Link.from_dict({"url": "https://example.com"})
         self.assertTrue(created)

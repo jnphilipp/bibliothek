@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+import django.db.models.expressions
 
 
 class Migration(migrations.Migration):
@@ -22,7 +23,7 @@ class Migration(migrations.Migration):
                 ('link', models.URLField(max_length=4096, unique=True, verbose_name='Link')),
             ],
             options={
-                'ordering': ('link',),
+                'ordering': (django.db.models.expressions.Func(django.db.models.expressions.F('link'), function='LOWER'),),
                 'verbose_name': 'Link',
                 'verbose_name_plural': 'Links',
             },
