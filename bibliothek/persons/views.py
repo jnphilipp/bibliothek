@@ -15,8 +15,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Persons Django app views."""
 
-from django.db.models import Case, CharField, Count, When
+from django.db.models import Case, Count, TextField, When
 from django.db.models.query import QuerySet
 from django.views import generic
 from persons.models import Person
@@ -74,7 +75,7 @@ class DetailView(generic.DetailView):
                 title=Case(
                     When(alternate_title__isnull=False, then="alternate_title"),
                     default="book__title",
-                    output_field=CharField(),
+                    output_field=TextField(),
                 )
             )
             .all()

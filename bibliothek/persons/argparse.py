@@ -15,13 +15,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Persons Django app argparse."""
 
 import sys
 
 from argparse import _SubParsersAction, Namespace
 from bibliothek import stdout
 from bibliothek.utils import lookahead
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
+from links.models import Link
 from persons.models import Person
 from typing import Optional, TextIO
 
@@ -30,21 +32,23 @@ def _person(args: Namespace, file: TextIO = sys.stdout):
     person: Optional[Person] = None
     if args.subparser == "add":
         person, created = Person.from_dict(
-            {"name": args.name, "links": [{"name": link} for link in args.link]}
+            {
+                "name": args.name,
+                "links": [Link.get_or_create(link).to_dict() for link in args.link],
+            }
         )
         if created:
             stdout.write(
-                _(f'Successfully added person "{person.name}" with id "{person.id}".'),
+                _('Successfully added person "%(name)s" with id "%(pk)d".')
+                % {"name": person.name, "pk": person.pk},
                 "=",
                 file=file,
             )
             person.print(file)
         else:
             stdout.write(
-                _(
-                    f'The person "{person.name}" already exists with id "{person.id}", '
-                    + "aborting..."
-                ),
+                _('The person "%(name)s" already exists with id "%(pk)d", aborting...')
+                % {"name": person.name, "pk": person.pk},
                 "",
                 file=file,
             )
@@ -53,7 +57,8 @@ def _person(args: Namespace, file: TextIO = sys.stdout):
         if person:
             person.delete()
             stdout.write(
-                _(f'Successfully deleted person with id "{person.id}".'),
+                _('Successfully deleted person with id "%(name)s".')
+                % {"name": person.name},
                 "",
                 file=file,
             )
@@ -64,7 +69,8 @@ def _person(args: Namespace, file: TextIO = sys.stdout):
         if person:
             person.edit(args.field, args.value)
             stdout.write(
-                _(f'Successfully edited person "{person.name}" with id "{person.id}".'),
+                _('Successfully edited person "%(name)s" with id "%(pk)d".')
+                % {"name": person.name, "pk": person.pk},
                 "",
                 file=file,
             )

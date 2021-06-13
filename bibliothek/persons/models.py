@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Persons Django app models."""
 
 import hashlib
 import sys
@@ -24,13 +25,13 @@ from bibliothek.utils import lookahead
 from django.db import models
 from django.db.models import F, Func, Q
 from django.template.defaultfilters import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from links.models import Link
 from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar
 
 
 class Person(models.Model):
-    """Binding ORM Model."""
+    """Person ORM Model."""
 
     T = TypeVar("T", bound="Person", covariant=True)
 
@@ -70,6 +71,14 @@ class Person(models.Model):
             if query_set.count() != 1:
                 return None
         return query_set[0]
+
+    @classmethod
+    def get_or_create(cls: Type[T], term: str) -> T:
+        """Search for given term and if not found create it, return single object."""
+        obj = cls.get(term)
+        if obj is None:
+            return cls.from_dict({"name": term})[0]
+        return obj
 
     @classmethod
     def search(cls: Type[T], term: str) -> models.query.QuerySet[T]:

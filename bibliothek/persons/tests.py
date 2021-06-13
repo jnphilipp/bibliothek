@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -103,6 +103,27 @@ class PersonModelTestCase(TestCase):
         person2 = Person.get(str(person.id))
         self.assertIsNotNone(person2)
         self.assertEquals(person, person2)
+
+    def test_get_or_create(self):
+        person, created = Person.from_dict({"name": "Hans Müller"})
+        self.assertTrue(created)
+        self.assertIsNotNone(person.id)
+        self.assertEquals(1, Person.objects.count())
+
+        person2 = Person.get_or_create("Hans Müller")
+        self.assertIsNotNone(person2)
+        self.assertEquals(person, person2)
+        self.assertEquals(1, Person.objects.count())
+
+        person2 = Person.get_or_create(str(person.id))
+        self.assertIsNotNone(person2)
+        self.assertEquals(person, person2)
+        self.assertEquals(1, Person.objects.count())
+
+        person2 = Person.get_or_create("Franz Müller")
+        self.assertIsNotNone(person2)
+        self.assertNotEquals(person, person2)
+        self.assertEquals(2, Person.objects.count())
 
     def test_search(self):
         person, created = Person.from_dict({"name": "Hans Müller"})
