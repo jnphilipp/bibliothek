@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Journals Django app views."""
 
 from django.db.models import Count
 from django.db.models.query import QuerySet
@@ -43,7 +44,7 @@ class ListView(generic.ListView):
 
 
 class DetailView(generic.DetailView):
-    """Series detail view."""
+    """Journal detail view."""
 
     model = Journal
 

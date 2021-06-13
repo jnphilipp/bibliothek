@@ -15,9 +15,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Journals Django app admin."""
 
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from journals.models import Journal
 
 
@@ -30,6 +31,6 @@ class JournalAdmin(admin.ModelAdmin):
         (_("Links"), {"fields": ["links"]}),
     ]
     filter_horizontal = ("links",)
-    list_display = ("name", "show_paper_count", "updated_at")
+    list_display = ("name", "updated_at")
     readonly_fields = ("slug",)
     search_fields = ("name",)

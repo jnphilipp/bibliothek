@@ -22,7 +22,7 @@ from journals.models import Journal
 from links.models import Link
 
 
-class JournalModelsTestCase(TestCase):
+class JournalModelTestCase(TestCase):
     def test_from_to_dict(self):
         link, created = Link.objects.get_or_create(link="https://tj.org")
         self.assertTrue(created)
@@ -56,18 +56,6 @@ class JournalModelsTestCase(TestCase):
             (journal, False), Journal.from_dict({"name": "Random Journal"})
         )
 
-    def test_edit(self):
-        journal, created = Journal.objects.get_or_create(name="Science Journal")
-        self.assertTrue(created)
-        self.assertIsNotNone(journal.id)
-
-        journal.edit("name", "The Science Journal")
-        self.assertEquals("The Science Journal", journal.name)
-
-        self.assertEquals(0, journal.links.count())
-        journal.edit("link", "https://tsj.net")
-        self.assertEquals(1, journal.links.count())
-
     def test_delete(self):
         journals, created = Journal.from_dict({"name": "Science Journal"})
         self.assertTrue(created)
@@ -90,47 +78,80 @@ class JournalModelsTestCase(TestCase):
             deleted,
         )
 
-    def test_get(self):
-        series, created = Journal.from_dict({"name": "Science Journal"})
+    def test_edit(self):
+        journal, created = Journal.objects.get_or_create(name="Science Journal")
         self.assertTrue(created)
-        self.assertIsNotNone(series.id)
+        self.assertIsNotNone(journal.id)
 
-        series2 = Journal.get("Science Journal")
-        self.assertIsNotNone(series2)
-        self.assertEquals(series, series2)
+        journal.edit("name", "The Science Journal")
+        self.assertEquals("The Science Journal", journal.name)
 
-        series2 = Journal.get("science")
-        self.assertIsNotNone(series2)
-        self.assertEquals(series, series2)
+        self.assertEquals(0, journal.links.count())
+        journal.edit("link", "https://tsj.net")
+        self.assertEquals(1, journal.links.count())
 
-        series2 = Journal.get(str(series.id))
-        self.assertIsNotNone(series2)
-        self.assertEquals(series, series2)
+    def test_get(self):
+        journal, created = Journal.from_dict({"name": "Science Journal"})
+        self.assertTrue(created)
+        self.assertIsNotNone(journal.id)
+
+        journal2 = Journal.get("Science Journal")
+        self.assertIsNotNone(journal2)
+        self.assertEquals(journal, journal2)
+
+        journal2 = Journal.get("science")
+        self.assertIsNotNone(journal2)
+        self.assertEquals(journal, journal2)
+
+        journal2 = Journal.get(str(journal.id))
+        self.assertIsNotNone(journal2)
+        self.assertEquals(journal, journal2)
+
+    def test_get_or_create(self):
+        journal, created = Journal.from_dict({"name": "Science Journal"})
+        self.assertTrue(created)
+        self.assertIsNotNone(journal.id)
+        self.assertEquals(1, Journal.objects.count())
+
+        journal2 = Journal.get_or_create("Science Journal")
+        self.assertIsNotNone(journal2)
+        self.assertEquals(journal, journal2)
+        self.assertEquals(1, Journal.objects.count())
+
+        journal2 = Journal.get_or_create(str(journal.id))
+        self.assertIsNotNone(journal2)
+        self.assertEquals(journal, journal2)
+        self.assertEquals(1, Journal.objects.count())
+
+        journal2 = Journal.get_or_create("IT Journal")
+        self.assertIsNotNone(journal2)
+        self.assertNotEquals(journal, journal2)
+        self.assertEquals(2, Journal.objects.count())
 
     def test_search(self):
-        series, created = Journal.from_dict({"name": "Science Journal"})
+        journal, created = Journal.from_dict({"name": "Science Journal"})
         self.assertTrue(created)
-        self.assertIsNotNone(series.id)
+        self.assertIsNotNone(journal.id)
 
-        series, created = Journal.from_dict({"name": "Nature Journal"})
+        journal, created = Journal.from_dict({"name": "Nature Journal"})
         self.assertTrue(created)
-        self.assertIsNotNone(series.id)
+        self.assertIsNotNone(journal.id)
 
-        series, created = Journal.from_dict({"name": "Math science"})
+        journal, created = Journal.from_dict({"name": "Math science"})
         self.assertTrue(created)
-        self.assertIsNotNone(series.id)
+        self.assertIsNotNone(journal.id)
 
         self.assertEquals(3, Journal.objects.all().count())
         self.assertEquals(2, Journal.search("journal").count())
         self.assertEquals(2, Journal.search("science").count())
 
     def test_print(self):
-        series, created = Journal.from_dict({"name": "Science Journal"})
+        journal, created = Journal.from_dict({"name": "Science Journal"})
         self.assertTrue(created)
-        self.assertIsNotNone(series.id)
+        self.assertIsNotNone(journal.id)
 
         with StringIO() as cout:
-            series.print(cout)
+            journal.print(cout)
             self.assertEquals(
                 "Field                            Value                              "
                 + "                                \n=================================="

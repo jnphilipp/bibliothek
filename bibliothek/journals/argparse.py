@@ -15,14 +15,16 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Journals Django app argparse."""
 
 import sys
 
 from argparse import _SubParsersAction, Namespace
 from bibliothek import stdout
 from bibliothek.utils import lookahead
-from django.utils.translation import ugettext_lazy as _
-from journals.model import Journal
+from django.utils.translation import gettext_lazy as _
+from journals.models import Journal
+from links.models import Link
 from typing import Optional, TextIO
 
 
@@ -30,24 +32,23 @@ def _journal(args: Namespace, file: TextIO = sys.stdout):
     journal: Optional[Journal] = None
     if args.subparser == "add":
         journal, created = Journal.from_dict(
-            {"name": args.name, "links": [{"name": link} for link in args.link]}
+            {
+                "name": args.name,
+                "links": [Link.get_or_create(link).to_dict() for link in args.link],
+            }
         )
         if created:
             stdout.write(
-                _(
-                    f'Successfully added journal "{journal.name}" with id '
-                    + f'"{journal.id}".'
-                ),
+                _('Successfully added journal "%(name)s" with id "%(pk)d".')
+                % {"name": journal.name, "pk": journal.pk},
                 "=",
                 file=file,
             )
             journal.print(file)
         else:
             stdout.write(
-                _(
-                    f'The journal "{journal.name}" already exists with id '
-                    + f'"{journal.id}", aborting...'
-                ),
+                _('The journal "%(name)s" already exists with id "%(pk)d", aborting...')
+                % {"name": journal.name, "pk": journal.pk},
                 "",
                 file=file,
             )
@@ -56,7 +57,8 @@ def _journal(args: Namespace, file: TextIO = sys.stdout):
         if journal:
             journal.delete()
             stdout.write(
-                _(f'Successfully deleted journal with id "{journal.id}".'),
+                _('Successfully deleted journal with id "%(pk)d".')
+                % {"pk": journal.pk},
                 "",
                 file=file,
             )
@@ -67,10 +69,8 @@ def _journal(args: Namespace, file: TextIO = sys.stdout):
         if journal:
             journal.edit(args.field, args.value)
             stdout.write(
-                _(
-                    f'Successfully edited journal "{journal.name}" with id '
-                    + f'"{journal.id}".'
-                ),
+                _('Successfully edited journal "%(name)s" with id "%(pk)d".')
+                % {"name": journal.name, "pk": journal.pk},
                 "",
                 file=file,
             )
