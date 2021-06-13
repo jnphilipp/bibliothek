@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Bibliothek Django app stdout."""
 
 import sys
 
@@ -44,7 +45,7 @@ def write(
     if len(positions) == 0 or positions[-1] <= 1.0:
         positions += [1.0]
 
-    if isinstance(fields, str):
+    if isinstance(fields, str) or not isinstance(fields, list):
         fields = [fields]
 
     def _write(fields: Sequence, positions: List[int]):

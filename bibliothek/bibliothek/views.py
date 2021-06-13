@@ -15,10 +15,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Bibliothek Django app views."""
 
 from books.models import Edition
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Case, CharField, When
+from django.db.models import Case, TextField, When
 from django.shortcuts import render
 from magazines.models import Issue
 from papers.models import Paper
@@ -26,6 +27,7 @@ from shelves.models import Read
 
 
 def dashboard(request):
+    """Dashboard view."""
     edition_reads = (
         Read.objects.filter(content_type=ContentType.objects.get_for_model(Edition))
         .filter(started__isnull=False)
@@ -37,7 +39,7 @@ def dashboard(request):
                     then="editions__alternate_title",
                 ),
                 default="editions__book__title",
-                output_field=CharField(),
+                output_field=TextField(),
             )
         )
         .order_by("started")

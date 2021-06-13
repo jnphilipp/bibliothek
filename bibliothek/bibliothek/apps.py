@@ -15,12 +15,16 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Bibliothek Django app config."""
 
 from django.apps import AppConfig
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class BibliothekConfig(AppConfig):
+    """Bibliothek app config."""
+
+    default_auto_field = "django.db.models.AutoField"
     name = "bibliothek"
     verbose_name = _("Library")
     verbose_name_plural = _("Libraries")
