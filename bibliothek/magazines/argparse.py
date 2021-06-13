@@ -367,6 +367,10 @@ def issue_subparser(parser: _SubParsersAction):
     add_parser.add_argument("--link", nargs="*", default=[], help=_("Links"))
     add_parser.add_argument("--file", nargs="*", default=[], help=_("Files"))
 
+    # magazine issue delete
+    delete_parser = subparser.add_parser("delete", help=_("Delete magazine issue"))
+    delete_parser.add_argument("issue", help=_("Issue"))
+
     # magazine issue edit
     edit_parser = subparser.add_parser("edit", help=_("Edit a magazine issue"))
     edit_parser.add_argument("issue", help=_("Issue"))

@@ -19,6 +19,7 @@
 
 import sys
 
+from argparse import _SubParsersAction
 from bibliothek import stdout
 from bibliothek.utils import lookahead
 from django.utils.translation import gettext_lazy as _
@@ -86,7 +87,7 @@ def _binding(args, file: TextIO = sys.stdout):
             stdout.write([i.id, i.name], "_" if has_next else "=", [0.05], file=file)
 
 
-def add_subparser(parser):
+def add_subparser(parser: _SubParsersAction):
     """Add subparser for the bindings module."""
     binding_parser = parser.add_parser("binding", help=_("Manage bindings"))
     binding_parser.set_defaults(func=_binding)

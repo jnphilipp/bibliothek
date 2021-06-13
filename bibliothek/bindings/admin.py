@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Bindings Django app admin."""
 
 from bindings.models import Binding
 from django.contrib import admin

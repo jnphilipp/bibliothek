@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Shelves argparse."""
+"""Papers Django app argparse."""
 
 import datetime
 import os
@@ -286,6 +286,10 @@ def add_subparser(parser: _SubParsersAction):
     add_parser.add_argument("--language", nargs="*", default=[], help=_("Languages"))
     add_parser.add_argument("--link", nargs="*", default=[], help=_("Links"))
     add_parser.add_argument("--file", nargs="*", default=[], help=_("Additional files"))
+
+    # paper delete
+    delete_parser = subparser.add_parser("delete", help=_("Delete paper"))
+    delete_parser.add_argument("paper", help=_("Paper"))
 
     # paper edit
     edit_parser = subparser.add_parser("edit", help=_("Edit a paper"))

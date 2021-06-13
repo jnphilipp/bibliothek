@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Shelves Django models."""
+"""Shelves Django app models."""
 
 import datetime
 import sys
