@@ -15,36 +15,40 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-
+"""Series Django app argparse."""
 
 import sys
 
+from argparse import _SubParsersAction, Namespace
 from bibliothek import stdout
 from bibliothek.utils import lookahead
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
+from links.models import Link
 from series.models import Series
 from typing import Optional, TextIO
 
 
-def _series(args, file: TextIO = sys.stdout):
+def _series(args: Namespace, file: TextIO = sys.stdout):
     series: Optional[Series] = None
     if args.subparser == "add":
         series, created = Series.from_dict(
-            {"name": args.name, "links": [{"name": link} for link in args.link]}
+            {
+                "name": args.name,
+                "links": [Link.get_or_create(link).to_dict() for link in args.link],
+            }
         )
         if created:
             stdout.write(
-                _(f'Successfully added series "{series.name}" with id "{series.id}".'),
+                _('Successfully added series "%(name)s" with id "%(pk)d".')
+                % {"name": series.name, "pk": series.pk},
                 "=",
                 file=file,
             )
             series.print(file)
         else:
             stdout.write(
-                _(
-                    f'The series "{series.name}" already exists with id "{series.id}", '
-                    + "aborting..."
-                ),
+                _('The series "%(name)s" already exists with id "%(pk)d", aborting...')
+                % {"name": series.name, "pk": series.pk},
                 "",
                 file=file,
             )
@@ -53,7 +57,7 @@ def _series(args, file: TextIO = sys.stdout):
         if series:
             series.delete()
             stdout.write(
-                _(f'Successfully deleted series with id "{series.id}".'),
+                _('Successfully deleted series with id "%(pk)d".') % {"pk": series.pk},
                 "",
                 file=file,
             )
@@ -64,7 +68,8 @@ def _series(args, file: TextIO = sys.stdout):
         if series:
             series.edit(args.field, args.value)
             stdout.write(
-                _(f'Successfully edited series "{series.name}" with id "{series.id}".'),
+                _('Successfully edited series "%(name)s" with id "%(pk)d".')
+                % {"name": series.name, "pk": series.pk},
                 "",
                 file=file,
             )
@@ -79,13 +84,13 @@ def _series(args, file: TextIO = sys.stdout):
             stdout.write(_("No series found."), "", file=file)
     elif args.subparser == "list":
         if args.search:
-            bindings = Series.search(args.search)
+            series = Series.search(args.search)
         else:
-            bindings = Series.objects.all()
+            series = Series.objects.all()
         stdout.write(
             [_("Id"), _("Name"), _("Number of books")], "=", [0.05, 0.8], file=file
         )
-        for i, has_next in lookahead(bindings):
+        for i, has_next in lookahead(series):
             stdout.write(
                 [i.id, i.name, i.books.count()],
                 "_" if has_next else "=",
@@ -94,7 +99,7 @@ def _series(args, file: TextIO = sys.stdout):
             )
 
 
-def add_subparser(parser):
+def add_subparser(parser: _SubParsersAction):
     """Add subparser for the series module."""
     series_parser = parser.add_parser("series", help=_("Manage series"))
     series_parser.set_defaults(func=_series)

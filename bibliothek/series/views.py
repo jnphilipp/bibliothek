@@ -15,10 +15,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Series Django app views."""
 
 from django.db.models import Count
+from django.db.models.query import QuerySet
 from django.views import generic
 from series.models import Series
+from typing import Dict
 
 
 class ListView(generic.ListView):
@@ -26,7 +29,7 @@ class ListView(generic.ListView):
 
     model = Series
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> Dict:
         """Get context data."""
         context = super(ListView, self).get_context_data(**kwargs)
         context["o"] = "name"
@@ -34,7 +37,7 @@ class ListView(generic.ListView):
             context["o"] = self.request.GET.get("o")
         return context
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Series]:
         """Get django query set."""
         o = self.request.GET.get("o") if self.request.GET.get("o") else "name"
         return Series.objects.annotate(cb=Count("books")).order_by(o)
@@ -45,7 +48,7 @@ class DetailView(generic.DetailView):
 
     model = Series
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> Dict:
         """Get context data."""
         context = super(DetailView, self).get_context_data(**kwargs)
         context["o"] = "volume"

@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+import django.db.models.expressions
 
 
 class Migration(migrations.Migration):
@@ -26,7 +27,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name_plural': 'Series',
-                'ordering': ('name',),
+                'ordering': (django.db.models.expressions.Func(django.db.models.expressions.F('name'), function='LOWER'),),
                 'verbose_name': 'Series',
             },
         ),

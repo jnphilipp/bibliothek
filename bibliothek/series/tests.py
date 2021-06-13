@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -17,9 +17,9 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.test import TestCase
+from io import StringIO
 from links.models import Link
 from series.models import Series
-from io import StringIO
 
 
 class SeriesModelTestCase(TestCase):
@@ -53,18 +53,6 @@ class SeriesModelTestCase(TestCase):
         )
         self.assertEquals((series, False), Series.from_dict({"name": "Random"}))
 
-    def test_edit(self):
-        series, created = Series.objects.get_or_create(name="Secret Files")
-        self.assertTrue(created)
-        self.assertIsNotNone(series.id)
-
-        series.edit("name", "The Secret Files")
-        self.assertEquals("The Secret Files", series.name)
-
-        self.assertEquals(0, series.links.count())
-        series.edit("link", "https://the-secret-files.com")
-        self.assertEquals(1, series.links.count())
-
     def test_delete(self):
         series, created = Series.from_dict({"name": "Secret Files"})
         self.assertTrue(created)
@@ -87,6 +75,18 @@ class SeriesModelTestCase(TestCase):
             deleted,
         )
 
+    def test_edit(self):
+        series, created = Series.objects.get_or_create(name="Secret Files")
+        self.assertTrue(created)
+        self.assertIsNotNone(series.id)
+
+        series.edit("name", "The Secret Files")
+        self.assertEquals("The Secret Files", series.name)
+
+        self.assertEquals(0, series.links.count())
+        series.edit("link", "https://the-secret-files.com")
+        self.assertEquals(1, series.links.count())
+
     def test_get(self):
         series, created = Series.from_dict({"name": "Secret Files"})
         self.assertTrue(created)
@@ -103,6 +103,27 @@ class SeriesModelTestCase(TestCase):
         series2 = Series.get(str(series.id))
         self.assertIsNotNone(series2)
         self.assertEquals(series, series2)
+
+    def test_get_or_create(self):
+        series, created = Series.from_dict({"name": "Secret Files"})
+        self.assertTrue(created)
+        self.assertIsNotNone(series.id)
+        self.assertEquals(1, Series.objects.count())
+
+        series2 = Series.get_or_create("Secret Files")
+        self.assertIsNotNone(series2)
+        self.assertEquals(series, series2)
+        self.assertEquals(1, Series.objects.count())
+
+        series2 = Series.get_or_create(str(series.id))
+        self.assertIsNotNone(series2)
+        self.assertEquals(series, series2)
+        self.assertEquals(1, Series.objects.count())
+
+        series2 = Series.get_or_create("Secret Papers")
+        self.assertIsNotNone(series2)
+        self.assertNotEquals(series, series2)
+        self.assertEquals(2, Series.objects.count())
 
     def test_search(self):
         series, created = Series.from_dict({"name": "Secret Files"})
@@ -126,7 +147,6 @@ class SeriesModelTestCase(TestCase):
         self.assertTrue(created)
         self.assertIsNotNone(series.id)
 
-        self.maxDiff = None
         with StringIO() as cout:
             series.print(cout)
             self.assertEquals(

@@ -15,15 +15,16 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Series Django app models."""
 
 import sys
 
 from bibliothek import stdout
 from bibliothek.utils import lookahead
 from django.db import models
-from django.db.models import Q
+from django.db.models import F, Func, Q
 from django.template.defaultfilters import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from links.models import Link
 from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar
 
@@ -44,7 +45,7 @@ class Series(models.Model):
 
     @classmethod
     def from_dict(cls: Type[T], data: Dict) -> Tuple[T, bool]:
-        """Create a object from dict.
+        """Create from dict.
 
         Returns True if was crated, i. e. was not found in the DB.
         """
@@ -57,7 +58,7 @@ class Series(models.Model):
 
     @classmethod
     def get(cls: Type[T], term: str) -> Optional[T]:
-        """Search DB for given term, return single object."""
+        """Search for given term, return single object."""
         query_set = cls.search(term)
         if query_set.count() == 0:
             return None
@@ -71,16 +72,33 @@ class Series(models.Model):
         return query_set[0]
 
     @classmethod
+    def get_or_create(cls: Type[T], term: str) -> T:
+        """Search for given term and if not found create it, return single object."""
+        obj = cls.get(term)
+        if obj is None:
+            return cls.from_dict({"name": term})[0]
+        return obj
+
+    @classmethod
     def search(cls: Type[T], term: str) -> models.query.QuerySet[T]:
-        """Search DB for given term."""
+        """Search for given term."""
         return cls.objects.filter(
             Q(pk=term if term.isdigit() else None) | Q(name__icontains=term)
         )
 
-    def delete(self: T) -> Tuple[int, Dict]:
+    def delete(self: T) -> Tuple[int, Dict[str, int]]:
         """Delete from DB."""
+
+        def append(d: Tuple[int, Dict]) -> int:
+            for k, v in d[1].items():
+                if k in deleted:
+                    deleted[k] += v
+                else:
+                    deleted[k] = v
+            return d[0]
+
         nb_deleted = 0
-        deleted = {}
+        deleted: Dict[str, int] = {}
         for link in self.links.all():
             if (
                 link.editions.count() == 0
@@ -94,31 +112,23 @@ class Series(models.Model):
                 and link.papers.count() == 0
                 and link.persons.count() == 0
             ):
-                r = link.delete()
-                nb_deleted += r[0]
-                for k, v in r[1].items():
-                    deleted[k] = v
-        r = super(Series, self).delete()
-        nb_deleted += r[0]
-        for k, v in r[1].items():
-            deleted[k] = v
+                nb_deleted += append(link.delete())
+        nb_deleted += append(super(Series, self).delete())
         return nb_deleted, deleted
 
-    def edit(self: T, field: str, value: str):
+    def edit(self: T, field: str, value: str, *args, **kwargs):
         """Change field by given value."""
         assert field in ["name", "link"]
 
         if field == "name":
             self.name = value
         elif field == "link":
-            link, created = Link.objects.filter(
-                Q(pk=value if value.isdigit() else None) | Q(link=value)
-            ).get_or_create(defaults={"link": value})
+            link = Link.get_or_create(value)
             if self.links.filter(pk=link.pk).exists():
                 self.links.remove(link)
             else:
                 self.links.add(link)
-        self.save()
+        self.save(*args, **kwargs)
 
     def print(self: T, file: TextIO = sys.stdout):
         """Print instance info."""
@@ -138,8 +148,9 @@ class Series(models.Model):
             stdout.write(f"{_('Links')}", file=file)
 
         if self.books.count() > 0:
-            books = self.books.all().order_by("volume")
-            for (i, book), has_next in lookahead(enumerate(books)):
+            for (i, book), has_next in lookahead(
+                enumerate(self.books.all().order_by("volume"))
+            ):
                 stdout.write(
                     [_("Books") if i == 0 else "", f"{book.id}: {book}"],
                     "" if has_next else "_",
@@ -175,6 +186,6 @@ class Series(models.Model):
     class Meta:
         """Meta."""
 
-        ordering = ("name",)
+        ordering = (Func(F("name"), function="LOWER"),)
         verbose_name = _("Series")
         verbose_name_plural = _("Series")
