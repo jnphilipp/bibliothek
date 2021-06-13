@@ -7,7 +7,7 @@ _bibliothek()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     subcommand="${COMP_WORDS[1]}"
 
-    opts="binding book genre info journal magazine paper person publisher series runserver load read reading-list statistics -h --help -v --version"
+    opts="info binding book genre journal magazine paper person publisher series acquisition read runserver import reading-list statistics -h --help -v --version"
 
     case "${subcommand}" in
         binding)
@@ -147,7 +147,7 @@ _bibliothek()
                             esac
                             ;;
                         *)
-                            opts="acquisition add edit info list read -h --help"
+                            opts="acquisition read add edit info list open -h --help"
                             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                             return 0
                             ;;
@@ -164,7 +164,7 @@ _bibliothek()
                     return 0
                     ;;
                 *)
-                    opts="add edit edition info list -h --help"
+                    opts="edition add edit info list -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -218,6 +218,11 @@ _bibliothek()
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
+                delete)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
                 edit)
                     opts="name link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
@@ -234,7 +239,7 @@ _bibliothek()
                     return 0
                     ;;
                 *)
-                    opts="add edit info list -h --help"
+                    opts="add delete edit info list -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -301,8 +306,13 @@ _bibliothek()
                             _file="-o filenames"
                             return 0
                             ;;
+                        delete)
+                            opts="-h --help"
+                            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                            return 0
+                            ;;
                         edit)
-                            opts="issue publishing-date cover +language -language +file +link -link -h --help"
+                            opts="issue publishing-date cover language file link -h --help"
                             copts=$(compgen -W "${opts}" -- ${cur})
                             OLDIFS=$IFS
                             IFS=$'\n'
@@ -352,7 +362,7 @@ _bibliothek()
                             esac
                             ;;
                         *)
-                            opts="acquisition add edit info list open read -h --help"
+                            opts="acquisition add delete edit info list open read -h --help"
                             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                             return 0
                         ;;
@@ -399,7 +409,7 @@ _bibliothek()
                     esac
                     ;;
                 add)
-                    opts="--author --publishing-date --journal --volume --language --link -h --help"
+                    opts="--author --publishing-date --journal --volume --language --link --file -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -478,6 +488,11 @@ _bibliothek()
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
+                delete)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
                 edit)
                     opts="name link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
@@ -494,7 +509,7 @@ _bibliothek()
                     return 0
                     ;;
                 *)
-                    opts="add edit info list -h --help"
+                    opts="add delete edit info list -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -508,6 +523,11 @@ _bibliothek()
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
+                delete)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
                 edit)
                     opts="name link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
@@ -524,7 +544,7 @@ _bibliothek()
                     return 0
                     ;;
                 *)
-                    opts="add edit info list -h --help"
+                    opts="add delete edit info list -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
@@ -538,6 +558,11 @@ _bibliothek()
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
+                delete)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
                 edit)
                     opts="name link -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
@@ -554,21 +579,11 @@ _bibliothek()
                     return 0
                     ;;
                 *)
-                    opts="add edit info list -h --help"
+                    opts="add delete edit info list -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
             esac
-            ;;
-        load)
-            opts="-h --help"
-            copts=$(compgen -W "${opts}" -- ${cur})
-            OLDIFS=$IFS
-            IFS=$'\n'
-            COMPREPLY=( ${copts[@]} $(compgen -f -- ${cur}) )
-            IFS=$OLDIFS
-            _file="-o filenames"
-            return 0
             ;;
         read)
             subcommand="${COMP_WORDS[2]}"
@@ -603,6 +618,16 @@ _bibliothek()
         reading-list)
             opts="--limit -h --help"
             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+            return 0
+            ;;
+        import)
+            opts="-h --help"
+            copts=$(compgen -W "${opts}" -- ${cur})
+            OLDIFS=$IFS
+            IFS=$'\n'
+            COMPREPLY=( ${copts[@]} $(compgen -f -- ${cur}) )
+            IFS=$OLDIFS
+            _file="-o filenames"
             return 0
             ;;
         *)
