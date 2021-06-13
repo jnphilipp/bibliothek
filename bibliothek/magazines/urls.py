@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -15,17 +15,20 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Magazines Django app urls."""
 
 from django.urls import path
 from .views.issue import DetailView as IssueDetailView
 from .views.magazine import DetailView as MagazineDetailView, ListView
 
 
-app_name = 'magazines'
+app_name = "magazines"
 urlpatterns = [
-    path('magazine/', ListView.as_view(), name='magazine_list'),
-    path('magazine/<slug:slug>/', MagazineDetailView.as_view(),
-         name='magazine_detail'),
-    path('magazine/<slug:slug>/issue/<int:pk>/', IssueDetailView.as_view(),
-         name='issue_detail'),
+    path("magazine/", ListView.as_view(), name="magazine_list"),
+    path("magazine/<slug:slug>/", MagazineDetailView.as_view(), name="magazine_detail"),
+    path(
+        "magazine/<slug:slug>/issue/<int:pk>/",
+        IssueDetailView.as_view(),
+        name="issue_detail",
+    ),
 ]

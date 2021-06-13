@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -15,61 +15,75 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Magazines Django admin."""
 
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
-from django.db.models import Count
-from django.forms import TextInput
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from files.models import File
 from magazines.models import Issue, Magazine
 from shelves.models import Acquisition, Read
 
 
 class AcquisitionInline(GenericStackedInline):
+    """Acquisition inline Django admin."""
+
     extra = 1
     model = Acquisition
 
 
 class FileInline(GenericStackedInline):
+    """File inline Django admin."""
+
     extra = 1
     model = File
 
 
 class ReadInline(GenericStackedInline):
+    """Read inline Django admin."""
+
     extra = 1
     model = Read
 
 
 @admin.register(Issue)
 class IssueAdmin(admin.ModelAdmin):
+    """Issue Django admin."""
+
     fieldsets = [
-        (None, {'fields': ['magazine', 'issue', 'publishing_date', 'languages',
-                           'cover_image']}),
-        (_('Links'), {'fields': ['links']}),
+        (
+            None,
+            {
+                "fields": [
+                    "created_at",
+                    "updated_at",
+                    "magazine",
+                    "issue",
+                    "publishing_date",
+                    "languages",
+                    "cover_image",
+                ]
+            },
+        ),
+        (_("Links"), {"fields": ["links"]}),
     ]
-    filter_horizontal = ('languages', 'links')
+    filter_horizontal = ("languages", "links")
     inlines = [FileInline, AcquisitionInline, ReadInline]
-    list_display = ('magazine', 'issue', 'publishing_date', 'updated_at')
-    list_filter = ('magazine',)
-    search_fields = ('magazine__name', 'issue')
+    list_display = ("magazine", "issue", "publishing_date", "updated_at")
+    list_filter = ("magazine",)
+    readonly_fields = ("created_at", "updated_at")
+    search_fields = ("magazine__name", "issue")
 
 
 @admin.register(Magazine)
 class MagazineAdmin(admin.ModelAdmin):
-    def get_queryset(self, request):
-        return Magazine.objects.annotate(magazine_count=Count('issues'))
-
-    def show_magazine_count(self, inst):
-        return inst.magazine_count
+    """Magazine Django admin."""
 
     fieldsets = [
-        (None, {'fields': ['slug', 'name', 'feed']}),
-        (_('Links'), {'fields': ['links']}),
+        (None, {"fields": ["created_at", "updated_at", "slug", "name", "feed"]}),
+        (_("Links"), {"fields": ["links"]}),
     ]
-    filter_horizontal = ('links',)
-    list_display = ('name', 'feed', 'show_magazine_count', 'updated_at')
-    readonly_fields = ('slug',)
-    search_fields = ('name',)
-    show_magazine_count.admin_order_field = 'magazine_count'
-    show_magazine_count.short_description = _('Number of Issues')
+    filter_horizontal = ("links",)
+    list_display = ("name", "feed", "updated_at")
+    readonly_fields = ("created_at", "updated_at", "slug")
+    search_fields = ("name",)
