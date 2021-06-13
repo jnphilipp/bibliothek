@@ -15,14 +15,16 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Publishers Django app config."""
 
 from django.apps import AppConfig
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class PublishersConfig(AppConfig):
     """Publishers app config."""
 
+    default_auto_field = "django.db.models.AutoField"
     name = "publishers"
     verbose_name = _("Publisher")
     verbose_name_plural = _("Publishers")

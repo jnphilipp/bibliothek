@@ -16,5 +16,3 @@
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 """Publishers Django app."""
-
-default_app_config = "publishers.apps.PublishersConfig"

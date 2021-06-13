@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Publishers Django app models."""
 
 import sys
 
@@ -23,7 +24,7 @@ from bibliothek.utils import lookahead
 from django.db import models
 from django.db.models import F, Func, Q
 from django.template.defaultfilters import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from links.models import Link
 from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar
 
@@ -71,16 +72,33 @@ class Publisher(models.Model):
         return query_set[0]
 
     @classmethod
+    def get_or_create(cls: Type[T], term: str) -> T:
+        """Search for given term and if not found create it, return single object."""
+        obj = cls.get(term)
+        if obj is None:
+            return cls.from_dict({"name": term})[0]
+        return obj
+
+    @classmethod
     def search(cls: Type[T], term: str) -> models.query.QuerySet[T]:
         """Search for given term."""
         return cls.objects.filter(
             Q(pk=term if term.isdigit() else None) | Q(name__icontains=term)
         )
 
-    def delete(self: T) -> Tuple[int, Dict]:
+    def delete(self: T) -> Tuple[int, Dict[str, int]]:
         """Delete."""
+
+        def append(d: Tuple[int, Dict]) -> int:
+            for k, v in d[1].items():
+                if k in deleted:
+                    deleted[k] += v
+                else:
+                    deleted[k] = v
+            return d[0]
+
         nb_deleted = 0
-        deleted = {}
+        deleted: Dict[str, int] = {}
         for link in self.links.all():
             if (
                 link.editions.count() == 0
@@ -94,14 +112,8 @@ class Publisher(models.Model):
                 and link.papers.count() == 0
                 and link.persons.count() == 0
             ):
-                r = link.delete()
-                nb_deleted += r[0]
-                for k, v in r[1].items():
-                    deleted[k] = v
-        r = super(Publisher, self).delete()
-        nb_deleted += r[0]
-        for k, v in r[1].items():
-            deleted[k] = v
+                nb_deleted += append(link.delete())
+        nb_deleted += append(super(Publisher, self).delete())
         return nb_deleted, deleted
 
     def edit(self: T, field: str, value: str, *args, **kwargs):
@@ -111,9 +123,7 @@ class Publisher(models.Model):
         if field == "name":
             self.name = value
         elif field == "link":
-            link, created = Link.objects.filter(
-                Q(pk=value if value.isdigit() else None) | Q(link=value)
-            ).get_or_create(defaults={"link": value})
+            link = Link.get_or_create(value)
             if self.links.filter(pk=link.pk).exists():
                 self.links.remove(link)
             else:

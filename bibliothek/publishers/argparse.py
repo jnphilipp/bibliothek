@@ -15,36 +15,43 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Publishers Django app argparse."""
 
 import sys
 
 from argparse import _SubParsersAction, Namespace
 from bibliothek import stdout
 from bibliothek.utils import lookahead
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
+from links.models import Link
 from publishers.models import Publisher
 from typing import Optional, TextIO
 
 
 def _publisher(args: Namespace, file: TextIO = sys.stdout):
-    publishers: Optional[Publisher] = None
+    publisher: Optional[Publisher] = None
     if args.subparser == "add":
-        series, created = Publisher.from_dict(
-            {"name": args.name, "links": [{"name": link} for link in args.link]}
+        publisher, created = Publisher.from_dict(
+            {
+                "name": args.name,
+                "links": [Link.get_or_create(link).to_dict() for link in args.link],
+            }
         )
         if created:
             stdout.write(
-                _(f'Successfully added series "{series.name}" with id "{series.id}".'),
+                _('Successfully added publisher "%(name)s" with id "%(pk)d".')
+                % {"name": publisher.name, "pk": publisher.pk},
                 "=",
                 file=file,
             )
-            series.print(file)
+            publisher.print(file)
         else:
             stdout.write(
                 _(
-                    f'The series "{series.name}" already exists with id "{series.id}", '
+                    'The publisher "%(name)s" already exists with id "%(pk)d", '
                     + "aborting..."
-                ),
+                )
+                % {"name": publisher.name, "pk": publisher.pk},
                 "",
                 file=file,
             )
@@ -53,7 +60,8 @@ def _publisher(args: Namespace, file: TextIO = sys.stdout):
         if publisher:
             publisher.delete()
             stdout.write(
-                _(f'Successfully deleted publisher with id "{publisher.id}".'),
+                _('Successfully deleted publisher with id "%(pk)d".')
+                % {"pk": publisher.pk},
                 "",
                 file=file,
             )
@@ -64,10 +72,8 @@ def _publisher(args: Namespace, file: TextIO = sys.stdout):
         if publisher:
             publisher.edit(args.field, args.value)
             stdout.write(
-                _(
-                    f'Successfully edited publisher "{publisher.name}" with id '
-                    + f'"{publisher.id}".'
-                ),
+                _('Successfully edited publisher "%(name)s" with id "%(pk)d".')
+                % {"name": publisher.name, "pk": publisher.pk},
                 "",
                 file=file,
             )

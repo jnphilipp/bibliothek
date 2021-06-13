@@ -58,18 +58,6 @@ class PublisherModelTestCase(TestCase):
             (publisher, False), Publisher.from_dict({"name": "Random Press"})
         )
 
-    def test_edit(self):
-        series, created = Publisher.objects.get_or_create(name="Publishing House")
-        self.assertTrue(created)
-        self.assertIsNotNone(series.id)
-
-        series.edit("name", "The Publishing House")
-        self.assertEquals("The Publishing House", series.name)
-
-        self.assertEquals(0, series.links.count())
-        series.edit("link", "https://publishing.house")
-        self.assertEquals(1, series.links.count())
-
     def test_delete(self):
         publisher, created = Publisher.from_dict({"name": "Publishing House"})
         self.assertTrue(created)
@@ -99,22 +87,55 @@ class PublisherModelTestCase(TestCase):
             deleted,
         )
 
-    def test_get(self):
-        series, created = Publisher.from_dict({"name": "Publishing House"})
+    def test_edit(self):
+        publisher, created = Publisher.objects.get_or_create(name="Publishing House")
         self.assertTrue(created)
-        self.assertIsNotNone(series.id)
+        self.assertIsNotNone(publisher.id)
 
-        series2 = Publisher.get("Publishing House")
-        self.assertIsNotNone(series2)
-        self.assertEquals(series, series2)
+        publisher.edit("name", "The Publishing House")
+        self.assertEquals("The Publishing House", publisher.name)
 
-        series2 = Publisher.get("house")
-        self.assertIsNotNone(series2)
-        self.assertEquals(series, series2)
+        self.assertEquals(0, publisher.links.count())
+        publisher.edit("link", "https://publishing.house")
+        self.assertEquals(1, publisher.links.count())
 
-        series2 = Publisher.get(str(series.id))
-        self.assertIsNotNone(series2)
-        self.assertEquals(series, series2)
+    def test_get(self):
+        publisher, created = Publisher.from_dict({"name": "Publishing House"})
+        self.assertTrue(created)
+        self.assertIsNotNone(publisher.id)
+
+        publisher2 = Publisher.get("Publishing House")
+        self.assertIsNotNone(publisher2)
+        self.assertEquals(publisher, publisher2)
+
+        publisher2 = Publisher.get("house")
+        self.assertIsNotNone(publisher2)
+        self.assertEquals(publisher, publisher2)
+
+        publisher2 = Publisher.get(str(publisher.id))
+        self.assertIsNotNone(publisher2)
+        self.assertEquals(publisher, publisher2)
+
+    def test_get_or_create(self):
+        publisher, created = Publisher.from_dict({"name": "Publishing House"})
+        self.assertTrue(created)
+        self.assertIsNotNone(publisher.id)
+        self.assertEquals(1, Publisher.objects.count())
+
+        publisher2 = Publisher.get_or_create("Publishing House")
+        self.assertIsNotNone(publisher2)
+        self.assertEquals(publisher, publisher2)
+        self.assertEquals(1, Publisher.objects.count())
+
+        publisher2 = Publisher.get_or_create(str(publisher.id))
+        self.assertIsNotNone(publisher2)
+        self.assertEquals(publisher, publisher2)
+        self.assertEquals(1, Publisher.objects.count())
+
+        publisher2 = Publisher.get_or_create("Old House")
+        self.assertIsNotNone(publisher2)
+        self.assertNotEquals(publisher, publisher2)
+        self.assertEquals(2, Publisher.objects.count())
 
     def test_search(self):
         publisher, created = Publisher.from_dict({"name": "Publishing House"})

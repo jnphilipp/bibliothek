@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Publishers Django app views."""
 
 from django.db.models import Count
 from django.db.models.functions import Lower
@@ -23,31 +24,38 @@ from publishers.models import Publisher
 
 
 class ListView(generic.ListView):
+    """Genre list view."""
+
     model = Publisher
 
     def get_context_data(self, **kwargs):
+        """Get context data."""
         context = super(ListView, self).get_context_data(**kwargs)
-        context['o'] = 'name'
-        if self.request.GET.get('o'):
-            context['o'] = self.request.GET.get('o')
+        context["o"] = "name"
+        if self.request.GET.get("o"):
+            context["o"] = self.request.GET.get("o")
         return context
 
     def get_queryset(self):
-        o = self.request.GET.get('o') if self.request.GET.get('o') else 'name'
-        o = o.replace('name', 'iname')
-        publishers = Publisher.objects.annotate(ce=Count('editions'),
-                                                iname=Lower('name')). \
-            order_by(o)
+        """Get Django query set."""
+        o = self.request.GET.get("o") if self.request.GET.get("o") else "name"
+        o = o.replace("name", "iname")
+        publishers = Publisher.objects.annotate(
+            ce=Count("editions"), iname=Lower("name")
+        ).order_by(o)
         return publishers
 
 
 class DetailView(generic.DetailView):
+    """Genre detail view."""
+
     model = Publisher
 
     def get_context_data(self, **kwargs):
+        """Get context data."""
         context = super(DetailView, self).get_context_data(**kwargs)
-        context['o'] = 'book__title'
-        if self.request.GET.get('o'):
-            context['o'] = self.request.GET.get('o')
-        context['editions'] = self.object.editions.order_by(context['o'])
+        context["o"] = "book__title"
+        if self.request.GET.get("o"):
+            context["o"] = self.request.GET.get("o")
+        context["editions"] = self.object.editions.order_by(context["o"])
         return context
