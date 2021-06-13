@@ -15,12 +15,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Bindings Django app argparse."""
 
 import sys
 
 from bibliothek import stdout
 from bibliothek.utils import lookahead
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from bindings.models import Binding
 from typing import Optional, TextIO
 
@@ -31,20 +32,16 @@ def _binding(args, file: TextIO = sys.stdout):
         binding, created = Binding.from_dict({"name": args.name})
         if created:
             stdout.write(
-                _(
-                    f'Successfully added binding "{binding.name}" with id '
-                    + f'"{binding.id}".'
-                ),
+                _('Successfully added binding "%(name)s" with id "%(pk)d".')
+                % {"name": binding.name, "pk": binding.pk},
                 "=",
                 file=file,
             )
             binding.print(file)
         else:
             stdout.write(
-                _(
-                    f'The binding "{binding.name}" already exists with id '
-                    + f'"{binding.id}", aborting...'
-                ),
+                _('The binding "%(name)s" already exists with id "%(pk)d", aborting...')
+                % {"name": binding.name, "pk": binding.pk},
                 "",
                 file=file,
             )
@@ -53,7 +50,8 @@ def _binding(args, file: TextIO = sys.stdout):
         if binding:
             binding.delete()
             stdout.write(
-                _(f'Successfully deleted binding with id "{binding.id}".'),
+                _('Successfully deleted binding with id "%(pk)d".')
+                % {"pk": binding.pk},
                 "",
                 file=file,
             )
@@ -64,10 +62,8 @@ def _binding(args, file: TextIO = sys.stdout):
         if binding:
             binding.edit(args.field, args.value)
             stdout.write(
-                _(
-                    f'Successfully edited binding "{binding.name}" with id '
-                    + f'"{binding.id}".'
-                ),
+                _('Successfully edited binding "%(name)s" with id "%(pk)d".')
+                % {"name": binding.name, "pk": binding.pk},
                 "",
                 file=file,
             )
@@ -91,7 +87,7 @@ def _binding(args, file: TextIO = sys.stdout):
 
 
 def add_subparser(parser):
-    """Add subparser for the binding module."""
+    """Add subparser for the bindings module."""
     binding_parser = parser.add_parser("binding", help=_("Manage bindings"))
     binding_parser.set_defaults(func=_binding)
     subparser = binding_parser.add_subparsers(dest="subparser")

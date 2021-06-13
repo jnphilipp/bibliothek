@@ -15,14 +15,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Bindings Django app models."""
 
 import sys
 
 from bibliothek import stdout
 from django.db import models
-from django.db.models import Q
+from django.db.models import F, Func, Q
 from django.template.defaultfilters import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar
 
 
@@ -39,7 +40,7 @@ class Binding(models.Model):
 
     @classmethod
     def from_dict(cls: Type[T], data: Dict) -> Tuple[T, bool]:
-        """Create a object from dict.
+        """Create from dict.
 
         Returns True if was crated, i. e. was not found in the DB.
         """
@@ -47,7 +48,7 @@ class Binding(models.Model):
 
     @classmethod
     def get(cls: Type[T], term: str) -> Optional[T]:
-        """Search DB for given term, return single object."""
+        """Search for given term, return single object."""
         query_set = cls.search(term)
         if query_set.count() == 0:
             return None
@@ -61,19 +62,27 @@ class Binding(models.Model):
         return query_set[0]
 
     @classmethod
+    def get_or_create(cls: Type[T], term: str) -> T:
+        """Search for given term and if not found create it, return single object."""
+        obj = cls.get(term)
+        if obj is None:
+            return cls.from_dict({"name": term})[0]
+        return obj
+
+    @classmethod
     def search(cls: Type[T], term: str) -> models.query.QuerySet[T]:
-        """Search DB for given term."""
+        """Search for given term."""
         return cls.objects.filter(
             Q(pk=term if term.isdigit() else None) | Q(name__icontains=term)
         )
 
-    def edit(self: T, field: str, value: str):
+    def edit(self: T, field: str, value: str, *args, **kwargs):
         """Change field by given value."""
         assert field in ["name"]
 
         if field == "name":
             self.name = value
-        self.save()
+        self.save(*args, **kwargs)
 
     def print(self: T, file: TextIO = sys.stdout):
         """Print instance info."""
@@ -102,6 +111,6 @@ class Binding(models.Model):
     class Meta:
         """Meta."""
 
-        ordering = ("name",)
+        ordering = (Func(F("name"), function="LOWER"),)
         verbose_name = _("Binding")
         verbose_name_plural = _("Bindings")
