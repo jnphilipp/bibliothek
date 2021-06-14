@@ -64,7 +64,7 @@ class BookAdmin(admin.ModelAdmin):
         (_("Links"), {"fields": ["links"]}),
     ]
     filter_horizontal = ("authors", "genres", "links")
-    list_display = ("title", "list_authors", "series", "volume")
+    list_display = ("title", "_list_authors", "series", "volume")
     list_filter = ("authors", "series")
     readonly_fields = ("slug",)
     search_fields = ("title", "authors__name", "series__name", "volume")
