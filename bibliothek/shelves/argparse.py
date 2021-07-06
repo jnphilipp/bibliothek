@@ -191,7 +191,7 @@ def add_subparser(parser: _SubParsersAction):
 
     # acquisition edit
     edit_parser = subparser.add_parser("edit", help=_("Edit an acquisition"))
-    edit_parser.add_argument("acquisition", type=int, help=_("Acquisition"))
+    edit_parser.add_argument("acquisition", help=_("Acquisition"))
 
     edit_subparser = edit_parser.add_subparsers(
         dest="edit_subparser", help=_("Which field to edit")
@@ -251,10 +251,10 @@ def acquisition_subparser(parser: _SubParsersAction, arg_name: str, help_txt: st
     add_parser.add_argument("--price", default=0, type=float, help=_("Price"))
 
     delete_parser = subparser.add_parser("delete", help=_("Delete an acquisition"))
-    delete_parser.add_argument("acquisition", type=int, help=_("Acquisition"))
+    delete_parser.add_argument("acquisition", help=_("Acquisition"))
 
     edit_parser = subparser.add_parser("edit", help=_("Edit an acquisition"))
-    edit_parser.add_argument("acquisition", type=int, help=_("Acquisition"))
+    edit_parser.add_argument("acquisition", help=_("Acquisition"))
 
     edit_subparser = edit_parser.add_subparsers(
         dest="edit_subparser", help=_("Which field to edit")
@@ -283,10 +283,10 @@ def read_subparser(parser: _SubParsersAction, arg_name: str, help_txt: str):
     )
 
     delete_parser = subparser.add_parser("delete", help=_("Delete a read"))
-    delete_parser.add_argument("read", type=int, help=_("Read"))
+    delete_parser.add_argument("read", help=_("Read"))
 
     edit_parser = subparser.add_parser("edit", help=_("Edit a read"))
-    edit_parser.add_argument("read", type=int, help=_("Read"))
+    edit_parser.add_argument("read", help=_("Read"))
     edit_parser.add_argument(
         "field", choices=["started", "finished"], help=_("Which field to edit")
     )
