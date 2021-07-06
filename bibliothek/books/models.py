@@ -423,9 +423,13 @@ class Edition(models.Model):
         if "isbn" in data and data["isbn"]:
             defaults["isbn"] = data["isbn"]
         if "publishing_date" in data and data["publishing_date"]:
-            defaults["publishing_date"] = datetime.datetime.strptime(
-                data["publishing_date"], "%Y-%m-%d"
-            ).date()
+            defaults["publishing_date"] = (
+                data["publishing_date"]
+                if isinstance(data["publishing_date"], datetime.date)
+                else datetime.datetime.strptime(
+                    data["publishing_date"], "%Y-%m-%d"
+                ).date()
+            )
         if "publisher" in data and data["publisher"]:
             defaults["publisher"] = Publisher.from_dict(data["publisher"])[0]
         if "binding" in data and data["binding"]:

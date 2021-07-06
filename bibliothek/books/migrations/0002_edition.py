@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+import django.db.models.expressions
 import django.db.models.deletion
 
 
@@ -33,9 +34,9 @@ class Migration(migrations.Migration):
                 ('publisher', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='editions', to='publishers.Publisher', verbose_name='Publisher')),
             ],
             options={
+                'ordering': (django.db.models.expressions.Func(django.db.models.expressions.F('book__series__name'), function='LOWER'), 'book__volume', django.db.models.expressions.Func(django.db.models.expressions.F('book__title'), function='LOWER'), 'publishing_date'),
                 'verbose_name': 'Edition',
                 'verbose_name_plural': 'Editions',
-                'ordering': ('book', 'publishing_date'),
             },
         ),
     ]

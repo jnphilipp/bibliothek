@@ -289,9 +289,13 @@ class Issue(models.Model):
         """
         defaults: Dict = {}
         if "publishing_date" in data and data["publishing_date"]:
-            defaults["publishing_date"] = datetime.datetime.strptime(
-                data["publishing_date"], "%Y-%m-%d"
-            ).date()
+            defaults["publishing_date"] = (
+                data["publishing_date"]
+                if isinstance(data["publishing_date"], datetime.date)
+                else datetime.datetime.strptime(
+                    data["publishing_date"], "%Y-%m-%d"
+                ).date()
+            )
 
         issue, created = cls.objects.get_or_create(
             issue=data["issue"], magazine=magazine, defaults=defaults
