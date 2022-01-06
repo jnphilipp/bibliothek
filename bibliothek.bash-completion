@@ -10,6 +10,36 @@ _bibliothek()
     opts="info binding book genre journal magazine paper person publisher series acquisition read runserver import reading-list statistics -h --help -v --version"
 
     case "${subcommand}" in
+        acquisition)
+            subcommand="${COMP_WORDS[2]}"
+            case "${subcommand}" in
+                add)
+                    opts="--date --price -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                delete)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                edit)
+                    opts="date price -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                info)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                *)
+                    opts="add delete edit info -h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+            esac
+            ;;
         binding)
             subcommand="${COMP_WORDS[2]}"
             case "${subcommand}" in
