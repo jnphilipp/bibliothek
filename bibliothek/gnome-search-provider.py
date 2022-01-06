@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # vim: ft=python fileencoding=utf-8 sts=4 sw=4 et:
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2021 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# Copyright (C) 2016-2022 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
 #
 # This file is part of bibliothek.
 #
