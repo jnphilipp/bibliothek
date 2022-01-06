@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# vim: ft=python fileencoding=utf-8 sts=4 sw=4 et:
 # Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
@@ -15,6 +16,4 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Bindings Django app."""
-
-default_app_config = "languages.apps.LanguagesConfig"
+"""Languages Django app."""

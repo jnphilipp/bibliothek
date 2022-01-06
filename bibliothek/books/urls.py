@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# vim: ft=python fileencoding=utf-8 sts=4 sw=4 et:
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -21,10 +22,13 @@ from .views.book import DetailView as BookDetailView, ListView
 from .views.edition import DetailView as EditionDetailView
 
 
-app_name = 'books'
+app_name = "books"
 urlpatterns = [
-    path('book/', ListView.as_view(), name='book_list'),
-    path('book/<slug:slug>/', BookDetailView.as_view(), name='book_detail'),
-    path('book/<slug:slug>/edition/<int:pk>/', EditionDetailView.as_view(),
-         name='edition_detail'),
+    path("book/", ListView.as_view(), name="book_list"),
+    path("book/<slug:slug>/", BookDetailView.as_view(), name="book_detail"),
+    path(
+        "book/<slug:slug>/edition/<int:pk>/",
+        EditionDetailView.as_view(),
+        name="edition_detail",
+    ),
 ]

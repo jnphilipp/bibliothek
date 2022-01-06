@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# vim: ft=python fileencoding=utf-8 sts=4 sw=4 et:
 # Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
 #
 # This file is part of bibliothek.
@@ -22,4 +23,4 @@ from magazines.models import Issue
 
 class DetailView(generic.DetailView):
     model = Issue
-    slug_field = 'magazine__slug'
+    slug_field = "magazine__slug"

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
+# vim: ft=python fileencoding=utf-8 sts=4 sw=4 et:
+# Copyright (C) 2016-2021 J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>
 #
 # This file is part of bibliothek.
 #
@@ -26,14 +27,14 @@ class ListView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ListView, self).get_context_data(**kwargs)
-        context['o'] = 'name'
-        if self.request.GET.get('o'):
-            context['o'] = self.request.GET.get('o')
+        context["o"] = "name"
+        if self.request.GET.get("o"):
+            context["o"] = self.request.GET.get("o")
         return context
 
     def get_queryset(self):
-        o = self.request.GET.get('o') if self.request.GET.get('o') else 'name'
-        return Magazine.objects.annotate(ci=Count('issues')).order_by(o)
+        o = self.request.GET.get("o") if self.request.GET.get("o") else "name"
+        return Magazine.objects.annotate(ci=Count("issues")).order_by(o)
 
 
 class DetailView(generic.DetailView):
@@ -41,8 +42,8 @@ class DetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DetailView, self).get_context_data(**kwargs)
-        context['o'] = '-publishing_date'
-        if self.request.GET.get('o'):
-            context['o'] = self.request.GET.get('o')
-        context['issues'] = self.object.issues.order_by(context['o'])
+        context["o"] = "-publishing_date"
+        if self.request.GET.get("o"):
+            context["o"] = self.request.GET.get("o")
+        context["issues"] = self.object.issues.order_by(context["o"])
         return context
