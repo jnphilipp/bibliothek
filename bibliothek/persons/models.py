@@ -149,7 +149,7 @@ class Person(models.Model):
             stdout.write(f"{_('Links')}", file=file)
 
         if self.books.count() > 0:
-            books = self.books.all().order_by("publishing_date")
+            books = self.books.all()
             for (i, book), has_next in lookahead(enumerate(books)):
                 stdout.write(
                     [_("Books") if i == 0 else "", f"{book.id}: {book}"],
@@ -161,7 +161,7 @@ class Person(models.Model):
             stdout.write(f"{_('Books')}", file=file)
 
         if self.editions.count() > 0:
-            editions = self.editions.all().order_by("publishing_date")
+            editions = self.editions.all()
             for (i, edition), has_next in lookahead(enumerate(editions)):
                 stdout.write(
                     [_("Editions") if i == 0 else "", f"{edition.id}: {edition}"],
@@ -173,7 +173,7 @@ class Person(models.Model):
             stdout.write(f"{_('Editions')}", file=file)
 
         if self.papers.count() > 0:
-            papers = self.papers.all().order_by("publishing_date")
+            papers = self.papers.all()
             for (i, paper), has_next in lookahead(enumerate(papers)):
                 stdout.write(
                     [_("Papers") if i == 0 else "", f"{paper.id}: {paper}"],
