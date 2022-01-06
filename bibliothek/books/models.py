@@ -450,10 +450,10 @@ class Edition(models.Model):
             defaults=defaults,
         )
 
-        if "cover_image" in data and data["cover_image"]:
+        if "cover" in data and data["cover"]:
             edition.cover_image.save(
-                os.path.basename(data["cover_image"]),
-                DJFile(open(data["cover_image"], "rb")),
+                os.path.basename(data["cover"]),
+                DJFile(open(data["cover"], "rb")),
             )
         if "languages" in data and data["languages"]:
             for i in data["languages"]:
@@ -759,7 +759,7 @@ class Edition(models.Model):
             "publishing_date": self.publishing_date.strftime("%Y-%m-%d")
             if self.publishing_date
             else None,
-            "cover_image": self.cover_image.path if self.cover_image else None,
+            "cover": self.cover_image.path if self.cover_image else None,
             "publisher": self.publisher.to_dict() if self.publisher else None,
             "binding": self.binding.to_dict() if self.binding else None,
             "languages": [i.to_dict() for i in self.languages.all()]

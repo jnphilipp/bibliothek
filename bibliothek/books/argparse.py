@@ -140,7 +140,7 @@ def _book(args: Namespace, file: TextIO = sys.stdout):
                 elif args.acquisition_subparser == "edit" and edition:
                     acquisition = Acquisition.get(args.acquisition, editions=edition)
                     if acquisition:
-                        acquisition.edit(args.field, args.value)
+                        acquisition.edit(args.edit_subparser, args.value)
                         stdout.write(
                             _('Successfully edited acquisition with id "%(pk)d".')
                             % {"pk": acquisition.pk},

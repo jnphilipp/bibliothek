@@ -120,10 +120,10 @@ def _magazine(args: Namespace, file: TextIO = sys.stdout):
                 elif args.acquisition_subparser == "delete" and issue:
                     acquisition = Acquisition.get(args.acquisition, issues=issue)
                     if acquisition:
-                        acquisition.delete(acquisition)
+                        acquisition.delete()
                         stdout.write(
                             _('Successfully deleted acquisition with id "%(pk)d".')
-                            % {"pk": acquisition.pk},
+                            % {"pk": args.acquisition},
                             "",
                             file=file,
                         )
