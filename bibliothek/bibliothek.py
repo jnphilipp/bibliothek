@@ -61,12 +61,9 @@ def init():
     """Init."""
     from django.core.management import execute_from_command_line
 
-    # if settings.DEBUG:
-    #     execute_from_command_line(['', 'migrate'])
-    # else:
-    if not os.path.exists(settings.APP_DATA_DIR):
-        os.makedirs(settings.APP_DATA_DIR)
-        execute_from_command_line(["", "migrate"])
+    if not settings.APP_DATA_DIR.exists():
+        settings.APP_DATA_DIR.mkdir(parents=True, exist_ok=True)
+    execute_from_command_line(["", "migrate", "--noinput", "-v0"])
 
 
 def _runserver(args):
