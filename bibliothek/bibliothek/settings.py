@@ -67,7 +67,7 @@ SECRET_KEY = "".join(["%02x" % h for h in os.urandom(4096)])
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["127.0.0.1"]
 
@@ -208,17 +208,24 @@ CURRENCY_SYMBOL = None
 
 # Load local settings
 
-paths = [BASE_DIR / "bibliothek" / "local.py", APP_CONFIG_DIR / "settings.py"]
+paths = [
+    BASE_DIR / "local.py",
+    BASE_DIR / "bibliothek" / "local.py",
+    APP_CONFIG_DIR / "settings.py"
+]
+
 
 try:
-    if (BASE_DIR / "local.py").exists():
-        spec = importlib.util.spec_from_file_location(
-            "local_settings", BASE_DIR / "local.py"
-        )
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        sys.modules["local_settings"] = module
-        from local_settings import *
+    for path in paths:
+        if path.exists():
+            spec = importlib.util.spec_from_file_location(
+                "local_settings", path
+            )
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            sys.modules["local_settings"] = module
+            from local_settings import *
+            break
 except ImportError as e:
     sys.stderr.write(str(e))
     pass
