@@ -27,42 +27,42 @@
                     {% url "books:book_list" as book_list_url %}
                     <a class="nav-link{% if request.path|startswith:book_list_url %} active{% endif %}" href="{{ book_list_url }}">
                         {% trans "Books" %}
-                        {% if request.path|startswith:book_list_url %}<span class="sr-only">(current)</span>{% endif %}
+                        {% if request.path|startswith:book_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
                     </a>
                     {% url "journals:journal_list" as journal_list_url %}
                     <a class="nav-link{% if request.path|startswith:journal_list_url %} active{% endif %}" href="{{ journal_list_url }}">
                         {% trans "Journals" %}
-                        {% if request.path|startswith:journal_list_url %}<span class="sr-only">(current)</span>{% endif %}
+                        {% if request.path|startswith:journal_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
                     </a>
                     {% url "genres:genre_list" as genre_list_url %}
                     <a class="nav-link{% if request.path|startswith:genre_list_url %} active{% endif %}" href="{{ genre_list_url }}">
                         {% trans "Genres" %}
-                        {% if request.path|startswith:genre_list_url %}<span class="sr-only">(current)</span>{% endif %}
+                        {% if request.path|startswith:genre_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
                     </a>
                     {% url "magazines:magazine_list" as magazine_list_url %}
                     <a class="nav-link{% if request.path|startswith:magazine_list_url %} active{% endif %}" href="{{ magazine_list_url }}">
                         {% trans "Magazines" %}
-                        {% if request.path|startswith:magazine_list_url %}<span class="sr-only">(current)</span>{% endif %}
+                        {% if request.path|startswith:magazine_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
                     </a>
                     {% url "papers:paper_list" as paper_list_url %}
                     <a class="nav-link{% if request.path|startswith:paper_list_url %} active{% endif %}" href="{{ paper_list_url }}">
                         {% trans "Papers" %}
-                        {% if request.path|startswith:paper_list_url %}<span class="sr-only">(current)</span>{% endif %}
+                        {% if request.path|startswith:paper_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
                     </a>
                     {% url "persons:person_list" as person_list_url %}
                     <a class="nav-link{% if request.path|startswith:person_list_url %} active{% endif %}" href="{{ person_list_url }}">
                         {% trans "Persons" %}
-                        {% if request.path|startswith:person_list_url %}<span class="sr-only">(current)</span>{% endif %}
+                        {% if request.path|startswith:person_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
                     </a>
                     {% url "publishers:publisher_list" as publisher_list_url %}
                     <a class="nav-link{% if request.path|startswith:publisher_list_url %} active{% endif %}" href="{{ publisher_list_url }}">
                         {% trans "Publishers" %}
-                        {% if request.path|startswith:publisher_list_url %}<span class="sr-only">(current)</span>{% endif %}
+                        {% if request.path|startswith:publisher_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
                     </a>
                     {% url "series:series_list" as series_url %}
                     <a class="nav-link{% if request.path|startswith:series_url %} active{% endif %}" href="{{ series_url }}">
                         {% trans "Series" %}
-                        {% if request.path|startswith:series_url %}<span class="sr-only">(current)</span>{% endif %}
+                        {% if request.path|startswith:series_url %}<span class="visually-hidden">(current)</span>{% endif %}
                     </a>
                 </ul>
             </div>
