@@ -78,7 +78,7 @@ INSTALLED_APPS = [
     "bibliothek",
     "bindings",
     "books",
-    "django_bootstrap4",
+    "django_bootstrap5",
     "files",
     "genres",
     "journals",
