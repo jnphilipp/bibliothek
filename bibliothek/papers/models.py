@@ -188,7 +188,7 @@ class Paper(models.Model):
                         "volume": volume,
                         "publisher": publisher,
                         "publishing_date": pub_date,
-                        "links": [url],
+                        "links": [url] if url else None,
                         "bibtex": bibtex,
                     }
                 )
