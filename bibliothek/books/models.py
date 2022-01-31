@@ -47,7 +47,7 @@ from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar, Union
 
 
 class Book(models.Model):
-    """Book ORM Model."""
+    """Book Model."""
 
     T = TypeVar("T", bound="Book", covariant=True)
 
@@ -330,7 +330,7 @@ class Book(models.Model):
 
 
 class Edition(models.Model):
-    """Book ORM Model."""
+    """Book Model."""
 
     T = TypeVar("T", bound="Edition", covariant=True)
 

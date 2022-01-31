@@ -31,21 +31,21 @@ from .models import Book, Edition
 
 
 class AcquisitionInline(GenericStackedInline):
-    """Acquisition inline Django admin."""
+    """Acquisition inline admin."""
 
     extra = 1
     model = Acquisition
 
 
 class FileInline(GenericStackedInline):
-    """File inline Django admin."""
+    """File inline admin."""
 
     extra = 1
     model = File
 
 
 class ReadInline(GenericStackedInline):
-    """Read inline Django admin."""
+    """Read inline admin."""
 
     extra = 1
     model = Read
@@ -53,7 +53,7 @@ class ReadInline(GenericStackedInline):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    """Book Django admin."""
+    """Book admin."""
 
     def _list_authors(self, obj):
         return format_html_join(", ", "{}", ((p.name,) for p in obj.authors.all()))
@@ -75,7 +75,7 @@ class BookAdmin(admin.ModelAdmin):
 
 @admin.register(Edition)
 class EditionAdmin(admin.ModelAdmin):
-    """Edition Django admin."""
+    """Edition admin."""
 
     fieldsets = [
         (
@@ -114,7 +114,7 @@ class EditionAdmin(admin.ModelAdmin):
     search_fields = (
         "book__title",
         "book__authors__name",
-        # 'book__series__name',
+        "book__series__name",
         "book__volume",
         "isbn",
         "binding__name",
