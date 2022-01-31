@@ -31,7 +31,7 @@ from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar
 
 
 class Series(models.Model):
-    """Series ORM model."""
+    """Series model."""
 
     T = TypeVar("T", bound="Series", covariant=True)
 

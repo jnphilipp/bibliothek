@@ -16,7 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Admin for series Django app."""
+"""Series Django app admin."""
 
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
@@ -25,7 +25,7 @@ from series.models import Series
 
 @admin.register(Series)
 class SeriesAdmin(admin.ModelAdmin):
-    """Series Django admin."""
+    """Series admin."""
 
     fieldsets = [
         (None, {"fields": ["created_at", "updated_at", "slug", "name"]}),

@@ -16,6 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Series Django app urls."""
 
 from django.urls import path
 from .views import DetailView, ListView
