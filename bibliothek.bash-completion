@@ -439,12 +439,12 @@ _bibliothek()
                     esac
                     ;;
                 add)
-                    opts="--author --publishing-date --journal --volume --language --link --file -h --help"
+                    opts="--author --publishing-date --journal --volume --doi --language --link --file -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
                 edit)
-                    opts="title publishing-date journal volume language link file -h --help"
+                    opts="title publishing-date journal volume doi language link file -h --help"
                     copts=$(compgen -W "${opts}" -- ${cur})
                     OLDIFS=$IFS
                     IFS=$'\n'

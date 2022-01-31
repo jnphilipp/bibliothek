@@ -16,32 +16,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Papers Django app views."""
+"""Papers Django app papers templatetags."""
 
-from django.views import generic
-from papers.models import Paper
+from django.template import Library
 
-
-class ListView(generic.ListView):
-    """Paper list view."""
-
-    model = Paper
-
-    def get_context_data(self, **kwargs):
-        """Get context data."""
-        context = super(ListView, self).get_context_data(**kwargs)
-        context["o"] = "title"
-        if self.request.GET.get("o"):
-            context["o"] = self.request.GET.get("o")
-        return context
-
-    def get_queryset(self):
-        """Get django query set."""
-        o = self.request.GET.get("o") if self.request.GET.get("o") else "title"
-        return Paper.objects.order_by(o)
+register = Library()
 
 
-class DetailView(generic.DetailView):
-    """Paper detail view."""
-
-    model = Paper
+@register.simple_tag
+def doi_url(doi):
+    """Conver DOI to an URL."""
+    return f"https://doi.org/{doi}"

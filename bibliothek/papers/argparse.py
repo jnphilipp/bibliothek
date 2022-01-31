@@ -101,6 +101,7 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
                 if args.journal
                 else None,
                 "volume": args.volume,
+                "doi": args.doi,
                 "languages": [
                     Language.get_or_create(language).to_dict()
                     for language in args.language
@@ -284,6 +285,7 @@ def add_subparser(parser: _SubParsersAction):
     )
     add_parser.add_argument("--journal", help=_("journal"))
     add_parser.add_argument("--volume", help=_("Volume"))
+    add_parser.add_argument("--doi", help=_("DOI"))
     add_parser.add_argument("--language", nargs="*", default=[], help=_("Languages"))
     add_parser.add_argument("--link", nargs="*", default=[], help=_("Links"))
     add_parser.add_argument("--file", nargs="*", default=[], help=_("Additional files"))
@@ -315,6 +317,9 @@ def add_subparser(parser: _SubParsersAction):
 
     edit_volume_parser = edit_subparser.add_parser("volume")
     edit_volume_parser.add_argument("value", help=_("New value for field"))
+
+    edit_doi_parser = edit_subparser.add_parser("doi")
+    edit_doi_parser.add_argument("value", help=_("New value for field"))
 
     edit_language_parser = edit_subparser.add_parser("language")
     edit_language_parser.add_argument("value", help=_("New value for field"))

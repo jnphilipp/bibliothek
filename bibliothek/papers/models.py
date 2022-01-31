@@ -44,7 +44,7 @@ from typing import Dict, List, Optional, TextIO, Tuple, Type, TypeVar, Union
 
 
 class Paper(models.Model):
-    """Paper ORM Model."""
+    """Paper Model."""
 
     T = TypeVar("T", bound="Paper", covariant=True)
 
@@ -56,6 +56,7 @@ class Paper(models.Model):
     authors = models.ManyToManyField(
         Person, blank=True, related_name="papers", verbose_name=_("Authors")
     )
+    doi = models.TextField(blank=True, null=True, unique=True, verbose_name=_("DOI"))
 
     journal = models.ForeignKey(
         Journal,
@@ -179,6 +180,15 @@ class Paper(models.Model):
             else:
                 url = None
 
+            doi = None
+            if "doi" in entry:
+                if entry["doi"].startswith("doi:"):
+                    doi = entry["doi"][4:]
+                elif entry["doi"].startswith("http"):
+                    doi = re.sub(r"https?://[^/]+/", "", entry["doi"])
+                else:
+                    doi = entry["doi"]
+
             papers.append(
                 cls.from_dict(
                     {
@@ -190,6 +200,7 @@ class Paper(models.Model):
                         "publishing_date": pub_date,
                         "links": [url] if url else None,
                         "bibtex": bibtex,
+                        "doi": doi,
                     }
                 )
             )
@@ -213,6 +224,8 @@ class Paper(models.Model):
             defaults["journal"] = Journal.from_dict(data["journal"])[0]
         if "volume" in data and data["volume"]:
             defaults["volume"] = data["volume"]
+        if "doi" in data and data["doi"]:
+            defaults["doi"] = data["doi"]
         if "publishing_date" in data and data["publishing_date"]:
             defaults["publishing_date"] = datetime.datetime.strptime(
                 data["publishing_date"], "%Y-%m-%d"
@@ -282,6 +295,7 @@ class Paper(models.Model):
             | Q(title__icontains=term)
             | Q(authors__in=persons)
             | Q(jv__icontains=term)
+            | Q(doi__icontains=term)
         ).distinct()
 
     def delete(self: T) -> Tuple[int, Dict[str, int]]:
@@ -334,6 +348,7 @@ class Paper(models.Model):
             "publishing-date",
             "journal",
             "volume",
+            "doi",
             "language",
             "file",
             "link",
@@ -355,6 +370,8 @@ class Paper(models.Model):
             self.journal = Journal.get_or_create(value)
         elif field == "volume":
             self.volume = value
+        elif field == "doi":
+            self.doi = value
         elif field == "bibtex":
             self.bibtex = value
         elif field == "language" and isinstance(value, str):
@@ -405,6 +422,11 @@ class Paper(models.Model):
         )
         stdout.write(
             [_("Volume"), self.volume if self.volume else ""],
+            positions=[0.33],
+            file=file,
+        )
+        stdout.write(
+            [_("DOI"), self.doi if self.doi else ""],
             positions=[0.33],
             file=file,
         )
@@ -482,6 +504,8 @@ class Paper(models.Model):
             orig = Paper.objects.get(pk=self.pk)
             if orig.title != self.title:
                 self.slug = slugify(self.title)
+        if self.doi and not self.doi.startswith("doi:"):
+            self.doi = f"doi:{self.doi}"
         super(Paper, self).save(*args, **kwargs)
         for file in self.files.all():
             path = os.path.join("papers", str(self.pk))
@@ -497,6 +521,7 @@ class Paper(models.Model):
             else None,
             "journal": self.journal.to_dict() if self.journal else None,
             "volume": self.volume,
+            "doi": self.doi,
             "publishing_date": self.publishing_date.strftime("%Y-%m-%d")
             if self.publishing_date
             else None,

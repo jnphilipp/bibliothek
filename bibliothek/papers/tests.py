@@ -16,6 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Papers Django app tests."""
 
 import os
 
@@ -77,6 +78,7 @@ class PaperModelTestCase(TestCase):
                     ],
                     "journal": {"name": "ArXiv e-prints", "links": None},
                     "volume": "1706.02515",
+                    "doi": None,
                     "publishing_date": "2017-06-01",
                     "languages": None,
                     "files": [
@@ -110,6 +112,7 @@ class PaperModelTestCase(TestCase):
                     ],
                     "journal": {"name": "ArXiv e-prints", "links": None},
                     "volume": "1805.08671",
+                    "doi": None,
                     "publishing_date": "2018-05-01",
                     "languages": None,
                     "files": [
@@ -149,6 +152,7 @@ class PaperModelTestCase(TestCase):
                     ],
                     "journal": {"name": "ArXiv e-prints", "links": None},
                     "volume": "1706.02515",
+                    "doi": None,
                     "publishing_date": "2017-06-01",
                     "languages": None,
                     "files": None,
@@ -173,6 +177,7 @@ class PaperModelTestCase(TestCase):
                     ],
                     "journal": {"name": "ArXiv e-prints", "links": None},
                     "volume": "1805.08671",
+                    "doi": None,
                     "publishing_date": "2018-05-01",
                     "languages": None,
                     "files": None,
@@ -267,6 +272,7 @@ class PaperModelTestCase(TestCase):
                 ],
                 "journal": {"name": "Science Journal", "links": None},
                 "volume": "1/2021",
+                "doi": None,
                 "publishing_date": None,
                 "languages": None,
                 "files": None,
@@ -288,6 +294,7 @@ class PaperModelTestCase(TestCase):
                     ],
                     "journal": {"name": "Science Journal", "links": None},
                     "volume": "1/2021",
+                    "doi": None,
                     "publishing_date": None,
                     "languages": None,
                     "files": None,
@@ -295,6 +302,20 @@ class PaperModelTestCase(TestCase):
                     "links": None,
                     "acquisitions": None,
                     "reads": None,
+                }
+            ),
+        )
+        self.assertEquals(
+            (paper, False),
+            Paper.from_dict(
+                {
+                    "title": "Random new stuff",
+                    "authors": [
+                        {"name": "Jane Doe"},
+                        {"name": "John Doe"},
+                    ],
+                    "journal": {"name": "Science Journal"},
+                    "volume": "1/2021",
                 }
             ),
         )
@@ -326,6 +347,7 @@ class PaperModelTestCase(TestCase):
             publishing_date=datetime.strptime("2021-01-01", "%Y-%m-%d").date(),
             journal=journal,
             volume="2/2021",
+            doi="some/doi",
         )
         paper.authors.add(author1)
         paper.authors.add(author2)
@@ -355,6 +377,7 @@ class PaperModelTestCase(TestCase):
                 ],
                 "journal": {"name": "Science Journal", "links": None},
                 "volume": "2/2021",
+                "doi": "some/doi",
                 "publishing_date": "2021-01-01",
                 "languages": [{"name": "Englisch"}],
                 "files": None,
@@ -376,6 +399,7 @@ class PaperModelTestCase(TestCase):
                     ],
                     "journal": {"name": "Science Journal", "links": None},
                     "volume": "2/2021",
+                    "doi": "some/doi",
                     "publishing_date": "2021-01-01",
                     "languages": [{"name": "Englisch"}],
                     "files": None,
@@ -397,6 +421,27 @@ class PaperModelTestCase(TestCase):
                     ],
                     "journal": {"name": "Science Journal"},
                     "volume": "2/2021",
+                    "doi": "some/doi",
+                    "publishing_date": "2021-01-01",
+                    "languages": [{"name": "Englisch"}],
+                    "links": [{"url": "https://example.com"}],
+                    "acquisitions": [{"date": "2021-01-02", "price": 10.0}],
+                    "reads": [{"started": "2021-01-02", "finished": "2021-01-03"}],
+                }
+            ),
+        )
+        self.assertEquals(
+            (paper, False),
+            Paper.from_dict(
+                {
+                    "title": "Random Science stuff",
+                    "authors": [
+                        {"name": "Jane Doe"},
+                        {"name": "John Doe"},
+                    ],
+                    "journal": {"name": "Science Journal"},
+                    "volume": "2/2021",
+                    "doi": "some/doi",
                     "publishing_date": "2021-01-01",
                     "languages": [{"name": "Englisch"}],
                     "links": [{"url": "https://example.com"}],
@@ -439,6 +484,7 @@ class PaperModelTestCase(TestCase):
                     ],
                     "journal": {"name": "Science Journal", "links": None},
                     "volume": "2/2021",
+                    "doi": None,
                     "publishing_date": "2021-02-01",
                     "languages": [{"name": "Englisch"}],
                     "bibtex": None,
@@ -625,6 +671,9 @@ class PaperModelTestCase(TestCase):
                 + "________________________________\nVolume                           1"
                 + "706.02515                                                         \n"
                 + "____________________________________________________________________"
+                + "________________________________\nDOI                               "
+                + "                                                                  \n"
+                + "____________________________________________________________________"
                 + "________________________________\nPublishing date                  2"
                 + "017-06-01                                                         \n"
                 + "____________________________________________________________________"
@@ -671,6 +720,9 @@ class PaperModelTestCase(TestCase):
                 + "____________________________________________________________________"
                 + "________________________________\nVolume                           1"
                 + "805.08671                                                         \n"
+                + "____________________________________________________________________"
+                + "________________________________\nDOI                               "
+                + "                                                                  \n"
                 + "____________________________________________________________________"
                 + "________________________________\nPublishing date                  2"
                 + "018-05-01                                                         \n"

@@ -1,5 +1,5 @@
 {% extends "bibliothek/base.html" %}
-{% load i18n shelves %}
+{% load i18n papers shelves %}
 
 
 {% block content %}
@@ -14,6 +14,8 @@
         <dl class="row">
             <dt class="col-sm-2">{% trans "Authors" %}</dt>
             <dd class="col-sm-10">{% for author in paper.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+            <dt class="col-sm-2">{% trans "DOI" %}</dt>
+            <dd class="col-sm-10">{% if paper.doi %}<a href="{% doi_url paper.doi %}">{{ paper.doi }}</a>{% endif %}</dd>
             <dt class="col-sm-2">{% trans "Journal" %}</dt>
             <dd class="col-sm-10">{% if paper.journal %}<a href="{% url "journals:journal_detail" paper.journal.slug %}">{{ paper.journal.name }}</a>{% endif %}</dd>
             <dt class="col-sm-2">{% trans "Volume" %}</dt>

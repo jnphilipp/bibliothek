@@ -16,32 +16,4 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Papers Django app views."""
-
-from django.views import generic
-from papers.models import Paper
-
-
-class ListView(generic.ListView):
-    """Paper list view."""
-
-    model = Paper
-
-    def get_context_data(self, **kwargs):
-        """Get context data."""
-        context = super(ListView, self).get_context_data(**kwargs)
-        context["o"] = "title"
-        if self.request.GET.get("o"):
-            context["o"] = self.request.GET.get("o")
-        return context
-
-    def get_queryset(self):
-        """Get django query set."""
-        o = self.request.GET.get("o") if self.request.GET.get("o") else "title"
-        return Paper.objects.order_by(o)
-
-
-class DetailView(generic.DetailView):
-    """Paper detail view."""
-
-    model = Paper
+"""Papers Django app templatetags."""

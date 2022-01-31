@@ -16,7 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Papers Django admin."""
+"""Papers Django app admin."""
 
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
@@ -30,21 +30,21 @@ from shelves.models import Acquisition, Read
 
 
 class AcquisitionInline(GenericStackedInline):
-    """Acquisition inline Django admin."""
+    """Acquisition inline admin."""
 
     extra = 1
     model = Acquisition
 
 
 class FileInline(GenericStackedInline):
-    """File inline Django admin."""
+    """File inline admin."""
 
     extra = 1
     model = File
 
 
 class ReadInline(GenericStackedInline):
-    """Read inline Django admin."""
+    """Read inline admin."""
 
     extra = 1
     model = Read
@@ -52,7 +52,7 @@ class ReadInline(GenericStackedInline):
 
 @admin.register(Paper)
 class PaperAdmin(admin.ModelAdmin):
-    """Paper Django admin."""
+    """Paper admin."""
 
     def list_authors(self, obj):
         """Format authors."""
@@ -69,6 +69,7 @@ class PaperAdmin(admin.ModelAdmin):
                     "title",
                     "authors",
                     "languages",
+                    "doi",
                 ]
             },
         ),
@@ -89,7 +90,7 @@ class PaperAdmin(admin.ModelAdmin):
         },
     }
     inlines = [FileInline, AcquisitionInline, ReadInline]
-    list_display = ("title", "list_authors", "journal", "volume", "updated_at")
+    list_display = ("title", "list_authors", "journal", "volume", "doi", "updated_at")
     list_filter = ("authors", "journal")
     readonly_fields = ("created_at", "updated_at", "slug")
     search_fields = ("title", "journal__name", "volume")
