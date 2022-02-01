@@ -196,7 +196,7 @@ build/conf/bibliothek.desktop: build/conf
 	@echo "Name=bibliothek" >> build/conf/bibliothek.desktop
 	@echo "Comment=Manage books, papers and magazines" >> build/conf/bibliothek.desktop
 	@echo "Terminal=false" >> build/conf/bibliothek.desktop
-	@echo "Exec=xdg-open http://localhost:8080" >> build/conf/bibliothek.desktop
+	@echo "Exec=xdg-open http://localhost:8081" >> build/conf/bibliothek.desktop
 	@echo "Type=Application" >> build/conf/bibliothek.desktop
 	@echo "OnlyShowIn=GNOME;" >> build/conf/bibliothek.desktop
 	@echo "Keywords=Library" >> build/conf/bibliothek.desktop
