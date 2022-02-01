@@ -69,7 +69,7 @@ SECRET_KEY = "".join(["%02x" % h for h in os.urandom(4096)])
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -141,7 +141,7 @@ WSGI_APPLICATION = "bibliothek.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3" if DEBUG else APP_DATA_DIR / "db.sqlite3",
     }
 }
 
@@ -192,7 +192,7 @@ STATICFILES_FINDERS = (
 # Media files
 
 MEDIA_URL = "media/"
-MEDIA_ROOT = APP_DATA_DIR
+MEDIA_ROOT = (BASE_DIR / "media") if DEBUG else APP_DATA_DIR
 
 
 # Default primary key field type
