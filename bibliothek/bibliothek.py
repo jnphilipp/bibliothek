@@ -41,7 +41,7 @@ import publishers.argparse
 import series.argparse
 import shelves.argparse
 
-from argparse import ArgumentParser, Namespace, RawTextHelpFormatter
+from argparse import ArgumentParser, FileType, Namespace, RawTextHelpFormatter
 from bibliothek import (
     __app_name__,
     __author__,
@@ -67,116 +67,46 @@ def init():
 
 
 def _import(args):
-    import bindings.functions.binding as fbinding
-    import books.functions.book as fbook
-    import books.functions.edition as fedition
-    import genres.functions as genres_functions
-    import persons.functions.person as fperson
-    import publishers.functions.publisher as fpublisher
-    import series.functions.series as fseries
-    import shelves.functions.acquisition as facquisition
-    import shelves.functions.read as fread
+    from books.models import Book, Edition
+    from magazines.models import Issue, Magazine
+    from papers.models import Paper
+    from shelves.models import Acquisition, Read
 
     with open(args.path, "r", encoding="utf-8") as f:
         data = json.loads(f.read())
 
-    if "books" in data:
-        for b in data["books"]:
-            authors = []
-            for a in b["authors"]:
-                if "first_name" in a:
-                    name = f"{a['first_name']} {a['last_name']}".strip()
-                else:
-                    name = a["name"]
-                person, c = fperson.create(name, a["links"] if "links" in a else [])
-                authors.append(str(person.id))
+    for b in data["books"] if "books" in data else []:
+        book, created = Book.from_dict(b)
 
-            genres = []
-            for g in b["genres"] if "genres" in b else []:
-                genre, c = genres_functions.genre.create(g["name"])
-                genres.append(str(genre.id))
+        for e in b["editions"] if "editions" in b else []:
+            edition, created = Edition.from_dict(e, book)
 
-            series, c = (
-                fseries.create(
-                    b["series"]["name"],
-                    b["series"]["links"] if "links" in b["series"] else [],
-                )
-                if "series" in b
-                else (None, False)
-            )
+            for a in e["acquisitions"] if "acquisitions" in e else []:
+                Acquisition.from_dict(a, edition)
 
-            book, c = fbook.create(
-                b["title"],
-                authors,
-                str(series.id) if series else None,
-                b["volume"] if "volume" in b else 0,
-                genres,
-                b["links"] if "links" in b else [],
-            )
+            for r in e["reads"] if "reads" in e else []:
+                Read.from_dict(a, edition)
 
-            for e in b["editions"] if "editions" in b else []:
-                binding, c = (
-                    fbinding.create(e["binding"]["name"])
-                    if "binding" in e
-                    else (None, False)
-                )
-                publisher, c = (
-                    fpublisher.create(
-                        e["publisher"]["name"],
-                        e["publisher"]["links"] if "links" in e["publisher"] else [],
-                    )
-                    if "publisher" in e
-                    else (None, False)
-                )
+    for m in data["magazines"] if "magazines" in data else []:
+        magazine, created = Magazine.from_dict(m)
 
-                persons = []
-                for p in e["persons"] if "persons" in e else []:
-                    if "first_name" in p:
-                        name = f"{p['first_name']} {a['last_name']}".strip()
-                    else:
-                        name = a["name"]
-                    person, c = fperson.create(name, a["links"] if "links" in a else [])
-                    persons.append(str(person.id))
+        for i in b["issues"] if "issues" in m else []:
+            issue, created = Issue.from_dict(i, magazine)
 
-                edition, c = fedition.create(
-                    book,
-                    e["alternate_title"] if "alternate_title" in e else None,
-                    e["isbn"] if "isbn" in e else None,
-                    e["publishing_date"] if "publishing_date" in e else None,
-                    e["cover"] if "cover" in e else None,
-                    str(binding.id) if binding else None,
-                    str(publisher.id) if publisher else None,
-                    persons,
-                    e["languages"] if "languages" in e else [],
-                    e["links"] if "links" in e else [],
-                    e["files"] if "files" in e else [],
-                )
+            for a in i["acquisitions"] if "acquisitions" in i else []:
+                Acquisition.from_dict(a, issue)
 
-                for a in e["acquisitions"] if "acquisitions" in e else []:
-                    date = a["date"] if "date" in a else None
-                    price = a["price"] if "price" in a else None
-                    if not date and not price:
-                        continue
+            for r in i["reads"] if "reads" in i else []:
+                Read.from_dict(a, issue)
 
-                    if (
-                        not edition.acquisitions.filter(date=date)
-                        .filter(price=price)
-                        .exists()
-                    ):
-                        facquisition.create(edition, date, price)
+    for p in data["papers"] if "papers" in data else []:
+        paper, created = Paper.from_dict(p)
 
-                for r in e["reads"] if "reads" in e else []:
-                    started = r["started"] if "started" in r else None
-                    finished = r["finished"] if "finished" in r else None
-                    if not started and not finished:
-                        continue
+        for a in p["acquisitions"] if "acquisitions" in p else []:
+            Acquisition.from_dict(a, paper)
 
-                    if (
-                        not edition.reads.filter(started=started)
-                        .filter(finished=finished)
-                        .exists()
-                    ):
-                        fread.create(edition, started, finished)
+        for r in p["reads"] if "reads" in p else []:
+            Read.from_dict(a, paper)
 
 
 def _reading_list(args: Namespace, file: TextIO = sys.stdout):
@@ -337,7 +267,12 @@ if __name__ == "__main__":
     # create the parser for the "import" subcommand
     import_parser = subparser.add_parser("import", help=_("Import data from JSON"))
     import_parser.set_defaults(func=_import)
-    import_parser.add_argument("path", help=_("JSON file"))
+    import_parser.add_argument(
+        "PATH",
+        type=FileType("r", encoding="utf8"),
+        default=sys.stdout,
+        help=_("JSON file to import from"),
+    )
 
     # create the parser for the "reading-list" subcommand
     reading_list_parser = subparser.add_parser(
