@@ -504,8 +504,6 @@ class Paper(models.Model):
             orig = Paper.objects.get(pk=self.pk)
             if orig.title != self.title:
                 self.slug = slugify(self.title)
-        if self.doi and not self.doi.startswith("doi:"):
-            self.doi = f"doi:{self.doi}"
         super(Paper, self).save(*args, **kwargs)
         for file in self.files.all():
             path = os.path.join("papers", str(self.pk))
