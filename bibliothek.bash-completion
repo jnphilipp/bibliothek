@@ -7,7 +7,7 @@ _bibliothek()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     subcommand="${COMP_WORDS[1]}"
 
-    opts="info binding book genre journal magazine paper person publisher series acquisition read runserver import reading-list statistics -h --help -v --version"
+    opts="info binding book genre journal magazine paper person publisher series acquisition read import reading-list statistics -h --help -v --version"
 
     case "${subcommand}" in
         acquisition)

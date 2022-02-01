@@ -66,15 +66,6 @@ def init():
     execute_from_command_line(["", "migrate", "--noinput", "-v0"])
 
 
-def _runserver(args):
-    from django.core.management import execute_from_command_line
-
-    runserver_args = ["", "runserver", args.addrport]
-    if args.ipv6:
-        runserver_args += ["-6"]
-    execute_from_command_line(runserver_args)
-
-
 def _import(args):
     import bindings.functions.binding as fbinding
     import books.functions.book as fbook
@@ -342,30 +333,6 @@ if __name__ == "__main__":
 
     # create the parser for the "acquisition" and "read" subcommand
     shelves.argparse.add_subparser(subparser)
-
-    # create the parser for the "runserver" subcommand
-    runserver_parser = subparser.add_parser(
-        "runserver", help=_("Start local http server")
-    )
-    runserver_parser.set_defaults(func=_runserver)
-    runserver_parser.add_argument(
-        "addrport",
-        nargs="?",
-        default="127.0.0.1:8000",
-        help=_("Optional port number, or " + "ipaddr:port"),
-    )
-    runserver_parser.add_argument(
-        "-6",
-        "--ipv6",
-        action="store_true",
-        help=_("Tells Django to use an IPv6 " + "address."),
-    )
-    runserver_parser.add_argument(
-        "-b",
-        "--background",
-        action="store_true",
-        help=_("Runs the Django server in the " + "background."),
-    )
 
     # create the parser for the "import" subcommand
     import_parser = subparser.add_parser("import", help=_("Import data from JSON"))
