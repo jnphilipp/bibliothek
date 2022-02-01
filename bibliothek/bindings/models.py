@@ -29,7 +29,7 @@ from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar
 
 
 class Binding(models.Model):
-    """Binding ORM Model."""
+    """Binding Model."""
 
     T = TypeVar("T", bound="Binding", covariant=True)
 

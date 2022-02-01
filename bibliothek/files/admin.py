@@ -16,7 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Admin for files Django app."""
+"""Links Django app admin."""
 
 from django.contrib import admin
 from files.models import File
@@ -24,7 +24,7 @@ from files.models import File
 
 @admin.register(File)
 class FileAdmin(admin.ModelAdmin):
-    """File Django admin."""
+    """File admin."""
 
     fieldsets = [
         (

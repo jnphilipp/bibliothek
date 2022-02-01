@@ -25,7 +25,7 @@ from publishers.models import Publisher
 
 @admin.register(Publisher)
 class PublisherAdmin(admin.ModelAdmin):
-    """Publisher Django admin."""
+    """Publisher admin."""
 
     fieldsets = [
         (None, {"fields": ["created_at", "updated_at", "slug", "name"]}),

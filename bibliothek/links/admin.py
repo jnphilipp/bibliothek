@@ -16,6 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Links Django app admin."""
 
 from django.contrib import admin
 from links.models import Link
@@ -23,7 +24,7 @@ from links.models import Link
 
 @admin.register(Link)
 class LinkAdmin(admin.ModelAdmin):
-    """Link Django admin."""
+    """Link admin."""
 
     fieldsets = [
         (None, {"fields": ["created_at", "updated_at", "link"]}),

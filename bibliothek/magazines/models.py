@@ -41,7 +41,7 @@ from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar, Union
 
 
 class Magazine(models.Model):
-    """Magazine ORM Model."""
+    """Magazine Model."""
 
     T = TypeVar("T", bound="Magazine", covariant=True)
 
@@ -231,7 +231,7 @@ class Magazine(models.Model):
 
 
 class Issue(models.Model):
-    """Issue ORM Model."""
+    """Issue Model."""
 
     T = TypeVar("T", bound="Issue", covariant=True)
 

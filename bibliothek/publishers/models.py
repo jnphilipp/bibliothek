@@ -31,7 +31,7 @@ from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar
 
 
 class Publisher(models.Model):
-    """Publisher ORM Model."""
+    """Publisher Model."""
 
     T = TypeVar("T", bound="Publisher", covariant=True)
 

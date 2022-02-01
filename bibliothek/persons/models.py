@@ -32,7 +32,7 @@ from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar
 
 
 class Person(models.Model):
-    """Person ORM Model."""
+    """Person Model."""
 
     T = TypeVar("T", bound="Person", covariant=True)
 

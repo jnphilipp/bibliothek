@@ -25,7 +25,7 @@ from persons.models import Person
 
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
-    """Person Django admin."""
+    """Person admin."""
 
     fieldsets = [
         (None, {"fields": ["created_at", "updated_at", "slug", "name"]}),

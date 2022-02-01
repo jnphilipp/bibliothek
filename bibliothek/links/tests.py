@@ -16,6 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Links Django app tests."""
 
 from django.test import TestCase
 from io import StringIO

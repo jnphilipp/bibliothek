@@ -30,7 +30,7 @@ from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar
 
 
 class Genre(models.Model):
-    """Genre ORM model."""
+    """Genre model."""
 
     T = TypeVar("T", bound="Genre", covariant=True)
 

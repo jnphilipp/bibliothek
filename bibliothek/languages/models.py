@@ -29,7 +29,7 @@ from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar
 
 
 class Language(models.Model):
-    """Language ORM Model."""
+    """Language Model."""
 
     T = TypeVar("T", bound="Language", covariant=True)
 

@@ -16,7 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Shelves templatetags."""
+"""Shelves Django app shelves templatetags."""
 
 from django.conf import settings
 from django.template import Library

@@ -31,7 +31,7 @@ from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar
 
 
 class Journal(models.Model):
-    """Binding ORM Model."""
+    """Binding Model."""
 
     T = TypeVar("T", bound="Journal", covariant=True)
 

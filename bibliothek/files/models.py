@@ -16,7 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Files app models."""
+"""Files Django app models."""
 
 import os
 
@@ -30,7 +30,7 @@ from typing import Dict, Tuple, Type, TypeVar
 
 
 class File(models.Model):
-    """File ORM Model."""
+    """File Model."""
 
     T = TypeVar("T", bound="File", covariant=True)
 

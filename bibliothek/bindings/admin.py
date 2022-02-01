@@ -24,7 +24,7 @@ from django.contrib import admin
 
 @admin.register(Binding)
 class BindingAdmin(admin.ModelAdmin):
-    """Binding Django admin."""
+    """Binding admin."""
 
     fieldsets = [
         (None, {"fields": ["created_at", "updated_at", "slug", "name"]}),

@@ -16,7 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Magazines Django admin."""
+"""Magazines Django app admin."""
 
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
@@ -27,21 +27,21 @@ from shelves.models import Acquisition, Read
 
 
 class AcquisitionInline(GenericStackedInline):
-    """Acquisition inline Django admin."""
+    """Acquisition inline admin."""
 
     extra = 1
     model = Acquisition
 
 
 class FileInline(GenericStackedInline):
-    """File inline Django admin."""
+    """File inline admin."""
 
     extra = 1
     model = File
 
 
 class ReadInline(GenericStackedInline):
-    """Read inline Django admin."""
+    """Read inline admin."""
 
     extra = 1
     model = Read
@@ -49,7 +49,7 @@ class ReadInline(GenericStackedInline):
 
 @admin.register(Issue)
 class IssueAdmin(admin.ModelAdmin):
-    """Issue Django admin."""
+    """Issue admin."""
 
     fieldsets = [
         (
@@ -78,7 +78,7 @@ class IssueAdmin(admin.ModelAdmin):
 
 @admin.register(Magazine)
 class MagazineAdmin(admin.ModelAdmin):
-    """Magazine Django admin."""
+    """Magazine admin."""
 
     fieldsets = [
         (None, {"fields": ["created_at", "updated_at", "slug", "name", "feed"]}),

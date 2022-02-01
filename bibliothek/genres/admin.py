@@ -16,6 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
+"""Genres Django app admin."""
 
 from django.contrib import admin
 from genres.models import Genre
@@ -23,7 +24,7 @@ from genres.models import Genre
 
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
-    """Genre Django admin."""
+    """Genre admin."""
 
     fieldsets = [
         (None, {"fields": ["created_at", "updated_at", "slug", "name"]}),

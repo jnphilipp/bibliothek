@@ -32,7 +32,7 @@ from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar, Union
 
 
 class Acquisition(models.Model):
-    """Acquisition ORM Model."""
+    """Acquisition Model."""
 
     T = TypeVar("T", bound="Acquisition", covariant=True)
 
@@ -173,7 +173,7 @@ class Acquisition(models.Model):
 
 
 class Read(models.Model):
-    """Read ORM Model."""
+    """Read Model."""
 
     T = TypeVar("T", bound="Read", covariant=True)
 

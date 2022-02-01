@@ -25,7 +25,7 @@ from .models import Acquisition, Read
 
 @admin.register(Acquisition)
 class AcquisitionAdmin(admin.ModelAdmin):
-    """Acquisition Django admin."""
+    """Acquisition admin."""
 
     fieldsets = [
         (
@@ -50,7 +50,7 @@ class AcquisitionAdmin(admin.ModelAdmin):
 
 @admin.register(Read)
 class ReadAdmin(admin.ModelAdmin):
-    """Read Django admin."""
+    """Read admin."""
 
     fieldsets = [
         (

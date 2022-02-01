@@ -19,8 +19,6 @@
 """Personal library tool."""
 
 
-default_app_config = "bibliothek.apps.BibliothekConfig"
-
 __author__ = "J. Nathanael Philipp"
 __copyright__ = "Copyright 2016-2022 J. Nathanael Philipp (jnphilipp)"
 __license__ = "GPLv3+"

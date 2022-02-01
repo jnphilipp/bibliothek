@@ -318,7 +318,7 @@ class IssueModelTestCase(TestCase):
             {
                 "issue": "1/2021",
                 "publishing_date": None,
-                "cover_image": None,
+                "cover": None,
                 "languages": None,
                 "links": None,
                 "files": None,
@@ -348,7 +348,7 @@ class IssueModelTestCase(TestCase):
             {
                 "issue": "2/2021",
                 "publishing_date": "2021-02-01",
-                "cover_image": None,
+                "cover": None,
                 "languages": [{"name": "Englisch"}],
                 "files": None,
                 "links": [{"url": "https://example.com"}],
@@ -393,7 +393,7 @@ class IssueModelTestCase(TestCase):
                 {
                     "issue": "3/2021",
                     "publishing_date": "2021-03-01",
-                    "cover_image": None,
+                    "cover": None,
                     "languages": [{"name": "Englisch"}],
                     "files": [
                         {

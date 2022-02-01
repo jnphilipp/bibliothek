@@ -25,7 +25,7 @@ from journals.models import Journal
 
 @admin.register(Journal)
 class JournalAdmin(admin.ModelAdmin):
-    """Journal Django admin."""
+    """Journal admin."""
 
     fieldsets = [
         (None, {"fields": ["created_at", "updated_at", "slug", "name"]}),

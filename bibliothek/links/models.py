@@ -28,7 +28,7 @@ from typing import Dict, Optional, TextIO, Tuple, Type, TypeVar
 
 
 class Link(models.Model):
-    """Link ORM Model."""
+    """Link Model."""
 
     T = TypeVar("T", bound="Link", covariant=True)
 
