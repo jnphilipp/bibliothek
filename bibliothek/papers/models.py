@@ -125,6 +125,16 @@ class Paper(models.Model):
 
         papers = []
         for entry, file in zip(bib_database.entries, files):
+            if entry["ENTRYTYPE"] not in [
+                "article",
+                "inproceedings",
+                "phdthesis",
+                "inbook",
+                "incollection",
+                "conference",
+            ]:
+                continue
+
             title = entry["title"].strip() if "title" in entry else ""
 
             authors = []
@@ -152,7 +162,14 @@ class Paper(models.Model):
             month = entry["month"].strip() if "month" in entry else None
             day = entry["day"].strip() if "day" in entry else None
             if year and month and day:
-                date = datetime.datetime.strptime(f"{day} {month} {year}", "%d %B %Y")
+                try:
+                    date = datetime.datetime.strptime(
+                        f"{day} {month} {year}", "%d %B %Y"
+                    )
+                except ValueError:
+                    date = datetime.datetime.strptime(
+                        f"{day} {month} {year}", "%d %b %Y"
+                    )
             elif year and month:
                 try:
                     date = datetime.datetime.strptime(f"{month} {year}", "%B %Y")
@@ -227,13 +244,17 @@ class Paper(models.Model):
         if "doi" in data and data["doi"]:
             defaults["doi"] = data["doi"]
         if "publishing_date" in data and data["publishing_date"]:
-            defaults["publishing_date"] = datetime.datetime.strptime(
-                data["publishing_date"], "%Y-%m-%d"
-            ).date()
+            defaults["publishing_date"] = (
+                data["publishing_date"]
+                if isinstance(data["publishing_date"], datetime.date)
+                else datetime.datetime.strptime(
+                    data["publishing_date"], "%Y-%m-%d"
+                ).date()
+            )
         if "bibtex" in data and data["bibtex"]:
             defaults["bibtex"] = data["bibtex"]
 
-        paper, created = Paper.objects.get_or_create(
+        paper, created = cls.objects.get_or_create(
             title=data["title"], defaults=defaults
         )
 
@@ -365,7 +386,11 @@ class Paper(models.Model):
             else:
                 self.authors.add(author)
         elif field == "publishing_date" or field == "publishing-date":
-            self.publishing_date = value
+            self.publishing_date = (
+                value
+                if isinstance(value, datetime.date)
+                else datetime.datetime.strptime(value, "%Y-%m-%d").date()
+            )
         elif field == "journal" and isinstance(value, str):
             self.journal = Journal.get_or_create(value)
         elif field == "volume":
