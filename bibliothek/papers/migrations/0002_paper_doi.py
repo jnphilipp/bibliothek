@@ -25,7 +25,7 @@ from bibtexparser.bparser import BibTexParser
 from django.db import migrations, models
 
 
-def default_units(apps, schema_editor):
+def default_dois(apps, schema_editor):
     Paper = apps.get_model("papers", "Paper")
 
     for paper in Paper.objects.all():
@@ -57,5 +57,5 @@ class Migration(migrations.Migration):
             name='doi',
             field=models.TextField(blank=True, null=True, unique=True, verbose_name='DOI'),
         ),
-        migrations.RunPython(default_units),
+        migrations.RunPython(default_dois),
     ]

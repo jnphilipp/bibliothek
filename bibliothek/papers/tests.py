@@ -36,36 +36,60 @@ from shelves.models import Acquisition, Read
 from tempfile import mkdtemp, NamedTemporaryFile
 
 
-BIBTEX = (
-    "@ARTICLE{arXiv1706.02515, author = {Klambauer, Günter and Unterthiner, "
-    + 'Thomas and Mayr, Andreas and Hochreiter, Sepp}, title = "Self-Normalizing '
-    + 'Neural Networks", journal = {ArXiv e-prints}, archivePrefix = "arXiv", '
-    + 'eprint = {1706.02515}, primaryClass = "cs.LG", keywords = {Computer Science '
-    + '- Learning, Statistics - Machine Learning}, year = 2017, month = "Jun", url '
-    + "= {https://arxiv.org/abs/1706.02515}, adsurl = {http://adsabs.harvard.edu/abs/"
-    + "2017arXiv170602515K}, adsnote = {Provided by the SAO/NASA Astrophysics Data "
-    + "System}}\n\n@ARTICLE{arXiv1805.08671, author = {Liang, Shiyu and Sun, Ruoyu "
-    + 'and Lee, Jason D. and Srikant, R.}, title = "Adding One Neuron Can Eliminate '
-    + 'All Bad Local Minima", journal = {ArXiv e-prints}, archivePrefix = "arXiv",'
-    + ' eprint = {1805.08671}, primaryClass = "stat.ML", keywords = {Statistics - '
-    + "Machine Learning, Computer Science - Learning}, year = 2018, month = may, url "
-    + "= {https://arxiv.org/abs/1805.08671}, adsurl = {http://adsabs.harvard.edu/abs/"
-    + "2018arXiv180508671L}, adsnote = {Provided by the SAO/NASA Astrophysics Data "
-    + "System}}"
-)
+PAPERS_BIBTEX = [
+    """@ARTICLE{arXiv1706.02515,
+  author = {Klambauer, Günter and Unterthiner, Thomas and Mayr, Andreas and Hochreiter, Sepp},
+  title = "Self-Normalizing Neural Networks",
+  journal = {ArXiv e-prints},
+  archivePrefix = "arXiv",
+  eprint = {1706.02515},
+  primaryClass = "cs.LG",
+  keywords = {Computer Science - Learning, Statistics - Machine Learning},
+  year = 2017,
+  month = "Jun",
+  url = {https://arxiv.org/abs/1706.02515},
+  adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170602515K},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}""",
+    """@ARTICLE{arXiv1805.08671,
+  author = {Liang, Shiyu and Sun, Ruoyu and Lee, Jason D. and Srikant, R.},
+  title = "Adding One Neuron Can Eliminate All Bad Local Minima",
+  journal = {ArXiv e-prints},
+  archivePrefix = "arXiv",
+  eprint = {1805.08671},
+  primaryClass = "stat.ML",
+  keywords = {Statistics - Machine Learning, Computer Science - Learning},
+  year = 2018,
+  month = may,
+  url = {https://arxiv.org/abs/1805.08671},
+  adsurl = {http://adsabs.harvard.edu/abs/2018arXiv180508671L},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}""",
+    """@conference{nlpinai22,
+  author={Michael Richter and Maria Bardají I. Farré and Max Kölbl and Yuki Kyogoku and J. Philipp and Tariq Yousef and Gerhard Heyer and Nikolaus Himmelmann},
+  title={Uniform Density in Linguistic Information Derived from Dependency Structures},
+  booktitle={Proceedings of the 14th International Conference on Agents and Artificial Intelligence - Volume 1: NLPinAI,},
+  year={2022},
+  pages={496-503},
+  publisher={SciTePress},
+  organization={INSTICC},
+  doi={10.5220/0010969600003116},
+  isbn={978-989-758-547-0},
+}""",
+]
 
 
 class PaperModelTestCase(TestCase):
     @override_settings(MEDIA_ROOT=Path(mkdtemp()))
     def test_from_bibfile(self):
-        papers = None
-        with NamedTemporaryFile() as f:
-            f.write(BIBTEX.encode("utf8"))
-            f.flush()
+        papers = []
+        for bibtex in PAPERS_BIBTEX:
+            with NamedTemporaryFile() as f:
+                f.write(bibtex.encode("utf8"))
+                f.flush()
 
-            papers = Paper.from_bibfile(f.name)
-            self.assertEquals(2, len(papers))
-
+                papers += [(Paper.from_bibfile(f.name)[0], f.name)]
+        self.assertEquals(3, len(papers))
         self.assertEquals(
             (
                 {
@@ -80,25 +104,27 @@ class PaperModelTestCase(TestCase):
                     "volume": "1706.02515",
                     "doi": None,
                     "publishing_date": "2017-06-01",
+                    "publisher": None,
+                    "series": None,
                     "languages": None,
                     "files": [
                         {
                             "path": os.path.join(
                                 settings.MEDIA_ROOT,
                                 "papers",
-                                str(papers[0][0].pk),
-                                os.path.basename(f.name),
+                                str(papers[0][0][0].pk),
+                                os.path.basename(papers[0][1]),
                             )
                         }
                     ],
-                    "bibtex": '@ARTICLE{arXiv1706.02515, author = {Klambauer, Günter and Unterthiner, Thomas and Mayr, Andreas and Hochreiter, Sepp}, title = "Self-Normalizing Neural Networks", journal = {ArXiv e-prints}, archivePrefix = "arXiv", eprint = {1706.02515}, primaryClass = "cs.LG", keywords = {Computer Science - Learning, Statistics - Machine Learning}, year = 2017, month = "Jun", url = {https://arxiv.org/abs/1706.02515}, adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170602515K}, adsnote = {Provided by the SAO/NASA Astrophysics Data System}}\n\n@ARTICLE{arXiv1805.08671, author = {Liang, Shiyu and Sun, Ruoyu and Lee, Jason D. and Srikant, R.}, title = "Adding One Neuron Can Eliminate All Bad Local Minima", journal = {ArXiv e-prints}, archivePrefix = "arXiv", eprint = {1805.08671}, primaryClass = "stat.ML", keywords = {Statistics - Machine Learning, Computer Science - Learning}, year = 2018, month = may, url = {https://arxiv.org/abs/1805.08671}, adsurl = {http://adsabs.harvard.edu/abs/2018arXiv180508671L}, adsnote = {Provided by the SAO/NASA Astrophysics Data System}}',
+                    "bibtex": PAPERS_BIBTEX[0],
                     "links": [{"url": "https://arxiv.org/abs/1706.02515"}],
                     "acquisitions": None,
                     "reads": None,
                 },
                 True,
             ),
-            (papers[0][0].to_dict(), papers[0][1]),
+            (papers[0][0][0].to_dict(), papers[0][0][1]),
         )
         self.assertEquals(
             (
@@ -114,32 +140,76 @@ class PaperModelTestCase(TestCase):
                     "volume": "1805.08671",
                     "doi": None,
                     "publishing_date": "2018-05-01",
+                    "publisher": None,
+                    "series": None,
                     "languages": None,
                     "files": [
                         {
                             "path": os.path.join(
                                 settings.MEDIA_ROOT,
                                 "papers",
-                                str(papers[1][0].pk),
-                                os.path.basename(f.name),
+                                str(papers[1][0][0].pk),
+                                os.path.basename(papers[1][1]),
                             )
                         }
                     ],
-                    "bibtex": '@ARTICLE{arXiv1706.02515, author = {Klambauer, Günter and Unterthiner, Thomas and Mayr, Andreas and Hochreiter, Sepp}, title = "Self-Normalizing Neural Networks", journal = {ArXiv e-prints}, archivePrefix = "arXiv", eprint = {1706.02515}, primaryClass = "cs.LG", keywords = {Computer Science - Learning, Statistics - Machine Learning}, year = 2017, month = "Jun", url = {https://arxiv.org/abs/1706.02515}, adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170602515K}, adsnote = {Provided by the SAO/NASA Astrophysics Data System}}\n\n@ARTICLE{arXiv1805.08671, author = {Liang, Shiyu and Sun, Ruoyu and Lee, Jason D. and Srikant, R.}, title = "Adding One Neuron Can Eliminate All Bad Local Minima", journal = {ArXiv e-prints}, archivePrefix = "arXiv", eprint = {1805.08671}, primaryClass = "stat.ML", keywords = {Statistics - Machine Learning, Computer Science - Learning}, year = 2018, month = may, url = {https://arxiv.org/abs/1805.08671}, adsurl = {http://adsabs.harvard.edu/abs/2018arXiv180508671L}, adsnote = {Provided by the SAO/NASA Astrophysics Data System}}',
+                    "bibtex": PAPERS_BIBTEX[1],
                     "links": [{"url": "https://arxiv.org/abs/1805.08671"}],
                     "acquisitions": None,
                     "reads": None,
                 },
                 True,
             ),
-            (papers[1][0].to_dict(), papers[1][1]),
+            (papers[1][0][0].to_dict(), papers[1][0][1]),
+        )
+        self.assertEquals(
+            (
+                {
+                    "title": "Uniform Density in Linguistic Information Derived from"
+                    + " Dependency Structures",
+                    "authors": [
+                        {"name": "Gerhard Heyer", "links": None},
+                        {"name": "J. Philipp", "links": None},
+                        {"name": "Maria Bardají I. Farré", "links": None},
+                        {"name": "Max Kölbl", "links": None},
+                        {"name": "Michael Richter", "links": None},
+                        {"name": "Nikolaus Himmelmann", "links": None},
+                        {"name": "Tariq Yousef", "links": None},
+                        {"name": "Yuki Kyogoku", "links": None},
+                    ],
+                    "journal": None,
+                    "volume": None,
+                    "doi": "10.5220/0010969600003116",
+                    "publishing_date": "2022-01-01",
+                    "publisher": {"name": "SciTePress", "links": None},
+                    "series": None,
+                    "languages": None,
+                    "files": [
+                        {
+                            "path": os.path.join(
+                                settings.MEDIA_ROOT,
+                                "papers",
+                                str(papers[2][0][0].pk),
+                                os.path.basename(papers[2][1]),
+                            )
+                        }
+                    ],
+                    "bibtex": PAPERS_BIBTEX[2],
+                    "links": None,
+                    "acquisitions": None,
+                    "reads": None,
+                },
+                True,
+            ),
+            (papers[2][0][0].to_dict(), papers[2][0][1]),
         )
 
     @override_settings(MEDIA_ROOT=Path(mkdtemp()))
     def test_from_bibtex(self):
-        papers = Paper.from_bibtex(BIBTEX)
-        self.assertEquals(2, len(papers))
-
+        papers = []
+        for bibtex in PAPERS_BIBTEX:
+            papers += Paper.from_bibtex(bibtex)
+        self.assertEquals(3, len(papers))
         self.assertEquals(
             (
                 {
@@ -153,10 +223,12 @@ class PaperModelTestCase(TestCase):
                     "journal": {"name": "ArXiv e-prints", "links": None},
                     "volume": "1706.02515",
                     "doi": None,
+                    "publisher": None,
+                    "series": None,
                     "publishing_date": "2017-06-01",
                     "languages": None,
                     "files": None,
-                    "bibtex": '@ARTICLE{arXiv1706.02515, author = {Klambauer, Günter and Unterthiner, Thomas and Mayr, Andreas and Hochreiter, Sepp}, title = "Self-Normalizing Neural Networks", journal = {ArXiv e-prints}, archivePrefix = "arXiv", eprint = {1706.02515}, primaryClass = "cs.LG", keywords = {Computer Science - Learning, Statistics - Machine Learning}, year = 2017, month = "Jun", url = {https://arxiv.org/abs/1706.02515}, adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170602515K}, adsnote = {Provided by the SAO/NASA Astrophysics Data System}}\n\n@ARTICLE{arXiv1805.08671, author = {Liang, Shiyu and Sun, Ruoyu and Lee, Jason D. and Srikant, R.}, title = "Adding One Neuron Can Eliminate All Bad Local Minima", journal = {ArXiv e-prints}, archivePrefix = "arXiv", eprint = {1805.08671}, primaryClass = "stat.ML", keywords = {Statistics - Machine Learning, Computer Science - Learning}, year = 2018, month = may, url = {https://arxiv.org/abs/1805.08671}, adsurl = {http://adsabs.harvard.edu/abs/2018arXiv180508671L}, adsnote = {Provided by the SAO/NASA Astrophysics Data System}}',
+                    "bibtex": PAPERS_BIBTEX[0],
                     "links": [{"url": "https://arxiv.org/abs/1706.02515"}],
                     "acquisitions": None,
                     "reads": None,
@@ -179,9 +251,11 @@ class PaperModelTestCase(TestCase):
                     "volume": "1805.08671",
                     "doi": None,
                     "publishing_date": "2018-05-01",
+                    "publisher": None,
+                    "series": None,
                     "languages": None,
                     "files": None,
-                    "bibtex": '@ARTICLE{arXiv1706.02515, author = {Klambauer, Günter and Unterthiner, Thomas and Mayr, Andreas and Hochreiter, Sepp}, title = "Self-Normalizing Neural Networks", journal = {ArXiv e-prints}, archivePrefix = "arXiv", eprint = {1706.02515}, primaryClass = "cs.LG", keywords = {Computer Science - Learning, Statistics - Machine Learning}, year = 2017, month = "Jun", url = {https://arxiv.org/abs/1706.02515}, adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170602515K}, adsnote = {Provided by the SAO/NASA Astrophysics Data System}}\n\n@ARTICLE{arXiv1805.08671, author = {Liang, Shiyu and Sun, Ruoyu and Lee, Jason D. and Srikant, R.}, title = "Adding One Neuron Can Eliminate All Bad Local Minima", journal = {ArXiv e-prints}, archivePrefix = "arXiv", eprint = {1805.08671}, primaryClass = "stat.ML", keywords = {Statistics - Machine Learning, Computer Science - Learning}, year = 2018, month = may, url = {https://arxiv.org/abs/1805.08671}, adsurl = {http://adsabs.harvard.edu/abs/2018arXiv180508671L}, adsnote = {Provided by the SAO/NASA Astrophysics Data System}}',
+                    "bibtex": PAPERS_BIBTEX[1],
                     "links": [{"url": "https://arxiv.org/abs/1805.08671"}],
                     "acquisitions": None,
                     "reads": None,
@@ -189,6 +263,38 @@ class PaperModelTestCase(TestCase):
                 True,
             ),
             (papers[1][0].to_dict(), papers[1][1]),
+        )
+        self.assertEquals(
+            (
+                {
+                    "title": "Uniform Density in Linguistic Information Derived from"
+                    + " Dependency Structures",
+                    "authors": [
+                        {"name": "Gerhard Heyer", "links": None},
+                        {"name": "J. Philipp", "links": None},
+                        {"name": "Maria Bardají I. Farré", "links": None},
+                        {"name": "Max Kölbl", "links": None},
+                        {"name": "Michael Richter", "links": None},
+                        {"name": "Nikolaus Himmelmann", "links": None},
+                        {"name": "Tariq Yousef", "links": None},
+                        {"name": "Yuki Kyogoku", "links": None},
+                    ],
+                    "journal": None,
+                    "volume": None,
+                    "doi": "10.5220/0010969600003116",
+                    "publishing_date": "2022-01-01",
+                    "publisher": {"name": "SciTePress", "links": None},
+                    "series": None,
+                    "languages": None,
+                    "files": None,
+                    "bibtex": PAPERS_BIBTEX[2],
+                    "links": None,
+                    "acquisitions": None,
+                    "reads": None,
+                },
+                True,
+            ),
+            (papers[2][0].to_dict(), papers[2][1]),
         )
 
     def test_by_shelf(self):
@@ -273,6 +379,8 @@ class PaperModelTestCase(TestCase):
                 "journal": {"name": "Science Journal", "links": None},
                 "volume": "1/2021",
                 "doi": None,
+                "publisher": None,
+                "series": None,
                 "publishing_date": None,
                 "languages": None,
                 "files": None,
@@ -367,7 +475,6 @@ class PaperModelTestCase(TestCase):
         )
         self.assertTrue(created)
         self.assertIsNotNone(read.id)
-
         self.assertEquals(
             {
                 "title": "Random Science stuff",
@@ -378,6 +485,8 @@ class PaperModelTestCase(TestCase):
                 "journal": {"name": "Science Journal", "links": None},
                 "volume": "2/2021",
                 "doi": "some/doi",
+                "publisher": None,
+                "series": None,
                 "publishing_date": "2021-01-01",
                 "languages": [{"name": "Englisch"}],
                 "files": None,
@@ -401,6 +510,8 @@ class PaperModelTestCase(TestCase):
                     "volume": "2/2021",
                     "doi": "some/doi",
                     "publishing_date": "2021-01-01",
+                    "publisher": None,
+                    "series": None,
                     "languages": [{"name": "Englisch"}],
                     "files": None,
                     "bibtex": None,
@@ -485,6 +596,8 @@ class PaperModelTestCase(TestCase):
                     "journal": {"name": "Science Journal", "links": None},
                     "volume": "2/2021",
                     "doi": None,
+                    "publisher": None,
+                    "series": None,
                     "publishing_date": "2021-02-01",
                     "languages": [{"name": "Englisch"}],
                     "bibtex": None,
@@ -574,6 +687,16 @@ class PaperModelTestCase(TestCase):
         self.assertIsNotNone(paper.journal.id)
         self.assertEquals("Science Journal", paper.journal.name)
 
+        self.assertIsNone(paper.publisher)
+        paper.edit("publisher", "SciTePress")
+        self.assertIsNotNone(paper.publisher)
+        self.assertEquals("SciTePress", paper.publisher.name)
+
+        self.assertIsNone(paper.series)
+        paper.edit("series", "Some series")
+        self.assertIsNotNone(paper.series)
+        self.assertEquals("Some series", paper.series.name)
+
         self.assertEquals(0, paper.languages.count())
         paper.edit("language", "Deutsch")
         self.assertEquals(1, paper.languages.count())
@@ -643,8 +766,10 @@ class PaperModelTestCase(TestCase):
         self.assertEquals(3, Paper.search("science").count())
 
     def test_print(self):
-        papers = Paper.from_bibtex(BIBTEX)
-        self.assertEquals(2, len(papers))
+        papers = []
+        for bibtex in PAPERS_BIBTEX:
+            papers += Paper.from_bibtex(bibtex)
+        self.assertEquals(3, len(papers))
 
         with StringIO() as cout:
             papers[0][0].print(cout)
@@ -676,6 +801,12 @@ class PaperModelTestCase(TestCase):
                 + "____________________________________________________________________"
                 + "________________________________\nPublishing date                  2"
                 + "017-06-01                                                         \n"
+                + "____________________________________________________________________"
+                + "________________________________\nPublisher                         "
+                + "                                                                  \n"
+                + "____________________________________________________________________"
+                + "________________________________\nSeries                            "
+                + "                                                                  \n"
                 + "____________________________________________________________________"
                 + "________________________________\nLanguages                         "
                 + "                                                                  \n"
@@ -727,6 +858,12 @@ class PaperModelTestCase(TestCase):
                 + "________________________________\nPublishing date                  2"
                 + "018-05-01                                                         \n"
                 + "____________________________________________________________________"
+                + "________________________________\nPublisher                         "
+                + "                                                                  \n"
+                + "____________________________________________________________________"
+                + "________________________________\nSeries                            "
+                + "                                                                  \n"
+                + "____________________________________________________________________"
                 + "________________________________\nLanguages                         "
                 + "                                                                  \n"
                 + "____________________________________________________________________"
@@ -743,6 +880,70 @@ class PaperModelTestCase(TestCase):
                 + "                                                                  \n"
                 + "____________________________________________________________________"
                 + "________________________________\n",
+                cout.getvalue(),
+            )
+
+        with StringIO() as cout:
+            papers[2][0].print(cout)
+            self.assertEquals(
+                "Field                            Value                              "
+                + "                                \n=================================="
+                + "==================================================================\n"
+                + "Id                               3                                  "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n"
+                + "Title                            Uniform Density in Linguistic Infor"
+                + "mation Derived from Dependency  \n                                 S"
+                + "tructures                                                         \n"
+                + "____________________________________________________________________"
+                + "________________________________\nAuthors                          1"
+                + "5: Gerhard Heyer                                                  \n"
+                + "                                 13: J. Philipp                     "
+                + "                                \n                                 1"
+                + "0: Maria Bardají I. Farré                                         \n"
+                + "                                 11: Max Kölbl                      "
+                + "                                \n                                 9"
+                + ": Michael Richter                                                 \n"
+                + "                                 16: Nikolaus Himmelmann            "
+                + "                                \n                                 1"
+                + "4: Tariq Yousef                                                   \n"
+                + "                                 12: Yuki Kyogoku                   "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n"
+                + "Journal                                                             "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n"
+                + "Volume                                                              "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n"
+                + "DOI                              10.5220/0010969600003116           "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n"
+                + "Publishing date                  2022-01-01                         "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n"
+                + "Publisher                        1: SciTePress                      "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n"
+                + "Series                                                              "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n"
+                + "Languages                                                           "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n"
+                + "Files                                                               "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n"
+                + "Links                                                               "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n"
+                + "Acquisitions                                                        "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n"
+                + "Reads                                                               "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________"
+                + "\n",
                 cout.getvalue(),
             )
 

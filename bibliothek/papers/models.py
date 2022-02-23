@@ -39,6 +39,8 @@ from journals.models import Journal
 from languages.models import Language
 from links.models import Link
 from persons.models import Person
+from publishers.models import Publisher
+from series.models import Series
 from shelves.models import Acquisition, Read
 from typing import Dict, List, Optional, TextIO, Tuple, Type, TypeVar, Union
 
@@ -56,6 +58,9 @@ class Paper(models.Model):
     authors = models.ManyToManyField(
         Person, blank=True, related_name="papers", verbose_name=_("Authors")
     )
+    publishing_date = models.DateField(
+        blank=True, null=True, verbose_name=_("Publishing date")
+    )
     doi = models.TextField(blank=True, null=True, unique=True, verbose_name=_("DOI"))
 
     journal = models.ForeignKey(
@@ -67,8 +72,21 @@ class Paper(models.Model):
         verbose_name=_("Journal"),
     )
     volume = models.TextField(blank=True, null=True, verbose_name=_("Volume"))
-    publishing_date = models.DateField(
-        blank=True, null=True, verbose_name=_("Publishing date")
+    publisher = models.ForeignKey(
+        Publisher,
+        models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="papers",
+        verbose_name=_("Publisher"),
+    )
+    series = models.ForeignKey(
+        Series,
+        models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="papers",
+        verbose_name=_("Series"),
     )
     languages = models.ManyToManyField(
         Language, blank=True, related_name="papers", verbose_name=_("Languages")
@@ -150,13 +168,14 @@ class Paper(models.Model):
 
             volume = entry["volume"].strip() if "volume" in entry else None
             if "number" in entry:
-                volume = f"{volume}.{entry['number']}"
+                volume = f"{volume}.{entry['number']}" if volume else entry["number"]
             if "eprint" in entry and not volume:
                 volume = entry["eprint"].strip()
 
             publisher = (
                 {"name": entry["publisher"].strip()} if "publisher" in entry else None
             )
+            series = {"name": entry["series"].strip()} if "series" in entry else None
 
             year = int(entry["year"].strip()) if "year" in entry else None
             month = entry["month"].strip() if "month" in entry else None
@@ -214,6 +233,7 @@ class Paper(models.Model):
                         "journal": journal,
                         "volume": volume,
                         "publisher": publisher,
+                        "series": series,
                         "publishing_date": pub_date,
                         "links": [url] if url else None,
                         "bibtex": bibtex,
@@ -243,6 +263,10 @@ class Paper(models.Model):
             defaults["volume"] = data["volume"]
         if "doi" in data and data["doi"]:
             defaults["doi"] = data["doi"]
+        if "publisher" in data and data["publisher"]:
+            defaults["publisher"] = Publisher.from_dict(data["publisher"])[0]
+        if "series" in data and data["series"]:
+            defaults["series"] = Series.from_dict(data["series"])[0]
         if "publishing_date" in data and data["publishing_date"]:
             defaults["publishing_date"] = (
                 data["publishing_date"]
@@ -333,25 +357,10 @@ class Paper(models.Model):
         nb_deleted = 0
         deleted: Dict[str, int] = {}
         for link in self.links.all():
-            if (
-                link.editions.count() == 0
-                and link.issues.count() == 0
-                and link.publishers.count() == 0
-                and link.journals.count() == 0
-                and link.books.count() == 0
-                and link.magazine_feed.count() == 0
-                and link.magazines.count() == 0
-                and link.series.count() == 0
-                and link.papers.count() == 1
-                and link.persons.count() == 0
-            ):
+            if link.num_related("papers") == 0:
                 nb_deleted += append(link.delete())
         for file in self.files.all():
-            if (
-                file.editions.count() == 0
-                and file.issues.count() == 0
-                and file.papers.count() == 1
-            ):
+            if file.num_related("papers") == 0:
                 nb_deleted += append(file.delete())
         for acquisition in self.acquisitions.all():
             nb_deleted += append(acquisition.delete())
@@ -360,9 +369,11 @@ class Paper(models.Model):
         nb_deleted += append(super(Paper, self).delete())
         return nb_deleted, deleted
 
-    def edit(self: T, field: str, value: Union[str, datetime.date], *args, **kwargs):
+    def edit(
+        self: T, field: str, value: Optional[Union[str, datetime.date]], *args, **kwargs
+    ):
         """Change field by given value."""
-        fields = [
+        assert field in [
             "title",
             "author",
             "publishing_date",
@@ -370,14 +381,24 @@ class Paper(models.Model):
             "journal",
             "volume",
             "doi",
+            "publisher",
+            "series",
             "language",
             "file",
             "link",
             "bibtex",
         ]
-        assert field in fields
+        if isinstance(value, str) and (
+            value.lower() == "none" or value.lower() == "null"
+        ):
+            value = None
+        elif isinstance(value, datetime.date) and field not in [
+            "publishing_date",
+            "publishing-date",
+        ]:
+            raise RuntimeError("Date type only allowed with publishing_date field.")
 
-        if field == "title":
+        if field == "title" and not value:
             self.title = value
         elif field == "author" and isinstance(value, str):
             author = Person.get_or_create(value)
@@ -388,7 +409,7 @@ class Paper(models.Model):
         elif field == "publishing_date" or field == "publishing-date":
             self.publishing_date = (
                 value
-                if isinstance(value, datetime.date)
+                if isinstance(value, datetime.date) or value is None
                 else datetime.datetime.strptime(value, "%Y-%m-%d").date()
             )
         elif field == "journal" and isinstance(value, str):
@@ -397,6 +418,10 @@ class Paper(models.Model):
             self.volume = value
         elif field == "doi":
             self.doi = value
+        elif field == "publisher" and isinstance(value, str):
+            self.publisher = Publisher.get_or_create(value)
+        elif field == "series" and isinstance(value, str):
+            self.series = Series.get_or_create(value)
         elif field == "bibtex":
             self.bibtex = value
         elif field == "language" and isinstance(value, str):
@@ -418,6 +443,8 @@ class Paper(models.Model):
                 file.delete()
             else:
                 self.files.add(file)
+        else:
+            raise ValueError("Combination of field and value not allowed.")
         self.save(*args, **kwargs)
 
     def print(self: T, file: TextIO = sys.stdout):
@@ -457,6 +484,22 @@ class Paper(models.Model):
         )
         stdout.write(
             [_("Publishing date"), self.publishing_date], positions=[0.33], file=file
+        )
+        stdout.write(
+            [
+                _("Publisher"),
+                f"{self.publisher.pk}: {self.publisher.name}" if self.publisher else "",
+            ],
+            positions=[0.33],
+            file=file,
+        )
+        stdout.write(
+            [
+                _("Series"),
+                f"{self.series.pk}: {self.series.name}" if self.series else "",
+            ],
+            positions=[0.33],
+            file=file,
         )
 
         if self.languages.count() > 0:
@@ -545,6 +588,8 @@ class Paper(models.Model):
             "journal": self.journal.to_dict() if self.journal else None,
             "volume": self.volume,
             "doi": self.doi,
+            "publisher": self.publisher.to_dict() if self.publisher else None,
+            "series": self.series.to_dict() if self.series else None,
             "publishing_date": self.publishing_date.strftime("%Y-%m-%d")
             if self.publishing_date
             else None,
@@ -592,6 +637,7 @@ class Paper(models.Model):
         ordering = (
             Func(F("journal__name"), function="LOWER"),
             Func(F("volume"), function="LOWER"),
+            Func(F("series__name"), function="LOWER"),
             Func(F("title"), function="LOWER"),
         )
         unique_together = ("journal", "volume", "title")

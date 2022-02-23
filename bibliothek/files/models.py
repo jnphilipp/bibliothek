@@ -26,7 +26,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.files import File as DJFile
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from typing import Dict, Tuple, Type, TypeVar
+from typing import Dict, Optional, Tuple, Type, TypeVar
 
 
 class File(models.Model):
@@ -72,6 +72,16 @@ class File(models.Model):
             file.content_object = content_object
             file.save()
             return file, True
+
+    def num_related(self: T, exclude: Optional[str] = None) -> int:
+        """Get number of related objects."""
+        return sum(
+            [
+                getattr(self, rel.name).count()
+                for rel in self._meta.related_objects
+                if rel.name != exclude
+            ]
+        )
 
     def to_dict(self: T) -> Dict:
         """Convert to dict."""

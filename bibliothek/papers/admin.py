@@ -70,10 +70,13 @@ class PaperAdmin(admin.ModelAdmin):
                     "authors",
                     "languages",
                     "doi",
+                    "publishing_date",
                 ]
             },
         ),
-        (_("Journal"), {"fields": ["journal", "volume", "publishing_date"]}),
+        (_("Journal"), {"fields": ["journal", "volume"]}),
+        (_("Publisher"), {"fields": ["publisher"]}),
+        (_("Series"), {"fields": ["series"]}),
         (_("Bibtex"), {"fields": ["bibtex"]}),
         (_("Links"), {"fields": ["links"]}),
     ]
@@ -91,6 +94,6 @@ class PaperAdmin(admin.ModelAdmin):
     }
     inlines = [FileInline, AcquisitionInline, ReadInline]
     list_display = ("title", "list_authors", "journal", "volume", "doi", "updated_at")
-    list_filter = ("authors", "journal")
+    list_filter = ("authors", "journal", "publisher", "series")
     readonly_fields = ("created_at", "updated_at", "slug")
     search_fields = ("title", "journal__name", "volume")
