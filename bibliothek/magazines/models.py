@@ -100,7 +100,7 @@ class Magazine(models.Model):
     @classmethod
     def search(cls: Type[T], term: str) -> models.query.QuerySet[T]:
         """Search for given term."""
-        return Magazine.objects.filter(
+        return cls.objects.filter(
             Q(pk=term if term.isdigit() else None) | Q(name__icontains=term)
         )
 
