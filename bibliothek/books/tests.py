@@ -528,7 +528,9 @@ class EditionModelTestCase(TestCase):
         self.assertEquals("9785423647891", edition.isbn)
 
         edition.edit("publishing_date", "2016-06-15")
-        self.assertEquals("2016-06-15", edition.publishing_date)
+        self.assertEquals(
+            datetime.strptime("2016-06-15", "%Y-%m-%d").date(), edition.publishing_date
+        )
 
         edition.edit("binding", "Taschenbuch")
         self.assertIsNotNone(edition.binding)

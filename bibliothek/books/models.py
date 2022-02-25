@@ -163,11 +163,15 @@ class Book(models.Model):
                 deleted = concat(deleted, link.delete())
         return concat(deleted, super(Book, self).delete())
 
-    def edit(self: T, field: str, value: Union[str, float], *args, **kwargs):
+    def edit(self: T, field: str, value: Optional[Union[str, float]], *args, **kwargs):
         """Change field by given value."""
         assert field in ["title", "author", "series", "volume", "genre", "link"]
+        if isinstance(value, str) and (
+            value.lower() == "none" or value.lower() == "null"
+        ):
+            value = None
 
-        if field == "title":
+        if field == "title" and value:
             self.title = value
         elif field == "author" and isinstance(value, str):
             author = Person.get_or_create(value)
@@ -322,7 +326,7 @@ class Edition(models.Model):
         Book, models.CASCADE, related_name="editions", verbose_name=_("Book")
     )
     isbn = models.CharField(
-        max_length=13, blank=True, null=True, verbose_name=_("ISBN")
+        max_length=13, blank=True, null=True, unique=True, verbose_name=_("ISBN")
     )
     publishing_date = models.DateField(
         blank=True, null=True, verbose_name=_("Publishing date")
@@ -396,13 +400,16 @@ class Edition(models.Model):
 
         Returns True if was crated, i. e. was not found in the DB.
         """
+        alternate_title = None
+        isbn = None
+        publishing_date = None
         defaults: Dict = {}
         if "alternate_title" in data and data["alternate_title"]:
-            defaults["alternate_title"] = data["alternate_title"]
+            alternate_title = data["alternate_title"]
         if "isbn" in data and data["isbn"]:
-            defaults["isbn"] = data["isbn"]
+            isbn = data["isbn"]
         if "publishing_date" in data and data["publishing_date"]:
-            defaults["publishing_date"] = (
+            publishing_date = (
                 data["publishing_date"]
                 if isinstance(data["publishing_date"], datetime.date)
                 else datetime.datetime.strptime(
@@ -418,13 +425,9 @@ class Edition(models.Model):
 
         edition, created = cls.objects.get_or_create(
             book=book,
-            alternate_title=data["alternate_title"]
-            if "alternate_title" in data
-            else None,
-            isbn=data["isbn"] if "isbn" in data else None,
-            publishing_date=data["publishing_date"]
-            if "publishing_date" in data
-            else None,
+            alternate_title=alternate_title,
+            isbn=isbn,
+            publishing_date=publishing_date,
             defaults=defaults,
         )
 
@@ -523,7 +526,9 @@ class Edition(models.Model):
             deleted = concat(deleted, read.delete())
         return concat(deleted, super(Edition, self).delete())
 
-    def edit(self: T, field: str, value: str, *args, **kwargs):
+    def edit(
+        self: T, field: str, value: Optional[Union[str, datetime.date]], *args, **kwargs
+    ):
         """Change field by given value."""
         assert field in [
             "alternate_title",
@@ -539,10 +544,14 @@ class Edition(models.Model):
             "link",
             "file",
         ]
+        if isinstance(value, str) and (
+            value.lower() == "none" or value.lower() == "null"
+        ):
+            value = None
 
         if field == "alternate_title" or field == "alternate-title":
             self.alternate_title = value
-        elif field == "binding":
+        elif field == "binding" and isinstance(value, str):
             self.binding = Binding.get_or_create(value)
         elif field == "cover":
             self.cover_image.save(
@@ -550,23 +559,27 @@ class Edition(models.Model):
             )
         elif field == "isbn":
             self.isbn = value
-        elif field == "person":
+        elif field == "person" and isinstance(value, str):
             person = Person.get_or_create(value)
             if self.persons.filter(pk=person.pk).exists():
                 self.persons.remove(person)
             else:
                 self.persons.add(person)
         elif field == "publishing_date" or field == "publishing-date":
-            self.publishing_date = value
-        elif field == "publisher":
+            self.publishing_date = (
+                value
+                if isinstance(value, datetime.date) or value is None
+                else datetime.datetime.strptime(value, "%Y-%m-%d").date()
+            )
+        elif field == "publisher" and isinstance(value, str):
             self.publisher = Publisher.get_or_create(value)
-        elif field == "language":
+        elif field == "language" and isinstance(value, str):
             language = Language.get_or_create(value)
             if self.languages.filter(pk=language.pk).exists():
                 self.languages.remove(language)
             else:
                 self.languages.add(language)
-        elif field == "link":
+        elif field == "link" and isinstance(value, str):
             link = Link.get_or_create(value)
             if self.links.filter(pk=link.pk).exists():
                 self.links.remove(link)
@@ -579,6 +592,8 @@ class Edition(models.Model):
                 file.delete()
             else:
                 self.files.add(file)
+        else:
+            raise ValueError("Combination of field and value not allowed.")
         self.save(*args, **kwargs)
 
     def get_title(self):
@@ -695,6 +710,8 @@ class Edition(models.Model):
 
     def save(self, *args, **kwargs):
         """Save."""
+        if self.isbn and "-" in self.isbn:
+            self.isbn = self.isbn.replace("-", "")
         path = os.path.join("books", str(self.book.id), str(self.id))
         if self.cover_image and not self.cover_image.name.startswith(path):
             self._move_cover_image()
