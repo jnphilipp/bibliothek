@@ -25,7 +25,7 @@ from django.forms import Textarea
 from django.utils.html import format_html_join
 from django.utils.translation import gettext_lazy as _
 from files.models import File
-from papers.models import Paper
+from papers.models import Paper, Proceedings
 from shelves.models import Acquisition, Read
 
 
@@ -77,6 +77,7 @@ class PaperAdmin(admin.ModelAdmin):
         (_("Journal"), {"fields": ["journal", "volume"]}),
         (_("Publisher"), {"fields": ["publisher"]}),
         (_("Series"), {"fields": ["series"]}),
+        (_("Proceedings"), {"fields": ["proceedings"]}),
         (_("Bibtex"), {"fields": ["bibtex"]}),
         (_("Links"), {"fields": ["links"]}),
     ]
@@ -93,7 +94,79 @@ class PaperAdmin(admin.ModelAdmin):
         },
     }
     inlines = [FileInline, AcquisitionInline, ReadInline]
-    list_display = ("title", "list_authors", "journal", "volume", "doi", "updated_at")
-    list_filter = ("authors", "journal", "publisher", "series")
+    list_display = (
+        "title",
+        "list_authors",
+        "journal",
+        "volume",
+        "series",
+        "doi",
+        "updated_at",
+    )
+    list_filter = ("authors", "journal", "series", "publisher", "series")
     readonly_fields = ("created_at", "updated_at", "slug")
-    search_fields = ("title", "journal__name", "volume")
+    search_fields = (
+        "title",
+        "journal__name",
+        "volume",
+        "series__name",
+        "proceedings__name",
+    )
+
+
+@admin.register(Proceedings)
+class ProceedingsAdmin(admin.ModelAdmin):
+    """Proceedings admin."""
+
+    def list_editors(self, obj):
+        """Format editors."""
+        return format_html_join(", ", "{}", ((p.name,) for p in obj.editors.all()))
+
+    fieldsets = [
+        (
+            None,
+            {
+                "fields": [
+                    "created_at",
+                    "updated_at",
+                    "slug",
+                    "title",
+                    "publishing_date",
+                    "doi",
+                    "isbn",
+                    "editors",
+                    "languages",
+                ]
+            },
+        ),
+        (_("Journal"), {"fields": ["journal", "volume"]}),
+        (_("Publisher"), {"fields": ["publisher"]}),
+        (_("Series"), {"fields": ["series", "volume"]}),
+        (_("Bibtex"), {"fields": ["bibtex"]}),
+        (_("Links"), {"fields": ["links"]}),
+    ]
+    filter_horizontal = ("editors", "languages", "links")
+    formfield_overrides = {
+        models.TextField: {
+            "widget": Textarea(
+                attrs={
+                    "autocomplete": "off",
+                    "rows": 20,
+                    "style": "width: 100%; resize: none;",
+                }
+            )
+        },
+    }
+    inlines = [FileInline, AcquisitionInline, ReadInline]
+    list_display = (
+        "title",
+        "list_editors",
+        "series",
+        "volume",
+        "doi",
+        "isbn",
+        "updated_at",
+    )
+    list_filter = ("authors", "publisher", "series")
+    readonly_fields = ("created_at", "updated_at", "slug")
+    search_fields = ("title", "publisher__name", "series__name", "volume")
