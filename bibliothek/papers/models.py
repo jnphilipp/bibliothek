@@ -25,7 +25,7 @@ import shutil
 import sys
 
 from bibliothek import stdout
-from bibliothek.utils import lookahead
+from bibliothek.utils import concat, lookahead
 from bibtexparser.bparser import BibTexParser
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
@@ -345,29 +345,20 @@ class Paper(models.Model):
 
     def delete(self: T) -> Tuple[int, Dict[str, int]]:
         """Delete."""
-
-        def append(d: Tuple[int, Dict[str, int]]) -> int:
-            for k, v in d[1].items():
-                if k in deleted:
-                    deleted[k] += v
-                else:
-                    deleted[k] = v
-            return d[0]
-
-        nb_deleted = 0
-        deleted: Dict[str, int] = {}
+        deleted: Tuple[int, Dict[str, int]] = (0, dict())
+        if self.series and self.series.num_related("papers") == 0:
+            deleted = concat(deleted, self.series.delete())
         for link in self.links.all():
             if link.num_related("papers") == 0:
-                nb_deleted += append(link.delete())
+                deleted = concat(deleted, link.delete())
         for file in self.files.all():
             if file.num_related("papers") == 0:
-                nb_deleted += append(file.delete())
+                deleted = concat(deleted, file.delete())
         for acquisition in self.acquisitions.all():
-            nb_deleted += append(acquisition.delete())
+            deleted = concat(deleted, acquisition.delete())
         for read in self.reads.all():
-            nb_deleted += append(read.delete())
-        nb_deleted += append(super(Paper, self).delete())
-        return nb_deleted, deleted
+            deleted = concat(deleted, read.delete())
+        return concat(deleted, super(Paper, self).delete())
 
     def edit(
         self: T, field: str, value: Optional[Union[str, datetime.date]], *args, **kwargs

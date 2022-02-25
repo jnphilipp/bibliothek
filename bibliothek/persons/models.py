@@ -22,7 +22,7 @@ import hashlib
 import sys
 
 from bibliothek import stdout
-from bibliothek.utils import lookahead
+from bibliothek.utils import concat, lookahead
 from django.db import models
 from django.db.models import F, Func, Q
 from django.template.defaultfilters import slugify
@@ -88,32 +88,13 @@ class Person(models.Model):
             Q(pk=term if term.isdigit() else None) | Q(name__icontains=term)
         )
 
-    def delete(self: T) -> Tuple[int, Dict]:
+    def delete(self: T) -> Tuple[int, Dict[str, int]]:
         """Delete."""
-        nb_deleted = 0
-        deleted = {}
+        deleted: Tuple[int, Dict[str, int]] = (0, dict())
         for link in self.links.all():
-            if (
-                link.editions.count() == 0
-                and link.issues.count() == 0
-                and link.publishers.count() == 0
-                and link.journals.count() == 0
-                and link.books.count() == 0
-                and link.magazine_feed.count() == 0
-                and link.magazines.count() == 0
-                and link.series.count() == 0
-                and link.papers.count() == 0
-                and link.persons.count() == 1
-            ):
-                r = link.delete()
-                nb_deleted += r[0]
-                for k, v in r[1].items():
-                    deleted[k] = v
-        r = super(Person, self).delete()
-        nb_deleted += r[0]
-        for k, v in r[1].items():
-            deleted[k] = v
-        return nb_deleted, deleted
+            if link.num_related("persons") == 0:
+                deleted = concat(deleted, link.delete())
+        return concat(deleted, super(Person, self).delete())
 
     def edit(self: T, field: str, value: str, *args, **kwargs):
         """Change field by given value."""

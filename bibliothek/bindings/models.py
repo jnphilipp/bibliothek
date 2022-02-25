@@ -85,6 +85,16 @@ class Binding(models.Model):
             self.name = value
         self.save(*args, **kwargs)
 
+    def num_related(self: T, exclude: Optional[str] = None) -> int:
+        """Get number of related objects."""
+        return sum(
+            [
+                getattr(self, rel.name).count()
+                for rel in self._meta.related_objects
+                if rel.name != exclude
+            ]
+        )
+
     def print(self: T, file: TextIO = sys.stdout):
         """Print instance info."""
         stdout.write([_("Field"), _("Value")], "=", [0.33], file=file)

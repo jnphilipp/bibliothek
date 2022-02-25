@@ -18,7 +18,7 @@
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
 """Bibliotheek Django app utils."""
 
-from typing import Any, Generator, Iterable, Optional, Tuple
+from typing import Any, Dict, Generator, Iterable, Optional, Tuple
 
 
 def lookahead(iterable: Optional[Iterable]) -> Generator[Tuple[Any, bool], None, None]:
@@ -34,3 +34,17 @@ def lookahead(iterable: Optional[Iterable]) -> Generator[Tuple[Any, bool], None,
         yield last, False
     except StopIteration:
         return None
+
+
+def concat(*args: Tuple[int, Dict[str, int]]) -> Tuple[int, Dict[str, int]]:
+    """Concatenate."""
+    n = 0
+    d: Dict[str, int] = dict()
+    for arg in args:
+        n += arg[0]
+        for k, v in arg[1].items():
+            if k in d:
+                d[k] += v
+            else:
+                d[k] = v
+    return n, d

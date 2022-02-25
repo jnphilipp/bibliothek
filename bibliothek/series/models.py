@@ -21,7 +21,7 @@
 import sys
 
 from bibliothek import stdout
-from bibliothek.utils import lookahead
+from bibliothek.utils import concat, lookahead
 from django.db import models
 from django.db.models import F, Func, Q
 from django.template.defaultfilters import slugify
@@ -88,34 +88,12 @@ class Series(models.Model):
         )
 
     def delete(self: T) -> Tuple[int, Dict[str, int]]:
-        """Delete from DB."""
-
-        def append(d: Tuple[int, Dict]) -> int:
-            for k, v in d[1].items():
-                if k in deleted:
-                    deleted[k] += v
-                else:
-                    deleted[k] = v
-            return d[0]
-
-        nb_deleted = 0
-        deleted: Dict[str, int] = {}
+        """Delete."""
+        deleted: Tuple[int, Dict[str, int]] = (0, dict())
         for link in self.links.all():
-            if (
-                link.editions.count() == 0
-                and link.issues.count() == 0
-                and link.publishers.count() == 0
-                and link.journals.count() == 0
-                and link.books.count() == 0
-                and link.magazine_feed.count() == 0
-                and link.magazines.count() == 0
-                and link.series.count() == 1
-                and link.papers.count() == 0
-                and link.persons.count() == 0
-            ):
-                nb_deleted += append(link.delete())
-        nb_deleted += append(super(Series, self).delete())
-        return nb_deleted, deleted
+            if link.num_related("series") == 0:
+                deleted = concat(deleted, link.delete())
+        return concat(deleted, super(Series, self).delete())
 
     def edit(self: T, field: str, value: str, *args, **kwargs):
         """Change field by given value."""
@@ -130,6 +108,16 @@ class Series(models.Model):
             else:
                 self.links.add(link)
         self.save(*args, **kwargs)
+
+    def num_related(self: T, exclude: Optional[str] = None) -> int:
+        """Get number of related objects."""
+        return sum(
+            [
+                getattr(self, rel.name).count()
+                for rel in self._meta.related_objects
+                if rel.name != exclude
+            ]
+        )
 
     def print(self: T, file: TextIO = sys.stdout):
         """Print instance info."""

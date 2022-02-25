@@ -25,7 +25,7 @@ import shutil
 import sys
 
 from bibliothek import stdout
-from bibliothek.utils import lookahead
+from bibliothek.utils import concat, lookahead
 from bindings.models import Binding
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
@@ -151,39 +151,17 @@ class Book(models.Model):
         ).distinct()
 
     def delete(self: T) -> Tuple[int, Dict[str, int]]:
-        """Delete from DB."""
-
-        def append(d: Tuple[int, Dict[str, int]]) -> int:
-            for k, v in d[1].items():
-                if k in deleted:
-                    deleted[k] += v
-                else:
-                    deleted[k] = v
-            return d[0]
-
-        nb_deleted = 0
-        deleted: Dict[str, int] = {}
-        if self.series and self.series.books.count() == 1:
-            nb_deleted += append(self.series.delete())
+        """Delete."""
+        deleted: Tuple[int, Dict[str, int]] = (0, dict())
+        if self.series and self.series.num_related("books") == 0:
+            deleted = concat(deleted, self.series.delete())
         for genre in self.genres.all():
-            if genre.books.count() == 1:
-                nb_deleted += append(genre.delete())
+            if genre.num_related("books") == 0:
+                deleted = concat(deleted, genre.delete())
         for link in self.links.all():
-            if (
-                link.editions.count() == 0
-                and link.issues.count() == 0
-                and link.publishers.count() == 0
-                and link.journals.count() == 0
-                and link.books.count() == 1
-                and link.magazine_feed.count() == 0
-                and link.magazines.count() == 0
-                and link.series.count() == 0
-                and link.papers.count() == 0
-                and link.persons.count() == 0
-            ):
-                nb_deleted += append(link.delete())
-        nb_deleted += append(super(Book, self).delete())
-        return nb_deleted, deleted
+            if link.num_related("books") == 0:
+                deleted = concat(deleted, link.delete())
+        return concat(deleted, super(Book, self).delete())
 
     def edit(self: T, field: str, value: Union[str, float], *args, **kwargs):
         """Change field by given value."""
@@ -530,46 +508,20 @@ class Edition(models.Model):
 
     def delete(self: T) -> Tuple[int, Dict[str, int]]:
         """Delete."""
-
-        def append(d: Tuple[int, Dict[str, int]]) -> int:
-            for k, v in d[1].items():
-                if k in deleted:
-                    deleted[k] += v
-                else:
-                    deleted[k] = v
-            return d[0]
-
-        nb_deleted = 0
-        deleted: Dict[str, int] = {}
-        if self.binding and self.binding.editions.count() == 1:
-            nb_deleted += append(self.binding.delete())
+        deleted: Tuple[int, Dict[str, int]] = (0, dict())
+        if self.binding and self.binding.num_related("editions") == 0:
+            deleted = concat(deleted, self.binding.delete())
         for link in self.links.all():
-            if (
-                link.editions.count() == 0
-                and link.issues.count() == 1
-                and link.publishers.count() == 0
-                and link.journals.count() == 0
-                and link.books.count() == 0
-                and link.magazine_feed.count() == 0
-                and link.magazines.count() == 0
-                and link.series.count() == 0
-                and link.papers.count() == 0
-                and link.persons.count() == 0
-            ):
-                nb_deleted += append(link.delete())
+            if link.num_related("editions") == 0:
+                deleted = concat(deleted, link.delete())
         for file in self.files.all():
-            if (
-                file.editions.count() == 0
-                and file.issues.count() == 0
-                and file.papers.count() == 1
-            ):
-                nb_deleted += append(file.delete())
+            if file.num_related("editions") == 0:
+                deleted = concat(deleted, file.delete())
         for acquisition in self.acquisitions.all():
-            nb_deleted += append(acquisition.delete())
+            deleted = concat(deleted, acquisition.delete())
         for read in self.reads.all():
-            nb_deleted += append(read.delete())
-        nb_deleted += append(super(Edition, self).delete())
-        return nb_deleted, deleted
+            deleted = concat(deleted, read.delete())
+        return concat(deleted, super(Edition, self).delete())
 
     def edit(self: T, field: str, value: str, *args, **kwargs):
         """Change field by given value."""
