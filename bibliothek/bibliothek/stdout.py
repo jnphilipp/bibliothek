@@ -61,8 +61,8 @@ def write(
                     rfields.append(line[rf + 1 :])
                     line = line[:rf]
                 else:
-                    line = line[: positions[i]]
                     rfields.append(line[positions[i] :])
+                    line = line[: positions[i]]
             else:
                 rfields.append("")
             line += " " * (positions[i] - len(line))
