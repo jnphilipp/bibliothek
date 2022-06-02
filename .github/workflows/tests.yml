@@ -34,6 +34,9 @@ jobs:
       matrix:
         python-version: ["3.7", "3.8", "3.9", "3.10"]
         django-version: ["3.2", "4.0"]
+        exclude:
+          - python-version: "3.7"
+            django-version: "4.0"
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
@@ -45,7 +48,7 @@ jobs:
           python -m pip install --upgrade pip wheel
           pip install Django~=${{ matrix.django-version }}
           pip install -r requirements.txt
-          sudo apt install -y python3-gi
+          pip install  pgi
       - name: Run Tests
         run: |
           cd bibliothek
