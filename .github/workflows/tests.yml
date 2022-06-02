@@ -45,6 +45,7 @@ jobs:
           python -m pip install --upgrade pip wheel
           pip install Django~=${{ matrix.django-version }}
           pip install -r requirements.txt
+          sudo apt install -y python3-gi
       - name: Run Tests
         run: |
           cd bibliothek
