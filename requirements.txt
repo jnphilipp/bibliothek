@@ -1,4 +1,4 @@
-Django~=4.0.0
+Django
 bibtexparser~=1.2.0
 feedparser~=6.0.0
 Pillow~=9.0.0
