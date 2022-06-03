@@ -130,8 +130,8 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
         if paper:
             paper.delete()
             stdout.write(
-                _('Successfully deleted paper with id "%(title)s".')
-                % {"title": paper.title},
+                _('Successfully deleted paper "%(title)s" with id "%(pk)d".')
+                % {"title": paper.title, "pk": paper.pk},
                 "",
                 file=file,
             )
@@ -283,7 +283,7 @@ def add_subparser(parser: _SubParsersAction):
     add_parser.add_argument(
         "--publishing-date", type=valid_date, help=_("Publishing date")
     )
-    add_parser.add_argument("--journal", help=_("journal"))
+    add_parser.add_argument("--journal", help=_("Journal"))
     add_parser.add_argument("--volume", help=_("Volume"))
     add_parser.add_argument("--doi", help=_("DOI"))
     add_parser.add_argument("--language", nargs="*", default=[], help=_("Languages"))
