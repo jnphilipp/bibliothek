@@ -141,7 +141,7 @@ class ProceedingsAdmin(admin.ModelAdmin):
         ),
         (_("Journal"), {"fields": ["journal", "volume"]}),
         (_("Publisher"), {"fields": ["publisher"]}),
-        (_("Series"), {"fields": ["series", "volume"]}),
+        (_("Series"), {"fields": ["series"]}),
         (_("Bibtex"), {"fields": ["bibtex"]}),
         (_("Links"), {"fields": ["links"]}),
     ]
@@ -167,6 +167,6 @@ class ProceedingsAdmin(admin.ModelAdmin):
         "isbn",
         "updated_at",
     )
-    list_filter = ("authors", "publisher", "series")
+    list_filter = ("editors", "publisher", "series")
     readonly_fields = ("created_at", "updated_at", "slug")
     search_fields = ("title", "publisher__name", "series__name", "volume")
