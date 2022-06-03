@@ -29,37 +29,110 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('persons', '0001_initial'),
-        ('journals', '0001_initial'),
-        ('links', '0001_initial'),
-        ('languages', '0001_initial'),
+        ("persons", "0001_initial"),
+        ("journals", "0001_initial"),
+        ("links", "0001_initial"),
+        ("languages", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Paper',
+            name="Paper",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('slug', models.SlugField(max_length=2048, unique=True, verbose_name='Slug')),
-                ('title', models.TextField(unique=True, verbose_name='Title')),
-                ('volume', models.TextField(blank=True, null=True, verbose_name='Volume')),
-                ('publishing_date', models.DateField(blank=True, null=True, verbose_name='Publishing date')),
-                ('bibtex', models.TextField(blank=True, null=True, verbose_name='BibTex')),
-                ('authors', models.ManyToManyField(blank=True, related_name='papers', to='persons.Person', verbose_name='Authors')),
-                ('journal', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='papers', to='journals.Journal', verbose_name='Journal')),
-                ('languages', models.ManyToManyField(blank=True, related_name='papers', to='languages.Language', verbose_name='Languages')),
-                ('links', models.ManyToManyField(blank=True, related_name='papers', to='links.Link', verbose_name='Links')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
+                (
+                    "slug",
+                    models.SlugField(max_length=2048, unique=True, verbose_name="Slug"),
+                ),
+                ("title", models.TextField(unique=True, verbose_name="Title")),
+                (
+                    "volume",
+                    models.TextField(blank=True, null=True, verbose_name="Volume"),
+                ),
+                (
+                    "publishing_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Publishing date"
+                    ),
+                ),
+                (
+                    "bibtex",
+                    models.TextField(blank=True, null=True, verbose_name="BibTex"),
+                ),
+                (
+                    "authors",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="papers",
+                        to="persons.Person",
+                        verbose_name="Authors",
+                    ),
+                ),
+                (
+                    "journal",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="papers",
+                        to="journals.Journal",
+                        verbose_name="Journal",
+                    ),
+                ),
+                (
+                    "languages",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="papers",
+                        to="languages.Language",
+                        verbose_name="Languages",
+                    ),
+                ),
+                (
+                    "links",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="papers",
+                        to="links.Link",
+                        verbose_name="Links",
+                    ),
+                ),
             ],
             options={
-                'ordering': (django.db.models.expressions.Func(django.db.models.expressions.F('journal__name'), function='LOWER'), django.db.models.expressions.Func(django.db.models.expressions.F('volume'), function='LOWER'), django.db.models.expressions.Func(django.db.models.expressions.F('title'), function='LOWER')),
-                'verbose_name': 'Paper',
-                'verbose_name_plural': 'Papers',
+                "ordering": (
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("journal__name"),
+                        function="LOWER",
+                    ),
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("volume"), function="LOWER"
+                    ),
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("title"), function="LOWER"
+                    ),
+                ),
+                "verbose_name": "Paper",
+                "verbose_name_plural": "Papers",
             },
         ),
         migrations.AlterUniqueTogether(
-            name='paper',
-            unique_together=set([('journal', 'volume', 'title')]),
+            name="paper",
+            unique_together=set([("journal", "volume", "title")]),
         ),
     ]

@@ -28,23 +28,43 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Genre',
+            name="Genre",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('slug', models.SlugField(max_length=2048, unique=True, verbose_name='Slug')),
-                ('name', models.TextField(unique=True, verbose_name='Name')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
+                (
+                    "slug",
+                    models.SlugField(max_length=2048, unique=True, verbose_name="Slug"),
+                ),
+                ("name", models.TextField(unique=True, verbose_name="Name")),
             ],
             options={
-                'verbose_name': 'Genre',
-                'verbose_name_plural': 'Genres',
-                'ordering': (django.db.models.expressions.Func(django.db.models.expressions.F('name'), function='LOWER'),),
+                "verbose_name": "Genre",
+                "verbose_name_plural": "Genres",
+                "ordering": (
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("name"), function="LOWER"
+                    ),
+                ),
             },
         ),
     ]

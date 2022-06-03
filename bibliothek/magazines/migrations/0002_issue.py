@@ -27,33 +27,92 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('languages', '0001_initial'),
-        ('links', '0001_initial'),
-        ('magazines', '0001_initial'),
+        ("languages", "0001_initial"),
+        ("links", "0001_initial"),
+        ("magazines", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Issue',
+            name="Issue",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('issue', models.TextField(verbose_name='Issue')),
-                ('publishing_date', models.DateField(blank=True, null=True, verbose_name='Publishing date')),
-                ('cover_image', models.ImageField(blank=True, null=True, upload_to='files', verbose_name='Cover image')),
-                ('languages', models.ManyToManyField(blank=True, related_name='issues', to='languages.Language', verbose_name='Languages')),
-                ('links', models.ManyToManyField(blank=True, related_name='issues', to='links.Link', verbose_name='Links')),
-                ('magazine', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issues', to='magazines.Magazine', verbose_name='Magazine')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
+                ("issue", models.TextField(verbose_name="Issue")),
+                (
+                    "publishing_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Publishing date"
+                    ),
+                ),
+                (
+                    "cover_image",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to="files",
+                        verbose_name="Cover image",
+                    ),
+                ),
+                (
+                    "languages",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="issues",
+                        to="languages.Language",
+                        verbose_name="Languages",
+                    ),
+                ),
+                (
+                    "links",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="issues",
+                        to="links.Link",
+                        verbose_name="Links",
+                    ),
+                ),
+                (
+                    "magazine",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issues",
+                        to="magazines.Magazine",
+                        verbose_name="Magazine",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Issue',
-                'verbose_name_plural': 'Issues',
-                'ordering': (django.db.models.expressions.Func(django.db.models.expressions.F('magazine__name'), function='LOWER'), django.db.models.expressions.Func(django.db.models.expressions.F('issue'), function='LOWER')),
+                "verbose_name": "Issue",
+                "verbose_name_plural": "Issues",
+                "ordering": (
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("magazine__name"),
+                        function="LOWER",
+                    ),
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("issue"), function="LOWER"
+                    ),
+                ),
             },
         ),
         migrations.AlterUniqueTogether(
-            name='issue',
-            unique_together=set([('magazine', 'issue')]),
+            name="issue",
+            unique_together=set([("magazine", "issue")]),
         ),
     ]

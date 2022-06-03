@@ -27,26 +27,52 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
-        ('shelves', '0001_initial'),
+        ("contenttypes", "0002_remove_content_type_name"),
+        ("shelves", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Read',
+            name="Read",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('started', models.DateField(blank=True, null=True, verbose_name='Started')),
-                ('finished', models.DateField(blank=True, null=True, verbose_name='Finished')),
-                ('object_id', models.PositiveIntegerField()),
-                ('content_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
+                (
+                    "started",
+                    models.DateField(blank=True, null=True, verbose_name="Started"),
+                ),
+                (
+                    "finished",
+                    models.DateField(blank=True, null=True, verbose_name="Finished"),
+                ),
+                ("object_id", models.PositiveIntegerField()),
+                (
+                    "content_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.ContentType",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Reads',
-                'verbose_name': 'Read',
-                'ordering': ('started', 'finished'),
+                "verbose_name_plural": "Reads",
+                "verbose_name": "Read",
+                "ordering": ("started", "finished"),
             },
         ),
     ]

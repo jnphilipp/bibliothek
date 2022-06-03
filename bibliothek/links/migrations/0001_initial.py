@@ -28,22 +28,42 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Link',
+            name="Link",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('link', models.URLField(max_length=4096, unique=True, verbose_name='Link')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
+                (
+                    "link",
+                    models.URLField(max_length=4096, unique=True, verbose_name="Link"),
+                ),
             ],
             options={
-                'ordering': (django.db.models.expressions.Func(django.db.models.expressions.F('link'), function='LOWER'),),
-                'verbose_name': 'Link',
-                'verbose_name_plural': 'Links',
+                "ordering": (
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("link"), function="LOWER"
+                    ),
+                ),
+                "verbose_name": "Link",
+                "verbose_name_plural": "Links",
             },
         ),
     ]

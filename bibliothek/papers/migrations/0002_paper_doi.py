@@ -39,7 +39,9 @@ def default_dois(apps, schema_editor):
             if bib_database.entries[0]["doi"].startswith("doi:"):
                 paper.doi = bib_database.entries[0]["doi"][4:]
             elif bib_database.entries[0]["doi"].startswith("http"):
-                paper.doi = re.sub(r"https?://[^/]+/", "", bib_database.entries[0]["doi"])
+                paper.doi = re.sub(
+                    r"https?://[^/]+/", "", bib_database.entries[0]["doi"]
+                )
             else:
                 paper.doi = bib_database.entries[0]["doi"]
             paper.save()
@@ -48,14 +50,16 @@ def default_dois(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('papers', '0001_initial'),
+        ("papers", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='paper',
-            name='doi',
-            field=models.TextField(blank=True, null=True, unique=True, verbose_name='DOI'),
+            model_name="paper",
+            name="doi",
+            field=models.TextField(
+                blank=True, null=True, unique=True, verbose_name="DOI"
+            ),
         ),
         migrations.RunPython(default_dois),
     ]

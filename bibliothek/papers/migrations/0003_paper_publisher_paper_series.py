@@ -36,17 +36,15 @@ def fill_publisher_series(apps, schema_editor):
             if not paper.bibtex:
                 continue
 
-            bib_database = BibTexParser(common_strings=True, homogenize_fields=True).parse(
-                paper.bibtex
-            )
+            bib_database = BibTexParser(
+                common_strings=True, homogenize_fields=True
+            ).parse(paper.bibtex)
             entry = bib_database.entries[0]
 
             publisher = (
                 {"name": entry["publisher"].strip()} if "publisher" in entry else None
             )
-            series = (
-                {"name": entry["series"].strip()} if "series" in entry else None
-            )
+            series = {"name": entry["series"].strip()} if "series" in entry else None
 
             if publisher or series:
                 if publisher:
@@ -71,25 +69,57 @@ def fill_publisher_series(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('series', '0001_initial'),
-        ('publishers', '0001_initial'),
-        ('papers', '0002_paper_doi'),
+        ("series", "0001_initial"),
+        ("publishers", "0001_initial"),
+        ("papers", "0002_paper_doi"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='paper',
-            name='publisher',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='papers', to='publishers.publisher', verbose_name='Publisher'),
+            model_name="paper",
+            name="publisher",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="papers",
+                to="publishers.publisher",
+                verbose_name="Publisher",
+            ),
         ),
         migrations.AddField(
-            model_name='paper',
-            name='series',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='papers', to='series.series', verbose_name='Series'),
+            model_name="paper",
+            name="series",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="papers",
+                to="series.series",
+                verbose_name="Series",
+            ),
         ),
         migrations.AlterModelOptions(
-            name='paper',
-            options={'ordering': (django.db.models.expressions.Func(django.db.models.expressions.F('journal__name'), function='LOWER'), django.db.models.expressions.Func(django.db.models.expressions.F('volume'), function='LOWER'), django.db.models.expressions.Func(django.db.models.expressions.F('series__name'), function='LOWER'), django.db.models.expressions.Func(django.db.models.expressions.F('title'), function='LOWER')), 'verbose_name': 'Paper', 'verbose_name_plural': 'Papers'},
+            name="paper",
+            options={
+                "ordering": (
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("journal__name"),
+                        function="LOWER",
+                    ),
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("volume"), function="LOWER"
+                    ),
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("series__name"), function="LOWER"
+                    ),
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("title"), function="LOWER"
+                    ),
+                ),
+                "verbose_name": "Paper",
+                "verbose_name_plural": "Papers",
+            },
         ),
         migrations.RunPython(fill_publisher_series),
     ]

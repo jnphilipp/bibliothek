@@ -29,24 +29,51 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
+        ("contenttypes", "0002_remove_content_type_name"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='File',
+            name="File",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('file', models.FileField(max_length=4096, upload_to='files', verbose_name='File')),
-                ('object_id', models.PositiveIntegerField(blank=True, null=True)),
-                ('content_type', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
+                (
+                    "file",
+                    models.FileField(
+                        max_length=4096, upload_to="files", verbose_name="File"
+                    ),
+                ),
+                ("object_id", models.PositiveIntegerField(blank=True, null=True)),
+                (
+                    "content_type",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.ContentType",
+                    ),
+                ),
             ],
             options={
-                'ordering': ('file',),
-                'verbose_name': 'File',
-                'verbose_name_plural': 'Files',
+                "ordering": ("file",),
+                "verbose_name": "File",
+                "verbose_name_plural": "Files",
             },
         ),
     ]

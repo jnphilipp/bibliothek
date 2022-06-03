@@ -8,48 +8,167 @@ import django.db.models.expressions
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publishers', '0001_initial'),
-        ('links', '0001_initial'),
-        ('languages', '0001_initial'),
-        ('persons', '0001_initial'),
-        ('series', '0001_initial'),
-        ('papers', '0003_paper_publisher_paper_series'),
+        ("publishers", "0001_initial"),
+        ("links", "0001_initial"),
+        ("languages", "0001_initial"),
+        ("persons", "0001_initial"),
+        ("series", "0001_initial"),
+        ("papers", "0003_paper_publisher_paper_series"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='paper',
-            options={'ordering': (django.db.models.expressions.Func(django.db.models.expressions.F('journal__name'), function='LOWER'), django.db.models.expressions.Func(django.db.models.expressions.F('volume'), function='LOWER'), django.db.models.expressions.Func(django.db.models.expressions.F('series__name'), function='LOWER'), django.db.models.expressions.Func(django.db.models.expressions.F('proceedings__title'), function='LOWER'), django.db.models.expressions.Func(django.db.models.expressions.F('title'), function='LOWER')), 'verbose_name': 'Paper', 'verbose_name_plural': 'Papers'},
+            name="paper",
+            options={
+                "ordering": (
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("journal__name"),
+                        function="LOWER",
+                    ),
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("volume"), function="LOWER"
+                    ),
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("series__name"), function="LOWER"
+                    ),
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("proceedings__title"),
+                        function="LOWER",
+                    ),
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("title"), function="LOWER"
+                    ),
+                ),
+                "verbose_name": "Paper",
+                "verbose_name_plural": "Papers",
+            },
         ),
         migrations.CreateModel(
-            name='Proceedings',
+            name="Proceedings",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('slug', models.SlugField(max_length=2048, unique=True, verbose_name='Slug')),
-                ('title', models.TextField(unique=True, verbose_name='Title')),
-                ('publishing_date', models.DateField(blank=True, null=True, verbose_name='Publishing date')),
-                ('doi', models.TextField(blank=True, null=True, unique=True, verbose_name='DOI')),
-                ('isbn', models.CharField(blank=True, max_length=13, null=True, unique=True, verbose_name='ISBN')),
-                ('volume', models.TextField(blank=True, null=True, verbose_name='Volume')),
-                ('bibtex', models.TextField(blank=True, null=True, verbose_name='BibTex')),
-                ('editors', models.ManyToManyField(blank=True, related_name='proceedings', to='persons.Person', verbose_name='Editors')),
-                ('languages', models.ManyToManyField(blank=True, related_name='proceedings', to='languages.Language', verbose_name='Languages')),
-                ('links', models.ManyToManyField(blank=True, related_name='proceedings', to='links.Link', verbose_name='Links')),
-                ('publisher', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='proceedings', to='publishers.publisher', verbose_name='Publisher')),
-                ('series', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='proceedings', to='series.series', verbose_name='Series')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
+                (
+                    "slug",
+                    models.SlugField(max_length=2048, unique=True, verbose_name="Slug"),
+                ),
+                ("title", models.TextField(unique=True, verbose_name="Title")),
+                (
+                    "publishing_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Publishing date"
+                    ),
+                ),
+                (
+                    "doi",
+                    models.TextField(
+                        blank=True, null=True, unique=True, verbose_name="DOI"
+                    ),
+                ),
+                (
+                    "isbn",
+                    models.CharField(
+                        blank=True,
+                        max_length=13,
+                        null=True,
+                        unique=True,
+                        verbose_name="ISBN",
+                    ),
+                ),
+                (
+                    "volume",
+                    models.TextField(blank=True, null=True, verbose_name="Volume"),
+                ),
+                (
+                    "bibtex",
+                    models.TextField(blank=True, null=True, verbose_name="BibTex"),
+                ),
+                (
+                    "editors",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="proceedings",
+                        to="persons.Person",
+                        verbose_name="Editors",
+                    ),
+                ),
+                (
+                    "languages",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="proceedings",
+                        to="languages.Language",
+                        verbose_name="Languages",
+                    ),
+                ),
+                (
+                    "links",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="proceedings",
+                        to="links.Link",
+                        verbose_name="Links",
+                    ),
+                ),
+                (
+                    "publisher",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="proceedings",
+                        to="publishers.publisher",
+                        verbose_name="Publisher",
+                    ),
+                ),
+                (
+                    "series",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="proceedings",
+                        to="series.series",
+                        verbose_name="Series",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Proceedings',
-                'verbose_name_plural': 'Proceedings',
-                'ordering': (django.db.models.expressions.Func(django.db.models.expressions.F('title'), function='LOWER'),),
-                'unique_together': {('title',)},
+                "verbose_name": "Proceedings",
+                "verbose_name_plural": "Proceedings",
+                "ordering": (
+                    django.db.models.expressions.Func(
+                        django.db.models.expressions.F("title"), function="LOWER"
+                    ),
+                ),
+                "unique_together": {("title",)},
             },
         ),
         migrations.AddField(
-            model_name='paper',
-            name='proceedings',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='papers', to='papers.proceedings', verbose_name='Proceedings'),
+            model_name="paper",
+            name="proceedings",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="papers",
+                to="papers.proceedings",
+                verbose_name="Proceedings",
+            ),
         ),
     ]

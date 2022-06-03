@@ -24,14 +24,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('links', '0001_initial'),
-        ('books', '0002_edition'),
+        ("links", "0001_initial"),
+        ("books", "0002_edition"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='edition',
-            name='links',
-            field=models.ManyToManyField(blank=True, related_name='editions', to='links.Link', verbose_name='Links'),
+            model_name="edition",
+            name="links",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="editions",
+                to="links.Link",
+                verbose_name="Links",
+            ),
         ),
     ]
