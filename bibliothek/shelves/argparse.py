@@ -127,7 +127,7 @@ def _read(args: Namespace, file: TextIO = sys.stdout):
             )
             if created:
                 stdout.write(
-                    _('Successfully added read with id "%(pk)d" to "{obj}".')
+                    _('Successfully added read with id "%(pk)d" to "%(obj)s".')
                     % {"pk": read.pk, "obj": obj},
                     "=",
                     file=file,
