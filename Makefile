@@ -40,8 +40,8 @@ venv:
 	$(Q)/usr/bin/python3 -m venv .venv
 	$(Q)( \
 		source .venv/bin/activate; \
-		pip install --upgrade pip
-		pip install django~=${DJANGO}
+		pip install --upgrade pip; \
+		pip install django~=${DJANGO}; \
 		pip install -r requirements.txt; \
 	)
 	$(Q)ln -fs ${PYTHON_LIB_DIR}/gi .venv/lib/python3*/site-packages/
