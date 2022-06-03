@@ -1,4 +1,4 @@
-SHELL := /bin/bash
+SHELL:=/bin/bash
 
 PYTHON_LIB_DIR?=/usr/lib/python3/dist-packages
 BASH_COMPLETION_DIR?=/usr/share/bash-completion.d
@@ -11,6 +11,7 @@ MAN_DIR?=/usr/share/man
 SHARE_DIR?=/usr/share
 SYSTEMD_DIR?=/usr/lib/systemd/user
 DEST_DIR?=
+DJANGO?=
 
 FILES := $(shell find bibliothek/* -type f ! -path "**/__pycache__/*" ! -path "**/.git" ! -path "**/.gitignore" ! -path "**/LICENSE" ! -path "**/README.md")
 
@@ -21,21 +22,28 @@ else
   Q := @
 endif
 
-
-clean:
-	$(Q)rm -rf ./build
-	$(Q)rm -rf ./bibliothek/static
-	$(Q)find bibliothek -name __pycache__ -exec rm -rf {} \;
-
-
 print-%:
 	@echo $*=$($*)
 
 
+clean:
+	$(Q)rm -rf ./build
+	$(Q)rm -rf ./bibliothek/static
+	$(Q)find bibliothek -depth -name __pycache__ -type d -exec rm -rf {} \;
+
+
 venv:
-	$(Q)virtualenv -p /usr/bin/python3 .venv
+	$(Q)make .venv
+
+
+.venv:
+	$(Q)/usr/bin/python3 -m venv .venv
 	$(Q)( \
 		source .venv/bin/activate; \
+		pip install --upgrade pip
+ifdef ($(DJANGO))
+		pip install django~=${DJANGO}
+endif
 		pip install -r requirements.txt; \
 	)
 	$(Q)ln -fs ${PYTHON_LIB_DIR}/gi .venv/lib/python3*/site-packages/
@@ -166,6 +174,7 @@ build/copyright: build
 	$(Q)echo " '/usr/share/common-licenses/GPL-3'." >> build/copyright
 
 
+
 build/copyright.h2m: build
 	$(Q)echo "[COPYRIGHT]" > build/copyright.h2m
 	$(Q)echo "This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version." >> build/copyright.h2m
@@ -176,7 +185,24 @@ build/copyright.h2m: build
 
 
 build/changelog.Debian.gz: build
-	$(Q)declare TAGS=(`git tag`); for ((i=$${#TAGS[@]};i>=0;i--)); do if [ $$i -eq 0 ]; then git log $${TAGS[$$i]} --no-merges --format="bibliothek ($${TAGS[$$i]}-%h) unstable; urgency=medium%n%n  * %s%n    %b%n -- %an <%ae>  %aD%n" | sed "/^\s*$$/d" >> build/changelog; elif [ $$i -eq $${#TAGS[@]} ]; then git log $${TAGS[$$i-1]}..HEAD --no-merges --format="bibliothek ($${TAGS[$$i-1]}-%h) unstable; urgency=medium%n%n  * %s%n    %b%n -- %an <%ae>  %aD%n" | sed "/^\s*$$/d" >> build/changelog; else git log $${TAGS[$$i-1]}..$${TAGS[$$i]} --no-merges --format="bibliothek ($${TAGS[$$i]}-%h) unstable; urgency=medium%n%n  * %s%n    %b%n -- %an <%ae>  %aD%n" | sed "/^\s*$$/d" >> build/changelog; fi; done
+	$(Q)( \
+		declare TAGS=(`git tag`); \
+		for ((i=$${#TAGS[@]};i>=0;i--)); do \
+			if [ $$i -eq 0 ]; then \
+				echo -e "bibliothek ($${TAGS[$$i]}) unstable; urgency=medium" >> build/changelog; \
+				git log $${TAGS[$$i]} --no-merges --format="  * %h %s"  >> build/changelog; \
+				git log $${TAGS[$$i]} -n 1 --format=" -- %an <%ae>  %aD" >> build/changelog; \
+			elif [ $$i -eq $${#TAGS[@]} ] && [ $$(git log $${TAGS[$$i-1]}..HEAD --oneline | wc -l) -ne 0 ]; then \
+				echo -e "bibliothek ($${TAGS[$$i-1]}-$$(git log -n 1 --format='%h')) unstable; urgency=medium" >> build/changelog; \
+				git log $${TAGS[$$i-1]}..HEAD --no-merges --format="  * %h %s"  >> build/changelog; \
+				git log HEAD -n 1 --format=" -- %an <%ae>  %aD" >> build/changelog; \
+			elif [ $$i -lt $${#TAGS[@]} ]; then \
+				echo -e "bibliothek ($${TAGS[$$i]}) unstable; urgency=medium" >> build/changelog; \
+				git log $${TAGS[$$i-1]}..$${TAGS[$$i]} --no-merges --format="  * %h %s"  >> build/changelog; \
+				git log $${TAGS[$$i]} -n 1 --format=" -- %an <%ae>  %aD" >> build/changelog; \
+			fi; \
+		done \
+	)
 	$(Q)cat build/changelog | gzip -n9 > build/changelog.Debian.gz
 
 
