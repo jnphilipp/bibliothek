@@ -41,9 +41,7 @@ venv:
 	$(Q)( \
 		source .venv/bin/activate; \
 		pip install --upgrade pip
-ifdef ($(DJANGO))
 		pip install django~=${DJANGO}
-endif
 		pip install -r requirements.txt; \
 	)
 	$(Q)ln -fs ${PYTHON_LIB_DIR}/gi .venv/lib/python3*/site-packages/
