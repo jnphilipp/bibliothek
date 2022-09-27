@@ -295,7 +295,7 @@ build/package/DEBIAN/control: build/package/DEBIAN/md5sums
 	$(Q)echo "Section: utils" >> build/package/DEBIAN/control
 	$(Q)echo "Priority: optional" >> build/package/DEBIAN/control
 	$(Q)echo "Architecture: all" >> build/package/DEBIAN/control
-	$(Q)echo "Depends: python3 (<< 3.11), python3 (>= 3.7), python3:any, python3-gi, python3-django (= 4.0~), python3-bibtexparser (=1.2~), python3-feedparser (=6.0~), python3-pillow (=9.0~)" >> build/package/DEBIAN/control
+	$(Q)echo "Depends: python3 (<< 3.11), python3 (>= 3.7), python3:any, python3-gi, python3-django (= 4.0~), python3-bibtexparser (= 1.2~), python3-pillow (= 9.0~), python-django-boostrap5 (>= 0.2)" >> build/package/DEBIAN/control
 	$(Q)echo "Recommends: systemd" >> build/package/DEBIAN/control
 	$(Q)echo "Installed-Size: `du -sk build/package/usr | grep -oE "[0-9]+"`" >> build/package/DEBIAN/control
 	$(Q)echo "Maintainer: J. Nathanael Philipp (jnphilipp) <nathanael@philipp.land>" >> build/package/DEBIAN/control

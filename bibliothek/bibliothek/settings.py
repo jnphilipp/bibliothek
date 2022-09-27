@@ -28,11 +28,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-import importlib.util
 import os
 import sys
 
 from gi.repository import GLib
+from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 
 
@@ -211,21 +211,21 @@ CURRENCY_SYMBOL = None
 paths = [
     BASE_DIR / "local.py",
     BASE_DIR / "bibliothek" / "local.py",
-    APP_CONFIG_DIR / "settings.py"
+    APP_CONFIG_DIR / "settings.py",
 ]
 
 
 try:
     for path in paths:
         if path.exists():
-            spec = importlib.util.spec_from_file_location(
-                "local_settings", path
-            )
-            module = importlib.util.module_from_spec(spec)
+            spec = spec_from_file_location("local_settings", path)
+            if spec is None or spec.loader is None:
+                raise ImportError(f"Couldn't load spec from file {path}.")
+            module = module_from_spec(spec)
             spec.loader.exec_module(module)
             sys.modules["local_settings"] = module
-            from local_settings import *
+            from local_settings import *  # noqa: F401, F403
+
             break
 except ImportError as e:
     sys.stderr.write(str(e))
-    pass
