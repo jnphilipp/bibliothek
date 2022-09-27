@@ -34,10 +34,12 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.7", "3.8", "3.9", "3.10"]
-        django-version: ["3.2", "4.0"]
+        django-version: ["3.2", "4.0", "4.1"]
         exclude:
           - python-version: "3.7"
             django-version: "4.0"
+          - python-version: "3.7"
+            django-version: "4.1"
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
@@ -46,8 +48,10 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
+          sudo apt install libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0
           python -m pip install --upgrade pip wheel
-          make venv VERBOSE=1 DJANGO=${{ matrix.django-version }}
+          python -m pip install pycairo PyGObject
+          pip install -r requirements.txt
+          pip install Django~=${{ matrix.django-version }}
       - name: Run Tests
-        run: |
-          make test
+        run: make test

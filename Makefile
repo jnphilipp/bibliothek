@@ -51,19 +51,12 @@ venv:
 	done
 
 
-test: .venv
-	$(Q)( \
-		source .venv/bin/activate; \
-		cd bibliothek; \
-		python manage.py test; \
-	)
+test:
+	$(Q)cd bibliothek && python manage.py test
 
 
 bibliothek/static: .venv
-	$(Q)( \
-		source .venv/bin/activate; \
-		python bibliothek/manage.py collectstatic -c --noinput; \
-	)
+	$(Q)python bibliothek/manage.py collectstatic -c --noinput
 
 
 deb: test build/package/DEBIAN/control
