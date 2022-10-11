@@ -198,10 +198,18 @@ class Paper(models.Model):
                         f"{day} {month} {year}", "%d %b %Y"
                     )
             elif year and month:
-                try:
+                if month.isdigit():
                     date = datetime.datetime.strptime(f"{month} {year}", "%B %Y")
-                except ValueError:
-                    date = datetime.datetime.strptime(f"{month} {year}", "%b %Y")
+                else:
+                    try:
+                        date = datetime.datetime.strptime(f"{month} {year}", "%B %Y")
+                    except ValueError:
+                        try:
+                            date = datetime.datetime.strptime(
+                                f"{month} {year}", "%b %Y"
+                            )
+                        except ValueError:
+                            date = datetime.datetime(year, 1, 1)
             elif year:
                 date = datetime.datetime(year, 1, 1)
 
