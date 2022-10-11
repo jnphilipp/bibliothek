@@ -55,7 +55,7 @@ test:
 	$(Q)cd bibliothek && python manage.py test
 
 
-bibliothek/static: .venv
+bibliothek/static:
 	$(Q)python bibliothek/manage.py collectstatic -c --noinput
 
 
