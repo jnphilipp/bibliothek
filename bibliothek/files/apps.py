@@ -32,4 +32,4 @@ class FilesConfig(AppConfig):
 
     def ready(self):
         """Ready."""
-        from . import signals
+        from . import signals  # noqa: F401
