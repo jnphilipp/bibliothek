@@ -47,11 +47,7 @@ from argparse import (  # noqa: E402
     Namespace,
     RawTextHelpFormatter,
 )
-from datetime import date, datetime  # noqa: E402
-from django.utils.translation import gettext_lazy as _  # noqa: E402
-from typing import TextIO  # noqa: E402
-
-from .bibliothek import (  # noqa: E402
+from bibliothek import (  # noqa: E402
     __app_name__,
     __author__,
     __email__,
@@ -60,7 +56,10 @@ from .bibliothek import (  # noqa: E402
     settings,
     stdout,
 )
-from .bibliothek.utils import lookahead  # noqa: E402
+from bibliothek.utils import lookahead  # noqa: E402
+from datetime import date, datetime  # noqa: E402
+from django.utils.translation import gettext_lazy as _  # noqa: E402
+from typing import TextIO  # noqa: E402
 
 
 def init():
