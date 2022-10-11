@@ -199,7 +199,7 @@ class Paper(models.Model):
                     )
             elif year and month:
                 if month.isdigit():
-                    date = datetime.datetime.strptime(f"{month} {year}", "%B %Y")
+                    date = datetime.datetime.strptime(f"{month} {year}", "%m %Y")
                 else:
                     try:
                         date = datetime.datetime.strptime(f"{month} {year}", "%B %Y")
