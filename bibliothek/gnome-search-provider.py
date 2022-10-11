@@ -23,21 +23,21 @@ import os
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bibliothek.settings")
 
-import django
+import django  # noqa: E402
 
 django.setup()
 
-import dbus
-import dbus.glib
-import dbus.service
-import os
-import sys
+import dbus  # noqa: E402
+import dbus.glib  # noqa: E402
+import dbus.service  # noqa: E402
+import os  # noqa: E402
+import sys  # noqa: E402
 
-from books.models import Edition
-from django.db.models import Q
-from gi.repository import GLib
-from magazines.models import Issue
-from papers.models import Paper
+from books.models import Edition  # noqa: E402
+from django.db.models import Q  # noqa: E402
+from gi.repository import GLib  # noqa: E402
+from magazines.models import Issue  # noqa: E402
+from papers.models import Paper  # noqa: E402
 
 search_bus_name = "org.gnome.Shell.SearchProvider2"
 sbn = dict(dbus_interface=search_bus_name)
@@ -57,7 +57,7 @@ class BibliothekSearchService(dbus.service.Object):
         dbus.service.Object.__init__(self, bus_name, self._object_path)
 
     @dbus.service.method(in_signature="sasu", **sbn)
-    def ActivateResult(self, id, terms, timestamp):
+    def ActivateResult(self, id, terms, timestamp):  # noqa: N802
         """Activate result item."""
         obj = self._get_obj(id)
         if obj is not None:
@@ -80,12 +80,12 @@ class BibliothekSearchService(dbus.service.Object):
                 os.system('open "%s"' % path)
 
     @dbus.service.method(in_signature="as", out_signature="as", **sbn)
-    def GetInitialResultSet(self, terms):
+    def GetInitialResultSet(self, terms):  # noqa: N802
         """Get initial result set."""
         return self._get_result_set(terms)
 
     @dbus.service.method(in_signature="as", out_signature="aa{sv}", **sbn)
-    def GetResultMetas(self, ids):
+    def GetResultMetas(self, ids):  # noqa: N802
         """Get result metas."""
         metas = []
         for id in ids:
@@ -106,12 +106,12 @@ class BibliothekSearchService(dbus.service.Object):
         return metas
 
     @dbus.service.method(in_signature="asas", out_signature="as", **sbn)
-    def GetSubsearchResultSet(self, previous_results, new_terms):
+    def GetSubsearchResultSet(self, previous_results, new_terms):  # noqa: N802
         """Get subsearch result set."""
         return self._get_result_set(new_terms)
 
     @dbus.service.method(in_signature="asu", terms="as", timestamp="u", **sbn)
-    def LaunchSearch(self, terms, timestamp):
+    def LaunchSearch(self, terms, timestamp):  # noqa: N802
         """Launch search."""
         pass
 

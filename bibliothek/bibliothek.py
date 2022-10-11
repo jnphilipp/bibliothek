@@ -25,24 +25,33 @@ import sys
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bibliothek.settings")
 
-import django
+import django  # noqa: E402
 
 django.setup()
 
-import bibliothek.argparse
-import bindings.argparse
-import books.argparse
-import genres.argparse
-import journals.argparse
-import magazines.argparse
-import papers.argparse
-import persons.argparse
-import publishers.argparse
-import series.argparse
-import shelves.argparse
+import bibliothek.argparse  # noqa: E402
+import bindings.argparse  # noqa: E402
+import books.argparse  # noqa: E402
+import genres.argparse  # noqa: E402
+import journals.argparse  # noqa: E402
+import magazines.argparse  # noqa: E402
+import papers.argparse  # noqa: E402
+import persons.argparse  # noqa: E402
+import publishers.argparse  # noqa: E402
+import series.argparse  # noqa: E402
+import shelves.argparse  # noqa: E402
 
-from argparse import ArgumentParser, FileType, Namespace, RawTextHelpFormatter
-from bibliothek import (
+from argparse import (  # noqa: E402
+    ArgumentParser,
+    FileType,
+    Namespace,
+    RawTextHelpFormatter,
+)
+from datetime import date, datetime  # noqa: E402
+from django.utils.translation import gettext_lazy as _  # noqa: E402
+from typing import TextIO  # noqa: E402
+
+from .bibliothek import (  # noqa: E402
     __app_name__,
     __author__,
     __email__,
@@ -51,10 +60,7 @@ from bibliothek import (
     settings,
     stdout,
 )
-from bibliothek.utils import lookahead
-from datetime import date, datetime
-from django.utils.translation import gettext_lazy as _
-from typing import TextIO
+from .bibliothek.utils import lookahead  # noqa: E402
 
 
 def init():
@@ -115,11 +121,11 @@ def _reading_list(args: Namespace, file: TextIO = sys.stdout):
     from papers.models import Paper
     from shelves.models import Acquisition
 
-    reading_list = set()
+    reading_list = list()
     for acquisition in Acquisition.objects.all():
         if acquisition.content_object.reads.count() == 0:
-            reading_list.add((acquisition.content_object, acquisition.date))
-    reading_list = sorted(reading_list, key=lambda x: x[1] if x[1] else date.min)
+            reading_list.append((acquisition.content_object, acquisition.date))
+    reading_list = sorted(set(reading_list), key=lambda x: x[1] if x[1] else date.min)
     if args.limit:
         reading_list = reading_list[: args.limit]
 
