@@ -322,6 +322,7 @@ class Edition(models.Model):
     alternate_title = models.TextField(
         blank=True, null=True, verbose_name=_("Alternate title")
     )
+    edition = models.TextField(blank=True, null=True, verbose_name=_("Edition"))
     book = models.ForeignKey(
         Book, models.CASCADE, related_name="editions", verbose_name=_("Book")
     )
@@ -401,11 +402,14 @@ class Edition(models.Model):
         Returns True if was crated, i. e. was not found in the DB.
         """
         alternate_title = None
+        edition_str = None
         isbn = None
         publishing_date = None
         defaults: Dict = {}
         if "alternate_title" in data and data["alternate_title"]:
             alternate_title = data["alternate_title"]
+        if "edition" in data and data["edition"]:
+            edition_str = data["edition"]
         if "isbn" in data and data["isbn"]:
             isbn = data["isbn"]
         if "publishing_date" in data and data["publishing_date"]:
@@ -426,6 +430,7 @@ class Edition(models.Model):
         edition, created = cls.objects.get_or_create(
             book=book,
             alternate_title=alternate_title,
+            edition=edition_str,
             isbn=isbn,
             publishing_date=publishing_date,
             defaults=defaults,
@@ -502,6 +507,7 @@ class Edition(models.Model):
         return query_set.filter(
             Q(pk=term if term.isdigit() else None)
             | Q(alternate_title__icontains=term)
+            | Q(edition__icontains=term)
             | Q(isbn__icontains=term)
             | Q(persons__in=persons)
             | Q(book__authors__in=persons)
@@ -535,6 +541,7 @@ class Edition(models.Model):
             "alternate-title",
             "binding",
             "cover",
+            "edition",
             "isbn",
             "person",
             "publishing_date",
@@ -557,6 +564,8 @@ class Edition(models.Model):
             self.cover_image.save(
                 os.path.basename(str(value)), DJFile(open(str(value), "rb"))
             )
+        elif field == "edition":
+            self.edition = value
         elif field == "isbn":
             self.isbn = value
         elif field == "person" and isinstance(value, str):
@@ -613,6 +622,7 @@ class Edition(models.Model):
         stdout.write(
             [_("Alternate title"), self.alternate_title], positions=[0.33], file=file
         )
+        stdout.write([_("Edition"), self.edition], positions=[0.33], file=file)
         stdout.write([_("ISBN"), self.isbn], positions=[0.33], file=file)
         stdout.write(
             [_("Publishing date"), self.publishing_date], positions=[0.33], file=file
@@ -724,6 +734,7 @@ class Edition(models.Model):
         """Convert to dict."""
         return {
             "alternate_title": self.alternate_title,
+            "edition": self.edition,
             "isbn": self.isbn,
             "publishing_date": self.publishing_date.strftime("%Y-%m-%d")
             if self.publishing_date

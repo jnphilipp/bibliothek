@@ -358,6 +358,7 @@ class EditionModelTestCase(TestCase):
         self.assertEquals(
             {
                 "alternate_title": None,
+                "edition": None,
                 "isbn": None,
                 "publishing_date": None,
                 "cover": None,
@@ -380,6 +381,7 @@ class EditionModelTestCase(TestCase):
         edition, created = Edition.from_dict(
             {
                 "alternate_title": "Beispiel",
+                "edition": None,
                 "isbn": "9783030637873",
                 "publishing_date": "2021-02-01",
                 "cover": None,
@@ -400,6 +402,7 @@ class EditionModelTestCase(TestCase):
         self.assertEquals(
             {
                 "alternate_title": "Beispiel",
+                "edition": None,
                 "isbn": "9783030637873",
                 "publishing_date": "2021-02-01",
                 "cover": None,
@@ -420,6 +423,7 @@ class EditionModelTestCase(TestCase):
             Edition.from_dict(
                 {
                     "alternate_title": "Beispiel",
+                    "edition": None,
                     "isbn": "9783030637873",
                     "publishing_date": "2021-02-01",
                     "publisher": {"name": "Horse"},
@@ -450,6 +454,7 @@ class EditionModelTestCase(TestCase):
             self.assertEquals(
                 {
                     "alternate_title": "Beispiel",
+                    "edition": None,
                     "publishing_date": "2021-02-01",
                     "files": [
                         {
@@ -526,6 +531,9 @@ class EditionModelTestCase(TestCase):
 
         edition.edit("isbn", "9785423647891")
         self.assertEquals("9785423647891", edition.isbn)
+
+        edition.edit("edition", "1/10")
+        self.assertEquals("1/10", edition.edition)
 
         edition.edit("publishing_date", "2016-06-15")
         self.assertEquals(
@@ -672,6 +680,9 @@ class EditionModelTestCase(TestCase):
                 + " Files 1)                       \n__________________________________"
                 + "__________________________________________________________________\n"
                 + "Alternate title                  Beispiel                           "
+                + "                                \n__________________________________"
+                + "__________________________________________________________________\n"
+                + "Edition                                                             "
                 + "                                \n__________________________________"
                 + "__________________________________________________________________\n"
                 + "ISBN                             9783030637873                      "

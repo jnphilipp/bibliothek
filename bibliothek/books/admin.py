@@ -84,6 +84,7 @@ class EditionAdmin(admin.ModelAdmin):
                 "fields": [
                     "book",
                     "alternate_title",
+                    "edition",
                     "isbn",
                     "binding",
                     "publishing_date",

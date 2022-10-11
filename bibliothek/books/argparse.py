@@ -156,6 +156,7 @@ def _book(args: Namespace, file: TextIO = sys.stdout):
                 edition, created = Edition.from_dict(
                     {
                         "alternate_title": args.alternate_title,
+                        "edition": args.edition,
                         "isbn": args.isbn,
                         "publishing_date": args.publishing_date,
                         "cover": args.cover,
@@ -405,6 +406,7 @@ def edition_subparser(parser: _SubParsersAction):
     # edition add
     add_parser = subparser.add_parser("add", help=_("Add an edition"))
     add_parser.add_argument("--alternate-title", help=_("Alternate title"))
+    add_parser.add_argument("--edition", help=_("Edition"))
     add_parser.add_argument("--isbn", help=_("ISBN"))
     add_parser.add_argument(
         "--publishing-date", type=valid_date, help=_("Publishing date")
@@ -425,6 +427,9 @@ def edition_subparser(parser: _SubParsersAction):
     )
 
     edit_edition_parser = edit_subparser.add_parser("alternate-title")
+    edit_edition_parser.add_argument("value", help=_("New value for field"))
+
+    edit_edition_parser = edit_subparser.add_parser("edition")
     edit_edition_parser.add_argument("value", help=_("New value for field"))
 
     edit_edition_parser = edit_subparser.add_parser("isbn")
