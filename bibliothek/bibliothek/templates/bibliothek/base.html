@@ -61,6 +61,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            {% url "papers:proceedings_list" as proceedings_list_url %}
+                            <a class="nav-link{% if request.path|startswith:proceedings_list_url %} active{% endif %}" href="{{ proceedings_list_url }}">
+                                {% trans "Proceedings" %}
+                                {% if request.path|startswith:proceedings_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             {% url "persons:person_list" as person_list_url %}
                             <a class="nav-link{% if request.path|startswith:person_list_url %} active{% endif %}" href="{{ person_list_url }}">
                                 {% trans "Persons" %}

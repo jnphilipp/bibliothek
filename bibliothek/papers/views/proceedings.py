@@ -16,24 +16,32 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Papers Django app urls."""
+"""Papers Django app proceedings views."""
 
-from django.urls import path
-from .views.paper import DetailView as PaperDetailView, ListView as PaperListView
-from .views.proceedings import (
-    DetailView as ProceedingsDetailView,
-    ListView as ProceedingsListView,
-)
+from django.views import generic
+from papers.models import Proceedings
 
 
-app_name = "papers"
-urlpatterns = [
-    path("paper/", PaperListView.as_view(), name="paper_list"),
-    path("paper/<slug:slug>/", PaperDetailView.as_view(), name="paper_detail"),
-    path("proceedings/", ProceedingsListView.as_view(), name="proceedings_list"),
-    path(
-        "proceedings/<slug:slug>/",
-        ProceedingsDetailView.as_view(),
-        name="proceedings_detail",
-    ),
-]
+class ListView(generic.ListView):
+    """Proceedings list view."""
+
+    model = Proceedings
+
+    def get_context_data(self, **kwargs):
+        """Get context data."""
+        context = super(ListView, self).get_context_data(**kwargs)
+        context["o"] = "title"
+        if self.request.GET.get("o"):
+            context["o"] = self.request.GET.get("o")
+        return context
+
+    def get_queryset(self):
+        """Get django query set."""
+        o = self.request.GET.get("o") if self.request.GET.get("o") else "title"
+        return Proceedings.objects.order_by(o)
+
+
+class DetailView(generic.DetailView):
+    """Proceedings detail view."""
+
+    model = Proceedings

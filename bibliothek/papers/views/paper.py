@@ -16,7 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Papers Django app views."""
+"""Papers Django app paper views."""
 
 from django.views import generic
 from papers.models import Paper

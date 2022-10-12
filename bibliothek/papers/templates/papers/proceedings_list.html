@@ -1,0 +1,46 @@
+{% extends "bibliothek/base.html" %}
+{% load bootstrap i18n papers shelves %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    {% trans "Title" as title_trans %}
+                    {% sortable_th title_trans o "o" "title" %}
+                    <th>{% trans "Editors" %}</th>
+                    {% trans "DOI" as doi_trans %}
+                    {% sortable_th doi_trans o "o" "doi" %}
+                    {% trans "Publisher" as publisher_trans %}
+                    {% sortable_th publisher_trans o "o" "publisher__name" %}
+                    {% trans "Series" as series_trans %}
+                    {% sortable_th series_trans o "o" "series__name" %}
+                    {% trans "Volume" as volume_trans %}
+                    {% sortable_th volume_trans o "o" "volume" %}
+                    {% trans "Acquired" as acquired_trans %}
+                    {% sortable_th acquired_trans o "o" "acquisitions" %}
+                    {% trans "Read" as read_trans %}
+                    {% sortable_th read_trans o "o" "reads" %}
+                </thead>
+                <tbody>
+                    {% for proceedings in object_list %}
+                        <tr>
+                            <th><a href="{% url "papers:proceedings_detail" proceedings.slug %}">{{ proceedings.title }}</a></th>
+                            <td>{% for editor in proceedings.editors.all %}<a href="{% url "persons:person_detail" editor.slug %}">{{ editor }}</a>{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+                            <td>{% if proceedings.doi %}<a href="{% doi_url proceedings.doi %}">{{ proceedings.doi }}</a>{% endif %}</td>
+                            <td>{% if proceedings.journal %}<a href="{% url "journals:journal_detail" proceedings.journal.slug %}">{{ proceedings.journal.name }}</a>{% endif %}</td>
+                            <td>{{ proceedings.volume|default:"" }}</td>
+                            <td>{% if proceedings.series %}<a href="{% url "series:series_detail" proceedings.series.slug %}">{{ proceedings.series.name }}</a>{% endif %}</td>
+                            <td>{% if proceedings.proceedings %}<a href="{% url "papers:paper_detail" proceedings.proceedings.slug %}">{{ proceedings.proceedings.name }}</a>{% endif %}</td>
+                            <td>{{ proceedings.acquisitions.count }}</td>
+                            <td>{{ proceedings.reads.count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

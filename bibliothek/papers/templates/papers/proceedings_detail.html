@@ -1,0 +1,113 @@
+{% extends "bibliothek/base.html" %}
+{% load bootstrap i18n %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <h1>{{ proceedings.title }}</h1>
+        <hr>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <dl class="row">
+            <dt class="col-sm-2">{% trans "Id" %}</dt>
+            <dd class="col-sm-10">{{ proceedings.id }}</dd>
+            <dt class="col-sm-2">{% trans "DOI" %}</dt>
+            <dd class="col-sm-10">{{ proceedings.doi|default:"" }}</dd>
+            <dt class="col-sm-1">{% trans "Editiors" %}</dt>
+            <dd class="col-sm-11">{% for editior in proceedings.editiors.all %}<a href="{% url "persons:person_detail" editior.slug %}">{{ editior }}</a>{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+            <dt class="col-sm-2">{% trans "ISBN" %}</dt>
+            <dd class="col-sm-10">{{ proceedings.isbn|default:"" }}</dd>
+            <dt class="col-sm-2">{% trans "Publisher" %}</dt>
+            <dd class="col-sm-10">{% if proceedings.publisher %}<a href="{% url "publishers:publisher_detail" proceedings.publisher.slug %}">{{ proceedings.publisher.name }}</a>{% endif %}</dd>
+            <dt class="col-sm-2">{% trans "Publishing date" %}</dt>
+            <dd class="col-sm-10">{{ proceedings.publishing_date|date:"Y-m-d" }}</dd>
+            <dt class="col-sm-2">{% trans "Series" %}</dt>
+            <dd class="col-sm-10">{% if proceedings.series %}<a href="{% url "series:series_detail" proceedings.series.slug %}">{{ proceedings.series.name }}</a>{% endif %}</dd>
+            <dt class="col-sm-2">{% trans "Volume" %}</dt>
+            <dd class="col-sm-10">{{ proceedings.volume|default:"" }}</dd>
+            <dt class="col-sm-2">{% trans "Languages" %}</dt>
+            <dd class="col-sm-10">{% for language in proceedings.languages.all %}{{ language.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+            <dt class="col-sm-2">{% trans "Bibtex" %}</dt>
+            <dd class="col-sm-10">{% if proceedings.bibtex %}<pre>{{ proceedings.bibtex }}</pre>{% endif %}</dd>
+
+            <dt class="col-sm-2">{% trans "Links" %}</dt>
+            <dd class="col-sm-10">
+                <ul>
+                    {% for link in proceedings.links.all %}
+                        <li><a href="{{ link }}">{{ link }}</a></li>
+                    {% endfor %}
+                </ul>
+            </dd>
+            <dt class="col-sm-2">{% trans "Files" %}</dt>
+            <dd class="col-sm-10">
+                <ul>
+                    {% for file in proceedings.files.all %}
+                        <li><a href="{{ file.file.url }}">{{ file }}</a></li>
+                    {% endfor %}
+                </ul>
+            </dd>
+            <dt class="col-sm-12"><hr></dt>
+            <dt class="col-sm-2">{% trans "Acquisitions" %}</dt>
+            <dd class="col-sm-10">
+                {% for acquisition in proceedings.acquisitions.all %}
+                    <ul>
+                        <li>
+                            <b>{% trans "Id" %}</b>: {{ acquisition.id }}
+                            {% if acquisition.date %}<b>{% trans "Date" %}</b>: {{ acquisition.date|date:"Y-m-d" }}{% endif%}
+                            <b>{% trans "Price" %}</b>: {{ acquisition.price|currency_symbol }}
+                        </li>
+                    </ul>
+                {% endfor %}
+            </dd>
+            <dt class="col-sm-12"><hr></dt>
+            <dt class="col-sm-2">{% trans "Reads" %}</dt>
+            <dd class="col-sm-10">
+                {% for read in proceedings.reads.all %}
+                    <ul>
+                        <li>
+                            <b>{% trans "Id" %}</b>: {{ read.id }}
+                            {% if read.started %}<b>{% trans "Date started" %}</b>: {{ read.started|date:"Y-m-d" }}{% endif %}
+                            {% if read.finished %}<b>{% trans "Date finished" %}</b>: {{ read.finished|date:"Y-m-d" }}{% endif %}
+                        </li>
+                    </ul>
+                {% endfor %}
+            </dd>
+        </dl>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <h2>{% trans "Editions" %}</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    {% trans "Title" as title_trans %}
+                    {% sortable_th title_trans o "o" "title" %}
+                    <th>{% trans "Authors" %}</th>
+                    {% trans "Volume" as volume_trans %}
+                    {% sortable_th volume_trans o "o" "volume" %}
+                    {% trans "Number of Editions" as nb_ditions_trans %}
+                    {% sortable_th nb_ditions_trans o "o" "ce" %}
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                        <tr>
+                            <th><a href="{% url "books:book_detail" book.slug %}">{{ book.title }}</a></th>
+                            <td>{% for author in book.authors.all %}<a href="{% url "persons:person_detail" author.slug %}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{{ book.volume|default:"" }}</td>
+                            <td>{{ book.ce }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

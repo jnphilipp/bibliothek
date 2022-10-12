@@ -16,24 +16,4 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with bibliothek.  If not, see <http://www.gnu.org/licenses/>.
-"""Papers Django app urls."""
-
-from django.urls import path
-from .views.paper import DetailView as PaperDetailView, ListView as PaperListView
-from .views.proceedings import (
-    DetailView as ProceedingsDetailView,
-    ListView as ProceedingsListView,
-)
-
-
-app_name = "papers"
-urlpatterns = [
-    path("paper/", PaperListView.as_view(), name="paper_list"),
-    path("paper/<slug:slug>/", PaperDetailView.as_view(), name="paper_detail"),
-    path("proceedings/", ProceedingsListView.as_view(), name="proceedings_list"),
-    path(
-        "proceedings/<slug:slug>/",
-        ProceedingsDetailView.as_view(),
-        name="proceedings_detail",
-    ),
-]
+"""Papers Django app views."""

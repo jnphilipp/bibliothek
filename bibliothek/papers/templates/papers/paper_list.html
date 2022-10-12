@@ -17,6 +17,10 @@
                     {% sortable_th journal_trans o "o" "journal__name" %}
                     {% trans "Volume" as volume_trans %}
                     {% sortable_th volume_trans o "o" "volume" %}
+                    {% trans "Series" as series_trans %}
+                    {% sortable_th series_trans o "o" "series__name" %}
+                    {% trans "Proceedings" as proceedings_trans %}
+                    {% sortable_th proceedings_trans o "o" "proceedings__name" %}
                     {% trans "Acquired" as acquired_trans %}
                     {% sortable_th acquired_trans o "o" "acquisitions" %}
                     {% trans "Read" as read_trans %}
@@ -30,6 +34,8 @@
                             <td>{% if paper.doi %}<a href="{% doi_url paper.doi %}">{{ paper.doi }}</a>{% endif %}</td>
                             <td>{% if paper.journal %}<a href="{% url "journals:journal_detail" paper.journal.slug %}">{{ paper.journal.name }}</a>{% endif %}</td>
                             <td>{{ paper.volume|default:"" }}</td>
+                            <td>{% if paper.series %}<a href="{% url "series:series_detail" paper.series.slug %}">{{ paper.series.name }}</a>{% endif %}</td>
+                            <td>{% if paper.proceedings %}<a href="{% url "papers:paper_detail" paper.proceedings.slug %}">{{ paper.proceedings.name }}</a>{% endif %}</td>
                             <td>{{ paper.acquisitions.count }}</td>
                             <td>{{ paper.reads.count }}</td>
                         </tr>
