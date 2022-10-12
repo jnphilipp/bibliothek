@@ -198,10 +198,7 @@ build/changelog.Debian.gz: build
 
 
 build/bibliothek.1.gz: build build/copyright.h2m
-	$(Q)( \
-		source .venv/bin/activate; \
-		help2man ./bibliothek/bibliothek.py -i build/copyright.h2m -n "Manage books, papers and magazines." | gzip -n9 > build/bibliothek.1.gz; \
-	)
+	$(Q)help2man ./bibliothek/bibliothek.py -i build/copyright.h2m -n "Manage books, papers and magazines." | gzip -n9 > build/bibliothek.1.gz
 	$(Q)LC_ALL=en_US.UTF-8 MANROFFSEQ='' MANWIDTH=80 man --warnings -E UTF-8 -l -Tutf8 -Z ./build/bibliothek.1.gz > /dev/null
 
 
