@@ -55,8 +55,13 @@ class DetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         """Get context data."""
         context = super(DetailView, self).get_context_data(**kwargs)
-        context["o"] = "book__title"
-        if self.request.GET.get("o"):
-            context["o"] = self.request.GET.get("o")
-        context["editions"] = self.object.editions.order_by(context["o"])
+        context["eo"] = "book__title"
+        if self.request.GET.get("eo"):
+            context["eo"] = self.request.GET.get("eo")
+        context["editions"] = self.object.editions.order_by(context["eo"])
+
+        context["po"] = "title"
+        if self.request.GET.get("po"):
+            context["po"] = self.request.GET.get("po")
+        context["papers"] = self.object.papers.order_by(context["po"])
         return context
