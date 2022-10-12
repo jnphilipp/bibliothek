@@ -42,6 +42,7 @@ import series.argparse  # noqa: E402
 import shelves.argparse  # noqa: E402
 
 from argparse import (  # noqa: E402
+    ArgumentDefaultsHelpFormatter,
     ArgumentParser,
     FileType,
     Namespace,
@@ -60,6 +61,12 @@ from bibliothek.utils import lookahead  # noqa: E402
 from datetime import date, datetime  # noqa: E402
 from django.utils.translation import gettext_lazy as _  # noqa: E402
 from typing import TextIO  # noqa: E402
+
+
+class ArgFormatter(ArgumentDefaultsHelpFormatter, RawTextHelpFormatter):
+    """Combination of ArgumentDefaultsHelpFormatter and RawTextHelpFormatter."""
+
+    pass
 
 
 def init():
@@ -214,7 +221,7 @@ def _statistics(args: Namespace, file: TextIO = sys.stdout):
 if __name__ == "__main__":
     init()
 
-    parser = ArgumentParser(prog=__app_name__, formatter_class=RawTextHelpFormatter)
+    parser = ArgumentParser(prog=__app_name__, formatter_class=ArgFormatter)
     parser.add_argument(
         "-V",
         "--version",
@@ -270,7 +277,7 @@ if __name__ == "__main__":
     shelves.argparse.add_subparser(subparser)
 
     # create the parser for the "import" subcommand
-    import_parser = subparser.add_parser("import", help=_("Import data from JSON"))
+    import_parser = subparser.add_parser("import", help=_("import data from JSON"))
     import_parser.set_defaults(func=_import)
     import_parser.add_argument(
         "PATH",
@@ -281,15 +288,15 @@ if __name__ == "__main__":
 
     # create the parser for the "reading-list" subcommand
     reading_list_parser = subparser.add_parser(
-        "reading-list", help=_("Show reading-list")
+        "reading-list", help=_("show reading-list")
     )
     reading_list_parser.set_defaults(func=_reading_list)
     reading_list_parser.add_argument(
-        "--limit", type=int, help=_("Limit list to n entries")
+        "--limit", type=int, help=_("limit list to n entries")
     )
 
     # create the parser for the "statistics" subcommand
-    statistics_parser = subparser.add_parser("statistics", help=_("Show statistics"))
+    statistics_parser = subparser.add_parser("statistics", help=_("show statistics"))
     statistics_parser.set_defaults(func=_statistics)
 
     args = parser.parse_args()
