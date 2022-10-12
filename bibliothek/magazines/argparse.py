@@ -67,8 +67,7 @@ def _magazine(args: Namespace, file: TextIO = sys.stdout):
         if magazine:
             magazine.delete()
             stdout.write(
-                _('Successfully deleted magazine "%(name)s".')
-                % {"name": magazine.name},
+                _("Successfully deleted magazine."),
                 "",
                 file=file,
             )
@@ -122,8 +121,7 @@ def _magazine(args: Namespace, file: TextIO = sys.stdout):
                     if acquisition:
                         acquisition.delete()
                         stdout.write(
-                            _('Successfully deleted acquisition with id "%(pk)d".')
-                            % {"pk": args.acquisition},
+                            _("Successfully deleted acquisition."),
                             "",
                             file=file,
                         )
@@ -178,8 +176,7 @@ def _magazine(args: Namespace, file: TextIO = sys.stdout):
                 if issue:
                     issue.delete()
                     stdout.write(
-                        _('Successfully deleted issue with id "%(pk)s".')
-                        % {"pk": issue.pk},
+                        _("Successfully deleted issue."),
                         "",
                         file=file,
                     )
@@ -262,8 +259,7 @@ def _magazine(args: Namespace, file: TextIO = sys.stdout):
                     if read:
                         read.delete()
                         stdout.write(
-                            _('Successfully deleted read with id "%(pk)s".')
-                            % {"pk": read.pk},
+                            _("Successfully deleted read."),
                             "",
                             file=file,
                         )

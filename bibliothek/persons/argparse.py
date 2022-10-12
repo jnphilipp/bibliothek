@@ -57,12 +57,7 @@ def _person(args: Namespace, file: TextIO = sys.stdout):
         person = Person.get(args.person)
         if person:
             person.delete()
-            stdout.write(
-                _('Successfully deleted person with id "%(name)s".')
-                % {"name": person.name},
-                "",
-                file=file,
-            )
+            stdout.write(_("Successfully deleted person."), "", file=file)
         else:
             stdout.write(_("No person found."), "", file=file)
     elif args.subparser == "edit":

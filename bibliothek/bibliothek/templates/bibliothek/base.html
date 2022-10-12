@@ -14,63 +14,81 @@
         {% block extrahead %}{% endblock %}
     </head>
     <body>
-        <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="{% url "dashboard" %}">
-                <img alt="Brand" src="{% static "images/bibliothek.svg" %}" style="margin-top: -5px; height: 30px; display: inline-block;"/> bibliothek
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url "dashboard" %}">
+                    <img alt="Brand" src="{% static "images/bibliothek.svg" %}" style="margin-top: -5px; height: 30px; display: inline-block;"/> bibliothek
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-            <div class="collapse navbar-collapse" id="navbarContent" role="navbar">
-                <ul class="navbar-nav">
-                    {% url "books:book_list" as book_list_url %}
-                    <a class="nav-link{% if request.path|startswith:book_list_url %} active{% endif %}" href="{{ book_list_url }}">
-                        {% trans "Books" %}
-                        {% if request.path|startswith:book_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
-                    </a>
-                    {% url "journals:journal_list" as journal_list_url %}
-                    <a class="nav-link{% if request.path|startswith:journal_list_url %} active{% endif %}" href="{{ journal_list_url }}">
-                        {% trans "Journals" %}
-                        {% if request.path|startswith:journal_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
-                    </a>
-                    {% url "genres:genre_list" as genre_list_url %}
-                    <a class="nav-link{% if request.path|startswith:genre_list_url %} active{% endif %}" href="{{ genre_list_url }}">
-                        {% trans "Genres" %}
-                        {% if request.path|startswith:genre_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
-                    </a>
-                    {% url "magazines:magazine_list" as magazine_list_url %}
-                    <a class="nav-link{% if request.path|startswith:magazine_list_url %} active{% endif %}" href="{{ magazine_list_url }}">
-                        {% trans "Magazines" %}
-                        {% if request.path|startswith:magazine_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
-                    </a>
-                    {% url "papers:paper_list" as paper_list_url %}
-                    <a class="nav-link{% if request.path|startswith:paper_list_url %} active{% endif %}" href="{{ paper_list_url }}">
-                        {% trans "Papers" %}
-                        {% if request.path|startswith:paper_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
-                    </a>
-                    {% url "persons:person_list" as person_list_url %}
-                    <a class="nav-link{% if request.path|startswith:person_list_url %} active{% endif %}" href="{{ person_list_url }}">
-                        {% trans "Persons" %}
-                        {% if request.path|startswith:person_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
-                    </a>
-                    {% url "publishers:publisher_list" as publisher_list_url %}
-                    <a class="nav-link{% if request.path|startswith:publisher_list_url %} active{% endif %}" href="{{ publisher_list_url }}">
-                        {% trans "Publishers" %}
-                        {% if request.path|startswith:publisher_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
-                    </a>
-                    {% url "series:series_list" as series_url %}
-                    <a class="nav-link{% if request.path|startswith:series_url %} active{% endif %}" href="{{ series_url }}">
-                        {% trans "Series" %}
-                        {% if request.path|startswith:series_url %}<span class="visually-hidden">(current)</span>{% endif %}
-                    </a>
-                </ul>
+                <div class="collapse navbar-collapse" id="navbarContent" role="navbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            {% url "books:book_list" as book_list_url %}
+                            <a class="nav-link{% if request.path|startswith:book_list_url %} active{% endif %}" href="{{ book_list_url }}">
+                                {% trans "Books" %}
+                                {% if request.path|startswith:book_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            {% url "journals:journal_list" as journal_list_url %}
+                            <a class="nav-link{% if request.path|startswith:journal_list_url %} active{% endif %}" href="{{ journal_list_url }}">
+                                {% trans "Journals" %}
+                                {% if request.path|startswith:journal_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            {% url "genres:genre_list" as genre_list_url %}
+                            <a class="nav-link{% if request.path|startswith:genre_list_url %} active{% endif %}" href="{{ genre_list_url }}">
+                                {% trans "Genres" %}
+                                {% if request.path|startswith:genre_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            {% url "magazines:magazine_list" as magazine_list_url %}
+                            <a class="nav-link{% if request.path|startswith:magazine_list_url %} active{% endif %}" href="{{ magazine_list_url }}">
+                                {% trans "Magazines" %}
+                                {% if request.path|startswith:magazine_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            {% url "papers:paper_list" as paper_list_url %}
+                            <a class="nav-link{% if request.path|startswith:paper_list_url %} active{% endif %}" href="{{ paper_list_url }}">
+                                {% trans "Papers" %}
+                                {% if request.path|startswith:paper_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            {% url "persons:person_list" as person_list_url %}
+                            <a class="nav-link{% if request.path|startswith:person_list_url %} active{% endif %}" href="{{ person_list_url }}">
+                                {% trans "Persons" %}
+                                {% if request.path|startswith:person_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            {% url "publishers:publisher_list" as publisher_list_url %}
+                            <a class="nav-link{% if request.path|startswith:publisher_list_url %} active{% endif %}" href="{{ publisher_list_url }}">
+                                {% trans "Publishers" %}
+                                {% if request.path|startswith:publisher_list_url %}<span class="visually-hidden">(current)</span>{% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            {% url "series:series_list" as series_url %}
+                            <a class="nav-link{% if request.path|startswith:series_url %} active{% endif %}" href="{{ series_url }}">
+                                {% trans "Series" %}
+                                {% if request.path|startswith:series_url %}<span class="visually-hidden">(current)</span>{% endif %}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
 
-        <div class="container-fluid">
+        <div class="container-fluid mt-3">
             <div class="row">
-                <div class="col-md-10 offset-md-1">
+                <div class="col-10 offset-1">
                     {% messages %}
                 </div>
             </div>

@@ -58,8 +58,7 @@ def _journal(args: Namespace, file: TextIO = sys.stdout):
         if journal:
             journal.delete()
             stdout.write(
-                _('Successfully deleted journal with id "%(pk)d".')
-                % {"pk": journal.pk},
+                _("Successfully deleted journal."),
                 "",
                 file=file,
             )
@@ -81,9 +80,9 @@ def _journal(args: Namespace, file: TextIO = sys.stdout):
     elif args.subparser == "info":
         journal = Journal.get(args.journal)
         if journal:
-            journal.info(file)
+            journal.print(file)
         else:
-            stdout.write([_("No journal found.")], "")
+            stdout.write([_("No journal found.")], "", file=file)
     elif args.subparser == "list":
         if args.search:
             journals = Journal.search(args.search)

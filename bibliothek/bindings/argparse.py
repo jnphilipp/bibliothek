@@ -51,12 +51,7 @@ def _binding(args, file: TextIO = sys.stdout):
         binding = Binding.get(args.binding)
         if binding:
             binding.delete()
-            stdout.write(
-                _('Successfully deleted binding with id "%(pk)d".')
-                % {"pk": binding.pk},
-                "",
-                file=file,
-            )
+            stdout.write(_("Successfully deleted binding."), "", file=file)
         else:
             stdout.write(_("No binding found."), "", file=file)
     elif args.subparser == "edit":

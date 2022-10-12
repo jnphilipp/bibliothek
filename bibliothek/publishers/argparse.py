@@ -60,12 +60,7 @@ def _publisher(args: Namespace, file: TextIO = sys.stdout):
         publisher = Publisher.get(args.publisher)
         if publisher:
             publisher.delete()
-            stdout.write(
-                _('Successfully deleted publisher with id "%(pk)d".')
-                % {"pk": publisher.pk},
-                "",
-                file=file,
-            )
+            stdout.write(_("Successfully deleted publisher."), "", file=file)
         else:
             stdout.write(_("No publisher found."), "", file=file)
     elif args.subparser == "edit":

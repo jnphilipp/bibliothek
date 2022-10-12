@@ -67,8 +67,7 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
             if acquisition:
                 acquisition.delete(acquisition)
                 stdout.write(
-                    _('Successfully deleted acquisition with id "%(pk)d".')
-                    % {"pk": acquisition.pk},
+                    _("Successfully deleted acquisition."),
                     "",
                     file=file,
                 )
@@ -130,8 +129,7 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
         if paper:
             paper.delete()
             stdout.write(
-                _('Successfully deleted paper "%(title)s" with id "%(pk)d".')
-                % {"title": paper.title, "pk": paper.pk},
+                _("Successfully deleted paper."),
                 "",
                 file=file,
             )
@@ -246,7 +244,7 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
             if read:
                 read.delete()
                 stdout.write(
-                    _('Successfully deleted read with id "%(pk)d".') % {"pk": read.pk},
+                    _("Successfully deleted read."),
                     "",
                     file=file,
                 )

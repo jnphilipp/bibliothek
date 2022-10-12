@@ -36,6 +36,7 @@ def _genre(args, file: TextIO = sys.stdout):
                 _('Successfully added genre "%(name)s" with id "%(pk)d".')
                 % {"name": genre.name, "pk": genre.pk},
                 "=",
+                file=file,
             )
             genre.print(file)
         else:
@@ -43,16 +44,15 @@ def _genre(args, file: TextIO = sys.stdout):
                 _('The genre "%(name)s" already exists with id "%(pk)d", aborting...')
                 % {"name": genre.name, "pk": genre.pk},
                 "",
+                file=file,
             )
     elif args.subparser == "delete":
         genre = Genre.get(args.genre)
         if genre:
             genre.delete()
-            stdout.write(
-                _('Successfully deleted genre with id "%(pk)d".') % {"pk": genre.pk}, ""
-            )
+            stdout.write(_("Successfully deleted genre."), "", file=file)
         else:
-            stdout.write(_("No genre found."), "")
+            stdout.write(_("No genre found."), "", file=file)
     elif args.subparser == "edit":
         genre = Genre.get(args.genre)
         if genre:
@@ -61,16 +61,17 @@ def _genre(args, file: TextIO = sys.stdout):
                 _('Successfully edited genre "%(name)s" with id "%(pk)d".')
                 % {"name": genre.name, "pk": genre.pk},
                 "",
+                file=file,
             )
             genre.print(file)
         else:
-            stdout.write(_("No genre found."), "")
+            stdout.write(_("No genre found."), "", file=file)
     elif args.subparser == "info":
         genre = Genre.get(args.genre)
         if genre:
             genre.print(file)
         else:
-            stdout.write(_("No genre found."), "")
+            stdout.write(_("No genre found."), "", file=file)
     elif args.subparser == "list":
         if args.search:
             genres = Genre.search(args.search)

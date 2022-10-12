@@ -74,12 +74,7 @@ def _acquisition(args: Namespace, file: TextIO = sys.stdout):
         acquisition = Acquisition.get(args.acquisition)
         if acquisition:
             acquisition.delete()
-            stdout.write(
-                _('Successfully deleted acquisition with id "%(pk)d".')
-                % {"pk": acquisition.pk},
-                "",
-                file=file,
-            )
+            stdout.write(_("Successfully deleted acquisition."), "", file=file)
         else:
             stdout.write(_("No acquisition found."), "", file=file)
     elif args.subparser == "edit":
@@ -146,11 +141,7 @@ def _read(args: Namespace, file: TextIO = sys.stdout):
         read = Read.get(args.read)
         if read:
             read.delete()
-            stdout.write(
-                _('Successfully deleted read with id "%(pk)d".') % {"pk": read.pk},
-                "",
-                file=file,
-            )
+            stdout.write(_("Successfully deleted read."), "", file=file)
         else:
             stdout.write(_("No read found."), "", file=file)
     elif args.subparser == "edit":

@@ -57,11 +57,7 @@ def _series(args: Namespace, file: TextIO = sys.stdout):
         series = Series.get(args.series)
         if series:
             series.delete()
-            stdout.write(
-                _('Successfully deleted series with id "%(pk)d".') % {"pk": series.pk},
-                "",
-                file=file,
-            )
+            stdout.write(_("Successfully deleted series."), "", file=file)
         else:
             stdout.write(_("No series found."), "", file=file)
     elif args.subparser == "edit":

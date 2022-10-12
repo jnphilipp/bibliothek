@@ -41,10 +41,8 @@ def fill_publisher_series(apps, schema_editor):
             ).parse(paper.bibtex)
             entry = bib_database.entries[0]
 
-            publisher = (
-                {"name": entry["publisher"].strip()} if "publisher" in entry else None
-            )
-            series = {"name": entry["series"].strip()} if "series" in entry else None
+            publisher = entry["publisher"].strip() if "publisher" in entry else None
+            series = entry["series"].strip() if "series" in entry else None
 
             if publisher or series:
                 if publisher:
