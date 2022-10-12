@@ -443,6 +443,16 @@ _bibliothek()
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
+                bibtex)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
+                delete)
+                    opts="-h --help"
+                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                    return 0
+                    ;;
                 edit)
                     opts="title publishing-date journal volume doi language link file -h --help"
                     copts=$(compgen -W "${opts}" -- ${cur})
@@ -504,7 +514,7 @@ _bibliothek()
                     esac
                     ;;
                 *)
-                    local opts="acquisition add edit list info open parse read -h --help"
+                    local opts="acquisition add bibtex delete edit list info open parse read -h --help"
                     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                     return 0
                     ;;
