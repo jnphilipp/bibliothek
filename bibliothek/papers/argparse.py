@@ -124,6 +124,14 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
                 file=file,
             )
         paper.print(file)
+    elif args.subparser == "bibtex":
+        paper = Paper.get(args.paper)
+        if paper:
+            file.write(
+                paper.bibtex,
+            )
+        else:
+            stdout.write(_("No paper found."), "", file=file)
     elif args.subparser == "delete":
         paper = Paper.get(args.paper)
         if paper:
@@ -287,6 +295,10 @@ def add_subparser(parser: _SubParsersAction):
     add_parser.add_argument("--language", nargs="*", default=[], help=_("Languages"))
     add_parser.add_argument("--link", nargs="*", default=[], help=_("Links"))
     add_parser.add_argument("--file", nargs="*", default=[], help=_("Additional files"))
+
+    # paper bibtex
+    delete_parser = subparser.add_parser("bibtex", help=_("show bibtext"))
+    delete_parser.add_argument("paper", help=_("Paper"))
 
     # paper delete
     delete_parser = subparser.add_parser("delete", help=_("Delete paper"))
