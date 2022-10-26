@@ -170,14 +170,14 @@ def _paper(args: Namespace, file: TextIO = sys.stdout):
         else:
             papers = Paper.objects.all()
         stdout.write(
-            [_("Id"), _("Name"), _("Journal"), _("Volume")],
+            [_("Id"), _("Title")],
             "=",
             [0.05, 0.7, 0.85],
             file=file,
         )
         for i, has_next in lookahead(papers):
             stdout.write(
-                [i.pk, i.name, i.journal.name, i.volume],
+                [i.pk, i.title],
                 "_" if has_next else "=",
                 [0.05, 0.7, 0.85],
                 file=file,
