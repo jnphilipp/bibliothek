@@ -17,3 +17,6 @@ build
 # SublimeText
 *.sublime-project
 *.sublime-workspace
+
+# Vim
+Session.vim
