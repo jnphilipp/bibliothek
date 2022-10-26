@@ -92,7 +92,7 @@ class Magazine(models.Model):
             if term.isdigit():
                 query_set = query_set.filter(pk=term)
             else:
-                query_set = query_set.filter(Q(title=term) | Q(jv=term))
+                query_set = query_set.filter(name=term)
             if query_set.count() != 1:
                 return None
         return query_set[0]
