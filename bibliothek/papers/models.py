@@ -162,10 +162,15 @@ class Paper(models.Model):
                 continue
 
             title = entry["title"].strip() if "title" in entry else ""
+            if title.startswith("{"):
+                title = title[1:]
+            if title.endswith("}"):
+                title = title[:-1]
 
             authors = []
             entry["author"] = re.sub(r"\s*\n\s*", " ", entry["author"], flags=re.S)
             for author in re.compile(r"\s+and\s+").split(entry["author"]):
+                author = author.replace("{", "").replace("}", "")
                 if "," in author:
                     s = author.split(",")
                     authors.append({"name": f"{s[1].strip()} {s[0].strip()}"})
